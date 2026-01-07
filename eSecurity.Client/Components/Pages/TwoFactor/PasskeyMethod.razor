@@ -85,8 +85,6 @@
     [SupplyParameterFromQuery(Name = "return_url")]
     public string? ReturnUrl { get; set; }
 
-    private bool _expanded;
-
     private async Task OnSignInAsync()
     {
         var request = new GenerateRequestOptionsRequest() { UserId = UserId };
@@ -125,7 +123,4 @@
         }
         else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
-
-    private void Expand() => _expanded = !_expanded;
-    private string GetIcon() => _expanded ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore;
 }

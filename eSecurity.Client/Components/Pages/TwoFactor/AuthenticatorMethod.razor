@@ -95,7 +95,6 @@
     private CodeModel _model = new();
     private MudForm _form = new();
     private readonly PatternMask _mask = new("000000");
-    private bool _expanded;
 
     private async Task OnSignInAsync()
     {
@@ -124,7 +123,4 @@
             else Snackbar.Add(result.GetError().Description, Severity.Error);
         }
     }
-
-    private void Expand() => _expanded = !_expanded;
-    private string GetIcon() => _expanded ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore;
 }
