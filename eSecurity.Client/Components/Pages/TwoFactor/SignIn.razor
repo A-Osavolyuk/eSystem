@@ -13,21 +13,25 @@
 @if (_methods.Any())
 {
     <MudGrid Justify="Justify.Center">
-        <MudItem xs="3">
-            <MudStack Spacing="3" Justify="Justify.Center" AlignItems="AlignItems.Center">
-                <MudIcon Size="Size.Large" Icon="@Icons.Material.Outlined.LockPerson"/>
-                @if (_preferredMethod != TwoFactorMethod.RecoveryCode)
-                {
-                    <MudTextM3 Typo="TypoM3.Headline" Size="Size.Small">
-                        Two-factor authentication
-                    </MudTextM3>
-                }
-                else
-                {
-                    <MudTextM3 Typo="TypoM3.Headline" Size="Size.Small">
-                        Two-factor recovery
-                    </MudTextM3>
-                }
+        <MudItem xs="3" Style="margin-top: 50px">
+            <MudStack Spacing="1">
+                <MudPaper Class="pa-3" Outlined="true">
+                    <MudStack Spacing="3" Justify="Justify.Center" AlignItems="AlignItems.Center">
+                        <MudIcon Size="Size.Large" Icon="@Icons.Material.Outlined.LockPerson"/>
+                        @if (_preferredMethod != TwoFactorMethod.RecoveryCode)
+                        {
+                            <MudTextM3 Typo="TypoM3.Headline" Size="Size.Small">
+                                Two-factor authentication
+                            </MudTextM3>
+                        }
+                        else
+                        {
+                            <MudTextM3 Typo="TypoM3.Headline" Size="Size.Small">
+                                Two-factor recovery
+                            </MudTextM3>
+                        }
+                    </MudStack>
+                </MudPaper>
                 @switch (_preferredMethod)
                 {
                     case TwoFactorMethod.AuthenticatorApp:
@@ -61,6 +65,7 @@
 }
 
 @code {
+
     [SupplyParameterFromQuery(Name = "id")]
     public Guid UserId { get; set; }
 
@@ -88,4 +93,5 @@
     {
         AuthenticationManager.Authorize();
     }
+
 }

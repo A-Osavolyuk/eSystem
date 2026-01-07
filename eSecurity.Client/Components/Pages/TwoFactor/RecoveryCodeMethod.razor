@@ -7,97 +7,91 @@
 @inject ISnackbar Snackbar
 @inject ISecurityService SecurityService
 
-<MudStack Spacing="4">
-    <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Align="Align.Center">
-        Enter one of the 16 recovery codes saved during 2FA configuration.
-    </MudTextM3>
-    <MudForm @ref="_form" Model="_model">
-        <MudTextFieldExtended
-            Mask="_mask"
-            Placeholder="XXXXXXXXXX"
-            Variant="Variant.Outlined"
-            Margin="Margin.Dense"
-            Clearable="true"
-            Immediate="true"
-            @bind-Value="_model.Code"
-            For="() => _model.Code"/>
-    </MudForm>
-    <MudStack Spacing="2">
-        <MudButton
-            Size="Size.Medium"
-            Color="Color.Success"
-            Variant="Variant.Filled"
-            ButtonType="ButtonType.Button"
-            Disabled="@(_model.Code.Length < 9)"
-            OnClick="@(async () => await OnSignInAsync())">
-            Verify
-        </MudButton>
-        <MudButton
-            Color="Color.Default"
-            Variant="Variant.Outlined"
-            ButtonType="ButtonType.Button"
-            Size="Size.Medium"
-            OnClick="@(() => Expand())"
-            EndIcon="@GetIcon()">
-            More options
-        </MudButton>
-        <MudCollapse Expanded="_expanded">
-            <MudDivider Class="my-2"/>
-            <MudStack Spacing="2">
-                @if (Methods.Any(x => x.Method == TwoFactorMethod.Passkey))
-                {
-                    <MudButton
-                        Color="Color.Default"
-                        Variant="Variant.Outlined"
-                        ButtonType="ButtonType.Button"
-                        Size="Size.Medium"
-                        OnClick="@(async () => await OnChangeMethod.InvokeAsync(TwoFactorMethod.Passkey))">
-                        Passkey
-                    </MudButton>
-                }
-                @if (Methods.Any(x => x.Method == TwoFactorMethod.AuthenticatorApp))
-                {
-                    <MudButton
-                        Color="Color.Default"
-                        Variant="Variant.Outlined"
-                        ButtonType="ButtonType.Button"
-                        Size="Size.Medium"
-                        OnClick="@(async () => await OnChangeMethod.InvokeAsync(TwoFactorMethod.AuthenticatorApp))">
-                        Authenticator app
-                    </MudButton>
-                }
-                @if (Methods.Any(x => x.Method == TwoFactorMethod.Sms))
-                {
-                    <MudButton
-                        Color="Color.Default"
-                        Variant="Variant.Outlined"
-                        ButtonType="ButtonType.Button"
-                        Size="Size.Medium"
-                        OnClick="@(async () => await OnChangeMethod.InvokeAsync(TwoFactorMethod.Sms))">
-                        SMS
-                    </MudButton>
-                }
-            </MudStack>
-        </MudCollapse>
+<MudPaper Outlined="true" Class="pa-5">
+    <MudStack Spacing="4">
+        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Align="Align.Center">
+            Enter one of the 16 recovery codes saved during 2FA configuration.
+        </MudTextM3>
+        <MudForm @ref="_form" Model="_model">
+            <MudTextFieldExtended
+                Mask="_mask"
+                Placeholder="XXXXXXXXXX"
+                Variant="Variant.Outlined"
+                Margin="Margin.Dense"
+                Immediate="true"
+                Clearable="true"
+                @bind-Value="_model.Code"
+                For="() => _model.Code"/>
+        </MudForm>
+        <MudStack Spacing="2">
+            <MudButton
+                Size="Size.Medium"
+                Color="Color.Primary"
+                Variant="Variant.Filled"
+                ButtonType="ButtonType.Button"
+                Disabled="@(_model.Code.Length < 9)"
+                OnClick="@(async () => await OnSignInAsync())">
+                Verify
+            </MudButton>
+        </MudStack>
     </MudStack>
+</MudPaper>
+<MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center" Justify="Justify.Center">
+    <MudDivider Style="max-width: 45%"/>
+    <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">OR</MudTextM3>
+    <MudDivider Style="max-width: 45%"/>
 </MudStack>
+<MudPaper Outlined="true" Class="pa-5">
+    <MudStack Spacing="2">
+        @if (Methods.Any(x => x.Method == TwoFactorMethod.Passkey))
+        {
+            <MudButton
+                Color="Color.Info"
+                Variant="Variant.Filled"
+                ButtonType="ButtonType.Button"
+                Size="Size.Medium"
+                OnClick="@(async () => await OnChangeMethod.InvokeAsync(TwoFactorMethod.Passkey))">
+                Passkey
+            </MudButton>
+        }
+        @if (Methods.Any(x => x.Method == TwoFactorMethod.AuthenticatorApp))
+        {
+            <MudButton
+                Color="Color.Info"
+                Variant="Variant.Filled"
+                ButtonType="ButtonType.Button"
+                Size="Size.Medium"
+                OnClick="@(async () => await OnChangeMethod.InvokeAsync(TwoFactorMethod.AuthenticatorApp))">
+                Authenticator app
+            </MudButton>
+        }
+        @if (Methods.Any(x => x.Method == TwoFactorMethod.Sms))
+        {
+            <MudButton
+                Color="Color.Info"
+                Variant="Variant.Filled"
+                ButtonType="ButtonType.Button"
+                Size="Size.Medium"
+                OnClick="@(async () => await OnChangeMethod.InvokeAsync(TwoFactorMethod.Sms))">
+                SMS
+            </MudButton>
+        }
+    </MudStack>
+</MudPaper>
 
 @code {
-    [Parameter] 
-    public EventCallback<TwoFactorMethod> OnChangeMethod { get; set; }
-    
-    [Parameter] 
-    public EventCallback OnSignIn { get; set; }
-    
-    [Parameter] 
-    public List<UserTwoFactorMethod> Methods { get; set; } = [];
-    
+    [Parameter] public EventCallback<TwoFactorMethod> OnChangeMethod { get; set; }
+
+    [Parameter] public EventCallback OnSignIn { get; set; }
+
+    [Parameter] public List<UserTwoFactorMethod> Methods { get; set; } = [];
+
     [SupplyParameterFromQuery(Name = "id")]
     public Guid UserId { get; set; }
 
     [SupplyParameterFromQuery(Name = "return_url")]
     public string ReturnUrl { get; set; } = string.Empty;
-    
+
     private CodeModel _model = new();
     private MudForm _form = new();
     private readonly PatternMask _mask = new("**********");
@@ -130,7 +124,7 @@
             else Snackbar.Add(result.GetError().Description, Severity.Error);
         }
     }
-    
+
     private void Expand() => _expanded = !_expanded;
     private string GetIcon() => _expanded ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore;
 }
