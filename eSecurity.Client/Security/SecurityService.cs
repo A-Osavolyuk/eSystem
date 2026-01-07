@@ -43,7 +43,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
         => await _apiClient.SendAsync<SignInSessionDto>(
             new HttpRequest()
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethod.Get,
                 Url = $"api/v1/Account/sign-in/session/{sid}"
             }, new HttpOptions()
             {
