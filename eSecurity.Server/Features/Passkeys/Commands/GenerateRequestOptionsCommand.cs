@@ -1,6 +1,7 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Security.Credentials.PublicKey.Constants;
 using eSecurity.Server.Common.Storage.Session;
+using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Credentials.PublicKey.Challenge;
@@ -33,8 +34,14 @@ public class GenerateRequestOptionsCommandHandler(
 
     public async Task<Result> Handle(GenerateRequestOptionsCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByUsernameAsync(request.Request.Username!, cancellationToken);
-        if (user is null)
+        UserEntity? user = null;
+        if (!string.IsNullOrEmpty(request.Request.Username))
+        {
+            user = await _userManager.FindByUsernameAsync(request.Request.Username, cancellationToken);
+            if (user is null) return Results.NotFound("User not found.");
+        }
+        
+        else if (user is null)
         {
             user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
             if (user is null) return Results.NotFound("User not found.");
