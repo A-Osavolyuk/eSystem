@@ -370,6 +370,27 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SignInSessions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ExpireDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SignInSessions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SignInSessions_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserClients",
                 columns: table => new
                 {
@@ -993,6 +1014,11 @@ namespace eSecurity.Server.Migrations
                 column: "DeviceId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_SignInSessions_UserId",
+                table: "SignInSessions",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserClients_ClientId",
                 table: "UserClients",
                 column: "ClientId");
@@ -1096,6 +1122,9 @@ namespace eSecurity.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "RolePermissions");
+
+            migrationBuilder.DropTable(
+                name: "SignInSessions");
 
             migrationBuilder.DropTable(
                 name: "UserClients");

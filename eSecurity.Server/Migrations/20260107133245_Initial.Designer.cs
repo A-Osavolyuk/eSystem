@@ -12,8 +12,8 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20260106230216_AddLoginSessionEntity")]
-    partial class AddLoginSessionEntity
+    [Migration("20260107133245_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -318,31 +318,6 @@ namespace eSecurity.Server.Migrations
                     b.HasIndex("ConsentId");
 
                     b.ToTable("GrantedScopes");
-                });
-
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.LoginSessionEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset>("ExpireDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset?>("UpdateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("LoginSessions");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.OAuthSessionEntity", b =>
@@ -787,6 +762,31 @@ namespace eSecurity.Server.Migrations
                     b.HasIndex("DeviceId");
 
                     b.ToTable("Sessions");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.SignInSessionEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset>("ExpireDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("SignInSessions");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.SigningCertificateEntity", b =>
@@ -1374,17 +1374,6 @@ namespace eSecurity.Server.Migrations
                     b.Navigation("Scope");
                 });
 
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.LoginSessionEntity", b =>
-                {
-                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("eSecurity.Server.Data.Entities.OAuthSessionEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.UserLinkedAccountEntity", "LinkedAccount")
@@ -1580,6 +1569,17 @@ namespace eSecurity.Server.Migrations
                         .IsRequired();
 
                     b.Navigation("Device");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.SignInSessionEntity", b =>
+                {
+                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.UserClientEntity", b =>
