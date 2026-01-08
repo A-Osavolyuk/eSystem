@@ -3,7 +3,6 @@
 public enum SignInType
 {
     Password,
-    AuthenticatorApp,
     Passkey,
     OAuth,
     RecoveryCode,

@@ -1,4 +1,4 @@
-﻿using eSecurity.Server.Security.Authentication.SignIn.Session;
+﻿using eSecurity.Core.Security.Authentication.SignIn.Session;
 using eSystem.Core.Data.Entities;
 
 namespace eSecurity.Server.Data.Entities;

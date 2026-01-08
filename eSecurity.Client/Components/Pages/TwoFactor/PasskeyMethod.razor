@@ -1,5 +1,6 @@
 ﻿@using eSecurity.Client.Common.JS.WebAuthN
 @using eSecurity.Client.Security
+@using eSecurity.Client.Security.Authorization.Access.Verification
 @using eSecurity.Client.Security.Credentials.PublicKey
 @using eSecurity.Core.Common.DTOs
 @using eSecurity.Core.Security.Authentication.SignIn
@@ -10,7 +11,7 @@
 @inject WebAuthNManager WebAuthNManager
 @inject ISnackbar Snackbar
 @inject IPasskeyService PasskeyService
-@inject ISecurityService SecurityService
+@inject IVerificationService VerificationService
 
 <MudPaper Outlined="true" Class="pa-5">
     <MudStack Spacing="4" Class="w-100">
@@ -102,16 +103,20 @@
 
     private async Task SignInAsync(PublicKeyCredential credential)
     {
-        var request = new SignInRequest()
+        var request = new VerifyPasskeyRequest()
         {
-            Payload = new PasskeySignInPayload()
-            {
-                Credential = credential,
-            }
+            UserId = UserState.UserId,
+            Credential = credential,
+            Action = ActionType.SignIn,
+            Purpose = PurposeType.TwoFactor
         };
         
-        var result = await SecurityService.SignInAsync(request);
+        var result = await VerificationService.VerifyPasskeyAsync(request);
         if (result.Succeeded) await OnSignIn.InvokeAsync();
-        else Snackbar.Add(result.GetError().Description, Severity.Error);
+        else
+        {
+            var error = result.GetError();
+            Snackbar.Add(error.Description, Severity.Error);
+        }
     }
 }

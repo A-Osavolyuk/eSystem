@@ -1,11 +1,12 @@
 ﻿@using eSecurity.Client.Security
+@using eSecurity.Client.Security.Authorization.Access.Verification
 @using eSecurity.Core.Common.DTOs
-@using eSecurity.Core.Security.Authentication.SignIn
 @using eSecurity.Core.Security.Authentication.TwoFactor
 
 @inject UserState UserState
 @inject ISnackbar Snackbar
 @inject ISecurityService SecurityService
+@inject IVerificationService VerificationService
 
 <MudPaper Outlined="true" Class="pa-5">
     <MudStack Spacing="4">
@@ -14,7 +15,7 @@
         </MudTextM3>
         <MudForm @ref="_form" Model="_model">
             <MudTextFieldExtended
-                Mask="_mask"
+                Mask="@(new PatternMask("**********"))"
                 Placeholder="XXXXXXXXXX"
                 Variant="Variant.Outlined"
                 Margin="Margin.Dense"
@@ -80,18 +81,20 @@
 </MudPaper>
 
 @code {
-    [Parameter] public EventCallback<TwoFactorMethod> OnChangeMethod { get; set; }
+    [Parameter] 
+    public EventCallback<TwoFactorMethod> OnChangeMethod { get; set; }
 
-    [Parameter] public EventCallback OnSignIn { get; set; }
+    [Parameter] 
+    public EventCallback OnSignIn { get; set; }
 
-    [Parameter] public List<UserTwoFactorMethod> Methods { get; set; } = [];
+    [Parameter] 
+    public List<UserTwoFactorMethod> Methods { get; set; } = [];
     
     [SupplyParameterFromQuery(Name = "return_url")]
     public string ReturnUrl { get; set; } = string.Empty;
 
     private CodeModel _model = new();
     private MudForm _form = new();
-    private readonly PatternMask _mask = new("**********");
 
     private async Task OnSignInAsync()
     {
@@ -99,18 +102,21 @@
 
         if (_form.IsValid)
         {
-            var request = new SignInRequest()
+            var request = new VerifyRecoveryCodeRequest()
             {
-                Payload = new RecoveryCodeSignInPayload()
-                {
-                    Code = _model.Code,
-                    UserId = UserState.UserId
-                }
+                UserId = UserState.UserId,
+                Code = _model.Code,
+                Purpose = PurposeType.TwoFactor,
+                Action = ActionType.SignIn
             };
-
-            var result = await SecurityService.SignInAsync(request);
+            
+            var result = await VerificationService.VerifyRecoveryCodeAsync(request);
             if (result.Succeeded) await OnSignIn.InvokeAsync();
-            else Snackbar.Add(result.GetError().Description, Severity.Error);
+            else
+            {
+                var error = result.GetError();
+                Snackbar.Add(error.Description, Severity.Error);
+            }
         }
     }
 }
