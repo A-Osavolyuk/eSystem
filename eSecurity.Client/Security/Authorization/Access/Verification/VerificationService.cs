@@ -47,6 +47,19 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
                 Authentication = AuthenticationType.None
             });
 
+    public async ValueTask<HttpResponse> VerifyRecoveryCodeAsync(VerifyRecoveryCodeRequest request)
+        => await _apiClient.SendAsync(
+            new HttpRequest()
+            {
+                Method = HttpMethod.Post,
+                Data = request,
+                Url = "api/v1/Verification/recovery-code/verify"
+            }, new HttpOptions()
+            {
+                ContentType = ContentTypes.Application.Json,
+                Authentication = AuthenticationType.None
+            });
+
 
     public async ValueTask<HttpResponse> VerifyAuthenticatorCodeAsync(VerifyAuthenticatorCodeRequest request)
         => await _apiClient.SendAsync(
