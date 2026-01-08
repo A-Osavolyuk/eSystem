@@ -3,6 +3,7 @@
 @using eSecurity.Client.Components.Pages.OAuth
 @using eSecurity.Client.Security
 @using eSecurity.Core.Security.Authentication.SignIn
+@using eSecurity.Core.Security.Authentication.SignIn.Session
 
 @inherits PageBase
 
@@ -136,37 +137,59 @@
             if (result.Succeeded)
             {
                 var response = result.Get()!;
+                var sid = response.SessionId;
 
-                if (!response.IsDeviceTrusted)
+                var sessionResult = await SecurityService.LoadSignInSessionAsync(sid);
+                if (sessionResult.Succeeded)
                 {
-                    var builder = QueryBuilder.Create()
-                        .WithUri(Links.Account.DeviceTrustPage)
-                        .WithQueryParam("sid", response.SessionId.ToString());
+                    var session = sessionResult.Get();
+                    switch (session.NextStep)
+                    {
+                        case SignInStep.Complete:
+                        {
+                            UserState.UserId = response.UserId;
+                            AuthenticationManager.Authorize();
+                            break;
+                        }
+                        case SignInStep.DeviceTrust:
+                        {
+                            var builder = QueryBuilder.Create()
+                                .WithUri(Links.Account.DeviceTrustPage)
+                                .WithQueryParam("sid", session.Id.ToString());
 
-                    if (!string.IsNullOrEmpty(ReturnUrl))
-                        builder.WithQueryParam("return_url", ReturnUrl);
+                            if (!string.IsNullOrEmpty(ReturnUrl))
+                                builder.WithQueryParam("return_url", ReturnUrl);
+
+                            const string message = "This device is untrusted. You need to trust it first.";
+                            Snackbar.Add(message, Severity.Info);
                     
-                    Snackbar.Add("This device is untrusted. You need to trust it first.", Severity.Info);
-                    
-                    NavigationManager.NavigateTo(builder.Build());
-                    return;
+                            NavigationManager.NavigateTo(builder.Build());
+                            break;
+                        }
+                        case SignInStep.TwoFactor:
+                        {
+                            var builder = QueryBuilder.Create()
+                                .WithUri(Links.Account.TwoFactorLoginPage)
+                                .WithQueryParam("sid", session.Id.ToString());
+
+                            if (!string.IsNullOrEmpty(ReturnUrl))
+                                builder.WithQueryParam("return_url", ReturnUrl);
+
+                            NavigationManager.NavigateTo(builder.Build());
+                            break;
+                        }
+                        default:
+                        {
+                            Snackbar.Add("Invalid session", Severity.Error);
+                            break;
+                        }
+                    }
                 }
-
-                if (response.IsTwoFactorEnabled)
+                else
                 {
-                    var builder = QueryBuilder.Create()
-                        .WithUri(Links.Account.TwoFactorLoginPage)
-                        .WithQueryParam("sid", response.SessionId.ToString());
-
-                    if (!string.IsNullOrEmpty(ReturnUrl))
-                        builder.WithQueryParam("return_url", ReturnUrl);
-
-                    NavigationManager.NavigateTo(builder.Build());
-                    return;
+                    var error = sessionResult.GetError();
+                    Snackbar.Add(error.Description, Severity.Error);
                 }
-
-                UserState.UserId = response.UserId;
-                AuthenticationManager.Authorize();
             }
             else
             {

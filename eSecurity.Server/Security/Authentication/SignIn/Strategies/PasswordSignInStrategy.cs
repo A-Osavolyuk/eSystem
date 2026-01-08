@@ -1,6 +1,7 @@
 ﻿using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Security.Authentication.Lockout;
 using eSecurity.Core.Security.Authentication.SignIn;
+using eSecurity.Core.Security.Authentication.SignIn.Session;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Lockout;
@@ -167,13 +168,26 @@ public sealed class PasswordSignInStrategy(
             });
 
         }
-
+        
+        var requiredSteps = new List<SignInStep>();
+        
+        if (!device.IsTrusted) 
+            requiredSteps.Add(SignInStep.DeviceTrust);
+        
+        if (await _twoFactorManager.IsEnabledAsync(user, cancellationToken)) 
+            requiredSteps.Add(SignInStep.TwoFactor);
+        
         var signInSession = new SignInSessionEntity()
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
+            RequiredSteps = requiredSteps,
+            CompletedSteps = [SignInStep.Password],
+            CurrentStep = requiredSteps.Count > 0 ? requiredSteps.First() : SignInStep.Complete,
+            Status = requiredSteps.Count > 0 ? SignInStatus.InProgress : SignInStatus.Completed,
+            StartDate = DateTimeOffset.UtcNow,
             CreateDate = DateTimeOffset.UtcNow,
-            ExpireDate = DateTimeOffset.UtcNow.AddMinutes(5),
+            ExpireDate = DateTimeOffset.UtcNow.AddMinutes(15),
         };
         
         var signInSessionResult = await _signInSessionManager.CreateAsync(signInSession, cancellationToken);
