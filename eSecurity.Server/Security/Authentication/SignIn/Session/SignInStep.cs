@@ -1,5 +1,8 @@
-﻿namespace eSecurity.Server.Security.Authentication.SignIn.Session;
+﻿using System.Text.Json.Serialization;
 
+namespace eSecurity.Server.Security.Authentication.SignIn.Session;
+
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum SignInStep
 {
     Password,

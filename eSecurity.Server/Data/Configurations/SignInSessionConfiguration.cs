@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using System.Text.Json;
+﻿using System.Text.Json;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.SignIn.Session;
 using eSystem.Core.Data;
