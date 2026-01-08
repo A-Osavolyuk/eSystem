@@ -7,5 +7,6 @@ public enum SignInType
     Passkey,
     OAuth,
     RecoveryCode,
-    DeviceTrust
+    DeviceTrust,
+    TwoFactor
 }

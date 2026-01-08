@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using eSecurity.Core.Security.Authentication.SignIn.Session;
 
 namespace eSecurity.Core.Security.Authentication.SignIn;
 
@@ -9,4 +10,5 @@ namespace eSecurity.Core.Security.Authentication.SignIn;
 [JsonDerivedType(typeof(AuthenticatorSignInPayload), typeDiscriminator: "authenticator")]
 [JsonDerivedType(typeof(RecoveryCodeSignInPayload), typeDiscriminator: "recoveryCode")]
 [JsonDerivedType(typeof(TrustDeviceSignInPayload), typeDiscriminator: "trustDevice")]
+[JsonDerivedType(typeof(TwoFactorSignInPayload), typeDiscriminator: "twoFactor")]
 public abstract class SignInPayload { }
