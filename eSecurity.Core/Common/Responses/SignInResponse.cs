@@ -1,6 +1,4 @@
-﻿using eSecurity.Core.Security.Authentication.Lockout;
-
-namespace eSecurity.Core.Common.Responses;
+﻿namespace eSecurity.Core.Common.Responses;
 
 public sealed class SignInResponse
 {

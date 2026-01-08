@@ -1,4 +1,3 @@
-using System.Net;
 using eSecurity.Server.Data;
 using eSystem.Core.Common.Http.Constants;
 using eSystem.Core.Data;
