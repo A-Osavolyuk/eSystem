@@ -109,6 +109,13 @@ public class TwoFactorSignInStrategy(
             var userUpdateResult = await _userManager.UpdateAsync(user, cancellationToken);
             if (!userUpdateResult.Succeeded) return userUpdateResult;
         }
+
+        session.CompletedSteps.Add(SignInStep.TwoFactor);
+        session.CurrentStep = SignInStep.Complete;
+        session.Status = SignInStatus.Completed;
+        
+        var sessionResult = await _signInSessionManager.UpdateAsync(session, cancellationToken);
+        if (!sessionResult.Succeeded) return sessionResult;
         
         await _sessionManager.CreateAsync(device, cancellationToken);
         return Results.Ok(new SignInResponse() { SessionId = session.Id });

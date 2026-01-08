@@ -1,5 +1,6 @@
 ﻿using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Security.Authentication.SignIn;
+using eSecurity.Core.Security.Authentication.SignIn.Session;
 using eSecurity.Core.Security.Authorization.Access;
 using eSecurity.Server.Security.Authentication.Oidc.Session;
 using eSecurity.Server.Security.Authentication.SignIn.Session;
@@ -34,18 +35,18 @@ public sealed class TrustDeviceSignInStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidPayloadType, 
+                Code = Errors.Common.InvalidPayloadType,
                 Description = "Invalid payload type"
             });
         }
-        
-        var signInSession = await _signInSessionManager.FindByIdAsync(trustPayload.Sid, cancellationToken);
-        if (signInSession is null || !signInSession.IsActive) 
+
+        var session = await _signInSessionManager.FindByIdAsync(trustPayload.Sid, cancellationToken);
+        if (session is null || !session.IsActive)
             return Results.BadRequest("Invalid sign-in session.");
-        
-        var user = await _userManager.FindByIdAsync(signInSession.UserId, cancellationToken);
+
+        var user = await _userManager.FindByIdAsync(session.UserId, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
-        
+
         var userAgent = _httpContext.GetUserAgent()!;
         var ipAddress = _httpContext.GetIpV4()!;
         var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
@@ -57,22 +58,32 @@ public sealed class TrustDeviceSignInStrategy(
                 Description = "Invalid device."
             });
         }
-        
-        var verificationResult = await _verificationManager.VerifyAsync(user, 
+
+        var verificationResult = await _verificationManager.VerifyAsync(user,
             PurposeType.Device, ActionType.Trust, cancellationToken);
-        
-        if(!verificationResult.Succeeded) return verificationResult;
-        
+
+        if (!verificationResult.Succeeded) return verificationResult;
+
         var deviceResult = await _deviceManager.TrustAsync(device, cancellationToken);
         if (!deviceResult.Succeeded) return deviceResult;
-        
-        await _sessionManager.CreateAsync(device, cancellationToken);
-        return Results.Ok(new SignInResponse()
+
+        session.CompletedSteps.Add(SignInStep.DeviceTrust);
+        var remainingSteps = session.RequiredSteps.Except(session.CompletedSteps).ToList();
+        if (remainingSteps.Count == 0)
         {
-            UserId = user.Id,
-            SessionId = signInSession.Id,
-            IsDeviceTrusted = true,
-            IsTwoFactorEnabled = await _twoFactorManager.IsEnabledAsync(user, cancellationToken)
-        });
+            session.CurrentStep = SignInStep.Complete;
+            session.Status = SignInStatus.Completed;
+            
+            await _sessionManager.CreateAsync(device, cancellationToken);
+        }
+        else
+        {
+            session.CurrentStep = remainingSteps.First();
+        }
+        
+        var sessionResult = await _signInSessionManager.UpdateAsync(session, cancellationToken);
+        if (!sessionResult.Succeeded) return sessionResult;
+
+        return Results.Ok(new SignInResponse() { SessionId = session.Id });
     }
 }

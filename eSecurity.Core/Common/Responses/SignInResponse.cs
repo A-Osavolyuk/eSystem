@@ -1,9 +1,9 @@
-﻿namespace eSecurity.Core.Common.Responses;
+﻿using System.Text.Json.Serialization;
+
+namespace eSecurity.Core.Common.Responses;
 
 public sealed class SignInResponse
 {
-    public Guid UserId { get; set; }
+    [JsonPropertyName("sid")]
     public Guid SessionId { get; set; }
-    public bool IsTwoFactorEnabled { get; set; }
-    public bool IsDeviceTrusted { get; set; }
 }

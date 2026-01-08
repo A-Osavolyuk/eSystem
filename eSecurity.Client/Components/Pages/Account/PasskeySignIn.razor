@@ -24,12 +24,12 @@
                 </MudTextM3>
             </MudPaper>
             <MudPaper Outlined="true" Class="pa-3">
-                <MudForm @ref="_form" Model="Model" Validation="Validator.ValidateValue">
+                <MudForm @ref="_form" Model="_model" Validation="Validator.ValidateValue">
                     <MudStack Spacing="2">
                         <MudTextFieldExtended
                             Margin="Margin.Dense"
-                            @bind-Value="Model.Username"
-                            For="@(() => Model.Username)"
+                            @bind-Value="_model.Username"
+                            For="@(() => _model.Username)"
                             Label="Username"
                             Immediate
                             Variant="Variant.Outlined"/>
@@ -39,7 +39,7 @@
                             ButtonType="ButtonType.Button"
                             OnClick="@(async () => await OnSubmitAsync())"
                             StartIcon="@Icons.Material.Filled.Login"
-                            Disabled="@(string.IsNullOrEmpty(Model.Username))"
+                            Disabled="@(string.IsNullOrEmpty(_model.Username))"
                             Variant="Variant.Filled"
                             Color="Color.Primary"
                             Size="Size.Medium"
@@ -83,8 +83,7 @@
 </MudGrid>
 
 @code {
-    public PasskeySignInModel Model = new();
-
+    private PasskeySignInModel _model = new();
     private MudForm _form = new();
 
     private async Task OnSubmitAsync()
@@ -95,7 +94,7 @@
         {
             var request = new GenerateRequestOptionsRequest()
             {
-                Username = Model.Username
+                Username = _model.Username
             };
 
             var result = await PasskeyService.GenerateRequestOptionsAsync(request);
@@ -125,9 +124,18 @@
             if (result.Succeeded)
             {
                 var response = result.Get()!;
-
-                UserState.UserId = response.UserId;
-                AuthenticationManager.Authorize();
+                var sessionResult = await SecurityService.LoadSignInSessionAsync(response.SessionId);
+                if (sessionResult.Succeeded)
+                {
+                    var session = sessionResult.Get();
+                    UserState.UserId = session.UserId;
+                    AuthenticationManager.Authorize();
+                }
+                else
+                {
+                    var error = result.GetError();
+                    Snackbar.Add(error.Description, Severity.Error);
+                }
             }
             else
             {

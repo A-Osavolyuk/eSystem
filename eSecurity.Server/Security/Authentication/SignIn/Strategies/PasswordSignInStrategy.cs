@@ -177,7 +177,7 @@ public sealed class PasswordSignInStrategy(
         if (await _twoFactorManager.IsEnabledAsync(user, cancellationToken)) 
             requiredSteps.Add(SignInStep.TwoFactor);
         
-        var signInSession = new SignInSessionEntity()
+        var session = new SignInSessionEntity()
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
@@ -190,16 +190,12 @@ public sealed class PasswordSignInStrategy(
             ExpireDate = DateTimeOffset.UtcNow.AddMinutes(15),
         };
         
-        var signInSessionResult = await _signInSessionManager.CreateAsync(signInSession, cancellationToken);
-        if (!signInSessionResult.Succeeded) return signInSessionResult;
+        var sessionResult = await _signInSessionManager.CreateAsync(session, cancellationToken);
+        if (!sessionResult.Succeeded) return sessionResult;
+
+        if (requiredSteps.Count == 0)
+            await _sessionManager.CreateAsync(device, cancellationToken);
         
-        await _sessionManager.CreateAsync(device, cancellationToken);
-        return Results.Ok(new SignInResponse()
-        {
-            UserId = user.Id,
-            SessionId = signInSession.Id,
-            IsDeviceTrusted = device.IsTrusted,
-            IsTwoFactorEnabled = await _twoFactorManager.IsEnabledAsync(user, cancellationToken),
-        });
+        return Results.Ok(new SignInResponse() { SessionId = session.Id });
     }
 }

@@ -147,7 +147,7 @@
                     {
                         case SignInStep.Complete:
                         {
-                            UserState.UserId = response.UserId;
+                            UserState.UserId = session.UserId;
                             AuthenticationManager.Authorize();
                             break;
                         }
