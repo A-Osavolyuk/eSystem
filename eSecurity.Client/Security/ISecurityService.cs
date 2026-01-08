@@ -9,7 +9,7 @@ public interface ISecurityService
     public ValueTask<HttpResponse<SignInResponse>> SignInAsync(SignInRequest request);
     public ValueTask<HttpResponse<SignUpResponse>> SignUpAsync(SignUpRequest request);
     
-    public ValueTask<HttpResponse<SignInSessionDto>> GetSignInSessionAsync(Guid sid);
+    public ValueTask<HttpResponse<SignInSessionDto>> LoadSignInSessionAsync(Guid sid);
     
     public ValueTask<HttpResponse<CheckAccountResponse>> CheckAccountAsync(CheckAccountRequest request);
     public ValueTask<HttpResponse> RecoverAccountAsync(RecoverAccountRequest request);

@@ -13,14 +13,14 @@ public class AccountController(ISender sender) : ControllerBase
 {
     private readonly ISender _sender = sender;
     
-    [EndpointSummary("Get sign in session")]
-    [EndpointDescription("Get sign in session")]
+    [EndpointSummary("Load sign in session")]
+    [EndpointDescription("Load sign in session")]
     [ProducesResponseType(200)]
-    [HttpGet("sign-in/session/{sid:guid}")]
+    [HttpPost("sign-in/session/{sid:guid}")]
     [AllowAnonymous]
-    public async ValueTask<IActionResult> GetSignSessionAsync(Guid sid)
+    public async ValueTask<IActionResult> LoadSignSessionAsync(Guid sid)
     {
-        var result = await _sender.Send(new GetSignInSessionQuery(sid));
+        var result = await _sender.Send(new LoadSignInSessionCommand(sid));
         return ResultHandler.Handle(result);
     }
     

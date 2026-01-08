@@ -21,4 +21,12 @@ public class SignInSessionManager(AuthDbContext context) : ISignInSessionManager
         await _context.SaveChangesAsync(cancellationToken);
         return Results.Ok();
     }
+
+    public async ValueTask<Result> UpdateAsync(SignInSessionEntity session, 
+        CancellationToken cancellationToken = default)
+    {
+        _context.SignInSessions.Update(session);
+        await _context.SaveChangesAsync(cancellationToken);
+        return Results.Ok();
+    }
 }

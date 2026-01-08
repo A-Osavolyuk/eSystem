@@ -39,11 +39,11 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 WithTimezone = true
             });
 
-    public async ValueTask<HttpResponse<SignInSessionDto>> GetSignInSessionAsync(Guid sid)
+    public async ValueTask<HttpResponse<SignInSessionDto>> LoadSignInSessionAsync(Guid sid)
         => await _apiClient.SendAsync<SignInSessionDto>(
             new HttpRequest()
             {
-                Method = HttpMethod.Get,
+                Method = HttpMethod.Post,
                 Url = $"api/v1/Account/sign-in/session/{sid}"
             }, new HttpOptions()
             {
