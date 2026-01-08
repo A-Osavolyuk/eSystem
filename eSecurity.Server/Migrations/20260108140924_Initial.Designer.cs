@@ -12,7 +12,7 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20260107133245_Initial")]
+    [Migration("20260108140924_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -770,11 +770,30 @@ namespace eSecurity.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("CompletedSteps")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<string>("CurrentStep")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTimeOffset>("ExpireDate")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("RequiredSteps")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset>("StartDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("datetimeoffset");

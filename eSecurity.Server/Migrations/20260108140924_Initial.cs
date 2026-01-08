@@ -375,6 +375,11 @@ namespace eSecurity.Server.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RequiredSteps = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CompletedSteps = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CurrentStep = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StartDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     ExpireDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
