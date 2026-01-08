@@ -41,7 +41,6 @@ public sealed class CodeManager(
             Action = action,
             Sender = sender,
             Purpose = purpose,
-            CreateDate = DateTime.UtcNow,
             ExpireDate = DateTime.UtcNow.AddMinutes(10)
         }, cancellationToken);
 

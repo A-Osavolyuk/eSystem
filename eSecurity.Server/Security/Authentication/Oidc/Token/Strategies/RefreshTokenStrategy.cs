@@ -150,8 +150,7 @@ public class RefreshTokenStrategy(
                 SessionId = refreshToken.Session.Id,
                 TokenHash = hasher.Hash(rawToken),
                 TokenType = OpaqueTokenType.RefreshToken,
-                ExpiredDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
-                CreateDate = DateTimeOffset.UtcNow
+                ExpiredDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime)
             };
 
             var scopes = client.AllowedScopes.Select(x => x.Scope);

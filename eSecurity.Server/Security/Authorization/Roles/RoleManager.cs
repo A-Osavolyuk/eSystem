@@ -43,8 +43,7 @@ public sealed class RoleManager(AuthDbContext context) : IRoleManager
         var userRole = new UserRoleEntity()
         {
             UserId = user.Id,
-            RoleId = role.Id,
-            CreateDate = DateTime.UtcNow
+            RoleId = role.Id
         };
 
         await _context.UserRoles.AddAsync(userRole, cancellationToken);

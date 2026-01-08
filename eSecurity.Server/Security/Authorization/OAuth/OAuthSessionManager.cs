@@ -25,8 +25,6 @@ public class OAuthSessionManager(AuthDbContext context) : IOAuthSessionManager
 
     public async ValueTask<Result> UpdateAsync(OAuthSessionEntity session, CancellationToken cancellationToken = default)
     {
-        session.UpdateDate = DateTimeOffset.UtcNow;
-        
         _context.OAuthSessions.Update(session);
         await _context.SaveChangesAsync(cancellationToken);
 

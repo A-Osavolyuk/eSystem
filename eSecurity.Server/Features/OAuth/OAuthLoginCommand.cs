@@ -35,7 +35,6 @@ public sealed class OAuthLoginCommandHandler(
         {
             Id = Guid.NewGuid(),
             Token = token,
-            CreateDate = DateTimeOffset.UtcNow,
             ExpiredDate = DateTimeOffset.UtcNow.AddMinutes(10),
         };
         

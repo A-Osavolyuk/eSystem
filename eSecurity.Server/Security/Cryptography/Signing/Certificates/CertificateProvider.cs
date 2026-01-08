@@ -44,8 +44,7 @@ public class CertificateProvider(
                 IsActive = true,
                 ProtectedPassword = protectedCertificate.ProtectedPasswordBytes,
                 ProtectedCertificate = protectedCertificate.ProtectedCertificateBytes,
-                ExpireDate = protectedCertificate.Certificate.NotAfter,
-                CreateDate = DateTimeOffset.UtcNow,
+                ExpireDate = protectedCertificate.Certificate.NotAfter
             };
 
             await _context.Certificates.AddAsync(entity, cancellationToken);

@@ -36,8 +36,7 @@ public class ConsentManager(AuthDbContext context) : IConsentManager
         var grantedScope = new GrantedScopeEntity()
         {
             ConsentId = consent.Id,
-            ScopeId = scope.Id,
-            CreateDate = DateTimeOffset.UtcNow
+            ScopeId = scope.Id
         };
 
         await _context.GrantedScopes.AddAsync(grantedScope, cancellationToken);

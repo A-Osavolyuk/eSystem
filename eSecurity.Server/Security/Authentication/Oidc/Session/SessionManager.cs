@@ -27,7 +27,6 @@ public class SessionManager(
             Id = Guid.CreateVersion7(),
             DeviceId = device.Id,
             IsActive = true,
-            CreateDate = DateTimeOffset.UtcNow,
             ExpireDate = DateTimeOffset.UtcNow.Add(_options.Timestamp)
         };
         

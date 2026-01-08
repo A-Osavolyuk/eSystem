@@ -41,8 +41,7 @@ public sealed class TokenManager(
             .Select(s => new OpaqueTokenScopeEntity
             {
                 ScopeId = s.Id,
-                TokenId = token.Id,
-                CreateDate = DateTimeOffset.UtcNow,
+                TokenId = token.Id
             }).ToList();
 
         await _context.OpaqueTokens.AddAsync(token, cancellationToken);
@@ -62,7 +61,6 @@ public sealed class TokenManager(
     {
         token.Revoked = true;
         token.RevokedDate = DateTimeOffset.UtcNow;
-        token.UpdateDate = DateTimeOffset.UtcNow;
 
         _context.OpaqueTokens.Update(token);
         await _context.SaveChangesAsync(cancellationToken);

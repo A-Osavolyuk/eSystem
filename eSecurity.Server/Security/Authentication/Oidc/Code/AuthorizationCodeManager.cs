@@ -31,7 +31,6 @@ public class AuthorizationCodeManager(
         CancellationToken cancellationToken = default)
     {
         code.Used = true;
-        code.UpdateDate = DateTimeOffset.UtcNow;
         
         _context.AuthorizationCodes.Update(code);
         await _context.SaveChangesAsync(cancellationToken);

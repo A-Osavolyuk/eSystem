@@ -49,10 +49,7 @@ public class RecoverAccountCommandHandler(
         if (!verificationResult.Succeeded) return verificationResult;
 
         userPrimaryEmail.Type = EmailType.Secondary;
-        userPrimaryEmail.UpdateDate = DateTimeOffset.UtcNow;
-
         userRecoveryEmail.Type = EmailType.Primary;
-        userRecoveryEmail.UpdateDate = DateTimeOffset.UtcNow;
 
         var updateResult = await _userManager.UpdateAsync(user, cancellationToken);
         return updateResult;

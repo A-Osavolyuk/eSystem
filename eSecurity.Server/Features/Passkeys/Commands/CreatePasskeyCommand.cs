@@ -103,7 +103,6 @@ public class CreatePasskeyCommandHandler(
             CredentialId = Convert.ToBase64String(authData.CredentialId),
             PublicKey = authData.CredentialPublicKey,
             SignCount = authData.SignCount,
-            CreateDate = DateTimeOffset.UtcNow,
             Type = request.Request.Response.Type
         };
 

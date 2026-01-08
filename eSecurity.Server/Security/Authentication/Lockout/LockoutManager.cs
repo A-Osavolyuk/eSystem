@@ -84,7 +84,6 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
         if (state is null) return Results.NotFound("State not found");
 
         state.Permanent = false;
-        state.UpdateDate = DateTimeOffset.UtcNow;
         state.Type = LockoutType.None;
         state.StartDate = DateTimeOffset.UtcNow;
         state.EndDate = DateTimeOffset.UtcNow;

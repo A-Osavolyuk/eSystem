@@ -56,11 +56,9 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
             Type = LockoutType.None,
-            CreateDate = DateTimeOffset.UtcNow,
         };
 
         user.NormalizedUsername = user.Username.ToUpper();
-        user.CreateDate = DateTimeOffset.UtcNow;
 
         await _context.Users.AddAsync(user, cancellationToken);
         await _context.LockoutStates.AddAsync(lockoutState, cancellationToken);
@@ -72,8 +70,6 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
     public async ValueTask<Result> UpdateAsync(UserEntity user,
         CancellationToken cancellationToken = default)
     {
-        user.UpdateDate = DateTimeOffset.UtcNow;
-
         _context.Users.Update(user);
         await _context.SaveChangesAsync(cancellationToken);
 

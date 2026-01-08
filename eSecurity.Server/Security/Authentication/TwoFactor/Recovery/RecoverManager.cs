@@ -37,8 +37,7 @@ public sealed class RecoverManager(
             {
                 Id = Guid.CreateVersion7(),
                 UserId = user.Id,
-                ProtectedCode = hash,
-                CreateDate = DateTimeOffset.UtcNow
+                ProtectedCode = hash
             })
             .ToList();
 

@@ -18,7 +18,6 @@ public class UserEmailSeed : Seed<UserEmailEntity>
                 NormalizedEmail = "sasha.osavolll111@gmail.com".ToUpperInvariant(),
                 Type = EmailType.Primary,
                 IsVerified = true,
-                CreateDate = DateTimeOffset.UtcNow,
                 VerifiedDate = DateTimeOffset.UtcNow,
             }
         ];

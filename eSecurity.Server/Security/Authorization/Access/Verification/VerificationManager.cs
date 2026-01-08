@@ -24,8 +24,7 @@ public class VerificationManager(AuthDbContext context) : IVerificationManager
             UserId = user.Id,
             Purpose = purpose,
             Action = action,
-            ExpireDate = DateTimeOffset.UtcNow.AddMinutes(10),
-            CreateDate = DateTimeOffset.UtcNow
+            ExpireDate = DateTimeOffset.UtcNow.AddMinutes(10)
         };
 
         await _context.Verifications.AddAsync(entity, cancellationToken);

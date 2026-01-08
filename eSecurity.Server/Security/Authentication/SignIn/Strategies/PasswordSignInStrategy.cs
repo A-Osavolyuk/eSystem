@@ -84,7 +84,6 @@ public sealed class PasswordSignInStrategy(
                 IsTrusted = false,
                 IsBlocked = false,
                 FirstSeen = DateTimeOffset.UtcNow,
-                CreateDate = DateTimeOffset.UtcNow
             };
 
             var result = await _deviceManager.CreateAsync(device, cancellationToken);
@@ -186,7 +185,6 @@ public sealed class PasswordSignInStrategy(
             CurrentStep = requiredSteps.Count > 0 ? requiredSteps.First() : SignInStep.Complete,
             Status = requiredSteps.Count > 0 ? SignInStatus.InProgress : SignInStatus.Completed,
             StartDate = DateTimeOffset.UtcNow,
-            CreateDate = DateTimeOffset.UtcNow,
             ExpireDate = DateTimeOffset.UtcNow.AddMinutes(15),
         };
         

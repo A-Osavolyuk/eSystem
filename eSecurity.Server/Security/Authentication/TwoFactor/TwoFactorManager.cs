@@ -37,7 +37,6 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         if (preferred && preferredMethod is not null)
         {
             preferredMethod.Preferred = false;
-            preferredMethod.UpdateDate = DateTimeOffset.UtcNow;
 
             _context.UserTwoFactorMethods.Update(preferredMethod);
         }
@@ -47,7 +46,6 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
             UserId = user.Id,
             Method = method,
             Preferred = preferred,
-            CreateDate = DateTimeOffset.UtcNow
         };
 
         await _context.UserTwoFactorMethods.AddAsync(userProvider, cancellationToken);
@@ -87,13 +85,11 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         if (currentPreferredMethod is null) return Results.BadRequest("Invalid method");
         
         currentPreferredMethod.Preferred = false;
-        currentPreferredMethod.UpdateDate = DateTimeOffset.UtcNow;
 
         var nextPreferredMethod = await GetAsync(user, method, cancellationToken);
         if (nextPreferredMethod is null) return Results.NotFound("Method not found");
 
         nextPreferredMethod.Preferred = true;
-        nextPreferredMethod.UpdateDate = DateTimeOffset.UtcNow;
 
         _context.UserTwoFactorMethods.UpdateRange([currentPreferredMethod, nextPreferredMethod]);
         await _context.SaveChangesAsync(cancellationToken);

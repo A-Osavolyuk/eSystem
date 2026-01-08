@@ -128,8 +128,7 @@ public sealed class OAuthSignUpStrategy(
             Device = clientInfo.Device.ToString(),
             IsTrusted = true,
             IsBlocked = false,
-            FirstSeen = DateTimeOffset.UtcNow,
-            CreateDate = DateTimeOffset.UtcNow
+            FirstSeen = DateTimeOffset.UtcNow
         };
 
         var deviceResult = await _deviceManager.CreateAsync(newDevice, cancellationToken);
@@ -159,7 +158,6 @@ public sealed class OAuthSignUpStrategy(
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
             Type = oauthPayload.Type,
-            CreateDate = DateTimeOffset.UtcNow
         };
 
         var linkedAccountResult = await _providerManager.CreateAsync(userLinkedAccount, cancellationToken);

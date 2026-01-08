@@ -45,7 +45,6 @@ public class GrantConsentsCommandHandler(
             {
                 UserId = user.Id,
                 ClientId = client.Id,
-                CreateDate = DateTimeOffset.UtcNow
             };
 
             var createResult = await _consentManager.CreateAsync(consent, cancellationToken);

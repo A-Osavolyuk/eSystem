@@ -25,7 +25,6 @@ public class ClientSeed : Seed<ClientEntity>
                 ClientType = ClientType.Confidential,
                 AccessTokenType = AccessTokenType.Jwt,
                 SubjectType = SubjectType.Public,
-                CreateDate = DateTimeOffset.UtcNow
             }
         ];
     }

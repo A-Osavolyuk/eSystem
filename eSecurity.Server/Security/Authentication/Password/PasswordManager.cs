@@ -21,8 +21,7 @@ public class PasswordManager(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            Hash = _hasher.Hash(password),
-            CreateDate = DateTimeOffset.UtcNow
+            Hash = _hasher.Hash(password)
         };
 
         await _context.Passwords.AddAsync(passwordEntity, cancellationToken);
@@ -38,7 +37,6 @@ public class PasswordManager(
         if (passwordEntity is null) return Results.BadRequest("User doesn't have password yet.");
 
         passwordEntity.Hash = _hasher.Hash(newPassword);
-        passwordEntity.UpdateDate = DateTimeOffset.UtcNow;
 
         _context.Passwords.Update(passwordEntity);
         await _context.SaveChangesAsync(cancellationToken);
@@ -53,7 +51,6 @@ public class PasswordManager(
         if (passwordEntity is null) return Results.BadRequest("User doesn't have password yet.");
 
         passwordEntity.Hash = _hasher.Hash(newPassword);
-        passwordEntity.UpdateDate = DateTimeOffset.UtcNow;
 
         _context.Passwords.Update(passwordEntity);
         await _context.SaveChangesAsync(cancellationToken);

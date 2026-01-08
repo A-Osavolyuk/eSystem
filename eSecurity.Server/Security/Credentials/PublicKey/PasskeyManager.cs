@@ -63,7 +63,6 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
 
         passkey.SignCount = signCount;
         passkey.LastSeenDate = DateTimeOffset.UtcNow;
-        passkey.UpdateDate = DateTimeOffset.UtcNow;
 
         _context.Passkeys.Update(passkey);
         await _context.SaveChangesAsync(cancellationToken);

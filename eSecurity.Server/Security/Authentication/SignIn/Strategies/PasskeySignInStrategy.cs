@@ -88,7 +88,6 @@ public sealed class PasskeySignInStrategy(
             Status = SignInStatus.Completed,
             ExpireDate = DateTimeOffset.UtcNow.AddMinutes(15),
             StartDate = DateTimeOffset.UtcNow,
-            CreateDate = DateTimeOffset.UtcNow,
         };
         
         var sessionResult = await _signInSessionManager.CreateAsync(session, cancellationToken);

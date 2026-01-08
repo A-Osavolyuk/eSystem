@@ -24,7 +24,6 @@ public class ChangePasskeyNameCommandHandler(
         if (passkey is null) return Results.NotFound("Passkey not found.");
 
         passkey.DisplayName = request.Request.DisplayName;
-        passkey.UpdateDate = DateTimeOffset.UtcNow;
 
         var result = await _passkeyManager.UpdateAsync(passkey, cancellationToken);
         return result;

@@ -37,7 +37,6 @@ public class ReconfigureAuthenticatorCommandHandler(
         if (userSecret is null) return Results.NotFound("Secret not found");
         
         userSecret.Secret = protectedSecret;
-        userSecret.UpdateDate = DateTimeOffset.UtcNow;
 
         var result = await _secretManager.UpdateAsync(userSecret, cancellationToken);
         return result;

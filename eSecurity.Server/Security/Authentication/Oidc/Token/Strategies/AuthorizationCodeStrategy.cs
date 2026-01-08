@@ -179,8 +179,7 @@ public class AuthorizationCodeStrategy(
                 SessionId = session.Id,
                 TokenHash = hash,
                 TokenType = OpaqueTokenType.RefreshToken,
-                ExpiredDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
-                CreateDate = DateTimeOffset.UtcNow
+                ExpiredDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime)
             };
 
             var scopes = client.AllowedScopes.Select(x => x.Scope);

@@ -48,8 +48,7 @@ public class EmailManager(AuthDbContext context) : IEmailManager
             NormalizedEmail = email.ToUpperInvariant(),
             Type = type,
             IsVerified = true,
-            VerifiedDate = DateTimeOffset.UtcNow,
-            CreateDate = DateTimeOffset.UtcNow
+            VerifiedDate = DateTimeOffset.UtcNow
         };
 
         await _context.UserEmails.AddAsync(userEmail, cancellationToken);
@@ -70,7 +69,6 @@ public class EmailManager(AuthDbContext context) : IEmailManager
         userEmail.NormalizedEmail = newEmail.ToUpperInvariant();
         userEmail.IsVerified = true;
         userEmail.VerifiedDate = DateTimeOffset.UtcNow;
-        userEmail.UpdateDate = DateTimeOffset.UtcNow;
 
         _context.UserEmails.Update(userEmail);
         await _context.SaveChangesAsync(cancellationToken);
@@ -87,7 +85,6 @@ public class EmailManager(AuthDbContext context) : IEmailManager
         if (currentEmail is not null)
         {
             currentEmail.Type = EmailType.Secondary;
-            currentEmail.UpdateDate = DateTimeOffset.UtcNow;
             _context.UserEmails.Update(currentEmail);
         }
 
@@ -97,7 +94,6 @@ public class EmailManager(AuthDbContext context) : IEmailManager
         if (nextEmail is null) return Results.BadRequest($"User doesn't have email {email}.");
 
         nextEmail.Type = type;
-        nextEmail.UpdateDate = DateTimeOffset.UtcNow;
 
         _context.UserEmails.Update(nextEmail);
         await _context.SaveChangesAsync(cancellationToken);
@@ -115,7 +111,6 @@ public class EmailManager(AuthDbContext context) : IEmailManager
 
         userEmail.IsVerified = true;
         userEmail.VerifiedDate = DateTimeOffset.UtcNow;
-        userEmail.CreateDate = DateTimeOffset.UtcNow;
 
         _context.UserEmails.Update(userEmail);
         await _context.SaveChangesAsync(cancellationToken);
@@ -135,7 +130,6 @@ public class EmailManager(AuthDbContext context) : IEmailManager
         userEmail.NormalizedEmail = newEmail.ToUpperInvariant();
         userEmail.IsVerified = true;
         userEmail.VerifiedDate = DateTimeOffset.UtcNow;
-        userEmail.UpdateDate = DateTimeOffset.UtcNow;
 
         _context.UserEmails.Update(userEmail);
         await _context.SaveChangesAsync(cancellationToken);
@@ -169,8 +163,7 @@ public class EmailManager(AuthDbContext context) : IEmailManager
             UserId = user.Id,
             Email = email,
             NormalizedEmail = email.ToUpperInvariant(),
-            Type = type,
-            CreateDate = DateTimeOffset.UtcNow
+            Type = type
         };
 
         await _context.UserEmails.AddAsync(userEmail, cancellationToken);

@@ -175,7 +175,6 @@ public class AuthorizeCommandHandler(
             CodeChallengeMethod = request.Request.CodeChallengeMethod,
             RedirectUri = request.Request.RedirectUri,
             ExpireDate = DateTimeOffset.UtcNow.AddMinutes(10),
-            CreateDate = DateTimeOffset.UtcNow,
         };
 
         var codeResult = await _authorizationCodeManager.CreateAsync(authorizationCode, cancellationToken);

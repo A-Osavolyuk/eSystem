@@ -44,7 +44,6 @@ public class DeviceManager(AuthDbContext context) : IDeviceManager
     public async ValueTask<Result> TrustAsync(UserDeviceEntity device, CancellationToken cancellationToken = default)
     {
         device.IsTrusted = true;
-        device.UpdateDate = DateTimeOffset.UtcNow;
 
         _context.UserDevices.Update(device);
         await _context.SaveChangesAsync(cancellationToken);
@@ -56,7 +55,6 @@ public class DeviceManager(AuthDbContext context) : IDeviceManager
     {
         device.IsBlocked = true;
         device.BlockedDate = DateTimeOffset.UtcNow;
-        device.UpdateDate = DateTimeOffset.UtcNow;
 
         _context.UserDevices.Update(device);
         await _context.SaveChangesAsync(cancellationToken);
@@ -68,7 +66,6 @@ public class DeviceManager(AuthDbContext context) : IDeviceManager
     {
         device.IsBlocked = false;
         device.BlockedDate = null;
-        device.UpdateDate = DateTimeOffset.UtcNow;
 
         _context.UserDevices.Update(device);
         await _context.SaveChangesAsync(cancellationToken);
