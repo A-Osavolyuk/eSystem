@@ -53,8 +53,8 @@ public class LoadSignInSessionCommandHandler(
         {
             Id = session.Id,
             UserId = session.UserId,
-            NextStep = session.RequiredSteps.Except([..session.CompletedSteps, session.CurrentStep]).Any() 
-                ? session.RequiredSteps.Except([..session.CompletedSteps, session.CurrentStep]).First() 
+            NextStep = session.RequiredSteps.Except([..session.CompletedSteps]).Any() 
+                ? session.RequiredSteps.Except([..session.CompletedSteps]).First() 
                 : SignInStep.Complete
         };
         
