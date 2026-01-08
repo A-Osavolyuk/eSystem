@@ -1,12 +1,15 @@
 ﻿@page "/account/device/trust"
 @using eSecurity.Client.Security
 @using eSecurity.Client.Security.Authorization.Access.Verification
+@using eSecurity.Client.Security.Authorization.Devices
 @using eSecurity.Core.Security.Authentication.SignIn
+@using eSecurity.Core.Security.Authentication.SignIn.Session
 @using eSecurity.Client.Security.Identity
 
 @inherits PageBase
 
 @inject IUserService UserService
+@inject IDeviceService DeviceService
 @inject ISecurityService SecurityService
 @inject IVerificationService VerificationService
 
@@ -33,7 +36,7 @@
                             Variant="Variant.Outlined"
                             Margin="Margin.Dense"
                             Placeholder="XXXXXX"
-                            Mask="_mask"
+                            Mask="@(new PatternMask("000000"))"
                             Clearable="true"
                             Immediate="true"/>
                     </MudForm>
@@ -58,20 +61,20 @@
     public Guid SessionId { get; set; }
 
     private TrustDeviceModel _model = new();
+    private MessageContext? _context;
     private MudForm _form = new();
-    private readonly PatternMask _mask = new("000000");
+    
     private string? _email;
     private Guid _userId;
-    private MessageContext? _context;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            var result = await SecurityService.GetSignInSessionAsync(SessionId);
+            var result = await SecurityService.LoadSignInSessionAsync(SessionId);
             if (result.Succeeded)
             {
-                var response = result.Get()!;
+                var response = result.Get();
                 _userId = response.UserId;
                 
                 await LoadAsync();
@@ -90,7 +93,7 @@
         var result = await UserService.GetUserAsync(_userId);
         if (result.Succeeded)
         {
-            var response = result.Get()!;
+            var response = result.Get();
             _email = response.Email;
 
             _context = new MessageContext()
@@ -148,21 +151,29 @@
         var result = await SecurityService.SignInAsync(request);
         if (result.Succeeded)
         {
-            var response = result.Get()!;
-            if (response!.IsTwoFactorEnabled)
+            var sessionResult = await SecurityService.LoadSignInSessionAsync(SessionId);
+            if (sessionResult.Succeeded)
             {
-                Snackbar.Add("Device successfully trusted", Severity.Success);
+                var session = sessionResult.Get()!;
+                if (session.NextStep == SignInStep.TwoFactor)
+                {
+                    Snackbar.Add("Device successfully trusted", Severity.Success);
 
-                var builder = QueryBuilder.Create()
-                    .WithUri(Links.Account.TwoFactorLoginPage)
-                    .WithQueryParam("sid", response.SessionId.ToString());
+                    var builder = QueryBuilder.Create()
+                        .WithUri(Links.Account.TwoFactorLoginPage)
+                        .WithQueryParam("sid", SessionId.ToString());
 
-                NavigationManager.NavigateTo(builder.Build());
-            }
-            else
-            {
-                UserState.UserId = response.UserId;
-                AuthenticationManager.Authorize();
+                    NavigationManager.NavigateTo(builder.Build());
+                }
+                else if(session.NextStep == SignInStep.Complete)
+                {
+                    UserState.UserId = session.UserId;
+                    AuthenticationManager.Authorize();
+                }
+                else
+                {
+                    Snackbar.Add("Unexpected sign-in step", Severity.Error);
+                }
             }
         }
         else
