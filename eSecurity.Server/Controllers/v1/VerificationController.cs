@@ -44,6 +44,17 @@ public class VerificationController(ISender sender) : ControllerBase
         var result = await _sender.Send(new VerifyCodeCommand(request));
         return ResultHandler.Handle(result);
     }
+    
+    [EndpointSummary("Verify code")]
+    [EndpointDescription("verify code")]
+    [ProducesResponseType(200)]
+    [HttpPost("recovery-code/verify")]
+    [AllowAnonymous]
+    public async ValueTask<IActionResult> VerifyRecoveryCodeAsync([FromBody] VerifyRecoveryCodeRequest request)
+    {
+        var result = await _sender.Send(new VerifyRecoveryCodeCommand(request));
+        return ResultHandler.Handle(result);
+    }
 
     [EndpointSummary("Verify authenticator code")]
     [EndpointDescription("verify authenticator code")]

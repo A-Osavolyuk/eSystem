@@ -1,0 +1,11 @@
+﻿using eSecurity.Core.Security.Authorization.Access;
+
+namespace eSecurity.Core.Common.Requests;
+
+public class VerifyRecoveryCodeRequest
+{
+    public required Guid UserId { get; set; }
+    public required string Code { get; set; }
+    public required PurposeType Purpose { get; set; }
+    public required ActionType Action { get; set; }
+}
