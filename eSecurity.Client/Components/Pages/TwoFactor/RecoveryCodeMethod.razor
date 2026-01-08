@@ -89,9 +89,6 @@
 
     [Parameter] 
     public List<UserTwoFactorMethod> Methods { get; set; } = [];
-    
-    [SupplyParameterFromQuery(Name = "return_url")]
-    public string ReturnUrl { get; set; } = string.Empty;
 
     private CodeModel _model = new();
     private MudForm _form = new();

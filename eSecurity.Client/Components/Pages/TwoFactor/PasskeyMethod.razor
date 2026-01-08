@@ -80,9 +80,6 @@
     [Parameter] 
     public List<UserTwoFactorMethod> Methods { get; set; } = [];
 
-    [SupplyParameterFromQuery(Name = "return_url")]
-    public string? ReturnUrl { get; set; }
-
     private async Task OnSignInAsync()
     {
         var request = new GenerateRequestOptionsRequest() { UserId = UserState.UserId };
