@@ -1,3 +1,4 @@
+using eSecurity.Server.Data.Interceptors;
 using eSystem.Core.Data;
 
 namespace eSecurity.Server.Data;
@@ -8,14 +9,17 @@ public static class DataExtensions
     {
         public void AddMsSqlDb()
         {
-            builder.AddSqlServerDbContext<AuthDbContext>("auth-db",
-                configureDbContextOptions: cfg =>
+            builder.Services.AddSingleton<AuditInterceptor>();
+            builder.Services.AddDbContext<AuthDbContext>((sp, options) =>
+            {
+                var cfg = sp.GetRequiredService<IConfiguration>();
+                options.UseSqlServer(cfg.GetConnectionString("auth-db"));
+                options.AddInterceptors(sp.GetRequiredService<AuditInterceptor>());
+                options.UseAsyncSeeding(async (ctx, _, ct) =>
                 {
-                    cfg.UseAsyncSeeding(async (ctx, _, ct) =>
-                    {
-                        await ctx.SeedAsync<IAssemblyMarker>(ct);
-                    });
+                    await ctx.SeedAsync<IAssemblyMarker>(ct);
                 });
+            });
         }
     }
 }
