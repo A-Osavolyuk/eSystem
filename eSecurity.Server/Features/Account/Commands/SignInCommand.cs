@@ -1,5 +1,6 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Security.Authentication.SignIn;
+using eSecurity.Core.Security.Authentication.SignIn.Session;
 using eSecurity.Server.Security.Authentication.SignIn;
 
 namespace eSecurity.Server.Features.Account.Commands;
@@ -17,6 +18,8 @@ public class SignInCommandHandler(ISignInResolver signInResolver) : IRequestHand
             PasswordSignInPayload => SignInType.Password,
             PasskeySignInPayload => SignInType.Passkey,
             OAuthSignInPayload => SignInType.OAuth,
+            TrustDeviceSignInPayload => SignInType.DeviceTrust,
+            TwoFactorSignInPayload => SignInType.TwoFactor,
             _ => throw new NotSupportedException("Unknown payload")
         };
         if (type == SignInType.OAuth) return Results.BadRequest("Unsupported for manual call");
