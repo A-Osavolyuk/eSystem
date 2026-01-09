@@ -63,15 +63,15 @@ public class OpenIdOptions
     
     
     [JsonPropertyName("backchannel_logout_supported")]
-    public bool BackchannelLogoutSupported { get; set; }
+    public bool BackChannelLogoutSupported { get; set; }
     
     [JsonPropertyName("backchannel_logout_session_supported")]
-    public bool BackchannelLogoutSessionSupported { get; set; }
+    public bool BackChannelLogoutSessionSupported { get; set; }
     
     
     [JsonPropertyName("frontchannel_logout_supported")]
-    public bool FrontchannelLogoutSupported { get; set; }
+    public bool FrontChannelLogoutSupported { get; set; }
     
     [JsonPropertyName("frontchannel_logout_session_supported")]
-    public bool FrontchannelLogoutSessionSupported { get; set; }
+    public bool FrontChannelLogoutSessionSupported { get; set; }
 }
