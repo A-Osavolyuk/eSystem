@@ -1,6 +1,7 @@
 using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Features.Account.Commands;
 using eSecurity.Server.Features.Account.Queries;
+using eSystem.Core.Common.Filters;
 using eSystem.Core.Common.Http.Constants;
 
 namespace eSecurity.Server.Controllers.v1;
@@ -40,6 +41,7 @@ public class AccountController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("sign-up")]
     [AllowAnonymous]
+    [RequireHeaders(HeaderTypes.XLocale, HeaderTypes.XTimezone)]
     public async ValueTask<IActionResult> SignUpAsync([FromBody] SignUpRequest request)
     {
         var result = await _sender.Send(new SignUpCommand(request));
