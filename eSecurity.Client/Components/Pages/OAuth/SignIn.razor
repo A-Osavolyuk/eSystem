@@ -62,7 +62,9 @@
 </MudGrid>
 
 @code {
-
+    [SupplyParameterFromQuery(Name = "sid")]
+    public Guid SessionId { get; set; }
+    
     [SupplyParameterFromQuery(Name = "redirect_uri")]
     public string? RedirectUri { get; set; }
 

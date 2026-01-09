@@ -1,20 +1,20 @@
-﻿using eSecurity.Server.Common.Responses;
+﻿using eSecurity.Core.Security.Authentication.SignIn.Session;
+using eSecurity.Server.Common.Responses;
 using eSecurity.Server.Data.Entities;
-using eSecurity.Server.Security.Authorization.OAuth;
+using eSecurity.Server.Security.Authentication.SignIn.Session;
 using eSecurity.Server.Security.Identity.Options;
 using eSystem.Core.Utilities.Query;
 using Microsoft.AspNetCore.Authentication;
-using OtpNet;
 
 namespace eSecurity.Server.Features.OAuth;
 
 public sealed record OAuthLoginCommand(string Provider, string ReturnUri, string State) : IRequest<Result>;
 
 public sealed class OAuthLoginCommandHandler(
-    IOAuthSessionManager sessionManager,
+    ISignInSessionManager _signInSessionManager,
     IOptions<SignInOptions> options) : IRequestHandler<OAuthLoginCommand, Result>
 {
-    private readonly IOAuthSessionManager _sessionManager = sessionManager;
+    private readonly ISignInSessionManager _signInSessionManager = _signInSessionManager;
     private readonly SignInOptions _options = options.Value;
 
     public async Task<Result> Handle(OAuthLoginCommand request,
@@ -29,13 +29,15 @@ public sealed class OAuthLoginCommandHandler(
                 .Build());
         }
         
-        var randomBytes = KeyGeneration.GenerateRandomKey(20);
-        var token = Base32Encoding.ToString(randomBytes);
-        var session = new OAuthSessionEntity()
+        var session = new SignInSessionEntity()
         {
             Id = Guid.NewGuid(),
-            Token = token,
-            ExpiredDate = DateTimeOffset.UtcNow.AddMinutes(10),
+            Provider = request.Provider,
+            CurrentStep = SignInStep.OAuth,
+            RequiredSteps = [SignInStep.OAuth],
+            Status = SignInStatus.InProgress,
+            StartDate = DateTimeOffset.UtcNow,
+            ExpireDate = DateTimeOffset.UtcNow.AddMinutes(15),
         };
         
         var builder = QueryBuilder.Create()
@@ -48,12 +50,11 @@ public sealed class OAuthLoginCommandHandler(
             Items = 
             {
                 { "sid", session.Id.ToString() },
-                { "token", token },
                 { "state", request.State },
             }
         };
         
-        await _sessionManager.CreateAsync(session, cancellationToken);
+        await _signInSessionManager.CreateAsync(session, cancellationToken);
         
         var result = Results.Ok(new OAuthLoginResponse()
         {

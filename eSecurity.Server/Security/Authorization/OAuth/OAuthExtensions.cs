@@ -8,7 +8,6 @@ public static class OAuthExtensions
     {
         public void AddOAuthAuthorization()
         {
-            services.AddScoped<IOAuthSessionManager, OAuthSessionManager>();
             services.AddScoped<ILinkedAccountManager, LinkedAccountManager>();
         }
     }

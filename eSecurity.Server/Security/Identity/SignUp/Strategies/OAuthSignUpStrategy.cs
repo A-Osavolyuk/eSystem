@@ -1,11 +1,12 @@
+using eSecurity.Core.Security.Authentication.SignIn.Session;
 using eSecurity.Core.Security.Authorization.OAuth;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Common.Messaging;
 using eSecurity.Server.Common.Messaging.Messages.Email;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Oidc.Session;
+using eSecurity.Server.Security.Authentication.SignIn.Session;
 using eSecurity.Server.Security.Authorization.Devices;
-using eSecurity.Server.Security.Authorization.OAuth;
 using eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
 using eSecurity.Server.Security.Authorization.Permissions;
 using eSecurity.Server.Security.Authorization.Roles;
@@ -24,7 +25,6 @@ public sealed class OAuthSignUpPayload : SignUpPayload
     public required LinkedAccountType Type { get; set; }
     public required string Email { get; set; }
     public required string ReturnUri { get; set; }
-    public required string Token { get; set; }
     public required string State { get; set; }
 }
 
@@ -33,7 +33,7 @@ public sealed class OAuthSignUpStrategy(
     IUserManager userManager,
     IMessageService messageService,
     IRoleManager roleManager,
-    IOAuthSessionManager oauthSessionManager,
+    ISignInSessionManager signInSessionManager,
     ILinkedAccountManager providerManager,
     IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor,
@@ -44,7 +44,7 @@ public sealed class OAuthSignUpStrategy(
     private readonly IUserManager _userManager = userManager;
     private readonly IMessageService _messageService = messageService;
     private readonly IRoleManager _roleManager = roleManager;
-    private readonly IOAuthSessionManager _oauthSessionManager = oauthSessionManager;
+    private readonly ISignInSessionManager _signInSessionManager = signInSessionManager;
     private readonly ILinkedAccountManager _providerManager = providerManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly IEmailManager _emailManager = emailManager;
@@ -63,7 +63,7 @@ public sealed class OAuthSignUpStrategy(
             });
         }
 
-        var session = await _oauthSessionManager.FindAsync(oauthPayload.SessionId, oauthPayload.Token, cancellationToken);
+        var session = await _signInSessionManager.FindByIdAsync(oauthPayload.SessionId, cancellationToken);
         if (session is null)
         {
             return Results.BadRequest(new Error()
@@ -163,16 +163,25 @@ public sealed class OAuthSignUpStrategy(
         var linkedAccountResult = await _providerManager.CreateAsync(userLinkedAccount, cancellationToken);
         if (!linkedAccountResult.Succeeded) return linkedAccountResult;
 
-        session.Flow = OAuthFlow.SignUp;
-        session.LinkedAccountId = userLinkedAccount.Id;
-
-        var sessionResult = await _oauthSessionManager.UpdateAsync(session, cancellationToken);
+        if (session.IsActive)
+        {
+            session.UserId = user.Id;
+            session.OAuthFlow = OAuthFlow.SignUp;
+            session.CompletedSteps = [SignInStep.OAuth];
+            session.Status = SignInStatus.Completed;
+            session.CurrentStep = SignInStep.Complete;
+        }
+        else
+        {
+            session.Status = SignInStatus.Expired;
+        }
+        
+        var sessionResult = await _signInSessionManager.UpdateAsync(session, cancellationToken);
         if (!sessionResult.Succeeded) return sessionResult;
 
         await _sessionManager.CreateAsync(newDevice, cancellationToken);
         return Results.Ok(QueryBuilder.Create().WithUri(oauthPayload.ReturnUri)
             .WithQueryParam("sid", session.Id.ToString())
-            .WithQueryParam("token", oauthPayload.Token)
             .WithQueryParam("state", oauthPayload.State)
             .Build());
     }

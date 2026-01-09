@@ -41,10 +41,10 @@ public sealed class TrustDeviceSignInStrategy(
         }
 
         var session = await _signInSessionManager.FindByIdAsync(trustPayload.Sid, cancellationToken);
-        if (session is null || !session.IsActive)
+        if (session is null || !session.IsActive || !session.UserId.HasValue)
             return Results.BadRequest("Invalid sign-in session.");
 
-        var user = await _userManager.FindByIdAsync(session.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(session.UserId.Value, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
         var userAgent = _httpContext.GetUserAgent()!;

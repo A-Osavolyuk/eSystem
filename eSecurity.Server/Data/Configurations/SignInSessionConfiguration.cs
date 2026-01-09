@@ -12,8 +12,10 @@ public class SignInSessionConfiguration : IEntityTypeConfiguration<SignInSession
     public void Configure(EntityTypeBuilder<SignInSessionEntity> builder)
     {
         builder.HasKey(x => x.Id);
-        builder.Property(x => x.Status).HasEnumConversion();
-        builder.Property(x => x.CurrentStep).HasEnumConversion();
+        builder.Property(x => x.Status).HasConversion<string>();
+        builder.Property(x => x.CurrentStep).HasConversion<string>();
+        builder.Property(x => x.OAuthFlow).HasConversion<string>();
+        builder.Property(x => x.Provider).HasMaxLength(32);
 
         builder.Property(x => x.RequiredSteps)
             .HasConversion(
@@ -44,6 +46,7 @@ public class SignInSessionConfiguration : IEntityTypeConfiguration<SignInSession
 
         builder.HasOne(x => x.User)
             .WithMany()
-            .HasForeignKey(x => x.UserId);
+            .HasForeignKey(x => x.UserId)
+            .IsRequired(false);
     }
 }

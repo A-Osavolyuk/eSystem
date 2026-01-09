@@ -1,20 +1,18 @@
 ﻿@page "/account/oauth/handle"
 
+@using eSecurity.Client.Security
 @using eSecurity.Client.Security.Authorization.OAuth
 @using eSecurity.Core.Security.Authorization.OAuth
 
 @inherits PageBase
 
-@inject IOAuthService OAuthService
+@inject ISecurityService SecurityService
 
 <Title Text="Handling OAuth session..."/>
 
 @code {
     [SupplyParameterFromQuery(Name = "sid")]
-    public string SessionId { get; set; } = string.Empty;
-
-    [SupplyParameterFromQuery(Name = "token")]
-    public string Token { get; set; } = string.Empty;
+    public Guid SessionId { get; set; }
 
     [SupplyParameterFromQuery(Name = "state")]
     public string State { get; set; } = string.Empty;
@@ -31,25 +29,28 @@
         {
             NavigationManager.NavigateTo(QueryBuilder.Create()
                 .WithUri(Links.OAuth.Error)
-                .WithQueryParam("error", ErrorCode)
-                .WithQueryParam("error_description", ErrorDescription)
+                .WithQueryParam("error", Errors.Common.InvalidSession)
+                .WithQueryParam("error_description", "Invalid session.")
                 .Build());
         }
         else
         {
-            var request = new LoadOAuthSessionRequest()
-            {
-                SessionId = Guid.Parse(SessionId),
-                Token = Token
-            };
-
-            var result = await OAuthService.LoadSessionAsync(request);
-
+            var result = await SecurityService.LoadSignInSessionAsync(SessionId);
             if (result.Succeeded)
             {
-                var response = result.Get();
-                UserState.UserId = response.UserId;
+                var session = result.Get();
+                if (!session.UserId.HasValue || string.IsNullOrEmpty(session.Provider) || !session.OAuthFlow.HasValue)
+                {
+                    NavigationManager.NavigateTo(QueryBuilder.Create()
+                        .WithUri(Links.OAuth.Error)
+                        .WithQueryParam("error", Errors.OAuth.InvalidRequestUri)
+                        .WithQueryParam("error_description", "Invalid session.")
+                        .Build());
+                    
+                    return;
+                }
                 
+                UserState.UserId = session.UserId.Value;
                 var encodedState = WebEncoders.Base64UrlDecode(State);
                 var stateJson = Encoding.UTF8.GetString(encodedState);
                 var state = JsonSerializer.Deserialize<OAuthState>(stateJson);
@@ -65,22 +66,11 @@
                     return;
                 }
 
-                if (response.Flow == OAuthFlow.SignIn)
-                {
-                    NavigationManager.NavigateTo(QueryBuilder.Create()
-                        .WithUri(Links.OAuth.SignIn)
-                        .WithQueryParam("redirect_uri", GetRedirectUri(state))
-                        .Build());
-                }
-                else
-                {
-                    NavigationManager.NavigateTo(QueryBuilder.Create()
-                        .WithUri(Links.OAuth.SignUp)
-                        .WithQueryParam("sid", SessionId)
-                        .WithQueryParam("token", Token)
-                        .WithQueryParam("redirect_uri", GetRedirectUri(state))
-                        .Build());
-                }
+                NavigationManager.NavigateTo(QueryBuilder.Create()
+                    .WithUri(session.OAuthFlow.Value == OAuthFlow.SignIn ? Links.OAuth.SignIn : Links.OAuth.SignUp)
+                    .WithQueryParam("sid", SessionId.ToString())
+                    .WithQueryParam("redirect_uri", GetRedirectUri(state))
+                    .Build());
             }
             else
             {

@@ -5,5 +5,5 @@ namespace eSecurity.Client.Security.Authorization.OAuth;
 
 public interface IOAuthService
 {
-    public ValueTask<HttpResponse<LoadOAuthSessionResponse>> LoadSessionAsync(LoadOAuthSessionRequest request);
+
 }

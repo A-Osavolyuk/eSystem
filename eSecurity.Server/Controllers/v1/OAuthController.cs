@@ -1,5 +1,4 @@
-﻿using eSecurity.Core.Common.Requests;
-using eSecurity.Server.Common.Responses;
+﻿using eSecurity.Server.Common.Responses;
 using eSecurity.Server.Features.OAuth;
 using eSecurity.Server.Security.Authentication.SignIn;
 using eSecurity.Server.Security.Authorization.OAuth.Schemes;
@@ -45,15 +44,5 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
         
         var result = await _sender.Send(new HandleLoginCommand(authenticationResult, remoteError, returnUri));
         return Redirect(result.Value!.ToString()!);
-    }
-    
-    [EndpointSummary("Load session")]
-    [EndpointDescription("Load session")]
-    [ProducesResponseType(200)]
-    [HttpPost("load")]
-    public async ValueTask<IActionResult> LoadAsync([FromBody] LoadOAuthSessionRequest request)
-    {
-        var result = await _sender.Send(new LoadOAuthSessionCommand(request));
-        return ResultHandler.Handle(result);
     }
 }

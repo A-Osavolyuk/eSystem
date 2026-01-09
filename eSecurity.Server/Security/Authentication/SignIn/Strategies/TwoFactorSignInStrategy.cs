@@ -45,7 +45,7 @@ public class TwoFactorSignInStrategy(
         }
 
         var session = await _signInSessionManager.FindByIdAsync(twoFactorPayload.Sid, cancellationToken);
-        if (session is null || !session.IsActive)
+        if (session is null || !session.IsActive || !session.UserId.HasValue)
         {
             return Results.BadRequest(new Error()
             {
@@ -54,7 +54,7 @@ public class TwoFactorSignInStrategy(
             });
         }
 
-        var user = await _userManager.FindByIdAsync(session.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(session.UserId.Value, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
         
         var userAgent = _httpContext.GetUserAgent()!;

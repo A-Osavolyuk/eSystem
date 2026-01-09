@@ -1,9 +1,11 @@
 ﻿using eSecurity.Core.Security.Authentication.SignIn;
+using eSecurity.Core.Security.Authentication.SignIn.Session;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Lockout;
 using eSecurity.Server.Security.Authentication.Oidc.Session;
+using eSecurity.Server.Security.Authentication.SignIn.Session;
+using eSecurity.Server.Security.Authentication.TwoFactor;
 using eSecurity.Server.Security.Authorization.Devices;
-using eSecurity.Server.Security.Authorization.OAuth;
 using eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
@@ -18,14 +20,16 @@ public sealed class OAuthSignInStrategy(
     ILockoutManager lockoutManager,
     IHttpContextAccessor httpContextAccessor,
     ILinkedAccountManager linkedAccountManager,
-    IOAuthSessionManager oauthSessionManager,
+    ISignInSessionManager signInSessionManager,
+    ITwoFactorManager twoFactorManager,
     ISessionManager sessionManager) : ISignInStrategy
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
     private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
-    private readonly IOAuthSessionManager _oauthSessionManager = oauthSessionManager;
+    private readonly ISignInSessionManager _signInSessionManager = signInSessionManager;
+    private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
@@ -105,21 +109,38 @@ public sealed class OAuthSignInStrategy(
             var connectResult = await _linkedAccountManager.CreateAsync(linkedAccount, cancellationToken);
             if (!connectResult.Succeeded) return connectResult;
         }
-
-        var sid = oauthPayload.SessionId;
-        var session = await _oauthSessionManager.FindAsync(sid, oauthPayload.Token, cancellationToken);
+        
+        var session = await _signInSessionManager.FindByIdAsync(oauthPayload.SessionId, cancellationToken);
         if (session is null) return Results.BadRequest("Session not found.");
 
-        session.Flow = OAuthFlow.SignIn;
-        session.LinkedAccountId = linkedAccount.Id;
+        if (session.IsActive)
+        {
+            session.UserId = user.Id;
+            session.OAuthFlow = OAuthFlow.SignIn;
+            session.CompletedSteps = [SignInStep.OAuth];
 
-        var updateResult = await _oauthSessionManager.UpdateAsync(session, cancellationToken);
+            if (await _twoFactorManager.IsEnabledAsync(user, cancellationToken))
+            {
+                session.RequiredSteps = [..session.RequiredSteps, SignInStep.TwoFactor];
+                session.CurrentStep = SignInStep.TwoFactor;
+            }
+            else
+            {
+                session.CurrentStep = SignInStep.Complete;
+                session.Status = SignInStatus.Completed;
+            }
+        }
+        else
+        {
+            session.Status = SignInStatus.Expired;
+        }
+
+        var updateResult = await _signInSessionManager.UpdateAsync(session, cancellationToken);
         if (!updateResult.Succeeded) return updateResult;
 
         await _sessionManager.CreateAsync(device, cancellationToken);
         return Results.Ok(QueryBuilder.Create().WithUri(oauthPayload.ReturnUri)
             .WithQueryParam("sid", session.Id.ToString())
-            .WithQueryParam("token", oauthPayload.Token)
             .WithQueryParam("state", oauthPayload.State)
             .Build());
     }

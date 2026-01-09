@@ -80,9 +80,16 @@
         var result = await SecurityService.LoadSignInSessionAsync(SessionId);
         if (result.Succeeded)
         {
-            var response = result.Get()!;
-            UserState.UserId = response.UserId;
-            await LoadMethods();
+            var response = result.Get();
+            if (response.UserId.HasValue)
+            {
+                UserState.UserId = response.UserId.Value;
+                await LoadMethods();
+            }
+            else
+            {
+                Snackbar.Add("Invalid session");
+            }
         }
         else
         {

@@ -374,11 +374,13 @@ namespace eSecurity.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     RequiredSteps = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CompletedSteps = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CurrentStep = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Provider = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: true),
+                    OAuthFlow = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     StartDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     ExpireDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
@@ -391,8 +393,7 @@ namespace eSecurity.Server.Migrations
                         name: "FK_SignInSessions_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -767,29 +768,6 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "OAuthSessions",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    LinkedAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Token = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
-                    Flow = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ExpiredDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OAuthSessions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_OAuthSessions_UserLinkedAccounts_LinkedAccountId",
-                        column: x => x.LinkedAccountId,
-                        principalTable: "UserLinkedAccounts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "RolePermissions",
                 columns: table => new
                 {
@@ -951,11 +929,6 @@ namespace eSecurity.Server.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_OAuthSessions_LinkedAccountId",
-                table: "OAuthSessions",
-                column: "LinkedAccountId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_OpaqueTokens_ClientId",
                 table: "OpaqueTokens",
                 column: "ClientId");
@@ -1108,9 +1081,6 @@ namespace eSecurity.Server.Migrations
                 name: "LockoutStates");
 
             migrationBuilder.DropTable(
-                name: "OAuthSessions");
-
-            migrationBuilder.DropTable(
                 name: "OpaqueTokensScopes");
 
             migrationBuilder.DropTable(
@@ -1138,6 +1108,9 @@ namespace eSecurity.Server.Migrations
                 name: "UserEmails");
 
             migrationBuilder.DropTable(
+                name: "UserLinkedAccounts");
+
+            migrationBuilder.DropTable(
                 name: "UserPermissions");
 
             migrationBuilder.DropTable(
@@ -1160,9 +1133,6 @@ namespace eSecurity.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "Consents");
-
-            migrationBuilder.DropTable(
-                name: "UserLinkedAccounts");
 
             migrationBuilder.DropTable(
                 name: "OpaqueTokens");

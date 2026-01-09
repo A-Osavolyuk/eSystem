@@ -53,6 +53,8 @@ public class LoadSignInSessionCommandHandler(
         {
             Id = session.Id,
             UserId = session.UserId,
+            Provider = session.Provider,
+            OAuthFlow = session.OAuthFlow,
             NextStep = session.RequiredSteps.Except([..session.CompletedSteps]).Any() 
                 ? session.RequiredSteps.Except([..session.CompletedSteps]).First() 
                 : SignInStep.Complete

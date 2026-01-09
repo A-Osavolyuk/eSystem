@@ -143,11 +143,18 @@
                 if (sessionResult.Succeeded)
                 {
                     var session = sessionResult.Get();
+
+                    if (!session.UserId.HasValue)
+                    {
+                        Snackbar.Add("Invalid session", Severity.Error);
+                        return;
+                    }
+                    
                     switch (session.NextStep)
                     {
                         case SignInStep.Complete:
                         {
-                            UserState.UserId = session.UserId;
+                            UserState.UserId = session.UserId.Value;
                             AuthenticationManager.Authorize();
                             break;
                         }

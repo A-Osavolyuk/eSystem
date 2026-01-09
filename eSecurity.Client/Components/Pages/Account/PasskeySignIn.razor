@@ -128,8 +128,16 @@
                 if (sessionResult.Succeeded)
                 {
                     var session = sessionResult.Get();
-                    UserState.UserId = session.UserId;
-                    AuthenticationManager.Authorize();
+
+                    if (session.UserId.HasValue)
+                    {
+                        UserState.UserId = session.UserId.Value;
+                        AuthenticationManager.Authorize();
+                    }
+                    else
+                    {
+                        Snackbar.Add("Invalid session", Severity.Error);
+                    }
                 }
                 else
                 {

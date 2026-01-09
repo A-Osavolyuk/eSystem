@@ -317,40 +317,6 @@ namespace eSecurity.Server.Migrations
                     b.ToTable("GrantedScopes");
                 });
 
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.OAuthSessionEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset?>("ExpiredDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Flow")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("LinkedAccountId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
-
-                    b.Property<DateTimeOffset?>("UpdateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LinkedAccountId");
-
-                    b.ToTable("OAuthSessions");
-                });
-
             modelBuilder.Entity("eSecurity.Server.Data.Entities.OpaqueTokenEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -781,6 +747,13 @@ namespace eSecurity.Server.Migrations
                     b.Property<DateTimeOffset>("ExpireDate")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<string>("OAuthFlow")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Provider")
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
                     b.Property<string>("RequiredSteps")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -795,7 +768,7 @@ namespace eSecurity.Server.Migrations
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid?>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -1390,16 +1363,6 @@ namespace eSecurity.Server.Migrations
                     b.Navigation("Scope");
                 });
 
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.OAuthSessionEntity", b =>
-                {
-                    b.HasOne("eSecurity.Server.Data.Entities.UserLinkedAccountEntity", "LinkedAccount")
-                        .WithMany()
-                        .HasForeignKey("LinkedAccountId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("LinkedAccount");
-                });
-
             modelBuilder.Entity("eSecurity.Server.Data.Entities.OpaqueTokenEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
@@ -1591,9 +1554,7 @@ namespace eSecurity.Server.Migrations
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });

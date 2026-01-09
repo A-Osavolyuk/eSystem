@@ -32,7 +32,6 @@ public sealed class HandleOAuthLoginCommandHandler(
         var items = authenticationResult.Properties.Items;
         var provider = request.AuthenticationResult.Principal.Identity!.AuthenticationType!;
         var sessionId = items["sid"]!;
-        var token = items["token"]!;
         var state = items["state"]!;
 
         var linkedAccountType = provider switch
@@ -74,7 +73,6 @@ public sealed class HandleOAuthLoginCommandHandler(
                 Type = linkedAccountType,
                 Email = email,
                 ReturnUri = request.ReturnUri,
-                Token = token,
                 State = state,
                 SessionId = Guid.Parse(sessionId),
             };
@@ -94,7 +92,6 @@ public sealed class HandleOAuthLoginCommandHandler(
         var signInPayload = new OAuthSignInPayload()
         {
             Email = email,
-            Token = token,
             State = state,
             LinkedAccount = linkedAccountType,
             ReturnUri = request.ReturnUri!,

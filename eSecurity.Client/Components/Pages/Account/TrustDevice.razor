@@ -75,10 +75,17 @@
             if (result.Succeeded)
             {
                 var response = result.Get();
-                _userId = response.UserId;
+                if (response.UserId.HasValue)
+                {
+                    _userId = response.UserId.Value;
                 
-                await LoadAsync();
-                StateHasChanged();
+                    await LoadAsync();
+                    StateHasChanged();
+                }
+                else
+                {
+                    Snackbar.Add("Invalid session", Severity.Error);
+                }
             }
             else
             {
@@ -167,8 +174,15 @@
                 }
                 else if(session.NextStep == SignInStep.Complete)
                 {
-                    UserState.UserId = session.UserId;
-                    AuthenticationManager.Authorize();
+                    if (session.UserId.HasValue)
+                    {
+                        UserState.UserId = session.UserId.Value;
+                        AuthenticationManager.Authorize();
+                    }
+                    else
+                    {
+                        Snackbar.Add("Invalid session", Severity.Error);
+                    }
                 }
                 else
                 {
