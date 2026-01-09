@@ -9,7 +9,7 @@ public sealed class UserTwoFactorMethodConfiguration : IEntityTypeConfiguration<
     public void Configure(EntityTypeBuilder<UserTwoFactorMethodEntity> builder)
     {
         builder.HasKey(x => x.Id);
-        builder.Property(x => x.Method).HasEnumConversion();
+        builder.Property(x => x.Method).HasConversion<string>();
         
         builder.HasOne(x => x.User)
             .WithMany()

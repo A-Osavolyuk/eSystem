@@ -15,9 +15,9 @@ public sealed class ClientConfiguration : IEntityTypeConfiguration<ClientEntity>
         builder.Property(x => x.Audience).HasMaxLength(64);
         builder.Property(x => x.LogoUri).HasMaxLength(100);
         builder.Property(x => x.ClientUri).HasMaxLength(100);
-        builder.Property(x => x.ClientType).HasEnumConversion();
-        builder.Property(x => x.AccessTokenType).HasEnumConversion();
-        builder.Property(x => x.SubjectType).HasEnumConversion();
+        builder.Property(x => x.ClientType).HasConversion<string>();
+        builder.Property(x => x.AccessTokenType).HasConversion<string>();
+        builder.Property(x => x.SubjectType).HasConversion<string>();
         builder.Property(x => x.RefreshTokenLifetime).HasConversion(
             time => time.Ticks,
             ticks => TimeSpan.FromTicks(ticks));

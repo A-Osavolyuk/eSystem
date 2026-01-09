@@ -10,7 +10,7 @@ public class ClientUriConfiguration : IEntityTypeConfiguration<ClientUriEntity>
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Uri).HasMaxLength(2048);
-        builder.Property(x => x.Type).HasEnumConversion();
+        builder.Property(x => x.Type).HasConversion<string>();
         
         builder.HasOne(x => x.Client)
             .WithMany(x => x.Uris)

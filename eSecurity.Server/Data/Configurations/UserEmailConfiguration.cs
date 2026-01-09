@@ -11,7 +11,7 @@ public sealed class UserEmailConfiguration : IEntityTypeConfiguration<UserEmailE
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Email).HasMaxLength(64);
         builder.Property(x => x.NormalizedEmail).HasMaxLength(64);
-        builder.Property(x => x.Type).HasEnumConversion();
+        builder.Property(x => x.Type).HasConversion<string>();
         
         builder.HasOne(u => u.User)
             .WithMany()

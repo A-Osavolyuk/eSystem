@@ -10,8 +10,8 @@ public sealed class CodeConfiguration : IEntityTypeConfiguration<CodeEntity>
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.CodeHash).HasMaxLength(200);
-        builder.Property(x => x.Action).HasEnumConversion();
-        builder.Property(x => x.Sender).HasEnumConversion();
-        builder.Property(x => x.Purpose).HasEnumConversion();
+        builder.Property(x => x.Action).HasConversion<string>();
+        builder.Property(x => x.Sender).HasConversion<string>();
+        builder.Property(x => x.Purpose).HasConversion<string>();
     }
 }

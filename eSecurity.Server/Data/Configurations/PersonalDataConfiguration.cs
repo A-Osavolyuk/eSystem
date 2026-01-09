@@ -9,7 +9,7 @@ public sealed class PersonalDataConfiguration : IEntityTypeConfiguration<Persona
     public void Configure(EntityTypeBuilder<PersonalDataEntity> builder)
     {
         builder.HasKey(p => p.Id);
-        builder.Property(x => x.Gender).HasEnumConversion();
+        builder.Property(x => x.Gender).HasConversion<string>();
         builder.Property(x => x.FirstName).HasMaxLength(64);
         builder.Property(x => x.LastName).HasMaxLength(64);
         builder.Property(x => x.MiddleName).HasMaxLength(64);

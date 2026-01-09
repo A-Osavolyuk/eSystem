@@ -9,8 +9,8 @@ public sealed class VerificationConfiguration : IEntityTypeConfiguration<Verific
     public void Configure(EntityTypeBuilder<VerificationEntity> builder)
     {
         builder.HasKey(x => x.Id);
-        builder.Property(x => x.Purpose).HasEnumConversion();
-        builder.Property(x => x.Action).HasEnumConversion();
+        builder.Property(x => x.Purpose).HasConversion<string>();
+        builder.Property(x => x.Action).HasConversion<string>();
 
         builder.HasOne(x => x.User)
             .WithMany()

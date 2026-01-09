@@ -10,7 +10,7 @@ public sealed class OpaqueTokenConfiguration : IEntityTypeConfiguration<OpaqueTo
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.TokenHash).HasMaxLength(100);
-        builder.Property(x => x.TokenType).HasEnumConversion();
+        builder.Property(x => x.TokenType).HasConversion<string>();
             
         builder.HasOne(x => x.Client)
             .WithMany()
