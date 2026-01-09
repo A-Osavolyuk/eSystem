@@ -9,17 +9,17 @@ public class SignInSessionDto
     [JsonPropertyName("sid")]
     public Guid Id { get; set; }
     
-    [JsonPropertyName("user_id")]
+    [JsonPropertyName("userId")]
     public Guid? UserId { get; set; }
     
-    [JsonPropertyName("next_step")]
+    [JsonPropertyName("nextStep")]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public SignInStep NextStep { get; set; }
 
     [JsonPropertyName("providers")]
     public string? Provider { get; set; }
 
-    [JsonPropertyName("oauth_flow")]
+    [JsonPropertyName("oauthFlow")]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public OAuthFlow? OAuthFlow { get; set; }
 }
