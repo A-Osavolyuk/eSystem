@@ -40,11 +40,3 @@
 .ml-3 {margin-left: 0.75rem;}
 .ml-4 {margin-left: 1rem;}
 
-.mud-button-label {
-    text-transform: none;
-}
-
-.mud-code-input-inner div.d-flex.flex-wrap.align-center.mud-width-full {
-    padding-left: 10px;
-}
-
