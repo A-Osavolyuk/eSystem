@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.Security.Authentication.Constants;
+﻿namespace eSystem.Core.Security.Authentication.Schemes;
 
 public static class BasicAuthenticationDefaults
 {

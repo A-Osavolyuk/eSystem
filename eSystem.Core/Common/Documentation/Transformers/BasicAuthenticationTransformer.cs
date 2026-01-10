@@ -1,4 +1,4 @@
-﻿using eSystem.Core.Security.Authentication.Constants;
+﻿using eSystem.Core.Security.Authentication.Schemes;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi.Models;
 

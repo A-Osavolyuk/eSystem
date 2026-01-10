@@ -12,6 +12,7 @@ using eSystem.Core.Common.Configuration;
 using eSystem.Core.Security.Authentication.Oidc;
 using eSystem.Core.Security.Authentication.Oidc.Authorization;
 using eSystem.Core.Security.Authentication.Oidc.Token;
+using eSystem.Core.Security.Authentication.Schemes;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace eSecurity.Server.Security.Authentication;

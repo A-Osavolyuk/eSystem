@@ -3,6 +3,7 @@ using System.Text.Encodings.Web;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Oidc.Client;
 using eSystem.Core.Common.Http.Constants;
+using eSystem.Core.Security.Authentication.Schemes;
 using Microsoft.AspNetCore.Authentication;
 
 namespace eSecurity.Server.Security.Authentication.Handlers;
