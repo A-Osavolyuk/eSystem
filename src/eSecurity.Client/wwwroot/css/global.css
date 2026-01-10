@@ -44,3 +44,7 @@
     text-transform: none;
 }
 
+.mud-code-input-inner div.d-flex.flex-wrap.align-center.mud-width-full {
+    padding-left: 10px;
+}
+
