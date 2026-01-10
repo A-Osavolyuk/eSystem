@@ -1,7 +1,4 @@
-﻿using eSystem.Core.Requests.Telegram;
-using HttpResponse = Microsoft.AspNetCore.Http.HttpResponse;
-
-namespace eSystem.Telegram.Bot.Controllers.v1;
+﻿namespace eSystem.Telegram.Bot.Controllers.v1;
 
 [ApiController]
 [ApiVersion("1.0")]
@@ -43,16 +40,6 @@ public class TelegramController(
             await _updateHandler.OnErrorAsync(_bot, exception, HandleErrorSource.HandleUpdateError, ct);
         }
 
-        return Ok();
-    }
-
-    [EndpointSummary("Send message")]
-    [EndpointDescription("Sends a message via Telegram")]
-    [ProducesResponseType(200)]
-    [HttpPost("send-message")]
-    public async ValueTask<ActionResult<HttpResponse>> SendAsync([FromBody] SendMessageRequest request)
-    {
-        await _bot.SendMessage(chatId: new ChatId(request.ChatId), text: request.Message);
         return Ok();
     }
 }
