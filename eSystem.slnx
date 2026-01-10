@@ -1,28 +1,28 @@
 <Solution>
   <Folder Name="/src/" />
   <Folder Name="/src/Core/">
-    <Project Path="eSystem.Core\eSystem.Core.csproj" />
+    <Project Path="src\eSystem.Core\eSystem.Core.csproj" />
   </Folder>
   <Folder Name="/src/eMessage/">
-    <Project Path="eSystem.EmailSender.Api\eSystem.EmailSender.Api.csproj" />
-    <Project Path="eSystem.MessageBus\eSystem.MessageBus.csproj" />
-    <Project Path="eSystem.SmsSender.Api\eSystem.SmsSender.Api.csproj" />
-    <Project Path="eSystem.Telegram.Bot\eSystem.Telegram.Bot.csproj" />
+    <Project Path="src\eSystem.EmailSender.Api\eSystem.EmailSender.Api.csproj" />
+    <Project Path="src\eSystem.MessageBus\eSystem.MessageBus.csproj" />
+    <Project Path="src\eSystem.SmsSender.Api\eSystem.SmsSender.Api.csproj" />
+    <Project Path="src\eSystem.Telegram.Bot\eSystem.Telegram.Bot.csproj" />
   </Folder>
   <Folder Name="/src/eSecurity/">
-    <Project Path="eSecurity.Client\eSecurity.Client.csproj" />
-    <Project Path="eSecurity.Core\eSecurity.Core.csproj" />
-    <Project Path="eSecurity.Server\eSecurity.Server.csproj" />
+    <Project Path="src\eSecurity.Client\eSecurity.Client.csproj" />
+    <Project Path="src\eSecurity.Core\eSecurity.Core.csproj" />
+    <Project Path="src\eSecurity.Server\eSecurity.Server.csproj" />
   </Folder>
   <Folder Name="/src/eStorage/">
-    <Project Path="eSystem.Storage.Api\eSystem.Storage.Api.csproj" />
+    <Project Path="src\eSystem.Storage.Api\eSystem.Storage.Api.csproj" />
   </Folder>
   <Folder Name="/src/Hosting/">
-    <Project Path="eSystem.AppHost\eSystem.AppHost.csproj" />
-    <Project Path="eSystem.ServiceDefaults\eSystem.ServiceDefaults.csproj" />
+    <Project Path="src\eSystem.AppHost\eSystem.AppHost.csproj" />
+    <Project Path="src\eSystem.ServiceDefaults\eSystem.ServiceDefaults.csproj" />
   </Folder>
   <Folder Name="/src/Proxy/">
-    <Project Path="eSystem.Proxy/eSystem.Proxy.csproj" />
+    <Project Path="src\eSystem.Proxy/eSystem.Proxy.csproj" />
   </Folder>
   <Folder Name="/tests/" />
 </Solution>

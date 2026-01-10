@@ -2,6 +2,7 @@
 using eSecurity.Server.Security.Authorization.Consents;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Authorization.OAuth;
+using eSecurity.Server.Security.Authorization.Permissions;
 using eSecurity.Server.Security.Authorization.Roles;
 using eSecurity.Server.Security.Authorization.Scopes;
 
@@ -17,6 +18,7 @@ public static class AuthorizationExtensions
         builder.Services.AddOAuthAuthorization();
 
         builder.Services.AddScoped<IConsentManager, ConsentManager>();
+        builder.Services.AddScoped<IPermissionManager, PermissionManager>();
         builder.Services.AddScoped<IScopeManager, ScopeManager>();
     }
 }
