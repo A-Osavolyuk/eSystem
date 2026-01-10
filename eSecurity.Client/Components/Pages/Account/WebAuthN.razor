@@ -1,4 +1,5 @@
-﻿@page "/account/passkeys/sign-in"
+﻿@page "/webauthn"
+
 @using eSecurity.Client.Common.JS.WebAuthN
 @using eSecurity.Client.Components.Pages.OAuth
 @using eSecurity.Client.Security
@@ -34,18 +35,54 @@
                             Immediate
                             Variant="Variant.Outlined"/>
 
-                        <MudLoadingButton
-                            LoadingAdornment="Adornment.End"
-                            ButtonType="ButtonType.Button"
-                            OnClick="@(async () => await OnSubmitAsync())"
-                            StartIcon="@Icons.Material.Filled.Login"
-                            Disabled="@(string.IsNullOrEmpty(_model.Username))"
-                            Variant="Variant.Filled"
-                            Color="Color.Primary"
-                            Size="Size.Medium"
-                            FullWidth="true">
-                            Sign in
-                        </MudLoadingButton>
+                        @if (_isLoading)
+                        {
+                            <MudStack Row="true" Justify="Justify.Center" AlignItems="AlignItems.Center">
+                                <MudProgressCircular Size="Size.Small" Indeterminate="true" Color="Color.Primary"/>
+                                <MudTextM3 Typo="TypoM3.Body" Size="Size.Small" Class="opacity-50">
+                                    Waiting for input from browser interaction...
+                                </MudTextM3>
+                            </MudStack>
+                        }
+                        else
+                        {
+                            if (_showError)
+                            {
+                                <MudButton
+                                    ButtonType="ButtonType.Button"
+                                    OnClick="@(async () => await OnSubmitAsync())"
+                                    Disabled="@(string.IsNullOrEmpty(_model.Username))"
+                                    Variant="Variant.Filled"
+                                    Color="Color.Primary"
+                                    Size="Size.Medium"
+                                    FullWidth="true">
+                                    Retry passkey
+                                </MudButton>
+                                <MudAlert
+                                    Severity="Severity.Error"
+                                    Variant="Variant.Outlined"
+                                    Class="w-100"
+                                    Dense="true"
+                                    ContentAlignment="HorizontalAlignment.Center">
+                                    <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Align="Align.Center" Class="w-100">
+                                        Failed on using passkey
+                                    </MudTextM3>
+                                </MudAlert>
+                            }
+                            else
+                            {
+                                <MudButton
+                                    ButtonType="ButtonType.Button"
+                                    OnClick="@(async () => await OnSubmitAsync())"
+                                    Disabled="@(string.IsNullOrEmpty(_model.Username))"
+                                    Variant="Variant.Filled"
+                                    Color="Color.Primary"
+                                    Size="Size.Medium"
+                                    FullWidth="true">
+                                    Use passkey
+                                </MudButton>
+                            }
+                        }
                     </MudStack>
                 </MudForm>
             </MudPaper>
@@ -86,8 +123,14 @@
     private PasskeySignInModel _model = new();
     private MudForm _form = new();
 
+    private bool _showError;
+    private bool _isLoading;
+
     private async Task OnSubmitAsync()
     {
+        _isLoading = true;
+        _showError = false;
+        
         await _form.Validate();
 
         if (_form.IsValid)
@@ -101,8 +144,17 @@
             var options = result.Get()!;
 
             if (result.Succeeded) await VerifyAsync(options);
-            else Snackbar.Add(result.GetError().Description, Severity.Error);
+            else
+            {
+                _showError = true;
+                _isLoading = false;
+                
+                var error = result.GetError();
+                Snackbar.Add(error.Description, Severity.Error);
+            }
         }
+
+        _isLoading = false;
     }
 
     private async Task VerifyAsync(PublicKeyCredentialRequestOptions options)
@@ -120,7 +172,6 @@
             };
 
             var result = await SecurityService.SignInAsync(request);
-
             if (result.Succeeded)
             {
                 var response = result.Get()!;
@@ -136,28 +187,41 @@
                     }
                     else
                     {
+                        _showError = true;
+                        _isLoading = false;
+                        
                         Snackbar.Add("Invalid session", Severity.Error);
                     }
                 }
                 else
                 {
+                    _showError = true;
+                    _isLoading = false;
+                    
                     var error = result.GetError();
                     Snackbar.Add(error.Description, Severity.Error);
                 }
             }
             else
             {
+                _showError = true;
+                _isLoading = false;
+                
                 var error = result.GetError();
-
                 if (error.Code == Errors.Common.AccountLockedOut)
                 {
                     NavigationManager.NavigateTo(Links.Common.AccountLocked);
                 }
                 else
                 {
-                    Snackbar.Add(result.GetError().Description, Severity.Error);
+                    Snackbar.Add(error.Description, Severity.Error);
                 }
             }
+        }
+        else
+        {
+            _showError = true;
+            _isLoading = false;
         }
     }
 
