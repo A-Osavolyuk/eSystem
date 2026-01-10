@@ -14,7 +14,7 @@
             Align="Align.Center"
             Typo="Typo.h5"
             Class="ml-3 cursor-pointer"
-            @onclick="@(() => NavigationManager.NavigateTo(Links.Account.Profile))">
+            @onclick="@(() => NavigationManager.NavigateTo(Links.Common.Profile))">
             eSecurity
         </MudText>
         <MudSpacer/>
@@ -23,13 +23,13 @@
                 <MudButton
                     StartIcon="@Icons.Material.Filled.Login"
                     Color="Color.Primary"
-                    Href="@Links.Account.SignIn">
+                    Href="@Links.Common.SignIn">
                     Sign in
                 </MudButton>
                 <MudButton
                     StartIcon="@Icons.Material.Filled.AppRegistration"
                     Color="Color.Primary"
-                    Href="@Links.Account.SignUp"
+                    Href="@Links.Common.SignUp"
                     Class="ml-3">
                     Sign up
                 </MudButton>

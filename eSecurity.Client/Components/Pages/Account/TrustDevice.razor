@@ -1,7 +1,6 @@
-﻿@page "/account/device/trust"
+﻿@page "/session/trust-device"
 @using eSecurity.Client.Security
 @using eSecurity.Client.Security.Authorization.Access.Verification
-@using eSecurity.Client.Security.Authorization.Devices
 @using eSecurity.Core.Security.Authentication.SignIn
 @using eSecurity.Core.Security.Authentication.SignIn.Session
 @using eSecurity.Client.Security.Identity
@@ -9,7 +8,6 @@
 @inherits PageBase
 
 @inject IUserService UserService
-@inject IDeviceService DeviceService
 @inject ISecurityService SecurityService
 @inject IVerificationService VerificationService
 
@@ -167,7 +165,7 @@
                     Snackbar.Add("Device successfully trusted", Severity.Success);
 
                     var builder = QueryBuilder.Create()
-                        .WithUri(Links.Account.TwoFactorLoginPage)
+                        .WithUri(Links.Session.TwoFactorSignIn)
                         .WithQueryParam("sid", SessionId.ToString());
 
                     NavigationManager.NavigateTo(builder.Build());

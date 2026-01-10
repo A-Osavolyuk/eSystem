@@ -1,4 +1,4 @@
-﻿@page "/account/sign-up"
+﻿@page "/sign-up"
 @using eSecurity.Client.Components.Pages.OAuth
 @using eSecurity.Client.Security
 @inherits PageBase
@@ -77,7 +77,7 @@
             <MudPaper Outlined Class="pa-3">
                 <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
                     Already have an account?
-                    <MudLink Typo="Typo.body2" Href="@Links.Account.SignIn">
+                    <MudLink Typo="Typo.body2" Href="@Links.Common.SignIn">
                         Sign in
                     </MudLink>
                 </MudTextM3>
@@ -120,9 +120,9 @@
                 Snackbar.Add("Successfully signed-up. Not you need to verify your email address.", Severity.Success);
 
                 var builder = QueryBuilder.Create()
-                    .WithUri(Links.Account.CompleteRegistrationPage)
+                    .WithUri(Links.Common.CompleteRegistration)
                     .WithQueryParam("id", response.UserId.ToString())
-                    .WithQueryParam("return_url", Links.Account.SignIn);
+                    .WithQueryParam("return_url", Links.Common.SignIn);
                 
                 NavigationManager.NavigateTo(builder.Build());
             }

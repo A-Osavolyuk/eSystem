@@ -124,7 +124,7 @@
         return QueryBuilder.Create()
             .WithUri(Links.Account.EmailVerifyPage)
             .WithQueryParam("type", EmailTypes.Primary)
-            .WithQueryParam("return_url", Links.Account.EmailsPage)
+            .WithQueryParam("return_url", Links.Settings.Emails)
             .Build();
     }
 
@@ -133,7 +133,7 @@
         return QueryBuilder.Create()
             .WithUri(Links.Account.EmailChangePage)
             .WithQueryParam("type", EmailTypes.Primary)
-            .WithQueryParam("return_url", Links.Account.EmailsPage)
+            .WithQueryParam("return_url", Links.Settings.Emails)
             .Build();
     }
 
@@ -142,7 +142,7 @@
         return QueryBuilder.Create()
             .WithUri(Links.Account.EmailResetPage)
             .WithQueryParam("type", EmailTypes.Primary)
-            .WithQueryParam("return_url", Links.Account.EmailsPage)
+            .WithQueryParam("return_url", Links.Settings.Emails)
             .Build();
     }
 

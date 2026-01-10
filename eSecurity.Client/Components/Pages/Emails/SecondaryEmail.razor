@@ -111,7 +111,7 @@
             .WithUri(Links.Account.EmailVerifyPage)
             .WithQueryParam("email", Email.Email)
             .WithQueryParam("type", EmailTypes.Secondary)
-            .WithQueryParam("return_url", Links.Account.EmailsPage)
+            .WithQueryParam("return_url", Links.Settings.Emails)
             .Build();
     }
 

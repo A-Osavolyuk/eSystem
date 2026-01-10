@@ -114,7 +114,7 @@
             .WithUri(Links.Account.EmailVerifyPage)
             .WithQueryParam("email", Email.Email)
             .WithQueryParam("type", EmailTypes.Recovery)
-            .WithQueryParam("return_url", Links.Account.EmailsPage)
+            .WithQueryParam("return_url", Links.Settings.Emails)
             .Build();
     }
 
@@ -125,7 +125,7 @@
             .WithUri(Links.Account.EmailChangePage)
             .WithQueryParam("email", Email.Email)
             .WithQueryParam("type", EmailTypes.Recovery)
-            .WithQueryParam("return_url", Links.Account.EmailsPage)
+            .WithQueryParam("return_url", Links.Settings.Emails)
             .Build();
     }
 

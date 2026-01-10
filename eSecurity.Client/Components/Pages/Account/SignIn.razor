@@ -1,4 +1,4 @@
-﻿@page "/account/sign-in"
+﻿@page "/sign-in"
 
 @using eSecurity.Client.Components.Pages.OAuth
 @using eSecurity.Client.Security
@@ -73,7 +73,7 @@
                             StartIcon="@Icons.Material.Filled.Key"
                             Variant="Variant.Filled"
                             Color="Color.Info"
-                            Href="@Links.Account.PasskeySignInPage"
+                            Href="@Links.Common.WebAuthN"
                             Size="Size.Medium"
                             FullWidth="true">
                             Continue with Passkey
@@ -84,7 +84,7 @@
                 <MudPaper Outlined Class="pa-3">
                     <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
                         Do not have an account yet?
-                        <MudLink Typo="Typo.body2" Href="@Links.Account.SignUp">
+                        <MudLink Typo="Typo.body2" Href="@Links.Common.SignUp">
                             Sign up
                         </MudLink>
                     </MudTextM3>
@@ -161,7 +161,7 @@
                         case SignInStep.DeviceTrust:
                         {
                             var builder = QueryBuilder.Create()
-                                .WithUri(Links.Account.DeviceTrustPage)
+                                .WithUri(Links.Session.DeviceTrust)
                                 .WithQueryParam("sid", session.Id.ToString());
 
                             if (!string.IsNullOrEmpty(ReturnUrl))
@@ -176,7 +176,7 @@
                         case SignInStep.TwoFactor:
                         {
                             var builder = QueryBuilder.Create()
-                                .WithUri(Links.Account.TwoFactorLoginPage)
+                                .WithUri(Links.Session.TwoFactorSignIn)
                                 .WithQueryParam("sid", session.Id.ToString());
 
                             if (!string.IsNullOrEmpty(ReturnUrl))
@@ -206,7 +206,7 @@
                 {
                     var userId = error.Details["userId"].ToString()!;
                     var builder = QueryBuilder.Create()
-                        .WithUri(Links.Account.CompleteRegistrationPage)
+                        .WithUri(Links.Common.CompleteRegistration)
                         .WithQueryParam("id", userId);
 
                     Snackbar.Add(result.GetError().Description, Severity.Info);
@@ -228,7 +228,7 @@
                 {
                     var userId = error.Details["userId"].ToString()!;
                     var builder = QueryBuilder.Create()
-                        .WithUri(Links.Account.LockedOutPage)
+                        .WithUri(Links.Common.AccountLocked)
                         .WithQueryParam("id", userId);
 
                     NavigationManager.NavigateTo(builder.Build());
@@ -241,16 +241,16 @@
     private string OnForgotPassword()
     {
         return QueryBuilder.Create()
-            .WithUri(Links.Account.ForgotPasswordPage)
-            .WithQueryParam("return_url", Links.Account.SignIn)
+            .WithUri(Links.Common.ForgotPassword)
+            .WithQueryParam("return_url", Links.Common.SignIn)
             .Build();
     }
 
     private string OnRecoverAccount()
     {
         return QueryBuilder.Create()
-            .WithUri(Links.Account.RecoverPage)
-            .WithQueryParam("return_url", Links.Account.SignIn)
+            .WithUri(Links.Common.RecoverAccount)
+            .WithQueryParam("return_url", Links.Common.SignIn)
             .Build();
     }
 

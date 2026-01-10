@@ -42,7 +42,7 @@
             .WithUri(Links.Account.EmailManagePage)
             .WithQueryParam("email", email)
             .WithQueryParam("type", EmailTypes.Primary)
-            .WithQueryParam("return_url", Links.Account.EmailsPage);
+            .WithQueryParam("return_url", Links.Settings.Emails);
         
         NavigationManager.NavigateTo(builder.Build());
     }

@@ -63,7 +63,7 @@ public class RefreshTokenHandler(
                 if (string.IsNullOrWhiteSpace(refreshToken))
                 {
                     _tokenProvider.Clear();
-                    _navigationManager.NavigateTo(Links.Account.SignIn);
+                    _navigationManager.NavigateTo(Links.Common.SignIn);
                     return response;
                 }
                 
@@ -99,7 +99,7 @@ public class RefreshTokenHandler(
                 if (!fetchResponse.Succeeded)
                 {
                     _tokenProvider.Clear();
-                    _navigationManager.NavigateTo(Links.Account.SignIn);
+                    _navigationManager.NavigateTo(Links.Common.SignIn);
                     return response;
                 }
 

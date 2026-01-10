@@ -1,14 +1,14 @@
-﻿@page "/account/register/complete"
-@using eSecurity.Client.Security
+﻿@page "/complete-registration"
+
 @using eSecurity.Client.Security.Authorization.Access.Verification
 @using eSecurity.Client.Security.Identity
 @using eSecurity.Core.Common.DTOs
+
 @inherits PageBase
 
 @inject VerifyEmailValidator Validator
 @inject IVerificationService VerificationService
 @inject IUserService UserService
-@inject ISecurityService SecurityService
 @inject IEmailService EmailService
 
 <Title Text="Registration completion"></Title>

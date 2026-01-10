@@ -2,6 +2,33 @@
 
 public static class Links
 {
+    public static class Common
+    {
+        public const string SignIn = "/sign-in";
+        public const string SignUp = "/sign-up";
+        public const string WebAuthN = "/webauthn";
+        public const string UnlockAccount = "/unlock-account";
+        public const string RecoverAccount = "/recover-account";
+        public const string CompleteRegistration = "/complete-registration";
+        public const string ForgotPassword = "/forgot-password";
+        public const string AccountLocked = "/account-locked";
+        public const string Profile = "/profile";
+    }
+
+    public static class Settings
+    {
+        public const string Emails = "/settings/emails";
+        public const string Security = "/settings/security";
+        public const string Devices = "/settings/devices";
+        public const string PhoneNumbers = "/settings/phone-numbers";
+        public const string RecoveryCodesView = "/settings/recovery-codes/view";
+        public const string RecoveryCodesPrint = "/settings/recovery-codes/print";
+        public const string EnableTwoFactor = "/settings/two-factor/enable";
+        public const string PasskeyAdd = "/settings/passkeys/add";
+        public const string ResetPassword = "/settings/reset-password";
+        public const string RemovePassword = "/settings/remove-password";
+    }
+    
     public static class Connect
     {
         public const string Authorize = "/connect/authorize";
@@ -12,41 +39,26 @@ public static class Links
         public const string SelectAccount = "/connect/select-account";
     }
 
+    public static class Session
+    {
+        public const string TwoFactorSignIn = "/session/two-factor";
+        public const string DeviceTrust = "/session/trust-device";
+    }
+
     public static class Account
     {
-        public const string SignIn = "/account/sign-in";
-        public const string AccountUnlockPage = "/account/unlock";
-        public const string LockedOutPage = "/account/locked-out";
-        public const string RecoverPage = "/account/recover";
-        public const string DeviceTrustPage = "/account/device/trust";
-        public const string SignUp = "/account/sign-up";
-        public const string CompleteRegistrationPage = "/account/register/complete";
-        public const string ForgotPasswordPage = "/account/password/forgot";
-        public const string ResetPasswordPage = "/account/password/reset";
-        public const string RemovePasswordPage = "/account/password/remove";
-        public const string PasskeySignInPage = "/account/passkeys/sign-in";
-        public const string PasskeyAddPage = "/account/passkeys/add";
-        public const string TwoFactorLoginPage = "/account/2fa/sign-in";
-        public const string RecoveryCodesViewPage = "/account/2fa/recovery-codes/view";
-        public const string RecoveryCodesPrintPage = "/account/2fa/recovery-codes/print";
-        public const string EnableTwoFactorPage = "/account/2fa/enable";
-        public const string EmailsPage = "/account/emails";
         public const string EmailChangePage = "/account/email/change";
         public const string EmailVerifyPage = "/account/email/verify";
         public const string EmailResetPage = "/account/email/reset";
         public const string EmailManagePage = "/account/email/manage";
-        public const string SecurityPage = "/account/security";
-        public const string Profile = "/account/profile";
         public const string SettingsPage = "/account/settings";
-        public const string DevicesPage = "/account/devices";
-        public const string PhoneNumbersPage = "/account/phone-numbers";
     }
 
     public static class OAuth
     {
-        public const string SignUp = "/account/oauth/sign-up";
-        public const string SignIn = "/account/oauth/sign-in";
-        public const string Error = "/account/oauth/error";
-        public const string Handle = "/account/oauth/handle";
+        public const string SignUp = "/oauth/sign-up";
+        public const string SignIn = "/oauth/sign-in";
+        public const string Error = "/oauth/error";
+        public const string Handle = "/oauth/handle";
     }
 }

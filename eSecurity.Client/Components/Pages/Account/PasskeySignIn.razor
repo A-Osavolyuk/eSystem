@@ -60,7 +60,7 @@
                         Size="Size.Medium"
                         LoadingAdornment="Adornment.End"
                         ButtonType="ButtonType.Button"
-                        Href="@Links.Account.SignIn"
+                        Href="@Links.Common.SignIn"
                         StartIcon="@Icons.Material.Filled.Password"
                         Variant="Variant.Filled"
                         Color="Color.Info"
@@ -73,7 +73,7 @@
             <MudPaper Outlined="true" Class="pa-3">
                 <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
                     Do not have an account yet?
-                    <MudLink Typo="Typo.body2" Href="@Links.Account.SignUp">
+                    <MudLink Typo="Typo.body2" Href="@Links.Common.SignUp">
                         Sign up
                     </MudLink>
                 </MudTextM3>
@@ -151,7 +151,7 @@
 
                 if (error.Code == Errors.Common.AccountLockedOut)
                 {
-                    NavigationManager.NavigateTo(Links.Account.LockedOutPage);
+                    NavigationManager.NavigateTo(Links.Common.AccountLocked);
                 }
                 else
                 {

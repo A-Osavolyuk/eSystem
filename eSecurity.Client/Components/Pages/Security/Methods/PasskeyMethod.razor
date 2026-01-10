@@ -75,7 +75,7 @@
     [Parameter] public TwoFactorData Model { get; set; } = new();
     
     private string OnAddPasskey() => QueryBuilder.Create()
-        .WithUri(Links.Account.PasskeyAddPage)
-        .WithQueryParam("return_url", Links.Account.SecurityPage)
+        .WithUri(Links.Settings.PasskeyAdd)
+        .WithQueryParam("return_url", Links.Settings.Security)
         .Build();
 }

@@ -1,4 +1,4 @@
-﻿@page "/account/2fa/sign-in"
+﻿@page "/session/two-factor"
 
 @using eSecurity.Client.Security
 @using eSecurity.Client.Security.Identity
@@ -11,7 +11,7 @@
 @inject IUserService UserService
 @inject ISecurityService SecurityService
 
-<Title Text="Two-factor login"/>
+<Title Text="Two-factor authentication"/>
 
 @if (_methods.Any())
 {
