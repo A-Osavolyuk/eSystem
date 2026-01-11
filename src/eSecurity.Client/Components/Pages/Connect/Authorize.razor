@@ -48,24 +48,22 @@
     {
         if (firstRender)
         {
+            if (!UserState.IsAuthenticated)
+            {
+                NavigationManager.NavigateTo(QueryBuilder.Create()
+                    .WithUri(RedirectUri)
+                    .WithQueryParam("error", Errors.OAuth.LoginRequired)
+                    .WithQueryParam("error_description", "User must be authenticated.")
+                    .Build());
+            }
+
             if (string.IsNullOrEmpty(Prompt))
             {
-                if (!UserState.IsAuthenticated)
-                {
-                    NavigationManager.NavigateTo(QueryBuilder.Create()
-                        .WithUri(RedirectUri)
-                        .WithQueryParam("error", Errors.OAuth.LoginRequired)
-                        .WithQueryParam("error_description", "User must be authenticated.")
-                        .Build());
-                }
-
                 await OnAuthorizeAsync();
                 return;
             }
 
             var prompts = Prompt!.Split(' ');
-            var processedPrompt = prompts.First();
-            
             if (prompts.Contains(Prompts.None) && prompts.Length > 1)
             {
                 NavigationManager.NavigateTo(QueryBuilder.Create()
@@ -76,45 +74,19 @@
 
                 return;
             }
-
-            switch (processedPrompt)
+            
+            switch (prompts.First())
             {
-                case Prompts.None:
-                {
-                    if (!UserState.IsAuthenticated)
-                    {
-                        NavigationManager.NavigateTo(QueryBuilder.Create()
-                            .WithUri(RedirectUri)
-                            .WithQueryParam("error", Errors.OAuth.LoginRequired)
-                            .WithQueryParam("error_description", "User must be authenticated.")
-                            .Build());
-                    }
-
-                    await OnAuthorizeAsync();
-                    
-                    break;
-                }
-                case Prompts.Login:
-                {
-                    OnProcessConsent(Links.Common.SignIn ,prompts);
-                    break;
-                }
-                case Prompts.Consent:
-                {
-                    OnProcessConsent(Links.Connect.Consents ,prompts);
-                    break;
-                }
-                case Prompts.SelectAccount:
-                {
-                    OnProcessConsent(Links.Connect.SelectAccount ,prompts);
-                    break;
-                }
+                case Prompts.None: await OnAuthorizeAsync(); break;
+                case Prompts.Login: OnProcessConsent(Links.Common.SignIn, prompts); break;
+                case Prompts.Consent: OnProcessConsent(Links.Connect.Consents, prompts); break;
+                case Prompts.SelectAccount: OnProcessConsent(Links.Connect.SelectAccount, prompts); break;
                 default:
                 {
                     NavigationManager.NavigateTo(QueryBuilder.Create()
                         .WithUri(RedirectUri)
                         .WithQueryParam("error", Errors.OAuth.InvalidRequest)
-                        .WithQueryParam("error_description", $"Prompt '{processedPrompt}' is not supported.")
+                        .WithQueryParam("error_description", $"Prompt '{prompts.First()}' is not supported.")
                         .Build());
                     break;
                 }
@@ -124,14 +96,13 @@
 
     private async Task OnAuthorizeAsync()
     {
-        var scopes = Scope.Split(' ').ToList();
         var request = new AuthorizeRequest()
         {
             UserId = UserState.UserId,
             ResponseType = ResponseType,
             ClientId = ClientId,
             RedirectUri = RedirectUri,
-            Scopes = scopes,
+            Scopes = Scope.Split(' ').ToList(),
             Nonce = Nonce,
             State = State,
             CodeChallenge = CodeChallenge,
@@ -139,7 +110,6 @@
         };
 
         var result = await ConnectService.AuthorizeAsync(request);
-
         if (result.Succeeded)
         {
             var response = result.Get()!;
@@ -166,7 +136,8 @@
                 .WithQueryParam("code", response.Code)
                 .WithQueryParam("state", response.State);
 
-            if (!string.IsNullOrEmpty(ReturnUrl)) builder.WithQueryParam("return_url", ReturnUrl);
+            if (!string.IsNullOrEmpty(ReturnUrl)) 
+                builder.WithQueryParam("return_url", ReturnUrl);
 
             NavigationManager.NavigateTo(builder.Build());
         }
@@ -194,21 +165,20 @@
 
         if (!string.IsNullOrEmpty(CodeChallenge))
             returnUrlBuilder.WithQueryParam("code_challenge", CodeChallenge);
-        
+
         if (!string.IsNullOrEmpty(CodeChallengeMethod))
             returnUrlBuilder.WithQueryParam("code_challenge_method", CodeChallengeMethod);
 
         if (prompts.Length > 1)
         {
-            var nextPrompts = prompts.Where(x => x != prompts.First());
-            returnUrlBuilder.WithQueryParam("prompt", string.Join(" ", nextPrompts));
+            var prompt = string.Join(" ", prompts.Except([prompts.First()]));
+            returnUrlBuilder.WithQueryParam("prompt", prompt);
         }
-        
-        var redirectUriBuilder = QueryBuilder.Create()
-            .WithUri(uri)
-            .WithQueryParam("return_url", returnUrlBuilder.Build());
 
-        NavigationManager.NavigateTo(redirectUriBuilder.Build());
+        NavigationManager.NavigateTo(QueryBuilder.Create()
+            .WithUri(uri)
+            .WithQueryParam("return_url", returnUrlBuilder.Build())
+            .Build());
     }
 
 }
