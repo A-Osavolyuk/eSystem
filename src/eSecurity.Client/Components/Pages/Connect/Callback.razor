@@ -27,6 +27,36 @@ else
     <Title Text="Failed authorization"></Title>
 }
 
+@if (!string.IsNullOrEmpty(Error) && !string.IsNullOrEmpty(ErrorDescription))
+{
+    <MudGrid Justify="Justify.Center">
+        <MudItem xs="4" Style="margin-top: 150px">
+            <MudPaper Outlined="true" Class="pa-5">
+                <MudStack Spacing="3">
+                    <MudStack AlignItems="AlignItems.Center" Justify="Justify.Center">
+                        <MudIcon
+                            Color="Color.Error"
+                            Size="Size.Large"
+                            Style="font-size: 5rem"
+                            Icon="@Icons.Material.Outlined.Cancel"/>
+                    </MudStack>
+                    <MudTextM3 Typo="TypoM3.Headline" Size="Size.Small" Align="Align.Center">
+                        Authorization Error
+                    </MudTextM3>
+                    <MudStack Spacing="1">
+                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Large">
+                            <strong>Error:</strong> @Error
+                        </MudTextM3>
+                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Large">
+                            <strong>Description:</strong> @ErrorDescription
+                        </MudTextM3>
+                    </MudStack>
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+}
+
 @code {
 
     [SupplyParameterFromQuery(Name = "code")]
@@ -43,16 +73,9 @@ else
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        if (firstRender && string.IsNullOrEmpty(Error) && string.IsNullOrEmpty(ErrorDescription))
         {
-            if (!string.IsNullOrEmpty(Error) && !string.IsNullOrEmpty(ErrorDescription))
-            {
-                Snackbar.Add(ErrorDescription, Severity.Error);
-                return;
-            }
-            
             var options = ClientOptions.Value;
-
             var request = new TokenRequest()
             {
                 ClientId = options.ClientId,
@@ -63,7 +86,6 @@ else
             };
 
             var result = await ConnectService.TokenAsync(request);
-
             if (result.Succeeded)
             {
                 var response = result.Get();
@@ -85,9 +107,13 @@ else
         TokenProvider.IdToken = idToken;
         
         var tokenResult = await TokenValidator.ValidateAsync(idToken);
-        if (!tokenResult.Succeeded) Snackbar.Add(tokenResult.GetError().Description, Severity.Error);
-        var claimValues = tokenResult.Get<List<ClaimValue>>();
+        if (!tokenResult.Succeeded)
+        {
+            var error = tokenResult.GetError();
+            Snackbar.Add(error.Description, Severity.Error);
+        }
         
+        var claimValues = tokenResult.Get<List<ClaimValue>>();
         var tokenIdentity = new SignIdentity()
         {
             RefreshToken = refreshToken,
@@ -103,7 +129,6 @@ else
         };
 
         var result = await FetchClient.FetchAsync(fetchOptions);
-
         if (result.Succeeded)
         {
             var claims = claimValues.Select(c => new Claim(c.Type, c.Value));
