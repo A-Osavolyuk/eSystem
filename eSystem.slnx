@@ -8,6 +8,7 @@
     <Project Path="src/eCinema.Client/eCinema.Client.esproj">
       <Build />
     </Project>
+    <Project Path="src/eCinema.Server/eCinema.Server.csproj" />
   </Folder>
   <Folder Name="/src/eMessage/">
     <Project Path="src\eSystem.EmailSender.Api\eSystem.EmailSender.Api.csproj" />
