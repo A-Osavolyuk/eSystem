@@ -2,11 +2,25 @@
   <PropertyGroup>
     <StartupCommand>npm start</StartupCommand>
     <JavaScriptTestFramework>Jasmine</JavaScriptTestFramework>
-    <!-- Allows the build (or compile) script located on package.json to run on Build -->
     <ShouldRunBuildScript>false</ShouldRunBuildScript>
-    <!-- Folder where production build objects will be placed -->
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist\eCinema.Client\browser\</BuildOutputFolder>
     <Configurations>Debug;Release</Configurations>
     <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
+  <PropertyGroup>
+    <ShouldRunNpmInstall>false</ShouldRunNpmInstall>
+    <ShouldRunNpmBuildScript>false</ShouldRunNpmBuildScript>
+    <PackageLockFile>$(ProjectDir)package-lock.json</PackageLockFile>
+    <PackageLockHashFile>$(ProjectDir)package-lock.hash</PackageLockHashFile>
+  </PropertyGroup>
+  <Target Name="CheckNpmPackages" BeforeTargets="Build">
+    <GetFileHash Files="$(PackageLockFile)" Algorithm="SHA256">
+      <Output TaskParameter="Hash" PropertyName="CurrentHash" />
+    </GetFileHash>
+    <ReadLinesFromFile File="$(PackageLockHashFile)" Condition="Exists('$(PackageLockHashFile)')">
+      <Output TaskParameter="Lines" PropertyName="PreviousHash" />
+    </ReadLinesFromFile>
+    <Exec Command="npm ci --no-audit" Condition="$(CurrentHash) != $(PreviousHash)" />
+    <WriteLinesToFile File="$(PackageLockHashFile)" Lines="$(CurrentHash)" Overwrite="true" />
+  </Target>
 </Project>
