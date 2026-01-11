@@ -36,34 +36,38 @@ var telegramService = builder.AddProject<Projects.eSystem_Telegram_Bot>("telegra
     .WithReference(rabbitMq).WaitFor(rabbitMq)
     .WithReference(redisCache).WaitFor(redisCache);
 
-var messageBus = builder.AddProject<Projects.eSystem_MessageBus>("message-bus")
+var eMessageServer = builder.AddProject<Projects.eSystem_MessageBus>("message-bus")
     .WithReference(rabbitMq).WaitFor(rabbitMq)
     .WaitFor(emailService)
     .WaitFor(smsService)
     .WaitFor(telegramService);
 
-var securityServer = builder.AddProject<Projects.eSecurity_Server>("e-security-server")
+var eSecurityServer = builder.AddProject<Projects.eSecurity_Server>("e-security-server")
     .WithReference(sqlServer).WaitFor(sqlServer)
     .WithReference(redisCache).WaitFor(redisCache)
     .WithReference(rabbitMq).WaitFor(rabbitMq)
-    .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging");
+    .WaitFor(eMessageServer).WithRelationship(eMessageServer.Resource, "Messaging");
 
-var storageApi = builder.AddProject<Projects.eSystem_Storage_Api>("storage-api")
-    .WaitFor(securityServer).WithRelationship(securityServer.Resource, "Authentication")
-    .WaitFor(messageBus).WithRelationship(messageBus.Resource, "Messaging")
+var eStorageServer = builder.AddProject<Projects.eSystem_Storage_Api>("storage-api")
+    .WaitFor(eSecurityServer).WithRelationship(eSecurityServer.Resource, "Authentication")
+    .WaitFor(eMessageServer).WithRelationship(eMessageServer.Resource, "Messaging")
     .WithReference(rabbitMq).WaitFor(rabbitMq)
     .WithReference(redisCache).WaitFor(redisCache)
     .WithReference(blobs).WaitFor(blobs);
 
 var proxy = builder.AddProject<Projects.eSystem_Proxy>("proxy")
-    .WithReference(securityServer).WaitFor(securityServer)
-    .WithReference(storageApi).WaitFor(storageApi);
+    .WithReference(eSecurityServer).WaitFor(eSecurityServer)
+    .WithReference(eStorageServer).WaitFor(eStorageServer);
 
 builder.AddProject<Projects.eSecurity_Client>("e-security-client")
     .WithReference(proxy).WaitFor(proxy);
 
+var eCinemaServer = builder.AddProject<Projects.eCinema_Server>("e-cinema-server")
+    .WithReference(eSecurityServer).WaitFor(eSecurityServer)
+    .WithReference(proxy).WaitFor(proxy);
+
 builder.AddNpmApp("e-cinema-client", "../eCinema.Client")
-    .WithReference(proxy).WaitFor(proxy)
+    .WithReference(eCinemaServer).WaitFor(eCinemaServer)
     .WithHttpsEndpoint(port: 6511, targetPort: 4200, env: "PORT")
     .WithExternalHttpEndpoints()
     .PublishAsDockerFile();
