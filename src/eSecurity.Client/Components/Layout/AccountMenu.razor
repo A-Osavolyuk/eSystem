@@ -1,4 +1,9 @@
-﻿@inject UserState UserState
+﻿@using eSecurity.Client.Security.Authentication.Oidc.Clients
+@using eSecurity.Client.Security.Authentication.Oidc.Token
+
+@inject UserState UserState
+@inject TokenProvider TokenProvider
+@inject IOptions<ClientOptions> ClientOptions
 
 <MudAvatar @onclick="DrawerToggle">
     <MudImage
@@ -71,7 +76,7 @@
         </MudNavLink>
         <MudDivider Class="my-2"/>
         <MudNavLink
-            Href="@Links.Connect.Logout"
+            Href="@GetLogoutUri()"
             Match="NavLinkMatch.All"
             Icon="@Icons.Material.Filled.Logout">
             Logout
@@ -83,4 +88,16 @@
     private bool _isDrawerOpen = false;
 
     private void DrawerToggle() => _isDrawerOpen = !_isDrawerOpen;
+
+    private string GetLogoutUri()
+    {
+        return QueryBuilder.Create()
+            .WithUri(Links.Connect.Logout)
+            .WithQueryParam("id_token_hint", TokenProvider.IdToken!)
+            .WithQueryParam("post_logout_redirect_uri", ClientOptions.Value.PostLogoutRedirectUri)
+            .WithQueryParam("state", Guid.CreateVersion7().ToString())
+            .WithQueryParam("client_id", ClientOptions.Value.ClientId)
+            .WithQueryParam("local", "true")
+            .Build();
+    }
 }

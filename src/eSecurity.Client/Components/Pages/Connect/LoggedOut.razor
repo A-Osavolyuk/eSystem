@@ -27,14 +27,28 @@
                         </MudTextM3>
                     </MudStack>
                 </MudStack>
-                <MudButton
-                    Color="Color.Success"
-                    Variant="Variant.Filled"
-                    ButtonType="ButtonType.Button"
-                    Size="Size.Medium"
-                    Href="@Links.Common.SignIn">
-                    Click here to continue
-                </MudButton>
+                @if (string.IsNullOrEmpty(PostLogoutRedirectUri) && string.IsNullOrEmpty(State))
+                {
+                    <MudButton
+                        Color="Color.Success"
+                        Variant="Variant.Filled"
+                        ButtonType="ButtonType.Button"
+                        Size="Size.Medium"
+                        Href="@Links.Common.SignIn">
+                        Click here to continue
+                    </MudButton>
+                }
+                else
+                {
+                    <MudButton
+                        Color="Color.Success"
+                        Variant="Variant.Filled"
+                        ButtonType="ButtonType.Button"
+                        Size="Size.Medium"
+                        Href="@GetRedirectUri()">
+                        Click here to continue
+                    </MudButton>
+                }
             </MudStack>
         </MudPaper>
     </MudItem>
@@ -49,6 +63,12 @@
 }
 
 @code {
+    [SupplyParameterFromQuery(Name = "post_logout_redirect_uri")]
+    public string? PostLogoutRedirectUri { get; set; }
+    
+    [SupplyParameterFromQuery(Name = "state")]
+    public string? State { get; set; }
+    
     private List<string> _uris = [];
 
     protected override async Task OnInitializedAsync()
@@ -57,4 +77,11 @@
         await AuthenticationManager.RefreshAsync();
     }
 
+    private string GetRedirectUri()
+    {
+        return QueryBuilder.Create()
+            .WithUri(PostLogoutRedirectUri!)
+            .WithQueryParam("state", State!)
+            .Build();
+    }
 }

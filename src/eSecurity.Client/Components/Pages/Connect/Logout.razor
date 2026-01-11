@@ -10,7 +10,6 @@
 
 @inject IConnectService ConnectService
 @inject IOptions<ClientOptions> ClientOptions
-@inject TokenProvider TokenProvider
 
 <Title Text="Logout from eSystem Account"></Title>
 
@@ -68,43 +67,37 @@
     [SupplyParameterFromQuery(Name = "ui_locales")]
     public string? UiLocales { get; set; }
 
+    [SupplyParameterFromQuery(Name = "local")]
+    public bool? IsLocal { get; set; }
+
     private async Task LogoutAsync()
     {
-        LogoutRequest? request;
-        if (string.IsNullOrEmpty(IdTokenHint) && string.IsNullOrEmpty(PostLogoutRedirectUri))
+        var request = new LogoutRequest()
         {
-            var options = ClientOptions.Value;
-            request = new LogoutRequest()
-            {
-                ClientId = options.ClientId,
-                IdTokenHint = TokenProvider.IdToken!,
-                PostLogoutRedirectUri = options.PostLogoutRedirectUri,
-                State = Guid.CreateVersion7().ToString(),
-            };
-        }
-        else
-        {
-            request = new LogoutRequest()
-            {
-                ClientId = ClientId,
-                IdTokenHint = IdTokenHint,
-                PostLogoutRedirectUri = PostLogoutRedirectUri,
-                State = State,
-            };
-        }
+            ClientId = ClientId,
+            IdTokenHint = IdTokenHint,
+            PostLogoutRedirectUri = PostLogoutRedirectUri,
+            State = State,
+        };
 
         var result = await ConnectService.LogoutAsync(request);
-
         if (result.Succeeded)
         {
             await AuthenticationManager.LogoutAsync();
 
             var response = result.Get();
             NavigationContext.Value = response.FrontChannelLogoutUris;
-            NavigationManager.NavigateTo(QueryBuilder.Create()
-                .WithUri(response.PostLogoutRedirectUri)
-                .WithQueryParam("state", response.State)
-                .Build());
+
+            var builder = QueryBuilder.Create().WithUri(Links.Connect.LoggedOut);
+            if (!IsLocal.HasValue)
+            {
+                builder
+                    .WithQueryParam("post_logout_redirect_uri", response.PostLogoutRedirectUri)
+                    .WithQueryParam("state", response.State);
+            }
+
+            NavigationManager.NavigateTo(builder.Build());
         }
     }
+
 }
