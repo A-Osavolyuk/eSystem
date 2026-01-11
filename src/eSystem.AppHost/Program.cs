@@ -62,6 +62,12 @@ var proxy = builder.AddProject<Projects.eSystem_Proxy>("proxy")
 builder.AddProject<Projects.eSecurity_Client>("e-security-client")
     .WithReference(proxy).WaitFor(proxy);
 
+builder.AddNpmApp("e-cinema-client", "../eCinema.Client")
+    .WithReference(proxy).WaitFor(proxy)
+    .WithHttpsEndpoint(port: 6511, targetPort: 4200, env: "PORT")
+    .WithExternalHttpEndpoints()
+    .PublishAsDockerFile();
+
 var app = builder.Build();
 
 app.Run();

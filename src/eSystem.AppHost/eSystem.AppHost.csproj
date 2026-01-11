@@ -34,6 +34,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\eCinema.Client\eCinema.Client.esproj" />
         <ProjectReference Include="..\eSecurity.Client\eSecurity.Client.csproj" />
         <ProjectReference Include="..\eSecurity.Server\eSecurity.Server.csproj" />
         <ProjectReference Include="..\eSystem.EmailSender.Api\eSystem.EmailSender.Api.csproj" />
