@@ -100,8 +100,11 @@
             await AuthenticationManager.LogoutAsync();
 
             var response = result.Get();
-            NavigationContext.Value = response.Uris;
-            NavigationManager.NavigateTo(Links.Connect.LoggedOut);
+            NavigationContext.Value = response.FrontChannelLogoutUris;
+            NavigationManager.NavigateTo(QueryBuilder.Create()
+                .WithUri(response.PostLogoutRedirectUri)
+                .WithQueryParam("state", response.State)
+                .Build());
         }
     }
 }
