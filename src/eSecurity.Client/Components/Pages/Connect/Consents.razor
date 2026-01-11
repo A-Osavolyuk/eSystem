@@ -12,129 +12,133 @@
 
 <Title Text="Grant consents"></Title>
 
-<MudGrid Justify="Justify.Center">
-    <MudItem xs="3">
-        <MudPaper Outlined="true">
-            <MudStack Spacing="4">
-                <MudStack Spacing="2">
-                    <MudTextM3 Size="Size.Medium" Typo="TypoM3.Body" Class="pt-3 px-3">
-                        Sign in with eSystem
-                    </MudTextM3>
-                    <MudDivider/>
-                </MudStack>
-                <MudStack Justify="Justify.Center" Class="px-8 py-5">
-                    <MudTextM3 Typo="TypoM3.Headline" Size="Size.Small" Align="Align.Center">
-                        <MudTextM3 Inline="true" Color="Color.Primary" Size="Size.Small" Typo="TypoM3.Headline">
-                            @_clientInfo.ClientName
+@if (!string.IsNullOrEmpty(_username))
+{
+    <MudGrid Justify="Justify.Center">
+        <MudItem xs="3">
+            <MudPaper Outlined="true">
+                <MudStack Spacing="4">
+                    <MudStack Spacing="2">
+                        <MudTextM3 Size="Size.Medium" Typo="TypoM3.Body" Class="pt-3 px-3">
+                            Sign in with eSystem
                         </MudTextM3>
-                        want to access your eSystem Account
-                    </MudTextM3>
-                    <MudStack Row="true" Spacing="3" Justify="Justify.Center">
-                        <MudAvatar Size="Size.Small">
-                            <MudImage
-                                Src="/images/avatar.jpg"
-                                Alt="Avatar"
-                                FallbackSrc="/images/avatar.jpg"/>
-                        </MudAvatar>
-                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
-                            @_username
-                        </MudTextM3>
+                        <MudDivider/>
                     </MudStack>
-                    <MudTextM3 Size="Size.Large" Typo="TypoM3.Body" Class="fw-bold">
-                        This will allow
-                        <MudTextM3
-                            Color="Color.Primary"
-                            Size="Size.Large"
-                            Typo="TypoM3.Body"
-                            Class="fw-bold"
-                            Inline="true">
-                            @_clientInfo.ClientName
+                    <MudStack Justify="Justify.Center" Class="px-8 py-5">
+                        <MudTextM3 Typo="TypoM3.Headline" Size="Size.Small" Align="Align.Center">
+                            <MudTextM3 Inline="true" Color="Color.Primary" Size="Size.Small" Typo="TypoM3.Headline">
+                                @_clientInfo.ClientName
+                            </MudTextM3>
+                            want to access your eSystem Account
                         </MudTextM3>
-                        to:
-                    </MudTextM3>
-                    <ul>
-                        <MudStack Spacing="3" Justify="Justify.Center">
-                            @foreach (var scope in _scopes)
-                            {
-                                <li>
-                                    <MudGrid>
-                                        <MudItem xs="11">
-                                            @switch (scope)
-                                            {
-                                                case Scopes.Email:
-                                                {
-                                                    <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
-                                                        Use your email address to send email notifications, news, etc
-                                                    </MudTextM3>
-                                                    break;
-                                                }
-                                                case Scopes.Phone:
-                                                {
-                                                    <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
-                                                        Use your phone number to send SMS notifications
-                                                    </MudTextM3>
-                                                    break;
-                                                }
-                                                case Scopes.Address:
-                                                {
-                                                    <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
-                                                        Use your address for security purposes
-                                                    </MudTextM3>
-                                                    break;
-                                                }
-                                                case Scopes.Profile:
-                                                {
-                                                    <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
-                                                        Use your profile data to use it in UI
-                                                    </MudTextM3>
-                                                    break;
-                                                }
-                                            }
-                                        </MudItem>
-                                        <MudItem xs="1" Class="pl-0">
-                                            <MudIcon Icon="@Icons.Material.Outlined.Info"/>
-                                        </MudItem>
-                                    </MudGrid>
-                                </li>
-                            }
+                        <MudStack Row="true" Spacing="3" Justify="Justify.Center">
+                            <MudAvatar Size="Size.Small">
+                                <MudImage
+                                    Src="/images/avatar.jpg"
+                                    Alt="Avatar"
+                                    FallbackSrc="/images/avatar.jpg"/>
+                            </MudAvatar>
+                            <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                                @_username
+                            </MudTextM3>
                         </MudStack>
-                    </ul>
-                    <MudTextM3 Typo="TypoM3.Body" Size="Size.Large" Class="fw-bold">
-                        @($"Make sure you trust {_clientInfo.ClientName}")
-                    </MudTextM3>
-                    <MudTextM3 Size="Size.Medium" Typo="TypoM3.Body">
-                        You may be sharing sensitive info with this site or app.
-                        Learn about how eSecurity will handle your data by reviewing
-                        its terms of service and privacy policies. You can always see or remove access in your
-                        <MudTextM3 Inline="true" Color="Color.Primary" Size="Size.Medium" Typo="TypoM3.Body">
-                            eSystem Account
+                        <MudTextM3 Size="Size.Large" Typo="TypoM3.Body" Class="fw-bold">
+                            This will allow
+                            <MudTextM3
+                                Color="Color.Primary"
+                                Size="Size.Large"
+                                Typo="TypoM3.Body"
+                                Class="fw-bold"
+                                Inline="true">
+                                @_clientInfo.ClientName
+                            </MudTextM3>
+                            to:
                         </MudTextM3>
-                    </MudTextM3>
-                    <MudLink Typo="Typo.body2">Learn about the risks</MudLink>
-                    <MudStack Row="true">
-                        <MudButton
-                            Color="Color.Info"
-                            Variant="Variant.Text"
-                            ButtonType="ButtonType.Button"
-                            Size="Size.Medium"
-                            OnClick="@(() => OnCancel())">
-                            Cancel
-                        </MudButton>
-                        <MudSpacer/>
-                        <MudButton
-                            Color="Color.Info"
-                            Variant="Variant.Filled"
-                            ButtonType="ButtonType.Button"
-                            Size="Size.Medium"
-                            OnClick="@(async () => await OnAllowAsync())">
-                            Allow
-                        </MudButton>
+                        <ul>
+                            <MudStack Spacing="3" Justify="Justify.Center">
+                                @foreach (var scope in _scopes.Except([Scopes.OfflineAccess, Scopes.OpenId]))
+                                {
+                                    <li>
+                                        <MudGrid>
+                                            <MudItem xs="11">
+                                                @switch (scope)
+                                                {
+                                                    case Scopes.Email:
+                                                    {
+                                                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                                                            Use your email address to send email notifications, news,
+                                                            etc
+                                                        </MudTextM3>
+                                                        break;
+                                                    }
+                                                    case Scopes.Phone:
+                                                    {
+                                                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                                                            Use your phone number to send SMS notifications
+                                                        </MudTextM3>
+                                                        break;
+                                                    }
+                                                    case Scopes.Address:
+                                                    {
+                                                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                                                            Use your address for security purposes
+                                                        </MudTextM3>
+                                                        break;
+                                                    }
+                                                    case Scopes.Profile:
+                                                    {
+                                                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                                                            Use your profile data to use it in UI
+                                                        </MudTextM3>
+                                                        break;
+                                                    }
+                                                }
+                                            </MudItem>
+                                            <MudItem xs="1" Class="pl-0">
+                                                <MudIcon Icon="@Icons.Material.Outlined.Info"/>
+                                            </MudItem>
+                                        </MudGrid>
+                                    </li>
+                                }
+                            </MudStack>
+                        </ul>
+                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Large" Class="fw-bold">
+                            @($"Make sure you trust {_clientInfo.ClientName}")
+                        </MudTextM3>
+                        <MudTextM3 Size="Size.Medium" Typo="TypoM3.Body">
+                            You may be sharing sensitive info with this site or app.
+                            Learn about how eSecurity will handle your data by reviewing
+                            its terms of service and privacy policies. You can always see or remove access in your
+                            <MudTextM3 Inline="true" Color="Color.Primary" Size="Size.Medium" Typo="TypoM3.Body">
+                                eSystem Account
+                            </MudTextM3>
+                        </MudTextM3>
+                        <MudLink Typo="Typo.body2">Learn about the risks</MudLink>
+                        <MudStack Row="true">
+                            <MudButton
+                                Color="Color.Info"
+                                Variant="Variant.Text"
+                                ButtonType="ButtonType.Button"
+                                Size="Size.Medium"
+                                OnClick="@(() => OnCancel())">
+                                Cancel
+                            </MudButton>
+                            <MudSpacer/>
+                            <MudButton
+                                Color="Color.Info"
+                                Variant="Variant.Filled"
+                                ButtonType="ButtonType.Button"
+                                Size="Size.Medium"
+                                OnClick="@(async () => await OnAllowAsync())">
+                                Allow
+                            </MudButton>
+                        </MudStack>
                     </MudStack>
                 </MudStack>
-            </MudStack>
-        </MudPaper>
-    </MudItem>
-</MudGrid>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+}
 
 <style>
     ul li::marker {
@@ -147,20 +151,33 @@
     [SupplyParameterFromQuery(Name = "return_url")]
     public string ReturnUrl { get; set; } = string.Empty;
 
-    private List<string> _scopes = [];
     private ClientInfo _clientInfo = new();
     private string _username = string.Empty;
+    private List<string> _scopes = [];
+    private string _clientId = string.Empty;
+    private string _redirectUri = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         var decodedQuery = HttpUtility.UrlDecode(ReturnUrl);
         var queryParams = QueryParser.GetQueryParameters(decodedQuery);
-        _scopes = queryParams["scope"].Split(" ")
-            .Where(x => x != Scopes.OfflineAccess && x != Scopes.OpenId)
-            .ToList();
 
-        var clientId = queryParams["client_id"];
-        var result = await ConnectService.GetClientInfoAsync(clientId);
+        if (!UserState.IsAuthenticated)
+        {
+            var redirectUri = queryParams["redirect_uri"];
+            var builder = QueryBuilder.Create()
+                .WithUri(redirectUri)
+                .WithQueryParam("error", Errors.OAuth.LoginRequired)
+                .WithQueryParam("error_description", "User must pass authentication first.");
+
+            NavigationManager.NavigateTo(builder.Build());
+        }
+
+        _scopes = queryParams["scope"].Split(" ").ToList();
+        _clientId = queryParams["client_id"];
+        _redirectUri = queryParams["redirect_uri"];
+
+        var result = await ConnectService.GetClientInfoAsync(_clientId);
         if (result.Succeeded)
         {
             _clientInfo = result.Get();
@@ -169,62 +186,7 @@
         else
         {
             var error = result.GetError();
-            Snackbar.Add(error.Code, Severity.Error);
-        }
-    }
-
-    private void OnCancel()
-    {
-        var decodedQuery = HttpUtility.UrlDecode(ReturnUrl);
-        var queryParams = QueryParser.GetQueryParameters(decodedQuery);
-        var redirectUri = queryParams["redirect_uri"];
-        var builder = QueryBuilder.Create()
-            .WithUri(redirectUri)
-            .WithQueryParam("error", Errors.OAuth.AccessDenied)
-            .WithQueryParam("error_description", "The resource owner or authorization server denied the request");
-        
-        NavigationManager.NavigateTo(builder.Build());
-    }
-
-    private async Task OnAllowAsync()
-    {
-        var decodedQuery = HttpUtility.UrlDecode(ReturnUrl);
-        var queryParams = QueryParser.GetQueryParameters(decodedQuery);
-        
-        if (!UserState.IsAuthenticated)
-        {
-
-            var redirectUri = queryParams["redirect_uri"];
-            var builder = QueryBuilder.Create()
-                .WithUri(redirectUri)
-                .WithQueryParam("error", Errors.OAuth.LoginRequired)
-                .WithQueryParam("error_description", "User must pass authentication first.");
-            
-            NavigationManager.NavigateTo(builder.Build());
-        }
-        
-        var clientId = queryParams["client_id"];
-        var request = new GrantConsentsRequest()
-        {
-            UserId = UserState.UserId,
-            ClientId = Guid.Parse(clientId),
-            Scopes = queryParams["scope"].Split(" ").ToList()
-        };
-        
-        var result = await ConnectService.GrantConsentsAsync(request);
-        
-        if (result.Succeeded) NavigationManager.NavigateTo(ReturnUrl);
-        else
-        {
-            var redirectUri = queryParams["redirect_uri"];
-            var error = result.GetError();
-            
-            var builder = QueryBuilder.Create()
-                .WithUri(redirectUri)
-                .WithQueryParam("error", error.Code)
-                .WithQueryParam("error_description", error.Description);
-            
-            NavigationManager.NavigateTo(builder.Build());
+            Snackbar.Add(error.Description, Severity.Error);
         }
     }
 
@@ -239,7 +201,41 @@
         else
         {
             var error = result.GetError();
-            Snackbar.Add(error.Code, Severity.Error);
+            Snackbar.Add(error.Description, Severity.Error);
         }
     }
+
+    private void OnCancel()
+    {
+        var builder = QueryBuilder.Create()
+            .WithUri(_redirectUri)
+            .WithQueryParam("error", Errors.OAuth.AccessDenied)
+            .WithQueryParam("error_description", "The resource owner or authorization server denied the request");
+
+        NavigationManager.NavigateTo(builder.Build());
+    }
+
+    private async Task OnAllowAsync()
+    {
+        var request = new GrantConsentsRequest()
+        {
+            UserId = UserState.UserId,
+            ClientId = Guid.Parse(_clientId),
+            Scopes = _scopes
+        };
+
+        var result = await ConnectService.GrantConsentsAsync(request);
+        if (result.Succeeded) NavigationManager.NavigateTo(ReturnUrl);
+        else
+        {
+            var error = result.GetError();
+            var builder = QueryBuilder.Create()
+                .WithUri(_redirectUri)
+                .WithQueryParam("error", error.Code)
+                .WithQueryParam("error_description", error.Description);
+
+            NavigationManager.NavigateTo(builder.Build());
+        }
+    }
+
 }
