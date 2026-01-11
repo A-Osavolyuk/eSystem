@@ -62,7 +62,7 @@ public class LogoutCommandHandler(
         if (string.IsNullOrEmpty(request.Request.ClientId))
         {
             var audience = principal.Claims.First(x => x.Type == AppClaimTypes.Aud);
-            client = await _clientManager.FindByIdAsync(audience.Value, cancellationToken);
+            client = await _clientManager.FindByAudienceAsync(audience.Value, cancellationToken);
         }
         else
         {
