@@ -26,7 +26,14 @@ public class CheckConsentCommandHandler(
         if (client is null) return Results.NotFound("Client not found");
 
         var consent = await _consentManager.FindAsync(user, client, cancellationToken);
-        if (consent is null) return Results.NotFound("Consent not found");
+        if (consent is null)
+        {
+            return Results.Ok(new CheckConsentResponse
+            {
+                Granted = false,
+                RemainingScopes = request.Request.Scopes
+            });
+        }
 
         if (!consent.HasScopes(request.Request.Scopes, out var remainingScopes))
         {
