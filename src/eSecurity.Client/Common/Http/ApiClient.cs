@@ -1,10 +1,20 @@
+using System.Net;
 using System.Text.Json;
 using eSecurity.Client.Common.Http.Extensions;
+using eSecurity.Client.Common.JS.Fetch;
 using eSecurity.Client.Common.JS.Localization;
 using eSecurity.Client.Security.Authentication.Oidc.Clients;
 using eSecurity.Client.Security.Authentication.Oidc.Token;
+using eSecurity.Core.Common.Requests;
+using eSecurity.Core.Common.Responses;
+using eSecurity.Core.Common.Routing;
+using eSecurity.Core.Security.Cookies;
+using eSecurity.Core.Security.Cookies.Constants;
 using eSystem.Core.Common.Http.Context;
 using eSystem.Core.Common.Network.Gateway;
+using eSystem.Core.Security.Authentication.Oidc.Token;
+using eSystem.Core.Security.Cryptography.Encoding;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
 
 namespace eSecurity.Client.Common.Http;
@@ -13,6 +23,9 @@ public class ApiClient(
     HttpClient httpClient,
     TokenProvider tokenProvider,
     GatewayOptions gatewayOptions,
+    NavigationManager navigationManager,
+    ICookieAccessor cookieAccessor,
+    IFetchClient fetchClient,
     IOptions<ClientOptions> clientOptions,
     ILocalizationManager localizationManager,
     IHttpContextAccessor httpContextAccessor) : IApiClient
@@ -21,6 +34,9 @@ public class ApiClient(
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly TokenProvider _tokenProvider = tokenProvider;
     private readonly GatewayOptions _gatewayOptions = gatewayOptions;
+    private readonly NavigationManager _navigationManager = navigationManager;
+    private readonly ICookieAccessor _cookieAccessor = cookieAccessor;
+    private readonly IFetchClient _fetchClient = fetchClient;
     private readonly ILocalizationManager _localizationManager = localizationManager;
     private readonly ClientOptions _clientOptions = clientOptions.Value;
 
@@ -80,6 +96,23 @@ public class ApiClient(
 
     private async ValueTask<HttpResponseMessage> SendRequestAsync(HttpRequest httpRequest, HttpOptions httpOptions)
     {
+        var requestMessage = await InitializeAsync(httpRequest, httpOptions);
+        var responseMessage = await _httpClient.SendAsync(requestMessage);
+
+        if (responseMessage.StatusCode != HttpStatusCode.Unauthorized)
+            return responseMessage;
+
+        var responseJson = await responseMessage.Content.ReadAsStringAsync();
+        var error = JsonSerializer.Deserialize<Error>(responseJson);
+
+        if (error is null || error.Code != Errors.OAuth.InvalidToken)
+            return responseMessage;
+
+        return await RefreshAsync(requestMessage, responseMessage);
+    }
+
+    private async Task<HttpRequestMessage> InitializeAsync(HttpRequest httpRequest, HttpOptions httpOptions)
+    {
         var message = new HttpRequestMessage();
 
         if (httpOptions.Authentication == AuthenticationType.Bearer)
@@ -93,7 +126,7 @@ public class ApiClient(
 
         if (httpOptions.WithTimezone)
             message.Headers.WithTimeZone(await _localizationManager.GetTimeZoneAsync());
-        
+
         if (httpOptions.WithLocale)
             message.Headers.WithLocale(await _localizationManager.GetLocaleAsync());
 
@@ -103,6 +136,83 @@ public class ApiClient(
         message.Headers.WithCookies(_httpContext.GetCookies());
         message.AddContent(httpRequest, httpOptions);
 
-        return await _httpClient.SendAsync(message);
+        return message;
+    }
+
+    private async Task<HttpResponseMessage> RefreshAsync(
+        HttpRequestMessage requestMessage,
+        HttpResponseMessage responseMessage,
+        CancellationToken cancellationToken = default)
+    {
+        var request = new HttpRequestMessage();
+        request.Headers.WithBasicAuthentication(_clientOptions.ClientId, _clientOptions.ClientSecret);
+        request.Method = HttpMethod.Post;
+        request.RequestUri = new Uri($"{_gatewayOptions.Url}/api/v1/Connect/token");
+        request.Headers.WithCookies(_httpContext.GetCookies());
+        request.Headers.WithUserAgent(_httpContext.GetUserAgent());
+
+        var content = FormUrl.Encode(new TokenRequest()
+        {
+            ClientId = _clientOptions.ClientId,
+            ClientSecret = _clientOptions.ClientSecret,
+            RefreshToken = _cookieAccessor.Get(DefaultCookies.RefreshToken),
+            GrantType = GrantTypes.RefreshToken
+        });
+
+        request.Headers.Add(HeaderTypes.Accept, ContentTypes.Application.XwwwFormUrlEncoded);
+        request.Content = new FormUrlEncodedContent(content);
+
+        var tokenResult = await _httpClient.SendAsync(request, cancellationToken);
+        if (!tokenResult.IsSuccessStatusCode) return responseMessage;
+
+        var tokenResponseJson = await tokenResult.Content.ReadAsStringAsync(cancellationToken);
+        var tokenResponse = JsonSerializer.Deserialize<TokenResponse>(tokenResponseJson);
+        if (tokenResponse is null) return responseMessage;
+
+        _tokenProvider.AccessToken = tokenResponse.AccessToken;
+        _tokenProvider.IdToken = tokenResponse.IdToken;
+
+        var fetchOptions = new FetchOptions()
+        {
+            Method = HttpMethod.Post,
+            Url = $"{_navigationManager.BaseUri}api/authentication/refresh",
+            Body = tokenResponse.RefreshToken
+        };
+
+        var fetchResponse = await _fetchClient.FetchAsync(fetchOptions);
+        if (!fetchResponse.Succeeded)
+        {
+            _tokenProvider.Clear();
+            _navigationManager.NavigateTo(Links.Common.SignIn);
+            return responseMessage;
+        }
+
+        var retry = await CloneAsync(requestMessage, cancellationToken);
+        return await _httpClient.SendAsync(retry, cancellationToken);
+    }
+
+    private async Task<HttpRequestMessage> CloneAsync(HttpRequestMessage request,
+        CancellationToken cancellationToken = default)
+    {
+        var retryRequestMessage = new HttpRequestMessage(request.Method, request.RequestUri);
+
+        foreach (var header in request.Headers.Where(x => x.Key != HeaderTypes.Authorization))
+        {
+            retryRequestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value);
+        }
+
+        if (request.Content != null)
+        {
+            var bytes = await request.Content.ReadAsByteArrayAsync(cancellationToken);
+            retryRequestMessage.Content = new ByteArrayContent(bytes);
+
+            foreach (var header in request.Content.Headers)
+                retryRequestMessage.Content.Headers.TryAddWithoutValidation(header.Key, header.Value);
+        }
+
+        retryRequestMessage.Headers.Add(HeaderTypes.XRetry, "1");
+        retryRequestMessage.Headers.WithBearerAuthentication(_tokenProvider.AccessToken);
+
+        return retryRequestMessage;
     }
 }

@@ -1,6 +1,5 @@
 using eSecurity.Client.Common.Confirmation;
 using eSecurity.Client.Common.Http;
-using eSecurity.Client.Common.Http.Handlers;
 using eSecurity.Client.Common.JS;
 using eSecurity.Client.Common.State;
 using eSecurity.Client.Common.Storage;
@@ -24,11 +23,8 @@ public static class HostApplicationBuilderExtensions
             builder.AddServiceDefaults();
             builder.AddValidation<IAssemblyMarker>();
             builder.Services.AddHttpContextAccessor();
-            builder.Services.AddTransient<RefreshTokenHandler>();
             builder.Services.AddHttpClient("Raw");
-            builder.Services.AddHttpClient<IApiClient, ApiClient>()
-                .AddHttpMessageHandler<RefreshTokenHandler>();
-            
+            builder.Services.AddHttpClient<IApiClient, ApiClient>();
             builder.Services.AddScoped<NavigationContext>();
             builder.Services.AddSecurity();
             builder.Services.AddConfirmation();
