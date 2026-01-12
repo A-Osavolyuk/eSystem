@@ -19,8 +19,11 @@ public class JwtAuthenticationHandler(
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         var header = Request.Headers.Authorization.ToString();
-        if (string.IsNullOrEmpty(header) || !header.StartsWith($"{AuthenticationTypes.Bearer} ")) 
-            return AuthenticateResult.NoResult();
+        if (string.IsNullOrEmpty(header) || !header.StartsWith($"{AuthenticationTypes.Bearer} "))
+        {
+            Context.Items["error"] = Errors.OAuth.InvalidToken;
+            return AuthenticateResult.Fail("Invalid token.");
+        }
         
         var token = header.Split(" ").Last();
         var result = await _tokenValidator.ValidateAsync(token);
