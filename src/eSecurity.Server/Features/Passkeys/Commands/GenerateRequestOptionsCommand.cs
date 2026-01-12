@@ -1,4 +1,5 @@
 ﻿using eSecurity.Core.Common.Requests;
+using eSecurity.Core.Security.Credentials.PublicKey;
 using eSecurity.Core.Security.Credentials.PublicKey.Constants;
 using eSecurity.Server.Common.Storage.Session;
 using eSecurity.Server.Data.Entities;
@@ -8,6 +9,7 @@ using eSecurity.Server.Security.Credentials.PublicKey.Challenge;
 using eSecurity.Server.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
+using CredentialOptions = eSecurity.Server.Security.Credentials.PublicKey.Credentials.CredentialOptions;
 
 namespace eSecurity.Server.Features.Passkeys.Commands;
 
@@ -18,7 +20,6 @@ public class GenerateRequestOptionsCommandHandler(
     IHttpContextAccessor httpContextAccessor,
     ISessionStorage sessionStorage,
     IChallengeFactory challengeFactory,
-    ICredentialFactory credentialFactory,
     IDeviceManager deviceManager,
     IPasskeyManager passkeyManager,
     IOptions<CredentialOptions> options) : IRequestHandler<GenerateRequestOptionsCommand, Result>
@@ -26,7 +27,6 @@ public class GenerateRequestOptionsCommandHandler(
     private readonly IUserManager _userManager = userManager;
     private readonly ISessionStorage _sessionStorage = sessionStorage;
     private readonly IChallengeFactory _challengeFactory = challengeFactory;
-    private readonly ICredentialFactory _credentialFactory = credentialFactory;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
     private readonly CredentialOptions _credentialOptions = options.Value;
@@ -68,9 +68,26 @@ public class GenerateRequestOptionsCommandHandler(
                 Description = "This device does not have a passkey."
             });
         }
+        
+        var allowCredentials = new List<PublicKeyCredentialDescriptor>()
+        {
+            new()
+            {
+                Type = KeyType.PublicKey,
+                Id = passkey.CredentialId,
+                Transports = [CredentialTransports.Internal]
+            }
+        };
 
         var challenge = _challengeFactory.Create();
-        var options = _credentialFactory.CreateRequestOptions(passkey, challenge, _credentialOptions);
+        var options = new PublicKeyCredentialRequestOptions()
+        {
+            Challenge = challenge,
+            Timeout = _credentialOptions.Timeout,
+            Domain = _credentialOptions.Domain,
+            UserVerification = UserVerifications.Required,
+            AllowCredentials = allowCredentials
+        };
 
         _sessionStorage.Set(ChallengeSessionKeys.Assertion, challenge);
         return Results.Ok(options);
