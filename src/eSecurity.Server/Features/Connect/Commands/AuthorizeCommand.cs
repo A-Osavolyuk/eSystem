@@ -131,7 +131,7 @@ public class AuthorizeCommandHandler(
         }
 
         var consent = await _consentManager.FindAsync(user, client, cancellationToken);
-        if (consent is null || !consent.HasScopes(request.Request.Scopes))
+        if (consent is null || !consent.HasScopes(request.Request.Scopes, out _))
         {
             return Results.BadRequest(new Error()
             {

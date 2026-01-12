@@ -69,22 +69,25 @@ public class GrantConsentsCommandHandler(
             return Results.Ok();
         }
 
-        foreach (var requestedScope in request.Request.Scopes.Where(scope => !consent.HasScope(scope)))
+        if (!consent.HasScopes(request.Request.Scopes, out var remainingScopes))
         {
-            var scope = await _scopeManager.FindByNameAsync(requestedScope, cancellationToken);
-            if (scope is null)
+            foreach (var requestedScope in remainingScopes)
             {
-                return Results.BadRequest(new Error()
+                var scope = await _scopeManager.FindByNameAsync(requestedScope, cancellationToken);
+                if (scope is null)
                 {
-                    Code = Errors.OAuth.InvalidScope,
-                    Description = $"'{requestedScope}' scope is not supported."
-                });
+                    return Results.BadRequest(new Error()
+                    {
+                        Code = Errors.OAuth.InvalidScope,
+                        Description = $"'{requestedScope}' scope is not supported."
+                    });
+                }
+
+                var grantResult = await _consentManager.GrantAsync(consent, scope, cancellationToken);
+                if (!grantResult.Succeeded) return grantResult;
             }
-
-            var grantResult = await _consentManager.GrantAsync(consent, scope, cancellationToken);
-            if (!grantResult.Succeeded) return grantResult;
         }
-
+        
         return Results.Ok();
     }
 }

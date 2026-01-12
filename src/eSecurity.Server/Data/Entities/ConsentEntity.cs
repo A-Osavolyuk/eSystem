@@ -11,8 +11,10 @@ public class ConsentEntity : Entity
     public UserEntity User { get; set; } = null!;
     public ClientEntity Client { get; set; } = null!;
     public ICollection<GrantedScopeEntity> GrantedScopes { get; set; } = null!;
-    
-    public bool HasScope(string scope) => GrantedScopes.Any(x => x.Scope.Name == scope);
-    public bool HasScopes(IEnumerable<string> scopes) 
-        => scopes.All(scope => GrantedScopes.Any(grantedScope => grantedScope.Scope.Name == scope));
+
+    public bool HasScopes(IEnumerable<string> scopes, out IEnumerable<string> remainingScopes)
+    {
+        remainingScopes = GrantedScopes.Select(x => x.Scope.Name).Except(scopes);
+        return !remainingScopes.Any();
+    }
 }
