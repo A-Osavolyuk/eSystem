@@ -47,11 +47,13 @@ public class ApiClient(
     };
 
     public async ValueTask<HttpResponse<TResponse>> SendAsync<TResponse>(
-        HttpRequest httpRequest, HttpOptions httpOptions)
+        HttpRequest httpRequest, 
+        HttpOptions httpOptions, 
+        CancellationToken cancellationToken = default)
     {
         try
         {
-            var httpResponseMessage = await SendRequestAsync(httpRequest, httpOptions);
+            var httpResponseMessage = await SendRequestAsync(httpRequest, httpOptions, cancellationToken);
             if (httpResponseMessage.IsSuccessStatusCode)
             {
                 var content = await httpResponseMessage.Content.ReadAsync<TResponse>(_serializationOptions);
@@ -71,11 +73,14 @@ public class ApiClient(
         }
     }
 
-    public async ValueTask<HttpResponse> SendAsync(HttpRequest httpRequest, HttpOptions httpOptions)
+    public async ValueTask<HttpResponse> SendAsync(
+        HttpRequest httpRequest, 
+        HttpOptions httpOptions, 
+        CancellationToken cancellationToken = default)
     {
         try
         {
-            var httpResponseMessage = await SendRequestAsync(httpRequest, httpOptions);
+            var httpResponseMessage = await SendRequestAsync(httpRequest, httpOptions, cancellationToken);
             if (httpResponseMessage.IsSuccessStatusCode)
             {
                 return HttpResponse.Success();
@@ -94,21 +99,24 @@ public class ApiClient(
         }
     }
 
-    private async ValueTask<HttpResponseMessage> SendRequestAsync(HttpRequest httpRequest, HttpOptions httpOptions)
+    private async ValueTask<HttpResponseMessage> SendRequestAsync(
+        HttpRequest httpRequest, 
+        HttpOptions httpOptions, 
+        CancellationToken cancellationToken = default)
     {
         var requestMessage = await InitializeAsync(httpRequest, httpOptions);
-        var responseMessage = await _httpClient.SendAsync(requestMessage);
+        var responseMessage = await _httpClient.SendAsync(requestMessage, cancellationToken);
 
         if (responseMessage.StatusCode != HttpStatusCode.Unauthorized)
             return responseMessage;
 
-        var responseJson = await responseMessage.Content.ReadAsStringAsync();
+        var responseJson = await responseMessage.Content.ReadAsStringAsync(cancellationToken);
         var error = JsonSerializer.Deserialize<Error>(responseJson);
 
         if (error is null || error.Code != Errors.OAuth.InvalidToken)
             return responseMessage;
 
-        return await RefreshAsync(requestMessage, responseMessage);
+        return await RefreshAsync(requestMessage, responseMessage, cancellationToken);
     }
 
     private async Task<HttpRequestMessage> InitializeAsync(HttpRequest httpRequest, HttpOptions httpOptions)
@@ -196,10 +204,11 @@ public class ApiClient(
     {
         var retryRequestMessage = new HttpRequestMessage(request.Method, request.RequestUri);
 
-        foreach (var header in request.Headers.Where(x => x.Key != HeaderTypes.Authorization))
-        {
+        var headers = request.Headers.Where(
+            x => x.Key != HeaderTypes.Authorization);
+        
+        foreach (var header in headers)
             retryRequestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value);
-        }
 
         if (request.Content != null)
         {
@@ -209,8 +218,7 @@ public class ApiClient(
             foreach (var header in request.Content.Headers)
                 retryRequestMessage.Content.Headers.TryAddWithoutValidation(header.Key, header.Value);
         }
-
-        retryRequestMessage.Headers.Add(HeaderTypes.XRetry, "1");
+        
         retryRequestMessage.Headers.WithBearerAuthentication(_tokenProvider.AccessToken);
 
         return retryRequestMessage;
