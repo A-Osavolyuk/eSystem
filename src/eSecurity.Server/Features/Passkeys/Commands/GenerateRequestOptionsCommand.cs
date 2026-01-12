@@ -2,11 +2,9 @@
 using eSecurity.Core.Security.Credentials.PublicKey;
 using eSecurity.Core.Security.Credentials.PublicKey.Constants;
 using eSecurity.Server.Common.Storage.Session;
-using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Credentials.PublicKey.Challenge;
-using eSecurity.Server.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
 using CredentialOptions = eSecurity.Server.Security.Credentials.PublicKey.Credentials.CredentialOptions;
@@ -34,51 +32,6 @@ public class GenerateRequestOptionsCommandHandler(
 
     public async Task<Result> Handle(GenerateRequestOptionsCommand request, CancellationToken cancellationToken)
     {
-        UserEntity? user = null;
-        if (!string.IsNullOrEmpty(request.Request.Username))
-        {
-            user = await _userManager.FindByUsernameAsync(request.Request.Username, cancellationToken);
-            if (user is null) return Results.NotFound("User not found.");
-        }
-        
-        else if (user is null)
-        {
-            user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-            if (user is null) return Results.NotFound("User not found.");
-        }
-
-        var userAgent = _httpContext.GetUserAgent();
-        var ipAddress = _httpContext.GetIpV4();
-        var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
-        if (device is null)
-        {
-            return Results.BadRequest(new Error()
-            {
-                Code = Errors.Common.InvalidDevice,
-                Description = "Invalid device."
-            });
-        }
-        
-        var passkey = await _passkeyManager.FindByDeviceAsync(device, cancellationToken);
-        if (passkey is null)
-        {
-            return Results.BadRequest(new Error()
-            {
-                Code = Errors.Common.InvalidDevice,
-                Description = "This device does not have a passkey."
-            });
-        }
-        
-        var allowCredentials = new List<PublicKeyCredentialDescriptor>()
-        {
-            new()
-            {
-                Type = KeyType.PublicKey,
-                Id = passkey.CredentialId,
-                Transports = [CredentialTransports.Internal]
-            }
-        };
-
         var challenge = _challengeFactory.Create();
         var options = new PublicKeyCredentialRequestOptions()
         {
@@ -86,8 +39,45 @@ public class GenerateRequestOptionsCommandHandler(
             Timeout = _credentialOptions.Timeout,
             Domain = _credentialOptions.Domain,
             UserVerification = UserVerifications.Required,
-            AllowCredentials = allowCredentials
         };
+
+        if (request.Request.UserId.HasValue)
+        {
+            var user = await _userManager.FindByIdAsync(request.Request.UserId.Value, cancellationToken);
+            if (user is null) return Results.NotFound("User not found.");
+
+            var userAgent = _httpContext.GetUserAgent();
+            var ipAddress = _httpContext.GetIpV4();
+            var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
+            if (device is null)
+            {
+                return Results.BadRequest(new Error()
+                {
+                    Code = Errors.Common.InvalidDevice,
+                    Description = "Invalid device."
+                });
+            }
+
+            var passkey = await _passkeyManager.FindByDeviceAsync(device, cancellationToken);
+            if (passkey is null)
+            {
+                return Results.BadRequest(new Error()
+                {
+                    Code = Errors.Common.InvalidDevice,
+                    Description = "This device does not have a passkey."
+                });
+            }
+
+            options.AllowCredentials =
+            [
+                new PublicKeyCredentialDescriptor
+                {
+                    Type = KeyType.PublicKey,
+                    Id = passkey.CredentialId,
+                    Transports = [CredentialTransports.Internal]
+                }
+            ];
+        }
 
         _sessionStorage.Set(ChallengeSessionKeys.Assertion, challenge);
         return Results.Ok(options);

@@ -16,9 +16,9 @@ public class PublicKeyCredentialRequestOptions
 
     [JsonPropertyName("userVerification")]
     public required string UserVerification { get; set; } = UserVerifications.Preferred;
-    
+
     [JsonPropertyName("allowCredentials")]
-    public required List<PublicKeyCredentialDescriptor> AllowCredentials { get; set; }
+    public List<PublicKeyCredentialDescriptor> AllowCredentials { get; set; } = [];
 }
 
 public class PublicKeyCredentialDescriptor
