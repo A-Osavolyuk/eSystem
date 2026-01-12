@@ -7,20 +7,20 @@ using eSecurity.Server.Security.Identity.User;
 
 namespace eSecurity.Server.Features.Connect.Commands;
 
-public record GrantConsentsCommand(GrantConsentsRequest Request) : IRequest<Result>;
+public record GrantConsentCommand(GrantConsentRequest Request) : IRequest<Result>;
 
-public class GrantConsentsCommandHandler(
+public class GrantConsentCommandHandler(
     IUserManager userManager,
     IClientManager clientManager,
     IScopeManager scopeManager,
-    IConsentManager consentManager) : IRequestHandler<GrantConsentsCommand, Result>
+    IConsentManager consentManager) : IRequestHandler<GrantConsentCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IClientManager _clientManager = clientManager;
     private readonly IScopeManager _scopeManager = scopeManager;
     private readonly IConsentManager _consentManager = consentManager;
 
-    public async Task<Result> Handle(GrantConsentsCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(GrantConsentCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null)

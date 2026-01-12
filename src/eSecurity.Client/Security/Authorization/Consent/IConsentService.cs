@@ -6,5 +6,5 @@ namespace eSecurity.Client.Security.Authorization.Consent;
 public interface IConsentService
 {
     public ValueTask<HttpResponse<CheckConsentResponse>> CheckAsync(CheckConsentResponse request);
-    public ValueTask<HttpResponse> GrantAsync(GrantConsentsRequest request);
+    public ValueTask<HttpResponse> GrantAsync(GrantConsentRequest request);
 }

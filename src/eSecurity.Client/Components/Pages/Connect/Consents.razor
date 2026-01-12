@@ -219,7 +219,7 @@
 
     private async Task OnAllowAsync()
     {
-        var request = new GrantConsentsRequest()
+        var request = new GrantConsentRequest()
         {
             UserId = UserState.UserId,
             ClientId = Guid.Parse(_clientId),

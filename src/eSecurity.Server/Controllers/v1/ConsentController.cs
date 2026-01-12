@@ -26,9 +26,9 @@ public class ConsentController(ISender sender) : ControllerBase
     [EndpointDescription("Grant consents")]
     [ProducesResponseType(200)]
     [HttpPost("grant")]
-    public async ValueTask<IActionResult> GrantAsync([FromBody] GrantConsentsRequest request)
+    public async ValueTask<IActionResult> GrantAsync([FromBody] GrantConsentRequest request)
     {
-        var result = await _sender.Send(new GrantConsentsCommand(request));
+        var result = await _sender.Send(new GrantConsentCommand(request));
         return ResultHandler.Handle(result);
     }
 }

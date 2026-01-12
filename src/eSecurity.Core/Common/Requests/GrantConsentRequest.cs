@@ -1,6 +1,6 @@
 namespace eSecurity.Core.Common.Requests;
 
-public class GrantConsentsRequest
+public class GrantConsentRequest
 {
     public required Guid UserId { get; set; }
     public required Guid ClientId { get; set; }

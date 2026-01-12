@@ -21,7 +21,7 @@ public class ConsentService(IApiClient apiClient) : IConsentService
                 Authentication = AuthenticationType.None
             });
 
-    public async ValueTask<HttpResponse> GrantAsync(GrantConsentsRequest request)
+    public async ValueTask<HttpResponse> GrantAsync(GrantConsentRequest request)
         => await _apiClient.SendAsync(
             new HttpRequest()
             {
