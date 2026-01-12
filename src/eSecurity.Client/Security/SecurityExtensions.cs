@@ -4,6 +4,7 @@ using eSecurity.Client.Security.Authentication.Oidc.Token;
 using eSecurity.Client.Security.Authentication.Password;
 using eSecurity.Client.Security.Authentication.TwoFactor;
 using eSecurity.Client.Security.Authorization.Access.Verification;
+using eSecurity.Client.Security.Authorization.Consent;
 using eSecurity.Client.Security.Authorization.Devices;
 using eSecurity.Client.Security.Authorization.LinkedAccounts;
 using eSecurity.Client.Security.Authorization.OAuth;
@@ -63,6 +64,7 @@ public static class SecurityExtensions
             services.AddScoped<IPasskeyService, PasskeyService>();
             services.AddScoped<IPasswordService, PasswordService>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IConsentService, ConsentService>();
         }
     }
 }

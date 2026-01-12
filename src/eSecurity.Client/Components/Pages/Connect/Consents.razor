@@ -1,6 +1,7 @@
 @page "/connect/consents"
 
 @using eSecurity.Client.Security.Authentication.Oidc
+@using eSecurity.Client.Security.Authorization.Consent
 @using eSecurity.Client.Security.Identity
 @using eSecurity.Core.Security.Authentication.Oidc.Client
 @using eSystem.Core.Security.Authentication.Oidc
@@ -8,6 +9,7 @@
 @inherits PageBase
 
 @inject IConnectService ConnectService
+@inject IConsentService ConsentService
 @inject IUserService UserService
 
 <Title Text="Grant consents"></Title>
@@ -224,7 +226,7 @@
             Scopes = _scopes
         };
 
-        var result = await ConnectService.GrantConsentsAsync(request);
+        var result = await ConsentService.GrantAsync(request);
         if (result.Succeeded) NavigationManager.NavigateTo(ReturnUrl);
         else
         {

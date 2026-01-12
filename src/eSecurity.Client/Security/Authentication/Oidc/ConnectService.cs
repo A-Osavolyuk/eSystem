@@ -84,17 +84,4 @@ public class ConnectService(IApiClient apiClient) : IConnectService
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
-
-    public async ValueTask<HttpResponse> GrantConsentsAsync(GrantConsentsRequest request)
-        => await _apiClient.SendAsync(
-            new HttpRequest()
-            {
-                Method = HttpMethod.Post,
-                Url = "api/v1/Connect/consents/grant",
-                Data = request
-            }, new HttpOptions()
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.None
-            });
 }
