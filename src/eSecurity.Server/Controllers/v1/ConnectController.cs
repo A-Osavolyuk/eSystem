@@ -80,16 +80,6 @@ public class ConnectController(ISender sender) : ControllerBase
         return ResultHandler.Handle(result);
     }
 
-    [EndpointSummary("Grant consents")]
-    [EndpointDescription("Grant consents")]
-    [ProducesResponseType(200)]
-    [HttpPost("consents/grant")]
-    public async ValueTask<IActionResult> GrantConsentsAsync([FromBody] GrantConsentsRequest request)
-    {
-        var result = await _sender.Send(new GrantConsentsCommand(request));
-        return ResultHandler.Handle(result);
-    }
-
     [EndpointSummary("Token")]
     [EndpointDescription("Token")]
     [ProducesResponseType(200)]
