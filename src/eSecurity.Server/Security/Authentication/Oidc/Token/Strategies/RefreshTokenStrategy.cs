@@ -65,8 +65,7 @@ public class RefreshTokenStrategy(
         var protector = _protectionProvider.CreateProtector(ProtectionPurposes.RefreshToken);
         var hasher = _hasherProvider.GetHasher(HashAlgorithm.Sha512);
         var unprotectedToken = protector.Unprotect(refreshPayload.RefreshToken!);
-        var incomingHash = hasher.Hash(unprotectedToken);
-        var refreshToken = await _tokenManager.FindByTokenAsync(incomingHash, cancellationToken);
+        var refreshToken = await _tokenManager.FindByTokenAsync(unprotectedToken, cancellationToken);
         if (refreshToken is null || !refreshToken.IsValid)
             return Results.NotFound(new Error()
             {
