@@ -1,0 +1,163 @@
+﻿@using eSecurity.Client.Common.Assets
+@using eSecurity.Client.Common.JS.WebAuthN
+@using eSecurity.Client.Security
+@using eSecurity.Client.Security.Authentication
+@using eSecurity.Client.Security.Credentials.PublicKey
+@using eSecurity.Core.Security.Authentication.SignIn
+@using eSecurity.Core.Security.Credentials.PublicKey
+
+@inject NavigationManager NavigationManager
+@inject WebAuthNManager WebAuthNManager
+@inject AuthenticationManager AuthenticationManager
+@inject UserState UserState
+@inject IPasskeyService PasskeyService
+@inject ISecurityService SecurityService
+@inject ISnackbar Snackbar
+
+@if (_isLoading)
+{
+    <MudStack Row="true" Justify="Justify.Center" AlignItems="AlignItems.Center" Class="my-3">
+        <MudProgressCircular Size="Size.Small" Indeterminate="true" Color="Color.Primary"/>
+        <MudTextM3 Typo="TypoM3.Body" Size="Size.Small" Class="opacity-50">
+            Waiting for input from browser interaction...
+        </MudTextM3>
+    </MudStack>
+}
+else
+{
+    if (_showError)
+    {
+        <MudStack Spacing="3">
+            <MudAlert
+                Severity="Severity.Error"
+                Variant="Variant.Outlined"
+                Class="w-100"
+                Dense="true"
+                ContentAlignment="HorizontalAlignment.Center">
+                <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Align="Align.Center" Class="w-100">
+                    Failed on using passkey
+                </MudTextM3>
+            </MudAlert>
+            <MudButton
+                StartIcon="@GoogleIcons.MaterialSymbols.Outlined.Passkey"
+                ButtonType="ButtonType.Button"
+                OnClick="@(async () => await OnSubmitAsync())"
+                Variant="Variant.Filled"
+                Color="@Color.Info"
+                Size="Size.Medium"
+                FullWidth="true">
+                Retry passkey
+            </MudButton>
+        </MudStack>
+    }
+    else
+    {
+        <MudButton
+            StartIcon="@GoogleIcons.MaterialSymbols.Outlined.Passkey"
+            ButtonType="ButtonType.Button"
+            OnClick="@(async () => await OnSubmitAsync())"
+            Variant="Variant.Filled"
+            Color="@Color.Info"
+            Size="Size.Medium"
+            FullWidth="true">
+            Continue with Passkey
+        </MudButton>
+    }
+}
+
+@code {
+    private bool _showError;
+    private bool _isLoading;
+
+    private async Task OnSubmitAsync()
+    {
+        _isLoading = true;
+        _showError = false;
+
+        var request = new GenerateRequestOptionsRequest();
+        var result = await PasskeyService.GenerateRequestOptionsAsync(request);
+        if (result.Succeeded)
+        {
+            var options = result.Get()!;
+            await VerifyAsync(options);
+        }
+        else
+        {
+            _showError = true;
+            _isLoading = false;
+
+            var error = result.GetError();
+            Snackbar.Add(error.Description, Severity.Error);
+        }
+
+        _isLoading = false;
+    }
+
+    private async Task VerifyAsync(PublicKeyCredentialRequestOptions options)
+    {
+        var authenticateResult = await WebAuthNManager.AuthenticateAsync(options);
+        if (authenticateResult.Success)
+        {
+            var credential = authenticateResult.Get<PublicKeyCredential>();
+            var request = new SignInRequest()
+            {
+                Payload = new PasskeySignInPayload()
+                {
+                    Credential = credential
+                }
+            };
+
+            var result = await SecurityService.SignInAsync(request);
+            if (result.Succeeded)
+            {
+                var response = result.Get()!;
+                var sessionResult = await SecurityService.LoadSignInSessionAsync(response.SessionId);
+                if (sessionResult.Succeeded)
+                {
+                    var session = sessionResult.Get();
+
+                    if (session.UserId.HasValue)
+                    {
+                        UserState.UserId = session.UserId.Value;
+                        AuthenticationManager.Authorize();
+                    }
+                    else
+                    {
+                        _showError = true;
+                        _isLoading = false;
+
+                        Snackbar.Add("Invalid session", Severity.Error);
+                    }
+                }
+                else
+                {
+                    _showError = true;
+                    _isLoading = false;
+
+                    var error = result.GetError();
+                    Snackbar.Add(error.Description, Severity.Error);
+                }
+            }
+            else
+            {
+                _showError = true;
+                _isLoading = false;
+
+                var error = result.GetError();
+                if (error.Code == Errors.Common.AccountLockedOut)
+                {
+                    NavigationManager.NavigateTo(Links.Common.AccountLocked);
+                }
+                else
+                {
+                    Snackbar.Add(error.Description, Severity.Error);
+                }
+            }
+        }
+        else
+        {
+            _showError = true;
+            _isLoading = false;
+        }
+    }
+}

@@ -112,7 +112,7 @@
     {
         _isLoading = true;
         _showError = false;
-        var request = new GenerateRequestOptionsRequest() { Username = UserState.Credentials!.Username! };
+        var request = new GenerateRequestOptionsRequest() { UserId = UserState.UserId! };
         var result = await PasskeyService.GenerateRequestOptionsAsync(request);
 
         if (result.Succeeded)

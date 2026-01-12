@@ -6,7 +6,6 @@ public static class Links
     {
         public const string SignIn = "/sign-in";
         public const string SignUp = "/sign-up";
-        public const string WebAuthN = "/webauthn";
         public const string UnlockAccount = "/unlock-account";
         public const string RecoverAccount = "/recover-account";
         public const string CompleteRegistration = "/complete-registration";

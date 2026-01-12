@@ -67,17 +67,7 @@
             <MudStack Spacing="1">
                 <MudPaper Class="pa-3" Outlined="true">
                     <MudStack Spacing="1">
-                        <MudLoadingButton
-                            LoadingAdornment="Adornment.End"
-                            ButtonType="ButtonType.Button"
-                            StartIcon="@Icons.Material.Filled.Key"
-                            Variant="Variant.Filled"
-                            Color="Color.Info"
-                            Href="@Links.Common.WebAuthN"
-                            Size="Size.Medium"
-                            FullWidth="true">
-                            Continue with Passkey
-                        </MudLoadingButton>
+                        <PasskeySignIn/>
                         <Providers/>
                     </MudStack>
                 </MudPaper>
