@@ -165,7 +165,7 @@
                     Snackbar.Add("Device successfully trusted", Severity.Success);
 
                     var builder = QueryBuilder.Create()
-                        .WithUri(Links.Session.TwoFactorSignIn)
+                        .WithUri(Links.Session.TwoFactor)
                         .WithQueryParam("sid", SessionId.ToString());
 
                     NavigationManager.NavigateTo(builder.Build());

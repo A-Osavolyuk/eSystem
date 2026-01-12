@@ -41,7 +41,7 @@ public static class Links
 
     public static class Session
     {
-        public const string TwoFactorSignIn = "/session/two-factor";
+        public const string TwoFactor = "/session/two-factor";
         public const string DeviceTrust = "/session/trust-device";
     }
 
@@ -57,7 +57,6 @@ public static class Links
     public static class OAuth
     {
         public const string SignUp = "/oauth/sign-up";
-        public const string SignIn = "/oauth/sign-in";
         public const string Error = "/oauth/error";
         public const string Handle = "/oauth/handle";
     }

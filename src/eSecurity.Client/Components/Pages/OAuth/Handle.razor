@@ -1,6 +1,7 @@
 ﻿@page "/oauth/handle"
 
 @using eSecurity.Client.Security
+@using eSecurity.Core.Security.Authentication.SignIn.Session
 @using eSecurity.Core.Security.Authorization.OAuth
 
 @inherits PageBase
@@ -65,11 +66,38 @@
                     return;
                 }
 
-                NavigationManager.NavigateTo(QueryBuilder.Create()
-                    .WithUri(session.OAuthFlow.Value == OAuthFlow.SignIn ? Links.OAuth.SignIn : Links.OAuth.SignUp)
-                    .WithQueryParam("sid", SessionId.ToString())
-                    .WithQueryParam("redirect_uri", GetRedirectUri(state))
-                    .Build());
+                if (session.OAuthFlow.Value == OAuthFlow.SignIn)
+                {
+                    if (session.NextStep == SignInStep.Complete)
+                    {
+                        NavigationManager.NavigateTo(GetRedirectUri(state));
+                    }
+                    else if (session.NextStep == SignInStep.TwoFactor)
+                    {
+                        NavigationManager.NavigateTo(QueryBuilder.Create()
+                            .WithUri(Links.Session.TwoFactor)
+                            .WithQueryParam("sid", SessionId.ToString())
+                            .WithQueryParam("redirect_uri", GetRedirectUri(state))
+                            .Build());
+                    }
+                    else
+                    {
+                        NavigationManager.NavigateTo(QueryBuilder.Create()
+                            .WithUri(Links.OAuth.Error)
+                            .WithQueryParam("error", Errors.Common.InvalidSession)
+                            .WithQueryParam("error_description", "Invalid session.")
+                            .Build());
+                    }
+                }
+                else
+                {
+                    NavigationManager.NavigateTo(QueryBuilder.Create()
+                        .WithUri(Links.OAuth.SignUp)
+                        .WithQueryParam("sid", SessionId.ToString())
+                        .WithQueryParam("redirect_uri", GetRedirectUri(state))
+                        .Build());
+                }
+                
             }
             else
             {

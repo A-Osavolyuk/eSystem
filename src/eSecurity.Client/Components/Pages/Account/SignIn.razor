@@ -176,7 +176,7 @@
                         case SignInStep.TwoFactor:
                         {
                             var builder = QueryBuilder.Create()
-                                .WithUri(Links.Session.TwoFactorSignIn)
+                                .WithUri(Links.Session.TwoFactor)
                                 .WithQueryParam("sid", session.Id.ToString());
 
                             if (!string.IsNullOrEmpty(ReturnUrl))
