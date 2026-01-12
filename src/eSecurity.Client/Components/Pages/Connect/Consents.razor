@@ -163,22 +163,54 @@
     {
         var decodedQuery = HttpUtility.UrlDecode(ReturnUrl);
         var queryParams = QueryParser.GetQueryParameters(decodedQuery);
-
-        if (!UserState.IsAuthenticated)
-        {
-            var redirectUri = queryParams["redirect_uri"];
-            var builder = QueryBuilder.Create()
-                .WithUri(redirectUri)
-                .WithQueryParam("error", Errors.OAuth.LoginRequired)
-                .WithQueryParam("error_description", "User must pass authentication first.");
-
-            NavigationManager.NavigateTo(builder.Build());
-        }
-
-        _scopes = queryParams["scope"].Split(" ").ToList();
+        
         _clientId = queryParams["client_id"];
         _redirectUri = queryParams["redirect_uri"];
+        
+        if (!UserState.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo(QueryBuilder.Create()
+                .WithUri(_redirectUri)
+                .WithQueryParam("error", Errors.OAuth.LoginRequired)
+                .WithQueryParam("error_description", "User must pass authentication first.")
+                .Build());
+        }
 
+        var request = new CheckConsentRequest()
+        {
+            ClientId = Guid.Parse(_clientId),
+            UserId = UserState.UserId,
+            Scopes = queryParams["scope"].Split(' ').ToList()
+        };
+
+        var result = await ConsentService.CheckAsync(request);
+        if (result.Succeeded)
+        {
+            var response = result.Get();
+            if (response is { Granted: true, RemainingScopes.Count: 0 })
+            {
+                NavigationManager.NavigateTo(ReturnUrl);
+            }
+            else
+            {
+                _scopes = response.RemainingScopes;
+                await InitializeAsync();
+            }
+
+        }
+        else
+        {
+            var error = result.GetError();
+            NavigationManager.NavigateTo(QueryBuilder.Create()
+                .WithUri(_redirectUri)
+                .WithQueryParam("error", error.Code)
+                .WithQueryParam("error_description", error.Description)
+                .Build());
+        }
+    }
+
+    private async Task InitializeAsync()
+    {
         var result = await ConnectService.GetClientInfoAsync(_clientId);
         if (result.Succeeded)
         {
@@ -188,7 +220,11 @@
         else
         {
             var error = result.GetError();
-            Snackbar.Add(error.Description, Severity.Error);
+            NavigationManager.NavigateTo(QueryBuilder.Create()
+                .WithUri(_redirectUri)
+                .WithQueryParam("error", error.Code)
+                .WithQueryParam("error_description", error.Description)
+                .Build());
         }
     }
 
@@ -203,18 +239,21 @@
         else
         {
             var error = result.GetError();
-            Snackbar.Add(error.Description, Severity.Error);
+            NavigationManager.NavigateTo(QueryBuilder.Create()
+                .WithUri(_redirectUri)
+                .WithQueryParam("error", error.Code)
+                .WithQueryParam("error_description", error.Description)
+                .Build());
         }
     }
 
     private void OnCancel()
     {
-        var builder = QueryBuilder.Create()
+        NavigationManager.NavigateTo(QueryBuilder.Create()
             .WithUri(_redirectUri)
             .WithQueryParam("error", Errors.OAuth.AccessDenied)
-            .WithQueryParam("error_description", "The resource owner or authorization server denied the request");
-
-        NavigationManager.NavigateTo(builder.Build());
+            .WithQueryParam("error_description", "The resource owner or authorization server denied the request")
+            .Build());
     }
 
     private async Task OnAllowAsync()
@@ -231,12 +270,11 @@
         else
         {
             var error = result.GetError();
-            var builder = QueryBuilder.Create()
+            NavigationManager.NavigateTo(QueryBuilder.Create()
                 .WithUri(_redirectUri)
                 .WithQueryParam("error", error.Code)
-                .WithQueryParam("error_description", error.Description);
-
-            NavigationManager.NavigateTo(builder.Build());
+                .WithQueryParam("error_description", error.Description)
+                .Build());
         }
     }
 
