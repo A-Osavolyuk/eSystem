@@ -1,4 +1,5 @@
-﻿@using eSecurity.Client.Security.Credentials.PublicKey
+﻿@using eSecurity.Client.Common.Assets
+@using eSecurity.Client.Security.Credentials.PublicKey
 @using eSecurity.Core.Common.DTOs
 @inject NavigationManager NavigationManager
 @inject UserState UserState
@@ -9,7 +10,7 @@
 <MudStack Spacing="0" Class="px-5 pb-2">
     <MudStack Row="true" Spacing="3">
         <MudStack>
-            <MudIcon Icon="@Icons.Material.Filled.Key" Class="mt-1"/>
+            <MudIcon Icon="@GoogleIcons.MaterialSymbols.Outlined.Passkey" Class="mt-1"/>
         </MudStack>
         <MudStack Spacing="3">
             <MudStack Spacing="0">
