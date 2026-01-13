@@ -13,7 +13,7 @@ public static class DataExtensions
             builder.Services.AddDbContext<AuthDbContext>((sp, options) =>
             {
                 var cfg = sp.GetRequiredService<IConfiguration>();
-                options.UseSqlServer(cfg.GetConnectionString("auth-db"));
+                options.UseNpgsql(cfg.GetConnectionString("auth-db"));
                 options.AddInterceptors(sp.GetRequiredService<AuditInterceptor>());
                 options.UseAsyncSeeding(async (ctx, _, ct) =>
                 {

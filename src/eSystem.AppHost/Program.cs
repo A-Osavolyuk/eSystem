@@ -14,7 +14,7 @@ var redisCache = builder.AddRedis()
     .WithDataVolume()
     .WithRedisInsight(containerName: "redis-insights");
 
-var sqlServer = builder.AddSqlServer()
+var postgres = builder.AddPostgres()
     .WithLifetime(ContainerLifetime.Persistent)
     .WithDataVolume()
     .AddDatabase("auth-db", "AuthDB");
@@ -43,7 +43,7 @@ var eMessageServer = builder.AddProject<Projects.eSystem_MessageBus>("message-bu
     .WaitFor(telegramService);
 
 var eSecurityServer = builder.AddProject<Projects.eSecurity_Server>("e-security-server")
-    .WithReference(sqlServer).WaitFor(sqlServer)
+    .WithReference(postgres).WaitFor(postgres)
     .WithReference(redisCache).WaitFor(redisCache)
     .WithReference(rabbitMq).WaitFor(rabbitMq)
     .WaitFor(eMessageServer).WithRelationship(eMessageServer.Resource, "Messaging");
