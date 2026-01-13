@@ -7,7 +7,6 @@ using eSecurity.Server.Security.Authentication.Password;
 using eSecurity.Server.Security.Authentication.SignIn;
 using eSecurity.Server.Security.Authentication.TwoFactor;
 using eSecurity.Server.Security.Authorization.OAuth;
-using eSecurity.Server.Security.Authorization.OAuth.Schemes;
 using eSystem.Core.Common.Configuration;
 using eSystem.Core.Security.Authentication.Oidc;
 using eSystem.Core.Security.Authentication.Oidc.Authorization;
@@ -87,10 +86,10 @@ public static class AuthenticationExtensions
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = AuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = ExternalAuthenticationDefaults.AuthenticationScheme;
             })
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie(AuthenticationDefaults.AuthenticationScheme, options =>
+            .AddCookie(ExternalAuthenticationDefaults.AuthenticationScheme, options =>
             {
                 options.Cookie.Name = DefaultCookies.External;
                 options.Cookie.HttpOnly = true;
@@ -106,7 +105,7 @@ public static class AuthenticationExtensions
                 options.ClientSecret = settings.ClientSecret;
                 options.SaveTokens = settings.SaveTokens;
                 options.CallbackPath = settings.CallbackPath;
-                options.SignInScheme = AuthenticationDefaults.AuthenticationScheme;
+                options.SignInScheme = ExternalAuthenticationDefaults.AuthenticationScheme;
             })
             .AddFacebook(options =>
             {
@@ -117,7 +116,7 @@ public static class AuthenticationExtensions
                 options.ClientSecret = settings.ClientSecret;
                 options.SaveTokens = settings.SaveTokens;
                 options.CallbackPath = settings.CallbackPath;
-                options.SignInScheme = AuthenticationDefaults.AuthenticationScheme;
+                options.SignInScheme = ExternalAuthenticationDefaults.AuthenticationScheme;
             })
             .AddMicrosoftAccount(options =>
             {
@@ -128,7 +127,7 @@ public static class AuthenticationExtensions
                 options.ClientSecret = settings.ClientSecret;
                 options.SaveTokens = settings.SaveTokens;
                 options.CallbackPath = settings.CallbackPath;
-                options.SignInScheme = AuthenticationDefaults.AuthenticationScheme;
+                options.SignInScheme = ExternalAuthenticationDefaults.AuthenticationScheme;
             })
             .AddScheme<JwtAuthenticationSchemeOptions, JwtAuthenticationHandler>(
                 JwtBearerDefaults.AuthenticationScheme, _ => { })

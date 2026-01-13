@@ -1,8 +1,8 @@
 ﻿using eSecurity.Server.Common.Responses;
 using eSecurity.Server.Features.OAuth;
 using eSecurity.Server.Security.Authentication.SignIn;
-using eSecurity.Server.Security.Authorization.OAuth.Schemes;
 using eSystem.Core.Common.Http.Constants;
+using eSystem.Core.Security.Authentication.Schemes;
 
 namespace eSecurity.Server.Controllers.v1;
 
@@ -40,7 +40,7 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
     public async ValueTask<IActionResult> HandleOAuthLoginAsync(string returnUri, string? remoteError = null)
     {
         var authenticationResult = await _signInManager.AuthenticateAsync(
-            AuthenticationDefaults.AuthenticationScheme);
+            ExternalAuthenticationDefaults.AuthenticationScheme);
         
         var result = await _sender.Send(new HandleLoginCommand(authenticationResult, remoteError, returnUri));
         return Redirect(result.Value!.ToString()!);
