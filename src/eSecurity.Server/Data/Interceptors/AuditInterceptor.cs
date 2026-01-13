@@ -16,12 +16,12 @@ public class AuditInterceptor : SaveChangesInterceptor
         {
             if (entry.State == EntityState.Added)
             {
-                entry.Entity.CreateDate = DateTime.Now;
+                entry.Entity.CreateDate = DateTimeOffset.UtcNow;
             }
             else if (entry.State == EntityState.Modified)
             {
                 entry.Property(e => e.CreateDate).IsModified = false;
-                entry.Entity.UpdateDate = DateTime.Now;
+                entry.Entity.UpdateDate = DateTimeOffset.UtcNow;
             }
         }
 
