@@ -11,10 +11,10 @@ namespace eSecurity.Server.Features.OAuth;
 public sealed record OAuthLoginCommand(string Provider, string ReturnUri, string State) : IRequest<Result>;
 
 public sealed class OAuthLoginCommandHandler(
-    ISignInSessionManager _signInSessionManager,
+    ISignInSessionManager signInSessionManager,
     IOptions<SignInOptions> options) : IRequestHandler<OAuthLoginCommand, Result>
 {
-    private readonly ISignInSessionManager _signInSessionManager = _signInSessionManager;
+    private readonly ISignInSessionManager _signInSessionManager = signInSessionManager;
     private readonly SignInOptions _options = options.Value;
 
     public async Task<Result> Handle(OAuthLoginCommand request,

@@ -16,7 +16,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
             .FirstOrDefaultAsync(u => _context.UserEmails
                 .Any(e => e.UserId == u.Id &&
                           e.Type == EmailType.Primary &&
-                          e.Email == normalizedEmail), cancellationToken);
+                          e.NormalizedEmail == normalizedEmail), cancellationToken);
 
         return user;
     }
