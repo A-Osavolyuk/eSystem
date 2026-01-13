@@ -41,8 +41,8 @@ public class IntrospectionCommandHandler(
         var incomingHash = hasher.Hash(request.Request.Token);
 
         var token = opaqueTokenType.HasValue
-            ? await _tokenManager.FindByTokenAsync(incomingHash, opaqueTokenType.Value, cancellationToken)
-            : await _tokenManager.FindByTokenAsync(incomingHash, cancellationToken);
+            ? await _tokenManager.FindByHashAsync(incomingHash, opaqueTokenType.Value, cancellationToken)
+            : await _tokenManager.FindByHashAsync(incomingHash, cancellationToken);
         
         if (token is null || !token.IsValid) return Results.Ok(IntrospectionResponse.Fail());
         

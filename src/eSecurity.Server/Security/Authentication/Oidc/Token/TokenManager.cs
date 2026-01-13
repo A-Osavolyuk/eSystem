@@ -8,11 +8,11 @@ public sealed class TokenManager(
 {
     private readonly AuthDbContext _context = context;
 
-    public async Task<OpaqueTokenEntity?> FindByTokenAsync(string token, OpaqueTokenType type, 
+    public async Task<OpaqueTokenEntity?> FindByHashAsync(string hash, OpaqueTokenType type, 
         CancellationToken cancellationToken = default)
     {
         return await _context.OpaqueTokens
-            .Where(x => x.TokenHash == token && x.TokenType == type)
+            .Where(x => x.TokenHash == hash && x.TokenType == type)
             .Include(x => x.Session)
             .ThenInclude(x => x.Device)
             .Include(x => x.Client)
@@ -21,11 +21,11 @@ public sealed class TokenManager(
             .FirstOrDefaultAsync(cancellationToken);
     }
     
-    public async Task<OpaqueTokenEntity?> FindByTokenAsync(string token,
+    public async Task<OpaqueTokenEntity?> FindByHashAsync(string hash,
         CancellationToken cancellationToken = default)
     {
         return await _context.OpaqueTokens
-            .Where(x => x.TokenHash == token)
+            .Where(x => x.TokenHash == hash)
             .Include(x => x.Session)
             .ThenInclude(x => x.Device)
             .Include(x => x.Client)
