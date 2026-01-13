@@ -1,4 +1,4 @@
-﻿namespace eSecurity.Core.Security.Authentication.SignIn.Session;
+﻿namespace eSecurity.Core.Security.Authentication.SignIn;
 
 public class TwoFactorSignInPayload : SignInPayload
 {
