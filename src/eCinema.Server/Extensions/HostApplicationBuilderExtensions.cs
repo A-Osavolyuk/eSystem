@@ -26,7 +26,7 @@ public static class HostApplicationBuilderExtensions
             builder.AddRedisCache();
             
             builder.Services.AddScoped<ICacheService, CacheService>();
-            builder.Services.AddSingleton<IOpenIdDiscoveryProvider, OpenIdDiscoveryProvider>();
+            builder.Services.AddScoped<IOpenIdDiscoveryProvider, OpenIdDiscoveryProvider>();
             builder.Services.AddMediatR(cfg =>
             {
                 cfg.RegisterServicesFromAssemblyContaining<IAssemblyMarker>();
