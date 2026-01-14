@@ -6,7 +6,8 @@ using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Phone;
 using eSecurity.Server.Security.Identity.Privacy;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Common.Http.Constants;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.Oidc;
 using eSystem.Core.Security.Identity.Claims;
 
@@ -45,11 +46,11 @@ public class GetUserInfoQueryHandler(
             const string description = "Missing access_token";
 
             _httpContext.Response.Headers.Append(HeaderTypes.WwwAuthenticate,
-                $"Bearer error=\"{Errors.OAuth.InvalidRequest}\", error_description=\"{description}\"");
+                $"Bearer error=\"{ErrorTypes.OAuth.InvalidRequest}\", error_description=\"{description}\"");
 
             return Results.Unauthorized(new Error
             {
-                Code = Errors.OAuth.InvalidRequest,
+                Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = description
             });
         }
@@ -72,11 +73,11 @@ public class GetUserInfoQueryHandler(
             const string description = "The access token does not contain the required 'openid' scope";
             
             _httpContext.Response.Headers.Append(HeaderTypes.WwwAuthenticate,
-                $"Bearer error=\"{Errors.OAuth.InvalidRequest}\", error_description=\"{description}\"");
+                $"Bearer error=\"{ErrorTypes.OAuth.InvalidRequest}\", error_description=\"{description}\"");
             
             return Results.Forbidden(new Error
             {
-                Code = Errors.OAuth.InsufficientScope,
+                Code = ErrorTypes.OAuth.InsufficientScope,
                 Description = description
             });
         }
@@ -88,11 +89,11 @@ public class GetUserInfoQueryHandler(
             const string description = "The access token is invalid or the user does not exist";
 
             _httpContext.Response.Headers.Append(HeaderTypes.WwwAuthenticate,
-                $"Bearer error=\"{Errors.OAuth.InvalidToken}\", error_description=\"{description}\"");
+                $"Bearer error=\"{ErrorTypes.OAuth.InvalidToken}\", error_description=\"{description}\"");
 
             return Results.Unauthorized(new Error
             {
-                Code = Errors.OAuth.InvalidToken,
+                Code = ErrorTypes.OAuth.InvalidToken,
                 Description = description
             });
         }

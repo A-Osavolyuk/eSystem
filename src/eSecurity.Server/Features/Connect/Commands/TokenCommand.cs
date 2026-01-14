@@ -2,6 +2,8 @@
 using eSecurity.Core.Security.Authentication.Oidc;
 using eSecurity.Server.Security.Authentication.Oidc.Token;
 using eSecurity.Server.Security.Authentication.Oidc.Token.Strategies;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.Oidc;
 using eSystem.Core.Security.Authentication.Oidc.Token;
 
@@ -21,21 +23,21 @@ public class TokenCommandHandler(
         if (string.IsNullOrEmpty(request.Request.GrantType))
             return Results.BadRequest(new Error()
             {
-                Code = Errors.OAuth.InvalidRequest,
+                Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "grant_type is required"
             });
 
         if (string.IsNullOrEmpty(request.Request.ClientId))
             return Results.BadRequest(new Error()
             {
-                Code = Errors.OAuth.InvalidRequest,
+                Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "client_id is required"
             });
 
         if (!_configuration.GrantTypesSupported.Contains(request.Request.GrantType))
             return Results.BadRequest(new Error()
             {
-                Code = Errors.OAuth.InvalidGrant,
+                Code = ErrorTypes.OAuth.InvalidGrant,
                 Description = $"'{request.Request.GrantType}' grant type is not supported"
             });
 
@@ -63,7 +65,7 @@ public class TokenCommandHandler(
         if (payload is null)
             return Results.BadRequest(new Error
             {
-                Code = Errors.OAuth.UnsupportedGrantType,
+                Code = ErrorTypes.OAuth.UnsupportedGrantType,
                 Description = $"'{request.Request.GrantType}' grant type is not supported"
             });
 

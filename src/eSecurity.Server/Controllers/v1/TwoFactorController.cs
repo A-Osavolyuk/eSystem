@@ -1,6 +1,8 @@
 using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Features.TwoFactor.Commands;
-using eSystem.Core.Common.Http.Constants;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Extensions;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Controllers.v1;
 
@@ -20,7 +22,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> EnableAsync([FromBody] EnableTwoFactorRequest request)
     {
         var result = await _sender.Send(new EnableTwoFactorCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Disable 2FA")]
@@ -31,7 +33,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> DisableAsync([FromBody] DisableTwoFactorRequest request)
     {
         var result = await _sender.Send(new DisableTwoFactorCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Prefer 2FA method")]
@@ -42,7 +44,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> PreferAsync([FromBody] PreferTwoFactorMethodRequest request)
     {
         var result = await _sender.Send(new PreferTwoFactorMethodCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Generate QR code")]
@@ -53,7 +55,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GenerateQrCodeAsync([FromBody] GenerateQrCodeRequest request)
     {
         var result = await _sender.Send(new GenerateQrCodeCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Regenerate QR code")]
@@ -64,7 +66,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> RegenerateQrCodeAsync([FromBody] RegenerateQrCodeRequest request)
     {
         var result = await _sender.Send(new RegenerateQrCodeCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Generate recovery codes")]
@@ -75,7 +77,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GenerateRecoveryCodesAsync([FromBody] GenerateRecoveryCodesRequest request)
     {
         var result = await _sender.Send(new GenerateRecoveryCodesCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Load recovery codes")]
@@ -86,7 +88,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> LoadRecoveryCodesAsync([FromBody] LoadRecoveryCodesRequest request)
     {
         var result = await _sender.Send(new LoadRecoveryCodesCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Revoke recovery codes")]
@@ -97,7 +99,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> RevokeRecoveryCodesAsync([FromBody] RevokeRecoveryCodesRequest request)
     {
         var result = await _sender.Send(new RevokeRecoveryCodesCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Verify authenticator")]
@@ -108,7 +110,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> VerifyAuthenticatorAsync([FromBody] VerifyAuthenticatorRequest request)
     {
         var result = await _sender.Send(new VerifyAuthenticatorCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Reconfigure authenticator")]
@@ -119,6 +121,6 @@ public class TwoFactorController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> ReconfigureAuthenticatorAsync([FromBody] ReconfigureAuthenticatorRequest request)
     {
         var result = await _sender.Send(new ReconfigureAuthenticatorCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
 }

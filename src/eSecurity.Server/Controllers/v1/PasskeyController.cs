@@ -1,6 +1,8 @@
 using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Features.Passkeys.Commands;
-using eSystem.Core.Common.Http.Constants;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Extensions;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Controllers.v1;
 
@@ -21,7 +23,7 @@ public class PasskeyController(ISender sender) : ControllerBase
         [FromBody] GenerateCreationOptionsRequest request)
     {
         var result = await _sender.Send(new GenerateCreationOptionsCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Generate public key credential request options")]
@@ -32,7 +34,7 @@ public class PasskeyController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GenerateRequestOptionsAsync([FromBody] GenerateRequestOptionsRequest request)
     {
         var result = await _sender.Send(new GenerateRequestOptionsCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Create passkey")]
@@ -43,7 +45,7 @@ public class PasskeyController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> CreateAsync([FromBody] CreatePasskeyRequest request)
     {
         var result = await _sender.Send(new CreatePasskeyCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Remove passkey")]
@@ -54,7 +56,7 @@ public class PasskeyController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> RemoveAsync([FromBody] RemovePasskeyRequest request)
     {
         var result = await _sender.Send(new RemovePasskeyCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Change passkey display name")]
@@ -65,6 +67,6 @@ public class PasskeyController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> ChangeNameAsync([FromBody] ChangePasskeyNameRequest request)
     {
         var result = await _sender.Send(new ChangePasskeyNameCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
 }

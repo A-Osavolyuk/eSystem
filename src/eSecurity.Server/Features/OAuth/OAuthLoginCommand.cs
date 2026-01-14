@@ -3,6 +3,8 @@ using eSecurity.Server.Common.Responses;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.SignIn.Session;
 using eSecurity.Server.Security.Identity.Options;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 using eSystem.Core.Utilities.Query;
 using Microsoft.AspNetCore.Authentication;
 
@@ -24,7 +26,7 @@ public sealed class OAuthLoginCommandHandler(
         {
             return Results.Found(QueryBuilder.Create()
                 .WithUri(request.ReturnUri)
-                .WithQueryParam("error", Errors.OAuth.ServerError)
+                .WithQueryParam("error", ErrorTypes.OAuth.ServerError)
                 .WithQueryParam("error_description", "OAuth is not allowed")
                 .Build());
         }

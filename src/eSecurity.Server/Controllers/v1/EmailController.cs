@@ -1,6 +1,8 @@
 using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Features.Email.Commands;
-using eSystem.Core.Common.Http.Constants;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Extensions;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Controllers.v1;
 
@@ -20,7 +22,7 @@ public class EmailController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> VerifyAsync([FromBody] VerifyEmailRequest request)
     {
         var result = await _sender.Send(new VerifyEmailCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Check email")]
@@ -31,7 +33,7 @@ public class EmailController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> CheckAsync([FromBody] CheckEmailRequest request)
     {
         var result = await _sender.Send(new CheckEmailCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Add email")]
@@ -42,7 +44,7 @@ public class EmailController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> AddAsync([FromBody] AddEmailRequest request)
     {
         var result = await _sender.Send(new AddEmailCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Change email")]
@@ -53,7 +55,7 @@ public class EmailController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> ChangeAsync([FromBody] ChangeEmailRequest request)
     {
         var result = await _sender.Send(new ChangeEmailCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Reset email")]
@@ -64,7 +66,7 @@ public class EmailController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> ResetAsync([FromBody] ResetEmailRequest request)
     {
         var result = await _sender.Send(new ResetEmailCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Remove email")]
@@ -75,7 +77,7 @@ public class EmailController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> RemoveAsync([FromBody] RemoveEmailRequest request)
     {
         var result = await _sender.Send(new RemoveEmailCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Manage email")]
@@ -86,6 +88,6 @@ public class EmailController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> ManageAsync([FromBody] ManageEmailRequest request)
     {
         var result = await _sender.Send(new ManageEmailCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
 }

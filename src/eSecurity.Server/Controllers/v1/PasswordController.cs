@@ -1,6 +1,8 @@
 using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Features.Password.Commands;
-using eSystem.Core.Common.Http.Constants;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Extensions;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Controllers.v1;
 
@@ -20,7 +22,7 @@ public class PasswordController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> AddAsync([FromBody] AddPasswordRequest request)
     {
         var result = await _sender.Send(new AddPasswordCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Change password")]
@@ -31,7 +33,7 @@ public class PasswordController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> ChangeAsync([FromBody] ChangePasswordRequest request)
     {
         var result = await _sender.Send(new ChangePasswordCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Reset password")]
@@ -42,7 +44,7 @@ public class PasswordController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> ResetAsync([FromBody] ResetPasswordRequest request)
     {
         var result = await _sender.Send(new ResetPasswordCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Remove password")]
@@ -53,7 +55,7 @@ public class PasswordController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> RemoveAsync([FromBody] RemovePasswordRequest request)
     {
         var result = await _sender.Send(new RemovePasswordCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Check password")]
@@ -64,7 +66,7 @@ public class PasswordController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> CheckAsync([FromBody] CheckPasswordRequest request)
     {
         var result = await _sender.Send(new CheckPasswordCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Forgot password")]
@@ -75,6 +77,6 @@ public class PasswordController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> ForgotAsync([FromBody] ForgotPasswordRequest request)
     {
         var result = await _sender.Send(new ForgotPasswordCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
 }

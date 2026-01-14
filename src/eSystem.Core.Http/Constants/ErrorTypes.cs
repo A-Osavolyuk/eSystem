@@ -1,6 +1,6 @@
-namespace eSystem.Core.Common.Results;
+namespace eSystem.Core.Http.Constants;
 
-public static class Errors
+public static class ErrorTypes
 {
     public static class OAuth
     {

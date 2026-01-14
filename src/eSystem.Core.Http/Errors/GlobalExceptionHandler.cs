@@ -1,10 +1,11 @@
 ﻿using eSystem.Core.Common.Exceptions;
-using eSystem.Core.Common.Results;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace eSystem.Core.Common.Errors;
+namespace eSystem.Core.Http.Errors;
 
 public class GlobalExceptionHandler(
     ILogger<GlobalExceptionHandler> logger) : IExceptionHandler
@@ -21,7 +22,7 @@ public class GlobalExceptionHandler(
             httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
             await httpContext.Response.WriteAsJsonAsync(new Error()
             {
-                Code = Results.Errors.OAuth.ServerError,
+                Code = ErrorTypes.OAuth.ServerError,
                 Description = failedValidationException.Message
             }, cancellationToken);
         }
@@ -31,7 +32,7 @@ public class GlobalExceptionHandler(
             httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
             await httpContext.Response.WriteAsJsonAsync(new Error()
             {
-                Code = Results.Errors.OAuth.ServerError,
+                Code = ErrorTypes.OAuth.ServerError,
                 Description = exception.Message
             }, cancellationToken);
         }

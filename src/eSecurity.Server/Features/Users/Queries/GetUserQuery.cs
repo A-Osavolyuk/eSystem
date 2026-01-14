@@ -3,6 +3,7 @@ using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Phone;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Features.Users.Queries;
 

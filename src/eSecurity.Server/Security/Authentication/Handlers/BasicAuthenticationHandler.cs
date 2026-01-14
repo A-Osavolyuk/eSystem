@@ -2,7 +2,8 @@ using System.Security.Claims;
 using System.Text.Encodings.Web;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Oidc.Client;
-using eSystem.Core.Common.Http.Constants;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.Schemes;
 using Microsoft.AspNetCore.Authentication;
 
@@ -30,14 +31,14 @@ public class BasicAuthenticationHandler(
             var value = Encoding.ASCII.GetString(bytes);
             if (!value.Contains(':'))
             {
-                Context.Items["error"] = Errors.OAuth.InvalidClient;
+                Context.Items["error"] = ErrorTypes.OAuth.InvalidClient;
                 return AuthenticateResult.Fail("Unauthorized.");
             }
 
             var valueParts = value.Split(':', 2);
             if (valueParts.Length != 2)
             {
-                Context.Items["error"] = Errors.OAuth.InvalidClient;
+                Context.Items["error"] = ErrorTypes.OAuth.InvalidClient;
                 return AuthenticateResult.Fail("Unauthorized.");
             }
 
@@ -46,7 +47,7 @@ public class BasicAuthenticationHandler(
             var client = await _clientManager.FindByIdAsync(clientId);
             if (client is null)
             {
-                Context.Items["error"] = Errors.OAuth.InvalidClient;
+                Context.Items["error"] = ErrorTypes.OAuth.InvalidClient;
                 return AuthenticateResult.Fail("Unauthorized.");
             }
 
@@ -55,7 +56,7 @@ public class BasicAuthenticationHandler(
                 var clientSecret = valueParts.Last();
                 if (!client.Secret!.Equals(clientSecret))
                 {
-                    Context.Items["error"] = Errors.OAuth.InvalidClient;
+                    Context.Items["error"] = ErrorTypes.OAuth.InvalidClient;
                     return AuthenticateResult.Fail("Unauthorized.");
                 }
             }
@@ -69,14 +70,14 @@ public class BasicAuthenticationHandler(
 
             if (!body.TryGetValue("client_id", out var clientId))
             {
-                Context.Items["error"] = Errors.OAuth.InvalidClient;
+                Context.Items["error"] = ErrorTypes.OAuth.InvalidClient;
                 return AuthenticateResult.Fail("Unauthorized.");
             }
 
             var client = await _clientManager.FindByIdAsync(clientId.ToString());
             if (client is null)
             {
-                Context.Items["error"] = Errors.OAuth.InvalidClient;
+                Context.Items["error"] = ErrorTypes.OAuth.InvalidClient;
                 return AuthenticateResult.Fail("Unauthorized.");
             }
 
@@ -84,7 +85,7 @@ public class BasicAuthenticationHandler(
             {
                 if (!body.TryGetValue("client_secret", out var secret) || !client.Secret!.Equals(secret))
                 {
-                    Context.Items["error"] = Errors.OAuth.InvalidClient;
+                    Context.Items["error"] = ErrorTypes.OAuth.InvalidClient;
                     return AuthenticateResult.Fail("Unauthorized.");
                 }
             }
@@ -98,14 +99,14 @@ public class BasicAuthenticationHandler(
     {
         var error = Context.Items["error"]?.ToString();
 
-        if (string.IsNullOrEmpty(error) || error == Errors.OAuth.ServerError)
+        if (string.IsNullOrEmpty(error) || error == ErrorTypes.OAuth.ServerError)
         {
             Response.StatusCode = StatusCodes.Status500InternalServerError;
             Response.ContentType = ContentTypes.Application.Json;
         
             await Response.WriteAsJsonAsync(new Error()
             {
-                Code = Errors.OAuth.ServerError, 
+                Code = ErrorTypes.OAuth.ServerError, 
                 Description = "Server error."
             });
         }

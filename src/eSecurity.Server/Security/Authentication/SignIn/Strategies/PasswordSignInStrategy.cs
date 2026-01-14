@@ -13,7 +13,9 @@ using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Common.Http.Context;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Extensions;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Security.Authentication.SignIn.Strategies;
 
@@ -48,7 +50,7 @@ public sealed class PasswordSignInStrategy(
         if (payload is not PasswordSignInPayload passwordPayload)
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidPayloadType,
+                Code = ErrorTypes.Common.InvalidPayloadType,
                 Description = "Invalid payload type"
             });
 
@@ -96,7 +98,7 @@ public sealed class PasswordSignInStrategy(
         if (_options.RequireConfirmedEmail && !email.IsVerified)
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.UnverifiedEmail,
+                Code = ErrorTypes.Common.UnverifiedEmail,
                 Description = "Email is not verified.",
                 Details = new() { { "userId", user.Id } }
             });
@@ -107,7 +109,7 @@ public sealed class PasswordSignInStrategy(
         if (lockoutState.Enabled)
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.AccountLockedOut,
+                Code = ErrorTypes.Common.AccountLockedOut,
                 Description = "Account is locked out",
                 Details = new() { { "userId", user.Id } }
             });
@@ -125,7 +127,7 @@ public sealed class PasswordSignInStrategy(
             if (user.FailedLoginAttempts < _options.MaxFailedLoginAttempts)
                 return Results.BadRequest(new Error()
                 {
-                    Code = Errors.Common.FailedLoginAttempt,
+                    Code = ErrorTypes.Common.FailedLoginAttempt,
                     Description = "The password is not valid.",
                     Details = new()
                     {
@@ -144,7 +146,7 @@ public sealed class PasswordSignInStrategy(
 
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.TooManyFailedLoginAttempts,
+                Code = ErrorTypes.Common.TooManyFailedLoginAttempts,
                 Description = "Account is locked out due to too many failed login attempts",
                 Details = new() { { "userId", user.Id } }
             });
@@ -162,7 +164,7 @@ public sealed class PasswordSignInStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.BlockedDevice,
+                Code = ErrorTypes.Common.BlockedDevice,
                 Description = "Cannot sign in, device is blocked."
             });
 

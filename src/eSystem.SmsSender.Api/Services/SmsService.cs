@@ -1,6 +1,6 @@
-﻿using eSystem.Core.Common.Results;
+﻿using eSystem.Core.Http.Results;
 using eSystem.SmsSender.Api.Interfaces;
-using Results = eSystem.Core.Common.Results.Results;
+using Results = eSystem.Core.Http.Results.Results;
 
 namespace eSystem.SmsSender.Api.Services;
 

@@ -29,7 +29,7 @@
         {
             NavigationManager.NavigateTo(QueryBuilder.Create()
                 .WithUri(Links.OAuth.Error)
-                .WithQueryParam("error", Errors.Common.InvalidSession)
+                .WithQueryParam("error", ErrorTypes.Common.InvalidSession)
                 .WithQueryParam("error_description", "Invalid session.")
                 .Build());
         }
@@ -43,7 +43,7 @@
                 {
                     NavigationManager.NavigateTo(QueryBuilder.Create()
                         .WithUri(Links.OAuth.Error)
-                        .WithQueryParam("error", Errors.OAuth.InvalidRequestUri)
+                        .WithQueryParam("error", ErrorTypes.OAuth.InvalidRequestUri)
                         .WithQueryParam("error_description", "Invalid session.")
                         .Build());
                     
@@ -59,7 +59,7 @@
                 {
                     NavigationManager.NavigateTo(QueryBuilder.Create()
                         .WithUri(Links.OAuth.Error)
-                        .WithQueryParam("error", Errors.OAuth.InvalidRequestUri)
+                        .WithQueryParam("error", ErrorTypes.OAuth.InvalidRequestUri)
                         .WithQueryParam("error_description", "The state parameter is invalid.")
                         .Build());
                         
@@ -84,7 +84,7 @@
                     {
                         NavigationManager.NavigateTo(QueryBuilder.Create()
                             .WithUri(Links.OAuth.Error)
-                            .WithQueryParam("error", Errors.Common.InvalidSession)
+                            .WithQueryParam("error", ErrorTypes.Common.InvalidSession)
                             .WithQueryParam("error_description", "Invalid session.")
                             .Build());
                     }

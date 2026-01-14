@@ -1,5 +1,4 @@
 ﻿global using System.Text;
-global using eSystem.Core.Common.Results;
 global using eSystem.ServiceDefaults;
 global using FluentValidation;
 global using MediatR;
@@ -10,5 +9,5 @@ global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.Options;
 global using Microsoft.IdentityModel.Tokens;
 global using Scalar.AspNetCore;
-global using Results = eSystem.Core.Common.Results.Results;
+global using Results = eSystem.Core.Http.Results.Results;
 global using TokenOptions = eSecurity.Server.Security.Cryptography.Tokens.TokenOptions;

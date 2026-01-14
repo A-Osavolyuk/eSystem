@@ -3,6 +3,7 @@ using eSecurity.Core.Common.Responses;
 using eSecurity.Server.Security.Authentication.Oidc.Client;
 using eSecurity.Server.Security.Authorization.Consents;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Features.Connect.Commands;
 

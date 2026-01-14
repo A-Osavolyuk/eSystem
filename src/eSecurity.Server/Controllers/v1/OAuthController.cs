@@ -1,7 +1,7 @@
 ﻿using eSecurity.Server.Common.Responses;
 using eSecurity.Server.Features.OAuth;
 using eSecurity.Server.Security.Authentication.SignIn;
-using eSystem.Core.Common.Http.Constants;
+using eSystem.Core.Http.Constants;
 using eSystem.Core.Security.Authentication.Schemes;
 
 namespace eSecurity.Server.Controllers.v1;

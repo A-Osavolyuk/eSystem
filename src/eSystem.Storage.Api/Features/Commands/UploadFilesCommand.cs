@@ -1,5 +1,5 @@
-﻿using eSystem.Core.Common.Http;
-using eSystem.Core.Common.Results;
+﻿using eSystem.Core.Http.Results;
+using eSystem.Core.Requests;
 using eSystem.Core.Responses.Storage;
 using eSystem.Storage.Api.Interfaces;
 

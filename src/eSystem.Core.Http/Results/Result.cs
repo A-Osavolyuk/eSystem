@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace eSystem.Core.Common.Results;
+namespace eSystem.Core.Http.Results;
 
 public class Result
 {

@@ -3,6 +3,8 @@ using eSecurity.Core.Security.Authorization.Access;
 using eSecurity.Server.Security.Authorization.Access.Verification;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Features.Devices.Commands;
 
@@ -27,7 +29,7 @@ public class VerifyDeviceCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidDevice,
+                Code = ErrorTypes.Common.InvalidDevice,
                 Description = "Invalid device."
             });
         }

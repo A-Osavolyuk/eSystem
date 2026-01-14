@@ -4,6 +4,8 @@ using eSecurity.Server.Security.Authorization.Access.Verification;
 using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Features.Verification.Commands;
 
@@ -30,7 +32,7 @@ public class VerifyPasskeyCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidCredentials,
+                Code = ErrorTypes.Common.InvalidCredentials,
                 Description = "Invalid credential"
             });
         }
@@ -43,7 +45,7 @@ public class VerifyPasskeyCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidChallenge,
+                Code = ErrorTypes.Common.InvalidChallenge,
                 Description = "Invalid challenge"
             });
         }

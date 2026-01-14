@@ -5,6 +5,8 @@ using eSecurity.Server.Security.Authorization.Access.Verification;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Features.Email.Commands;
 
@@ -33,7 +35,7 @@ public class ResetEmailCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidEmail,
+                Code = ErrorTypes.Common.InvalidEmail,
                 Description = "User's primary email address is missing"
             });
         }
@@ -45,7 +47,7 @@ public class ResetEmailCommandHandler(
             {
                 return Results.BadRequest(new Error()
                 {
-                    Code = Errors.Common.EmailTaken,
+                    Code = ErrorTypes.Common.EmailTaken,
                     Description = "User's primary email address is missing"
                 });
             }

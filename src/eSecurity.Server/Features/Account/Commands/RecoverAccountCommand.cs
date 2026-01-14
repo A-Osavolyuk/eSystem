@@ -4,6 +4,8 @@ using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Security.Authorization.Access.Verification;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Features.Account.Commands;
 
@@ -28,7 +30,7 @@ public class RecoverAccountCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidEmail,
+                Code = ErrorTypes.Common.InvalidEmail,
                 Description = "Invalid primary email"
             });
         }
@@ -38,7 +40,7 @@ public class RecoverAccountCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidEmail,
+                Code = ErrorTypes.Common.InvalidEmail,
                 Description = "Invalid recovery email"
             });
         }

@@ -1,3 +1,5 @@
+using eSystem.Core.Http;
+
 namespace eSecurity.Client.Common.Http;
 
 public interface IApiClient

@@ -2,6 +2,7 @@
 using eSecurity.Core.Common.Responses;
 using eSecurity.Server.Security.Authentication.Password;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Features.Password.Commands;
 

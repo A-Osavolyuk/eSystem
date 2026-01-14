@@ -6,7 +6,9 @@ using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Common.Http.Context;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Extensions;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Features.Users.Queries;
 
@@ -39,7 +41,7 @@ public class GetUserVerificationMethodsQueryHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidDevice,
+                Code = ErrorTypes.Common.InvalidDevice,
                 Description = "Invalid device"
             });
         }
@@ -49,7 +51,7 @@ public class GetUserVerificationMethodsQueryHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidEmail,
+                Code = ErrorTypes.Common.InvalidEmail,
                 Description = "Invalid email"
             });
         }

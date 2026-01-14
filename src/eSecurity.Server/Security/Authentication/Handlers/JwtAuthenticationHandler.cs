@@ -1,7 +1,8 @@
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using eSecurity.Server.Security.Authentication.Oidc.Token;
-using eSystem.Core.Common.Http.Constants;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 using Microsoft.AspNetCore.Authentication;
 
 namespace eSecurity.Server.Security.Authentication.Handlers;
@@ -21,7 +22,7 @@ public class JwtAuthenticationHandler(
         var header = Request.Headers.Authorization.ToString();
         if (string.IsNullOrEmpty(header) || !header.StartsWith($"{AuthenticationTypes.Bearer} "))
         {
-            Context.Items["error"] = Errors.OAuth.InvalidToken;
+            Context.Items["error"] = ErrorTypes.OAuth.InvalidToken;
             return AuthenticateResult.Fail("Invalid token.");
         }
         
@@ -46,14 +47,14 @@ public class JwtAuthenticationHandler(
     {
         var error = Context.Items["error"]?.ToString();
 
-        if (string.IsNullOrEmpty(error) || error == Errors.OAuth.ServerError)
+        if (string.IsNullOrEmpty(error) || error == ErrorTypes.OAuth.ServerError)
         {
             Response.StatusCode = StatusCodes.Status500InternalServerError;
             Response.ContentType = ContentTypes.Application.Json;
         
             await Response.WriteAsJsonAsync(new Error()
             {
-                Code = Errors.OAuth.ServerError, 
+                Code = ErrorTypes.OAuth.ServerError, 
                 Description = "Server error."
             });
         }

@@ -1,4 +1,4 @@
-namespace eSystem.Core.Common.Http;
+namespace eSystem.Core.Http;
 
 public enum AuthenticationType
 {

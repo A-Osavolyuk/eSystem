@@ -1,7 +1,6 @@
 @page "/connect/authorize"
 @using eSecurity.Client.Common.JS.Fetch
 @using eSecurity.Client.Security.Authentication.Oidc
-@using eSystem.Core.Common.Results
 @using eSystem.Core.Security.Authentication.Oidc.Authorization
 @using eSecurity.Core.Security.Cookies
 
@@ -59,7 +58,7 @@
             {
                 NavigationManager.NavigateTo(QueryBuilder.Create()
                     .WithUri(RedirectUri)
-                    .WithQueryParam("error", Errors.OAuth.InvalidRequest)
+                    .WithQueryParam("error", ErrorTypes.OAuth.InvalidRequest)
                     .WithQueryParam("error_description", "Prompt 'none' cannot be combined with other prompt values.")
                     .Build());
 
@@ -76,7 +75,7 @@
                 {
                     NavigationManager.NavigateTo(QueryBuilder.Create()
                         .WithUri(RedirectUri)
-                        .WithQueryParam("error", Errors.OAuth.InvalidRequest)
+                        .WithQueryParam("error", ErrorTypes.OAuth.InvalidRequest)
                         .WithQueryParam("error_description", $"Prompt '{prompts.First()}' is not supported.")
                         .Build());
                     break;
@@ -94,7 +93,7 @@
         {
             NavigationManager.NavigateTo(QueryBuilder.Create()
                 .WithUri(decodedRedirectUri)
-                .WithQueryParam("error", Errors.OAuth.LoginRequired)
+                .WithQueryParam("error", ErrorTypes.OAuth.LoginRequired)
                 .WithQueryParam("error_description", "User must be authenticated.")
                 .Build());
         }

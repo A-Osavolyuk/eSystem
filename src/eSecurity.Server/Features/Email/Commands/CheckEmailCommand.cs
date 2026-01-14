@@ -1,6 +1,8 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Features.Email.Commands;
 
@@ -23,7 +25,7 @@ public class CheckEmailCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.EmailTaken,
+                Code = ErrorTypes.Common.EmailTaken,
                 Description = "Email is already taken"
             });
         }

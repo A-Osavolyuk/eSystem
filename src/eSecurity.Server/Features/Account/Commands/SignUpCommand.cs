@@ -1,6 +1,7 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Security.Identity.SignUp;
 using eSecurity.Server.Security.Identity.SignUp.Strategies;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Features.Account.Commands;
 

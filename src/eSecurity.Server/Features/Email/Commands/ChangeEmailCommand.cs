@@ -6,6 +6,8 @@ using eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Features.Email.Commands;
 
@@ -33,7 +35,7 @@ public sealed class RequestChangeEmailCommandHandler(
         if (request.Request.Type is EmailType.Secondary)
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidEmail,
+                Code = ErrorTypes.Common.InvalidEmail,
                 Description = "Cannot change a secondary phone number."
             });
 
@@ -42,7 +44,7 @@ public sealed class RequestChangeEmailCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidEmail,
+                Code = ErrorTypes.Common.InvalidEmail,
                 Description = "User's primary email address is missing"
             });
         }
@@ -54,7 +56,7 @@ public sealed class RequestChangeEmailCommandHandler(
             {
                 return Results.BadRequest(new Error()
                 {
-                    Code = Errors.Common.EmailTaken,
+                    Code = ErrorTypes.Common.EmailTaken,
                     Description = "Email address is already taken"
                 });
             }
@@ -63,7 +65,7 @@ public sealed class RequestChangeEmailCommandHandler(
         if (await _linkedAccountManager.HasAsync(user, cancellationToken))
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.LinkedAccountConnected,
+                Code = ErrorTypes.Common.LinkedAccountConnected,
                 Description = "Cannot change email, first disconnect linked accounts."
             });
 

@@ -1,6 +1,8 @@
 using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Features.Devices.Commands;
-using eSystem.Core.Common.Http.Constants;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Extensions;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Controllers.v1;
 
@@ -20,7 +22,7 @@ public class DeviceController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> BlockAsync([FromBody] BlockDeviceRequest request)
     {
         var result = await _sender.Send(new BlockDeviceCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Unblock device")]
@@ -31,7 +33,7 @@ public class DeviceController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> UnblockAsync([FromBody] UnblockDeviceRequest request)
     {
         var result = await _sender.Send(new UnblockDeviceCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Verify device")]
@@ -42,6 +44,6 @@ public class DeviceController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> VerifyAsync([FromBody] VerifyDeviceRequest request)
     {
         var result = await _sender.Send(new VerifyDeviceCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
 }

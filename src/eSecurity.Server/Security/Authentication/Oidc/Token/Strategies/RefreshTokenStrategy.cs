@@ -8,6 +8,8 @@ using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.Claims;
 using eSecurity.Server.Security.Identity.Claims.Factories;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.Oidc;
 using Microsoft.AspNetCore.DataProtection;
 
@@ -51,14 +53,14 @@ public class RefreshTokenStrategy(
         if (client is null)
             return Results.Unauthorized(new Error()
             {
-                Code = Errors.OAuth.InvalidClient,
+                Code = ErrorTypes.OAuth.InvalidClient,
                 Description = "Invalid client."
             });
 
         if (!client.HasGrantType(refreshPayload.GrantType))
             return Results.BadRequest(new Error()
             {
-                Code = Errors.OAuth.UnsupportedGrantType,
+                Code = ErrorTypes.OAuth.UnsupportedGrantType,
                 Description = $"'{refreshPayload.GrantType}' is not supported by client."
             });
 
@@ -70,7 +72,7 @@ public class RefreshTokenStrategy(
         if (refreshToken is null || !refreshToken.IsValid)
             return Results.NotFound(new Error()
             {
-                Code = Errors.OAuth.InvalidGrant,
+                Code = ErrorTypes.OAuth.InvalidGrant,
                 Description = "Invalid refresh token."
             });
 
@@ -81,7 +83,7 @@ public class RefreshTokenStrategy(
             {
                 return Results.InternalServerError(new Error()
                 {
-                    Code = Errors.OAuth.ServerError,
+                    Code = ErrorTypes.OAuth.ServerError,
                     Description = "Server error"
                 });
             }
@@ -90,7 +92,7 @@ public class RefreshTokenStrategy(
         if (client.Id != refreshToken.ClientId)
             return Results.BadRequest(new Error()
             {
-                Code = Errors.OAuth.InvalidGrant,
+                Code = ErrorTypes.OAuth.InvalidGrant,
                 Description = "Invalid refresh token"
             });
 
@@ -101,14 +103,14 @@ public class RefreshTokenStrategy(
         if (!client.HasScopes(requestedScopes))
             return Results.BadRequest(new Error()
             {
-                Code = Errors.OAuth.InvalidScope,
+                Code = ErrorTypes.OAuth.InvalidScope,
                 Description = "Requested scopes exceed originally granted scopes."
             });
 
         if (requestedScopes.Contains(Scopes.OfflineAccess) && !client.AllowOfflineAccess)
             return Results.BadRequest(new Error()
             {
-                Code = Errors.OAuth.InvalidScope,
+                Code = ErrorTypes.OAuth.InvalidScope,
                 Description = "offline_access scope was not originally granted."
             });
 
@@ -117,7 +119,7 @@ public class RefreshTokenStrategy(
         if (user is null)
             return Results.NotFound(new Error()
             {
-                Code = Errors.OAuth.InvalidGrant,
+                Code = ErrorTypes.OAuth.InvalidGrant,
                 Description = "Invalid refresh token."
             });
 

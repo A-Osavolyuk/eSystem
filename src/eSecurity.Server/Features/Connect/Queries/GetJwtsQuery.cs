@@ -1,5 +1,6 @@
 using System.Security.Cryptography.X509Certificates;
 using eSecurity.Server.Security.Cryptography.Signing.Certificates;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Features.Connect.Queries;
 

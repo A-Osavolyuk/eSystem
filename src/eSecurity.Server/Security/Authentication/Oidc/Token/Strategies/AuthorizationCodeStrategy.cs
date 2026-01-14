@@ -11,6 +11,8 @@ using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.Claims;
 using eSecurity.Server.Security.Identity.Claims.Factories;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.Oidc;
 using Microsoft.AspNetCore.DataProtection;
 
@@ -59,7 +61,7 @@ public class AuthorizationCodeStrategy(
         if (string.IsNullOrEmpty(authorizationPayload.RedirectUri))
             return Results.BadRequest(new Error()
             {
-                Code = Errors.OAuth.InvalidRequest,
+                Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "redirect_uri is required"
             });
 
@@ -67,14 +69,14 @@ public class AuthorizationCodeStrategy(
         if (client is null)
             return Results.Unauthorized(new Error()
             {
-                Code = Errors.OAuth.InvalidClient,
+                Code = ErrorTypes.OAuth.InvalidClient,
                 Description = "Client was not found."
             });
 
         if (!client.HasGrantType(authorizationPayload.GrantType))
             return Results.BadRequest(new Error()
             {
-                Code = Errors.OAuth.UnsupportedGrantType,
+                Code = ErrorTypes.OAuth.UnsupportedGrantType,
                 Description = $"'{authorizationPayload.GrantType}' grant is not supported by client."
             });
 
@@ -91,7 +93,7 @@ public class AuthorizationCodeStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.OAuth.InvalidGrant,
+                Code = ErrorTypes.OAuth.InvalidGrant,
                 Description = "Invalid authorization code."
             });
         }
@@ -104,7 +106,7 @@ public class AuthorizationCodeStrategy(
             {
                 return Results.BadRequest(new Error()
                 {
-                    Code = Errors.OAuth.InvalidGrant,
+                    Code = ErrorTypes.OAuth.InvalidGrant,
                     Description = "Invalid authorization code."
                 });
             }
@@ -118,7 +120,7 @@ public class AuthorizationCodeStrategy(
             if (!isValidPkce)
                 return Results.BadRequest(new Error()
                 {
-                    Code = Errors.OAuth.InvalidGrant,
+                    Code = ErrorTypes.OAuth.InvalidGrant,
                     Description = "Invalid authorization code."
                 });
         }
@@ -128,7 +130,7 @@ public class AuthorizationCodeStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.OAuth.InvalidGrant,
+                Code = ErrorTypes.OAuth.InvalidGrant,
                 Description = "Invalid authorization code."
             });
         }
@@ -139,7 +141,7 @@ public class AuthorizationCodeStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.OAuth.InvalidGrant,
+                Code = ErrorTypes.OAuth.InvalidGrant,
                 Description = "Invalid authorization code."
             });
         }

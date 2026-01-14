@@ -4,6 +4,8 @@ using eSecurity.Server.Security.Authentication.Oidc.Client;
 using eSecurity.Server.Security.Authorization.Consents;
 using eSecurity.Server.Security.Authorization.Scopes;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Features.Connect.Commands;
 
@@ -26,7 +28,7 @@ public class GrantConsentCommandHandler(
         if (user is null)
             return Results.BadRequest(new Error()
             {
-                Code = Errors.OAuth.InvalidRequest,
+                Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "user_id is invalid."
             });
 
@@ -34,7 +36,7 @@ public class GrantConsentCommandHandler(
         if (client is null)
             return Results.Unauthorized(new Error()
             {
-                Code = Errors.OAuth.InvalidClient,
+                Code = ErrorTypes.OAuth.InvalidClient,
                 Description = "Invalid client."
             });
 
@@ -57,7 +59,7 @@ public class GrantConsentCommandHandler(
                 {
                     return Results.BadRequest(new Error()
                     {
-                        Code = Errors.OAuth.InvalidScope,
+                        Code = ErrorTypes.OAuth.InvalidScope,
                         Description = $"'{requestedScope}' scope is not supported."
                     });
                 }
@@ -78,7 +80,7 @@ public class GrantConsentCommandHandler(
                 {
                     return Results.BadRequest(new Error()
                     {
-                        Code = Errors.OAuth.InvalidScope,
+                        Code = ErrorTypes.OAuth.InvalidScope,
                         Description = $"'{requestedScope}' scope is not supported."
                     });
                 }

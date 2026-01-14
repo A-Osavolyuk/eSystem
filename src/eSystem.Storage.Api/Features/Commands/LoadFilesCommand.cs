@@ -1,4 +1,4 @@
-﻿using eSystem.Core.Common.Results;
+﻿using eSystem.Core.Http.Results;
 using eSystem.Core.Requests.Storage;
 using eSystem.Core.Responses.Storage;
 using eSystem.Storage.Api.Interfaces;

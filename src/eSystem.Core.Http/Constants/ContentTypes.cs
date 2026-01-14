@@ -1,4 +1,4 @@
-namespace eSystem.Core.Common.Http.Constants;
+namespace eSystem.Core.Http.Constants;
 
 public class ContentTypes
 {

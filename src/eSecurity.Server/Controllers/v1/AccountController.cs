@@ -1,8 +1,10 @@
 using eSecurity.Core.Common.Requests;
+using eSecurity.Server.Common.Filters;
 using eSecurity.Server.Features.Account.Commands;
 using eSecurity.Server.Features.Account.Queries;
-using eSystem.Core.Common.Filters;
-using eSystem.Core.Common.Http.Constants;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Extensions;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Controllers.v1;
 
@@ -22,7 +24,7 @@ public class AccountController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> LoadSignSessionAsync(Guid sid)
     {
         var result = await _sender.Send(new LoadSignInSessionCommand(sid));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Sign in")]
@@ -32,7 +34,7 @@ public class AccountController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> SignInAsync([FromBody] SignInRequest request)
     {
         var result = await _sender.Send(new SignInCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Sign up")]
@@ -43,7 +45,7 @@ public class AccountController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> SignUpAsync([FromBody] SignUpRequest request)
     {
         var result = await _sender.Send(new SignUpCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Check")]
@@ -53,7 +55,7 @@ public class AccountController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> CheckAsync([FromBody] CheckAccountRequest request)
     {
         var result = await _sender.Send(new CheckAccountCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Recover")]
@@ -63,7 +65,7 @@ public class AccountController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> RecoverAsync([FromBody] RecoverAccountRequest request)
     {
         var result = await _sender.Send(new RecoverAccountCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Unlock")]
@@ -73,6 +75,6 @@ public class AccountController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> UnlockAsync([FromBody] UnlockAccountRequest request)
     {
         var result = await _sender.Send(new UnlockAccountCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
 }

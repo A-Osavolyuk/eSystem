@@ -8,7 +8,9 @@ using eSecurity.Server.Security.Authentication.TwoFactor;
 using eSecurity.Server.Security.Authorization.Access.Verification;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Common.Http.Context;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Extensions;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Security.Authentication.SignIn.Strategies;
 
@@ -35,7 +37,7 @@ public sealed class TrustDeviceSignInStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidPayloadType,
+                Code = ErrorTypes.Common.InvalidPayloadType,
                 Description = "Invalid payload type"
             });
         }
@@ -54,7 +56,7 @@ public sealed class TrustDeviceSignInStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidDevice,
+                Code = ErrorTypes.Common.InvalidDevice,
                 Description = "Invalid device."
             });
         }

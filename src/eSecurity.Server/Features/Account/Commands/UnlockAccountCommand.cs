@@ -4,8 +4,10 @@ using eSecurity.Server.Security.Authentication.Lockout;
 using eSecurity.Server.Security.Authorization.Access.Codes;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Common.Http.Context;
+using eSystem.Core.Http.Extensions;
 using eSystem.Core.Common.Messaging;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Features.Account.Commands;
 
@@ -36,7 +38,7 @@ public class UnlockAccountCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidDevice,
+                Code = ErrorTypes.Common.InvalidDevice,
                 Description = "Invalid device"
             });
 

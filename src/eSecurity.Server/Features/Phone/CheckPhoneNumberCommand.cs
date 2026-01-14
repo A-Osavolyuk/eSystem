@@ -1,6 +1,8 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Security.Identity.Phone;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Features.Phone;
 
@@ -23,7 +25,7 @@ public class CheckPhoneNumberCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.PhoneTaken,
+                Code = ErrorTypes.Common.PhoneTaken,
                 Description = "Phone number is already taken."
             });
         }

@@ -1,7 +1,7 @@
 ﻿using eSystem.Core.Common.Cache.Redis;
 using eSystem.Core.Common.Documentation;
-using eSystem.Core.Common.Errors;
 using eSystem.Core.Common.Logging;
+using eSystem.Core.Http.Errors;
 using eSystem.EmailSender.Api.Consumers;
 using eSystem.EmailSender.Api.Services;
 

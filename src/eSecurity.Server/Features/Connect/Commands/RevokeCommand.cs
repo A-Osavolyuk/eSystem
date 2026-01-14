@@ -1,6 +1,8 @@
 using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Security.Authentication.Oidc.Token;
 using eSecurity.Server.Security.Cryptography.Hashing;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.Oidc.Revocation;
 
 namespace eSecurity.Server.Features.Connect.Commands;
@@ -19,7 +21,7 @@ public class RevokeCommandHandler(
         if (string.IsNullOrEmpty(request.Request.Token))
             return Results.BadRequest(new Error()
             {
-                Code = Errors.OAuth.InvalidRequest,
+                Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "Token is missing."
             });
 

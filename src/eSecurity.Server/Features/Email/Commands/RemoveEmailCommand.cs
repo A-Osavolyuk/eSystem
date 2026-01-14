@@ -6,6 +6,8 @@ using eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
 using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Features.Email.Commands;
 
@@ -34,7 +36,7 @@ public class RemoveEmailCommandHandler(
         {
             return Results.NotFound(new Error()
             {
-                Code = Errors.Common.InvalidEmail,
+                Code = ErrorTypes.Common.InvalidEmail,
                 Description = "User doesn't owe this email."
             });
         }
@@ -46,7 +48,7 @@ public class RemoveEmailCommandHandler(
             {
                 return Results.BadRequest(new Error()
                 {
-                    Code = Errors.Common.InvalidEmail,
+                    Code = ErrorTypes.Common.InvalidEmail,
                     Description = "Cannot remove the primary email, because it is the only authentication method"
                 });
             }
@@ -55,7 +57,7 @@ public class RemoveEmailCommandHandler(
             {
                 return Results.BadRequest(new Error()
                 {
-                    Code = Errors.Common.LinkedAccountConnected,
+                    Code = ErrorTypes.Common.LinkedAccountConnected,
                     Description = "Cannot remove the primary email, because there are one or more linked accounts"
                 });
             }

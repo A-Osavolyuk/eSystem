@@ -3,6 +3,7 @@ using eSecurity.Core.Security.Authorization.Access;
 using eSecurity.Server.Security.Authorization.Access.Verification;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Features.Email.Commands;
 

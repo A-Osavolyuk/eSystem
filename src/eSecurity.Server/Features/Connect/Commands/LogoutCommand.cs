@@ -5,6 +5,8 @@ using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Oidc.Client;
 using eSecurity.Server.Security.Authentication.Oidc.Session;
 using eSecurity.Server.Security.Authentication.Oidc.Token;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.Connect.Commands;
@@ -27,14 +29,14 @@ public class LogoutCommandHandler(
         if (string.IsNullOrEmpty(request.Request.PostLogoutRedirectUri))
             return Results.BadRequest(new Error()
             {
-                Code = Errors.OAuth.InvalidRequest,
+                Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "post_logout_redirect_uri is required."
             });
 
         if (string.IsNullOrEmpty(request.Request.IdTokenHint))
             return Results.BadRequest(new Error()
             {
-                Code = Errors.OAuth.InvalidRequest,
+                Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "id_token_hint is required."
             });
 
@@ -46,7 +48,7 @@ public class LogoutCommandHandler(
         if (sid is null)
             return Results.BadRequest(new Error()
             {
-                Code = Errors.OAuth.InvalidRequest,
+                Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "id_token_hint is invalid."
             });
 
@@ -54,7 +56,7 @@ public class LogoutCommandHandler(
         if (session is null)
             return Results.InternalServerError(new Error()
             {
-                Code = Errors.OAuth.ServerError,
+                Code = ErrorTypes.OAuth.ServerError,
                 Description = "Invalid session."
             });
 
@@ -72,7 +74,7 @@ public class LogoutCommandHandler(
         if (client is null)
             return Results.Unauthorized(new Error()
             {
-                Code = Errors.OAuth.InvalidClient,
+                Code = ErrorTypes.OAuth.InvalidClient,
                 Description = "Invalid client."
             });
         
@@ -80,7 +82,7 @@ public class LogoutCommandHandler(
         if (postLogoutRedirectUri is null)
             return Results.BadRequest(new Error()
             {
-                Code = Errors.OAuth.InvalidRequest,
+                Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "post_logout_redirect_uri is invalid."
             });
 

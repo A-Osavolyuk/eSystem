@@ -1,4 +1,5 @@
 ﻿using eCinema.Server.Features.Connect.Commands;
+using eSystem.Core.Http.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +19,7 @@ public class ConnectController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> Authorize()
     {
         var result = await _sender.Send(new AuthorizeCommand());
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
 
     [HttpGet("callback")]
@@ -38,6 +39,6 @@ public class ConnectController(ISender sender) : ControllerBase
             ErrorDescription = description
         });
         
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
 }

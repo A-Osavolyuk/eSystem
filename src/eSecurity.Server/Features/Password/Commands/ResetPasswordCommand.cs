@@ -3,6 +3,8 @@ using eSecurity.Core.Security.Authorization.Access;
 using eSecurity.Server.Security.Authentication.Password;
 using eSecurity.Server.Security.Authorization.Access.Verification;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Features.Password.Commands;
 
@@ -25,7 +27,7 @@ public sealed class ResetPasswordCommandHandler(
         if (!await _passwordManager.HasAsync(user, cancellationToken)) 
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidPassword,
+                Code = ErrorTypes.Common.InvalidPassword,
                 Description = "User does not have a password."
             });
         

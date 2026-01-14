@@ -1,7 +1,9 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Features.Connect.Commands;
 using eSecurity.Server.Features.Connect.Queries;
-using eSystem.Core.Common.Http.Constants;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Extensions;
+using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.Schemes;
 
 namespace eSecurity.Server.Controllers.v1;
@@ -21,7 +23,7 @@ public class ConnectController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> OpenIdConfigurationAsync()
     {
         var result = await _sender.Send(new GetOpenidConfigurationQuery());
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
 
     [EndpointSummary("Json Web Key")]
@@ -31,7 +33,7 @@ public class ConnectController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> JsonWebKeyAsync()
     {
         var result = await _sender.Send(new GetJwksQuery());
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
 
     [EndpointSummary("Client info")]
@@ -41,7 +43,7 @@ public class ConnectController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetClientInfoAsync(string clientId)
     {
         var result = await _sender.Send(new GetClientInfoQuery(clientId));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Userinfo")]
@@ -55,18 +57,18 @@ public class ConnectController(ISender sender) : ControllerBase
         {
             const string description = "GET cannot have form body";
             Response.Headers.Append(HeaderTypes.WwwAuthenticate,
-                $"Bearer error=\"{Errors.OAuth.InvalidRequest}\", error_description=\"{description}\"");
+                $"Bearer error=\"{ErrorTypes.OAuth.InvalidRequest}\", error_description=\"{description}\"");
             
             return BadRequest(new Error()
             {
-                Code = Errors.OAuth.InvalidRequest,
+                Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = description
             });
         }
 
         
         var result = await _sender.Send(new GetUserInfoQuery());
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Userinfo")]
@@ -77,7 +79,7 @@ public class ConnectController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> PostUserInfoAsync([FromForm] UserInfoRequest request)
     {
         var result = await _sender.Send(new GetUserInfoQuery(request.AccessToken));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
 
     [EndpointSummary("Token")]
@@ -89,7 +91,7 @@ public class ConnectController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> TokenAsync([FromForm] TokenRequest request)
     {
         var result = await _sender.Send(new TokenCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
 
     [EndpointSummary("Revocation")]
@@ -101,7 +103,7 @@ public class ConnectController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> RevokeAsync([FromForm] RevocationRequest request)
     {
         var result = await _sender.Send(new RevokeCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
 
     [EndpointSummary("Introspection")]
@@ -113,7 +115,7 @@ public class ConnectController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> IntrospectionAsync([FromForm] IntrospectionRequest request)
     {
         var result = await _sender.Send(new IntrospectionCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
 
     [EndpointSummary("Authorize")]
@@ -123,7 +125,7 @@ public class ConnectController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> AuthorizeAsync([FromBody] AuthorizeRequest request)
     {
         var result = await _sender.Send(new AuthorizeCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
 
     [EndpointSummary("Logout")]
@@ -133,6 +135,6 @@ public class ConnectController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> LogoutAsync([FromBody] LogoutRequest request)
     {
         var result = await _sender.Send(new LogoutCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
 }

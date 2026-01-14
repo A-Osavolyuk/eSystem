@@ -9,6 +9,7 @@ using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Features.Passkeys.Commands;
 

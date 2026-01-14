@@ -8,7 +8,9 @@ using eSecurity.Server.Security.Authentication.Oidc.Session;
 using eSecurity.Server.Security.Authorization.Consents;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Common.Http.Context;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Extensions;
+using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.Oidc;
 
 namespace eSecurity.Server.Features.Connect.Commands;
@@ -40,7 +42,7 @@ public class AuthorizeCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.OAuth.UnsupportedResponseType,
+                Code = ErrorTypes.OAuth.UnsupportedResponseType,
                 Description = $"'{request.Request.ResponseType}' is unsupported response type"
             });
         }
@@ -49,7 +51,7 @@ public class AuthorizeCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.OAuth.InvalidRequest,
+                Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "nonce is required."
             });
         }
@@ -64,14 +66,14 @@ public class AuthorizeCommandHandler(
             {
                 return Results.BadRequest(new Error()
                 {
-                    Code = Errors.OAuth.InvalidScope,
+                    Code = ErrorTypes.OAuth.InvalidScope,
                     Description = $"'{unsupportedScopes.First()}' scope is invalid."
                 });
             }
 
             return Results.BadRequest(new Error()
             {
-                Code = Errors.OAuth.InvalidScope,
+                Code = ErrorTypes.OAuth.InvalidScope,
                 Description = $"'{string.Join(" ", unsupportedScopes)}' scopes are invalid."
             });
         }
@@ -81,7 +83,7 @@ public class AuthorizeCommandHandler(
         {
             return Results.Unauthorized(new Error()
             {
-                Code = Errors.OAuth.InvalidClient,
+                Code = ErrorTypes.OAuth.InvalidClient,
                 Description = "Invalid client"
             });
         }
@@ -90,7 +92,7 @@ public class AuthorizeCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.OAuth.InvalidRequest,
+                Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "redirect_uri is invalid."
             });
         }
@@ -99,7 +101,7 @@ public class AuthorizeCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.OAuth.InvalidScope,
+                Code = ErrorTypes.OAuth.InvalidScope,
                 Description = "Invalid scopes."
             });
         }
@@ -109,14 +111,14 @@ public class AuthorizeCommandHandler(
             if (string.IsNullOrEmpty(request.Request.CodeChallenge))
                 return Results.BadRequest(new Error()
                 {
-                    Code = Errors.OAuth.InvalidRequest,
+                    Code = ErrorTypes.OAuth.InvalidRequest,
                     Description = "code_challenge is required"
                 });
 
             if (string.IsNullOrEmpty(request.Request.CodeChallengeMethod))
                 return Results.BadRequest(new Error()
                 {
-                    Code = Errors.OAuth.InvalidRequest,
+                    Code = ErrorTypes.OAuth.InvalidRequest,
                     Description = "code_challenge_method is required"
                 });
         }
@@ -126,7 +128,7 @@ public class AuthorizeCommandHandler(
         {
             return Results.InternalServerError(new Error()
             {
-                Code = Errors.OAuth.ServerError,
+                Code = ErrorTypes.OAuth.ServerError,
                 Description = "Invalid authorization session."
             });
         }
@@ -136,7 +138,7 @@ public class AuthorizeCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.OAuth.ConsentRequired,
+                Code = ErrorTypes.OAuth.ConsentRequired,
                 Description = "User consent is required."
             });
         }
@@ -149,7 +151,7 @@ public class AuthorizeCommandHandler(
         {
             return Results.InternalServerError(new Error()
             {
-                Code = Errors.OAuth.ServerError,
+                Code = ErrorTypes.OAuth.ServerError,
                 Description = "Invalid authorization session."
             });
         }
@@ -159,7 +161,7 @@ public class AuthorizeCommandHandler(
         {
             return Results.InternalServerError(new Error()
             {
-                Code = Errors.OAuth.ServerError,
+                Code = ErrorTypes.OAuth.ServerError,
                 Description = "Invalid authorization session."
             });
         }

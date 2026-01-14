@@ -2,6 +2,7 @@
   <Folder Name="/nuget/" />
   <Folder Name="/src/" />
   <Folder Name="/src/Core/">
+    <Project Path="src/eSystem.Core.Http/eSystem.Core.Http.csproj" />
     <Project Path="src\eSystem.Core\eSystem.Core.csproj" />
   </Folder>
   <Folder Name="/src/eCinema/">

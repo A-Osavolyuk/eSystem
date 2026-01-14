@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace eSecurity.Client.Common.Http.Extensions;
+namespace eSystem.Core.Http.Extensions;
 
 public static class HttpContentExtensions
 {

@@ -192,7 +192,7 @@
             {
                 var error = result.GetError();
                 
-                if (error.Code == Errors.Common.UnverifiedEmail)
+                if (error.Code == ErrorTypes.Common.UnverifiedEmail)
                 {
                     var userId = error.Details["userId"].ToString()!;
                     var builder = QueryBuilder.Create()
@@ -204,7 +204,7 @@
                     return;
                 }
 
-                if (error.Code == Errors.Common.FailedLoginAttempt)
+                if (error.Code == ErrorTypes.Common.FailedLoginAttempt)
                 {
                     var maxFailedLoginAttempts = Convert.ToInt32(error.Details["maxFailedLoginAttempts"].ToString());
                     var failedLoginAttempts = Convert.ToInt32(error.Details["failedLoginAttempts"].ToString());
@@ -214,7 +214,7 @@
                     return;
                 }
 
-                if (error.Code is Errors.Common.TooManyFailedLoginAttempts or Errors.Common.AccountLockedOut)
+                if (error.Code is ErrorTypes.Common.TooManyFailedLoginAttempts or ErrorTypes.Common.AccountLockedOut)
                 {
                     var userId = error.Details["userId"].ToString()!;
                     var builder = QueryBuilder.Create()

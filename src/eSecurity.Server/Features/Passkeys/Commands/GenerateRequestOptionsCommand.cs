@@ -6,7 +6,9 @@ using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Credentials.PublicKey.Challenge;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Common.Http.Context;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Extensions;
+using eSystem.Core.Http.Results;
 using CredentialOptions = eSecurity.Server.Security.Credentials.PublicKey.Credentials.CredentialOptions;
 
 namespace eSecurity.Server.Features.Passkeys.Commands;
@@ -53,7 +55,7 @@ public class GenerateRequestOptionsCommandHandler(
             {
                 return Results.BadRequest(new Error()
                 {
-                    Code = Errors.Common.InvalidDevice,
+                    Code = ErrorTypes.Common.InvalidDevice,
                     Description = "Invalid device."
                 });
             }
@@ -63,7 +65,7 @@ public class GenerateRequestOptionsCommandHandler(
             {
                 return Results.BadRequest(new Error()
                 {
-                    Code = Errors.Common.InvalidDevice,
+                    Code = ErrorTypes.Common.InvalidDevice,
                     Description = "This device does not have a passkey."
                 });
             }

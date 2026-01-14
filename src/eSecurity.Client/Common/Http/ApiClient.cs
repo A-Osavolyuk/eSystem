@@ -1,6 +1,5 @@
 using System.Net;
 using System.Text.Json;
-using eSecurity.Client.Common.Http.Extensions;
 using eSecurity.Client.Common.JS.Fetch;
 using eSecurity.Client.Common.JS.Localization;
 using eSecurity.Client.Security.Authentication.Oidc.Token;
@@ -9,8 +8,9 @@ using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Common.Routing;
 using eSecurity.Core.Security.Cookies;
 using eSecurity.Core.Security.Cookies.Constants;
-using eSystem.Core.Common.Http.Context;
+using eSystem.Core.Http.Extensions;
 using eSystem.Core.Common.Network.Gateway;
+using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.Oidc.Client;
 using eSystem.Core.Security.Authentication.Oidc.Token;
 using eSystem.Core.Security.Cryptography.Encoding;
@@ -67,7 +67,7 @@ public class ApiClient(
         {
             return HttpResponse<TResponse>.Fail(new Error()
             {
-                Code = Errors.Common.InternalServerError,
+                Code = ErrorTypes.Common.InternalServerError,
                 Description = ex.Message
             });
         }
@@ -93,7 +93,7 @@ public class ApiClient(
         {
             return HttpResponse.Fail(new Error()
             {
-                Code = Errors.Common.InternalServerError,
+                Code = ErrorTypes.Common.InternalServerError,
                 Description = ex.Message
             });
         }
@@ -113,7 +113,7 @@ public class ApiClient(
         var responseJson = await responseMessage.Content.ReadAsStringAsync(cancellationToken);
         var error = JsonSerializer.Deserialize<Error>(responseJson);
 
-        if (error is null || error.Code != Errors.OAuth.InvalidToken)
+        if (error is null || error.Code != ErrorTypes.OAuth.InvalidToken)
             return responseMessage;
 
         return await RefreshAsync(requestMessage, responseMessage, cancellationToken);

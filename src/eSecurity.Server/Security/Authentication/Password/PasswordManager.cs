@@ -1,6 +1,7 @@
 using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Cryptography.Hashing;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Security.Authentication.Password;
 

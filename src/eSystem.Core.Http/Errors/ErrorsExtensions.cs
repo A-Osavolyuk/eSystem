@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace eSystem.Core.Common.Errors;
+namespace eSystem.Core.Http.Errors;
 
 public static class ErrorsExtensions
 {

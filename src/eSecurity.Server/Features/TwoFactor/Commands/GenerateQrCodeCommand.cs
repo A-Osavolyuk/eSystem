@@ -6,6 +6,7 @@ using eSecurity.Server.Security.Authentication.TwoFactor.Authenticator;
 using eSecurity.Server.Security.Authentication.TwoFactor.Secret;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Http.Results;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Server.Features.TwoFactor.Commands;

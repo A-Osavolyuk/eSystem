@@ -5,6 +5,8 @@ using eSecurity.Server.Security.Authorization.Access.Verification;
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.Phone;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Features.Phone;
 
@@ -31,7 +33,7 @@ public sealed class RequestChangePhoneNumberCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidPhone,
+                Code = ErrorTypes.Common.InvalidPhone,
                 Description = "Cannot change a secondary phone number."
             });
         }
@@ -41,7 +43,7 @@ public sealed class RequestChangePhoneNumberCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidPhone,
+                Code = ErrorTypes.Common.InvalidPhone,
                 Description = "User's phone number is missing."
             });
         }
@@ -53,7 +55,7 @@ public sealed class RequestChangePhoneNumberCommandHandler(
             {
                 return Results.BadRequest(new Error()
                 {
-                    Code = Errors.Common.PhoneTaken,
+                    Code = ErrorTypes.Common.PhoneTaken,
                     Description = "This phone number is already taken"
                 });
             }

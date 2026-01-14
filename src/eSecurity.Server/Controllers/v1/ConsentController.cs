@@ -1,6 +1,8 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Features.Connect.Commands;
-using eSystem.Core.Common.Http.Constants;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Extensions;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Controllers.v1;
 
@@ -19,7 +21,7 @@ public class ConsentController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> CheckAsync([FromBody] CheckConsentRequest request)
     {
         var result = await _sender.Send(new CheckConsentCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Grant consents")]
@@ -29,6 +31,6 @@ public class ConsentController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GrantAsync([FromBody] GrantConsentRequest request)
     {
         var result = await _sender.Send(new GrantConsentCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
 }

@@ -9,7 +9,9 @@ using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
 using eSecurity.Server.Security.Identity.User.Username;
-using eSystem.Core.Common.Http.Context;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Extensions;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Security.Identity.SignUp.Strategies;
 
@@ -52,7 +54,7 @@ public sealed class ManualSignUpStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.UsernameTaken,
+                Code = ErrorTypes.Common.UsernameTaken,
                 Description = "This username is already taken"
             });
         }
@@ -62,7 +64,7 @@ public sealed class ManualSignUpStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.EmailTaken,
+                Code = ErrorTypes.Common.EmailTaken,
                 Description = "This email is already taken."
             });
         }

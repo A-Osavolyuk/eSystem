@@ -129,12 +129,12 @@
             else
             {
                 var error = result.GetError();
-                if (error.Code == Errors.Common.UsernameTaken)
+                if (error.Code == ErrorTypes.Common.UsernameTaken)
                 {
                     _showUsernameError = true;
                     _usernameError = error.Description;
                 }
-                else if (error.Code == Errors.Common.EmailTaken)
+                else if (error.Code == ErrorTypes.Common.EmailTaken)
                 {
                     _showEmailError = true;
                     _emailError = error.Description;

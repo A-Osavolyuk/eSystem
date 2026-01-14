@@ -1,6 +1,8 @@
 using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Features.Verification.Commands;
-using eSystem.Core.Common.Http.Constants;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Extensions;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Controllers.v1;
 
@@ -20,7 +22,7 @@ public class VerificationController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> SendCodeAsync([FromBody] SendCodeRequest request)
     {
         var result = await _sender.Send(new SendCodeCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Resend code")]
@@ -31,7 +33,7 @@ public class VerificationController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> ResendCodeAsync([FromBody] ResendCodeRequest request)
     {
         var result = await _sender.Send(new ResendCodeCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
 
     [EndpointSummary("Verify code")]
@@ -42,7 +44,7 @@ public class VerificationController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> VerifyCodeAsync([FromBody] VerifyCodeRequest request)
     {
         var result = await _sender.Send(new VerifyCodeCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Verify code")]
@@ -53,7 +55,7 @@ public class VerificationController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> VerifyRecoveryCodeAsync([FromBody] VerifyRecoveryCodeRequest request)
     {
         var result = await _sender.Send(new VerifyRecoveryCodeCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
 
     [EndpointSummary("Verify authenticator code")]
@@ -64,7 +66,7 @@ public class VerificationController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> VerifyAuthenticatorCodeAsync([FromBody] VerifyAuthenticatorCodeRequest request)
     {
         var result = await _sender.Send(new VerifyAuthenticatorCodeCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Verify passkey")]
@@ -75,6 +77,6 @@ public class VerificationController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> VerifyPasskeyAsync([FromBody] VerifyPasskeyRequest request)
     {
         var result = await _sender.Send(new VerifyPasskeyCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
 }

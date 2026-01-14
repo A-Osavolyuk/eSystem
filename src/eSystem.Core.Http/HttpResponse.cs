@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
-using eSystem.Core.Common.Results;
+using eSystem.Core.Http.Results;
 
-namespace eSystem.Core.Common.Http;
+namespace eSystem.Core.Http;
 
 public sealed class HttpResponse
 {

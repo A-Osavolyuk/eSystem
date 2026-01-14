@@ -1,6 +1,8 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Security.Identity.User;
 using eSecurity.Server.Security.Identity.User.Username;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Features.Username.Commands;
 
@@ -22,7 +24,7 @@ public sealed class SetUsernameCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.UsernameTaken,
+                Code = ErrorTypes.Common.UsernameTaken,
                 Description = "The username is already taken."
             });
         }

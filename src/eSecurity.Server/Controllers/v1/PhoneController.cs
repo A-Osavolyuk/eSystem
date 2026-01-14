@@ -1,6 +1,8 @@
 using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Features.Phone;
-using eSystem.Core.Common.Http.Constants;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Extensions;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Controllers.v1;
 
@@ -20,7 +22,7 @@ public class PhoneController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> VerifyAsync([FromBody] VerifyPhoneNumberRequest request)
     {
         var result = await _sender.Send(new VerifyPhoneNumberCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Check phone number")]
@@ -31,7 +33,7 @@ public class PhoneController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> CheckAsync([FromBody] CheckPhoneNumberRequest request)
     {
         var result = await _sender.Send(new CheckPhoneNumberCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Add phone number")]
@@ -42,7 +44,7 @@ public class PhoneController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> AddAsync([FromBody] AddPhoneNumberRequest request)
     {
         var result = await _sender.Send(new AddPhoneNumberCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Change phone number")]
@@ -53,7 +55,7 @@ public class PhoneController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> ChangeAsync([FromBody] ChangePhoneNumberRequest request)
     {
         var result = await _sender.Send(new ChangePhoneNumberCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Reset phone number")]
@@ -64,7 +66,7 @@ public class PhoneController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> ResetAsync([FromBody] ResetPhoneNumberRequest request)
     {
         var result = await _sender.Send(new ResetPhoneNumberCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Remove phone number")]
@@ -75,6 +77,6 @@ public class PhoneController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> RemoveAsync([FromBody] RemovePhoneNumberRequest request)
     {
         var result = await _sender.Send(new RemovePhoneNumberCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
 }

@@ -8,7 +8,9 @@ using eSecurity.Server.Security.Authentication.TwoFactor;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Common.Http.Context;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Extensions;
+using eSystem.Core.Http.Results;
 using eSystem.Core.Utilities.Query;
 using OAuthFlow = eSecurity.Core.Security.Authorization.OAuth.OAuthFlow;
 
@@ -40,7 +42,7 @@ public sealed class OAuthSignInStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidPayloadType,
+                Code = ErrorTypes.Common.InvalidPayloadType,
                 Description = "Invalid payload"
             });
         }
@@ -76,7 +78,7 @@ public sealed class OAuthSignInStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.BlockedDevice,
+                Code = ErrorTypes.Common.BlockedDevice,
                 Description = "Device is blocked"
             });
         }

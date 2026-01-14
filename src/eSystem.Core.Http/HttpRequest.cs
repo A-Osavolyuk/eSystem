@@ -1,4 +1,6 @@
-﻿namespace eSystem.Core.Common.Http;
+﻿using eSystem.Core.Requests;
+
+namespace eSystem.Core.Http;
 
 public sealed class HttpRequest
 {
@@ -6,10 +8,4 @@ public sealed class HttpRequest
     public required HttpMethod Method { get; set; } = HttpMethod.Get;
     public object? Data { get; set; }
     public Metadata? Metadata { get; set; }
-}
-
-public sealed class Metadata
-{
-    public string Identifier { get; set; } = string.Empty;
-    public string Type { get; set; } = string.Empty;
 }

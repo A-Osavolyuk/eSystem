@@ -2,6 +2,8 @@
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
 using eSecurity.Server.Security.Identity.User.Username;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Features.Username.Commands;
 
@@ -28,7 +30,7 @@ public class ChangeUsernameCommandHandler(
         {
             return Results.NotFound(new Error()
             {
-                Code = Errors.Common.UsernameTaken,
+                Code = ErrorTypes.Common.UsernameTaken,
                 Description = "Username is already taken"
             });
         }

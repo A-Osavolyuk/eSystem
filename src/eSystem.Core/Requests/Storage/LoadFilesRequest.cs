@@ -1,6 +1,4 @@
-﻿using eSystem.Core.Common.Http;
-
-namespace eSystem.Core.Requests.Storage;
+﻿namespace eSystem.Core.Requests.Storage;
 
 public class LoadFilesRequest
 {

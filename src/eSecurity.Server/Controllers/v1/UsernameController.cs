@@ -1,6 +1,8 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Features.Username.Commands;
-using eSystem.Core.Common.Http.Constants;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Extensions;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Controllers.v1;
 
@@ -20,7 +22,7 @@ public class UsernameController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> SetAsync([FromBody] SetUsernameRequest request)
     {
         var result = await _sender.Send(new SetUsernameCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Check username")]
@@ -31,7 +33,7 @@ public class UsernameController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> CheckAsync([FromBody] CheckUsernameRequest request)
     {
         var result = await _sender.Send(new CheckUsernameCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Change username")]
@@ -42,6 +44,6 @@ public class UsernameController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> EnableAsync([FromBody] ChangeUsernameRequest request)
     {
         var result = await _sender.Send(new ChangeUsernameCommand(request));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
 }

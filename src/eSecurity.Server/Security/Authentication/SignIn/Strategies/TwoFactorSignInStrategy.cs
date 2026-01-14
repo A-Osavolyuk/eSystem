@@ -10,7 +10,9 @@ using eSecurity.Server.Security.Authorization.Access.Verification;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Common.Http.Context;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Extensions;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Security.Authentication.SignIn.Strategies;
 
@@ -39,7 +41,7 @@ public class TwoFactorSignInStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidPayloadType,
+                Code = ErrorTypes.Common.InvalidPayloadType,
                 Description = "Invalid payload type"
             });
         }
@@ -49,7 +51,7 @@ public class TwoFactorSignInStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidSession,
+                Code = ErrorTypes.Common.InvalidSession,
                 Description = "Invalid sign-in session."
             });
         }
@@ -64,7 +66,7 @@ public class TwoFactorSignInStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidDevice,
+                Code = ErrorTypes.Common.InvalidDevice,
                 Description = "Invalid device."
             });
         }
@@ -78,7 +80,7 @@ public class TwoFactorSignInStrategy(
             if (user.FailedLoginAttempts < _options.MaxFailedLoginAttempts)
                 return Results.BadRequest(new Error()
                 {
-                    Code = Errors.Common.FailedLoginAttempt, 
+                    Code = ErrorTypes.Common.FailedLoginAttempt, 
                     Description = "Invalid recovery code.",
                     Details = new()
                     {
@@ -96,7 +98,7 @@ public class TwoFactorSignInStrategy(
             if (!lockoutResult.Succeeded) return lockoutResult;
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.AccountLockedOut,
+                Code = ErrorTypes.Common.AccountLockedOut,
                 Description = "Account is locked out due to too many failed login attempts",
                 Details = new() { { "userId", user.Id } }
             });

@@ -12,8 +12,10 @@ using eSecurity.Server.Security.Authorization.Permissions;
 using eSecurity.Server.Security.Authorization.Roles;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Common.Http.Context;
+using eSystem.Core.Http.Extensions;
 using eSystem.Core.Common.Messaging;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 using eSystem.Core.Utilities.Query;
 using OAuthFlow = eSecurity.Core.Security.Authorization.OAuth.OAuthFlow;
 
@@ -58,7 +60,7 @@ public sealed class OAuthSignUpStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidPayloadType,
+                Code = ErrorTypes.Common.InvalidPayloadType,
                 Description = "Invalid payload"
             });
         }
@@ -68,7 +70,7 @@ public sealed class OAuthSignUpStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.NotFound,
+                Code = ErrorTypes.Common.NotFound,
                 Description = "Session not found"
             });
         }
@@ -78,7 +80,7 @@ public sealed class OAuthSignUpStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.EmailTaken,
+                Code = ErrorTypes.Common.EmailTaken,
                 Description = "Email is already taken"
             });
         }

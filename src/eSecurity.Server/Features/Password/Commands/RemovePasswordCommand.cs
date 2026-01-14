@@ -3,6 +3,8 @@ using eSecurity.Server.Security.Authentication.Password;
 using eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
 using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Features.Password.Commands;
 
@@ -28,7 +30,7 @@ public class RemovePasswordCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidPassword,
+                Code = ErrorTypes.Common.InvalidPassword,
                 Description = "User doesn't have a password."
             });
         }

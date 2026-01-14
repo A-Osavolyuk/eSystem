@@ -6,6 +6,8 @@ using eSecurity.Server.Security.Authentication.TwoFactor;
 using eSecurity.Server.Security.Authorization.Access.Verification;
 using eSecurity.Server.Security.Identity.Phone;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Features.Phone;
 
@@ -31,7 +33,7 @@ public class RemovePhoneNumberCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidPhone,
+                Code = ErrorTypes.Common.InvalidPhone,
                 Description = "Cannot remove phone number. Phone number is not provided."
             });
         }
@@ -40,7 +42,7 @@ public class RemovePhoneNumberCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidPhone,
+                Code = ErrorTypes.Common.InvalidPhone,
                 Description = "Cannot remove phone number. First disable 2FA with SMS."
             });
         }

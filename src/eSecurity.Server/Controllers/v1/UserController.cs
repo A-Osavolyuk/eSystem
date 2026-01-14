@@ -1,5 +1,7 @@
 using eSecurity.Server.Features.Users.Queries;
-using eSystem.Core.Common.Http.Constants;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Extensions;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Controllers.v1;
 
@@ -19,7 +21,7 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserQuery(userId));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Get user's 2FA methods")]
@@ -30,7 +32,7 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserTwoFactorMethodsAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserTwoFactorMethodsQuery(userId));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Get user's verification methods")]
@@ -41,7 +43,7 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserVerificationMethodsAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserVerificationDataQuery(userId));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Get user's personal data")]
@@ -52,7 +54,7 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserPersonalDataAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserPersonalQuery(userId));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Get user's lockout state")]
@@ -63,7 +65,7 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserLogoutStateAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserLockoutQuery(userId));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Get user's linked accounts")]
@@ -74,7 +76,7 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserLinkedAccountsAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserLinkedAccountDataQuery(userId));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Get user's login methods")]
@@ -85,7 +87,7 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserLoginMethodsAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserLoginMethodsQuery(userId));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Get user's devices")]
@@ -96,7 +98,7 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserDevicesAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserDevicesQuery(userId));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Get user's device")]
@@ -107,7 +109,7 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserDevicesAsync(Guid userId, Guid deviceId)
     {
         var result = await _sender.Send(new GetUserDeviceQuery(userId, deviceId));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Get user's emails")]
@@ -118,7 +120,7 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserEmailsAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserEmailsQuery(userId));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Get user's primary email")]
@@ -129,7 +131,7 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserPrimaryEmailAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserPrimaryEmailQuery(userId));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Get user's phone numbers")]
@@ -140,7 +142,7 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserPhoneNumbersAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserPhoneNumbersQuery(userId));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Get user's primary phone number")]
@@ -151,6 +153,6 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserPrimaryPhoneNumberAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserPrimaryPhoneNumberQuery(userId));
-        return ResultHandler.Handle(result);
+        return HttpContext.HandleResult(result);
     }
 }

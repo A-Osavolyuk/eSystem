@@ -10,7 +10,9 @@ using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Common.Http.Context;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Extensions;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Security.Authentication.SignIn.Strategies;
 
@@ -37,7 +39,7 @@ public sealed class PasskeySignInStrategy(
         if (payload is not PasskeySignInPayload passkeyPayload)
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidPayloadType, 
+                Code = ErrorTypes.Common.InvalidPayloadType, 
                 Description = "Invalid payload type"
             });
 
@@ -61,7 +63,7 @@ public sealed class PasskeySignInStrategy(
         if (lockoutState.Enabled)
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.AccountLockedOut, 
+                Code = ErrorTypes.Common.AccountLockedOut, 
                 Description = "Account is locked out",
                 Details = new() { { "userId", user.Id } }
             });
@@ -73,7 +75,7 @@ public sealed class PasskeySignInStrategy(
         {
             return Results.NotFound(new Error()
             {
-                Code = Errors.Common.InvalidDevice, 
+                Code = ErrorTypes.Common.InvalidDevice, 
                 Description = "Invalid device."
             });
         }

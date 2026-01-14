@@ -4,6 +4,8 @@ using System.Security.Cryptography.X509Certificates;
 using eSecurity.Server.Security.Authentication.Oidc.Client;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Cryptography.Signing.Certificates;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Security.Authentication.Oidc.Token;
@@ -31,7 +33,7 @@ public class TokenValidator(
             if (opaqueToken is null || !opaqueToken.IsValid || opaqueToken.TokenType == OpaqueTokenType.RefreshToken)
                 return Results.Unauthorized(new Error()
                 {
-                    Code = Errors.OAuth.InvalidToken,
+                    Code = ErrorTypes.OAuth.InvalidToken,
                     Description = "Invalid token"
                 });
 
@@ -58,7 +60,7 @@ public class TokenValidator(
         if (securityToken is null)
             return Results.Unauthorized(new Error()
             {
-                Code = Errors.OAuth.InvalidToken,
+                Code = ErrorTypes.OAuth.InvalidToken,
                 Description = "Invalid token"
             });
 
@@ -67,7 +69,7 @@ public class TokenValidator(
         if (certificate is null)
             return Results.Unauthorized(new Error()
             {
-                Code = Errors.OAuth.InvalidToken,
+                Code = ErrorTypes.OAuth.InvalidToken,
                 Description = "Invalid token"
             });
 
@@ -95,7 +97,7 @@ public class TokenValidator(
         {
             return Results.InternalServerError(new Error()
             {
-                Code = Errors.OAuth.InvalidToken,
+                Code = ErrorTypes.OAuth.InvalidToken,
                 Description = "Invalid token"
             });
         }

@@ -1,6 +1,7 @@
 using eSecurity.Server.Data;
-using eSystem.Core.Common.Http.Constants;
+using eSystem.Core.Http.Constants;
 using eSystem.Core.Data;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Extensions;
 
@@ -19,7 +20,7 @@ public static class WebApplicationExtensions
                     response.ContentType = ContentTypes.Application.Json;
                     var error = new Error()
                     {
-                        Code = Errors.Common.MethodNotAllowed,
+                        Code = ErrorTypes.Common.MethodNotAllowed,
                         Description = "Method not allowed"
                     };
                     
@@ -30,7 +31,7 @@ public static class WebApplicationExtensions
                     response.ContentType = ContentTypes.Application.Json;
                     var error = new Error()
                     {
-                        Code = Errors.Common.UnsupportedMediaType,
+                        Code = ErrorTypes.Common.UnsupportedMediaType,
                         Description = "Unsupported media type"
                     };
                     

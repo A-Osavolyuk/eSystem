@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using eSystem.Core.Http.Results;
 using Microsoft.JSInterop;
 
 namespace eSecurity.Client.Common.JS.Fetch;

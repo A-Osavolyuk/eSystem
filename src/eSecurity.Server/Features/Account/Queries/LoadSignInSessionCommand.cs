@@ -1,6 +1,8 @@
 ﻿using eSecurity.Core.Common.DTOs;
 using eSecurity.Core.Security.Authentication.SignIn.Session;
 using eSecurity.Server.Security.Authentication.SignIn.Session;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Features.Account.Queries;
 
@@ -18,7 +20,7 @@ public class LoadSignInSessionCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidSession,
+                Code = ErrorTypes.Common.InvalidSession,
                 Description = "Session not found."
             });
         }
@@ -35,7 +37,7 @@ public class LoadSignInSessionCommandHandler(
             
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidSession,
+                Code = ErrorTypes.Common.InvalidSession,
                 Description = "Session is expired."
             });
         }
@@ -44,7 +46,7 @@ public class LoadSignInSessionCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = Errors.Common.InvalidSession,
+                Code = ErrorTypes.Common.InvalidSession,
                 Description = "Session is cancelled."
             });
         }

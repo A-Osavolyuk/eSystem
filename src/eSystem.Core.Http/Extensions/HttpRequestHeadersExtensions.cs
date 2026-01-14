@@ -1,7 +1,8 @@
 using System.Net.Http.Headers;
 using System.Text;
+using eSystem.Core.Http.Constants;
 
-namespace eSecurity.Client.Common.Http.Extensions;
+namespace eSystem.Core.Http.Extensions;
 
 public static class HttpRequestHeadersExtensions
 {

@@ -83,7 +83,7 @@
             {
                 NavigationManager.NavigateTo(QueryBuilder.Create()
                     .WithUri(Links.OAuth.Error)
-                    .WithQueryParam("error", Errors.Common.InvalidSession)
+                    .WithQueryParam("error", ErrorTypes.Common.InvalidSession)
                     .WithQueryParam("error_description", "Invalid session.")
                     .Build());
                 
@@ -120,7 +120,7 @@
             else
             {
                 var error = result.GetError();
-                if (error.Code == Errors.Common.UsernameTaken)
+                if (error.Code == ErrorTypes.Common.UsernameTaken)
                 {
                     _error = "Username is already taken.";
                     _showError = true;
