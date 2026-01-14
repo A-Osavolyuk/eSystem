@@ -5,6 +5,7 @@ using eSecurity.Server.Security.Authentication.Oidc.Pkce;
 using eSecurity.Server.Security.Authentication.Oidc.Session;
 using eSecurity.Server.Security.Authentication.Oidc.Token;
 using eSecurity.Server.Security.Authentication.Oidc.Token.Strategies;
+using eSystem.Core.Security.Authentication.Oidc;
 using eSystem.Core.Security.Authentication.Oidc.Token;
 using SessionOptions = eSecurity.Server.Security.Authentication.Oidc.Session.SessionOptions;
 
@@ -14,7 +15,7 @@ public static class OdicExtensions
 {
     extension(IServiceCollection services)
     {
-        public void AddOidc(Action<OpenIdOptions> configure)
+        public void AddOidc(Action<OpenIdConfiguration> configure)
         {
             services.Configure(configure);
             services.AddScoped<IClientManager, ClientManager>();

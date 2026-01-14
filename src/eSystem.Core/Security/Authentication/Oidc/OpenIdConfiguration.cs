@@ -1,8 +1,8 @@
 using System.Text.Json.Serialization;
 
-namespace eSecurity.Core.Security.Authentication.Oidc;
+namespace eSystem.Core.Security.Authentication.Oidc;
 
-public class OpenIdOptions
+public class OpenIdConfiguration
 {
     [JsonPropertyName("issuer")]
     public string Issuer { get; set; } = string.Empty;

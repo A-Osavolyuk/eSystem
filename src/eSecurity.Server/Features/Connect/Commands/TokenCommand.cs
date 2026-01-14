@@ -2,6 +2,7 @@
 using eSecurity.Core.Security.Authentication.Oidc;
 using eSecurity.Server.Security.Authentication.Oidc.Token;
 using eSecurity.Server.Security.Authentication.Oidc.Token.Strategies;
+using eSystem.Core.Security.Authentication.Oidc;
 using eSystem.Core.Security.Authentication.Oidc.Token;
 
 namespace eSecurity.Server.Features.Connect.Commands;
@@ -10,10 +11,10 @@ public record TokenCommand(TokenRequest Request) : IRequest<Result>;
 
 public class TokenCommandHandler(
     ITokenStrategyResolver tokenStrategyResolver,
-    IOptions<OpenIdOptions> options) : IRequestHandler<TokenCommand, Result>
+    IOptions<OpenIdConfiguration> options) : IRequestHandler<TokenCommand, Result>
 {
     private readonly ITokenStrategyResolver _tokenStrategyResolver = tokenStrategyResolver;
-    private readonly OpenIdOptions _options = options.Value;
+    private readonly OpenIdConfiguration _configuration = options.Value;
 
     public async Task<Result> Handle(TokenCommand request, CancellationToken cancellationToken)
     {
@@ -31,7 +32,7 @@ public class TokenCommandHandler(
                 Description = "client_id is required"
             });
 
-        if (!_options.GrantTypesSupported.Contains(request.Request.GrantType))
+        if (!_configuration.GrantTypesSupported.Contains(request.Request.GrantType))
             return Results.BadRequest(new Error()
             {
                 Code = Errors.OAuth.InvalidGrant,

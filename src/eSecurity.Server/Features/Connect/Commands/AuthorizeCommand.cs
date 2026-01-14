@@ -9,6 +9,7 @@ using eSecurity.Server.Security.Authorization.Consents;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Common.Http.Context;
+using eSystem.Core.Security.Authentication.Oidc;
 
 namespace eSecurity.Server.Features.Connect.Commands;
 
@@ -22,7 +23,7 @@ public class AuthorizeCommandHandler(
     IClientManager clientManager,
     IConsentManager consentManager,
     IDeviceManager deviceManager,
-    IOptions<OpenIdOptions> options) : IRequestHandler<AuthorizeCommand, Result>
+    IOptions<OpenIdConfiguration> options) : IRequestHandler<AuthorizeCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
@@ -31,11 +32,11 @@ public class AuthorizeCommandHandler(
     private readonly IClientManager _clientManager = clientManager;
     private readonly IConsentManager _consentManager = consentManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
-    private readonly OpenIdOptions _options = options.Value;
+    private readonly OpenIdConfiguration _configuration = options.Value;
 
     public async Task<Result> Handle(AuthorizeCommand request, CancellationToken cancellationToken)
     {
-        if (!_options.ResponseTypesSupported.Contains(request.Request.ResponseType))
+        if (!_configuration.ResponseTypesSupported.Contains(request.Request.ResponseType))
         {
             return Results.BadRequest(new Error()
             {
@@ -54,7 +55,7 @@ public class AuthorizeCommandHandler(
         }
         
         var unsupportedScopes = request.Request.Scopes
-            .Where(x => !_options.ScopesSupported.Contains(x))
+            .Where(x => !_configuration.ScopesSupported.Contains(x))
             .ToList();
 
         if (unsupportedScopes.Count > 0)
