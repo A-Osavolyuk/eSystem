@@ -24,8 +24,13 @@ public static class HostApplicationBuilderExtensions
             builder.AddDocumentation();
             builder.AddVersioning();
             builder.AddRedisCache();
+            
             builder.Services.AddScoped<ICacheService, CacheService>();
             builder.Services.AddSingleton<IOpenIdDiscoveryProvider, OpenIdDiscoveryProvider>();
+            builder.Services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssemblyContaining<IAssemblyMarker>();
+            });
             
             builder.Services.AddClient(cfg =>
             {
