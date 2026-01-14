@@ -24,6 +24,7 @@ public static class HostApplicationBuilderExtensions
             builder.AddDocumentation();
             builder.AddVersioning();
             builder.AddRedisCache();
+            builder.Services.AddScoped<ICacheService, CacheService>();
             
             builder.Services.AddClient(cfg =>
             {
