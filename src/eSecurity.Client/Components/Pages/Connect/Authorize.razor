@@ -48,15 +48,6 @@
     {
         if (firstRender)
         {
-            if (!UserState.IsAuthenticated)
-            {
-                NavigationManager.NavigateTo(QueryBuilder.Create()
-                    .WithUri(RedirectUri)
-                    .WithQueryParam("error", Errors.OAuth.LoginRequired)
-                    .WithQueryParam("error_description", "User must be authenticated.")
-                    .Build());
-            }
-
             if (string.IsNullOrEmpty(Prompt))
             {
                 await OnAuthorizeAsync();
@@ -96,13 +87,25 @@
 
     private async Task OnAuthorizeAsync()
     {
+        var decodedRedirectUri = HttpUtility.UrlDecode(RedirectUri);
+        var decodedScope = HttpUtility.UrlDecode(Scope);
+        
+        if (!UserState.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo(QueryBuilder.Create()
+                .WithUri(decodedRedirectUri)
+                .WithQueryParam("error", Errors.OAuth.LoginRequired)
+                .WithQueryParam("error_description", "User must be authenticated.")
+                .Build());
+        }
+        
         var request = new AuthorizeRequest()
         {
             UserId = UserState.UserId,
             ResponseType = ResponseType,
             ClientId = ClientId,
-            RedirectUri = RedirectUri,
-            Scopes = Scope.Split(' ').ToList(),
+            RedirectUri = decodedRedirectUri,
+            Scopes = decodedScope.Split(' ').ToList(),
             Nonce = Nonce,
             State = State,
             CodeChallenge = CodeChallenge,
@@ -132,7 +135,7 @@
             await FetchClient.FetchAsync(fetchOptions);
 
             var builder = QueryBuilder.Create()
-                .WithUri(request.RedirectUri)
+                .WithUri(decodedRedirectUri)
                 .WithQueryParam("code", response.Code)
                 .WithQueryParam("state", response.State);
 
@@ -154,12 +157,15 @@
 
     private void OnProcessConsent(string uri, string[] prompts)
     {
+        var decodedRedirectUri = HttpUtility.UrlDecode(RedirectUri);
+        var decodedScope = HttpUtility.UrlDecode(Scope);
+        
         var returnUrlBuilder = QueryBuilder.Create()
             .WithUri(Links.Connect.Authorize)
             .WithQueryParam("response_type", ResponseType)
             .WithQueryParam("client_id", ClientId)
-            .WithQueryParam("redirect_uri", RedirectUri)
-            .WithQueryParam("scope", Scope)
+            .WithQueryParam("redirect_uri", decodedRedirectUri)
+            .WithQueryParam("scope", decodedScope)
             .WithQueryParam("state", State)
             .WithQueryParam("nonce", Nonce);
 
