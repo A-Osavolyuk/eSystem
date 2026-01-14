@@ -1,6 +1,6 @@
-using eSecurity.Client.Security.Authentication.Oidc.Clients;
 using eSecurity.Client.Security.Authentication.Oidc.Token;
 using eSystem.Core.Security.Authentication.Oidc;
+using eSystem.Core.Security.Authentication.Oidc.Client;
 
 namespace eSecurity.Client.Security.Authentication.Oidc;
 
@@ -18,7 +18,7 @@ public static class OdicExtensions
                 cfg.ClientSecret = "2f213a036e325a55dc19320f03c2fad7c13f0169788b5968686cb4931341c393a651d7e6";
                 cfg.CallbackUri = "https://localhost:6501/connect/callback";
                 cfg.PostLogoutRedirectUri = "https://localhost:6501/connect/logged-out";
-                cfg.Scopes =
+                cfg.SupportedScopes =
                 [
                     Scopes.OpenId,
                     Scopes.OfflineAccess,

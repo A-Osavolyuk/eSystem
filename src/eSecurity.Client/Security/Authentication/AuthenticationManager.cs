@@ -1,9 +1,9 @@
 using System.Web;
 using eSecurity.Client.Common.JS.Fetch;
 using eSecurity.Client.Common.Storage;
-using eSecurity.Client.Security.Authentication.Oidc.Clients;
 using eSecurity.Core.Common.Routing;
 using eSystem.Core.Security.Authentication.Oidc.Authorization;
+using eSystem.Core.Security.Authentication.Oidc.Client;
 using eSystem.Core.Utilities.Query;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -35,7 +35,7 @@ public sealed class AuthenticationManager(
         builder.WithQueryParam("response_type", queryParams.GetValueOrDefault("response_type", ResponseTypes.Code))
             .WithQueryParam("client_id", queryParams.GetValueOrDefault("client_id", _clientOptions.ClientId))
             .WithQueryParam("redirect_uri", queryParams.GetValueOrDefault("redirect_uri", _clientOptions.CallbackUri))
-            .WithQueryParam("scope", queryParams.GetValueOrDefault("scope", string.Join(" ", _clientOptions.Scopes)))
+            .WithQueryParam("scope", queryParams.GetValueOrDefault("scope", string.Join(" ", _clientOptions.SupportedScopes)))
             .WithQueryParam("state", queryParams.GetValueOrDefault("state", Guid.NewGuid().ToString()))
             .WithQueryParam("nonce", queryParams.GetValueOrDefault("nonce", Guid.NewGuid().ToString()));
 

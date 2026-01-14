@@ -1,4 +1,4 @@
-namespace eSecurity.Client.Security.Authentication.Oidc.Clients;
+namespace eSystem.Core.Security.Authentication.Oidc.Client;
 
 public class ClientOptions
 {
@@ -7,5 +7,6 @@ public class ClientOptions
     public string ClientAudience { get; set; } = string.Empty;
     public string CallbackUri { get; set; } = string.Empty;
     public string PostLogoutRedirectUri { get; set; } = string.Empty;
-    public string[] Scopes { get; set; } = [];
+    public string[] SupportedScopes { get; set; } = [];
+    public string[] SupportedPrompts { get; set; } = [];
 };

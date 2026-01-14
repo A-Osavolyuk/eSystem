@@ -1,7 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
-using eSecurity.Client.Security.Authentication.Oidc.Clients;
 using eSecurity.Core.Common.DTOs;
+using eSystem.Core.Security.Authentication.Oidc.Client;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 

@@ -1,4 +1,6 @@
-namespace eSecurity.Client.Security.Authentication.Oidc.Clients;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace eSystem.Core.Security.Authentication.Oidc.Client;
 
 public static class ClientExtensions
 {
