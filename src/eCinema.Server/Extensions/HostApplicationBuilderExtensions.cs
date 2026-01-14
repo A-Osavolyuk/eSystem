@@ -1,4 +1,7 @@
 ﻿using System.Text.Json.Serialization;
+using eCinema.Server.Cache;
+using eCinema.Server.Security.Authentication.Oidc;
+using eSystem.Core.Common.Cache.Redis;
 using eSystem.Core.Common.Documentation;
 using eSystem.Core.Common.Errors;
 using eSystem.Core.Common.Network.Gateway;
@@ -20,6 +23,7 @@ public static class HostApplicationBuilderExtensions
             builder.AddExceptionHandler();
             builder.AddDocumentation();
             builder.AddVersioning();
+            builder.AddRedisCache();
             
             builder.Services.AddClient(cfg =>
             {

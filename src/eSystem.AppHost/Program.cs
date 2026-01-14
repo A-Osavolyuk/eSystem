@@ -63,7 +63,8 @@ builder.AddProject<Projects.eSecurity_Client>("e-security-client")
     .WithReference(proxy).WaitFor(proxy);
 
 var eCinemaServer = builder.AddProject<Projects.eCinema_Server>("e-cinema-server")
-    .WithReference(eSecurityServer).WaitFor(eSecurityServer)
+    .WaitFor(eSecurityServer)
+    .WithReference(redisCache).WaitFor(redisCache)
     .WithReference(proxy).WaitFor(proxy);
 
 builder.AddNpmApp("e-cinema-client", "../eCinema.Client")
