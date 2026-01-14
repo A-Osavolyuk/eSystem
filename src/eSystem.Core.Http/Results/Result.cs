@@ -7,6 +7,7 @@ public class Result
     public bool Succeeded { get; init; }
     public HttpStatusCode StatusCode { get; init; }
     public object? Value { get; init; }
+    public string? Uri { get; set; }
     public Error? Error { private get; init; }
 
     public static Result Success(HttpStatusCode statusCode, object? value) => new()
@@ -14,6 +15,13 @@ public class Result
         Succeeded = true,
         StatusCode = statusCode,
         Value = value,
+    };
+    
+    public static Result Success(HttpStatusCode statusCode, string? uri) => new()
+    {
+        Succeeded = true,
+        StatusCode = statusCode,
+        Uri = uri,
     };
     
     public static Result Success(HttpStatusCode statusCode) => new()

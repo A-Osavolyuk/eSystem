@@ -9,8 +9,8 @@ public static class Results
 
     public static Result Ok() => Result.Success(HttpStatusCode.OK);
     public static Result Created() => Result.Success(HttpStatusCode.Created);
-    public static Result Found(string uri) => Result.Success(HttpStatusCode.Found);
-    public static Result SeeOther() => Result.Success(HttpStatusCode.SeeOther);
+    public static Result Found(string uri) => Result.Success(HttpStatusCode.Found, uri);
+    public static Result SeeOther(string uri) => Result.Success(HttpStatusCode.SeeOther, uri);
 
     public static Result BadRequest(string description)
         => Result.Failure(HttpStatusCode.BadRequest, new Error

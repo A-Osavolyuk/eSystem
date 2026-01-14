@@ -71,7 +71,7 @@ public static class HttpContextExtensions
 
             if (new[] { 301, 302, 303, 307, 308 }.Contains(statusCode))
             {
-                context.Response.Headers.Location = result.Value!.ToString()!;
+                context.Response.Headers.Location = result.Uri!;
                 return new StatusCodeResult(statusCode);
             }
 
