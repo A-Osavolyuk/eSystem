@@ -25,6 +25,7 @@ public static class HostApplicationBuilderExtensions
             builder.AddVersioning();
             builder.AddRedisCache();
             builder.Services.AddScoped<ICacheService, CacheService>();
+            builder.Services.AddSingleton<IOpenIdDiscoveryProvider, OpenIdDiscoveryProvider>();
             
             builder.Services.AddClient(cfg =>
             {
