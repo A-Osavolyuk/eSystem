@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using eSystem.Core.Common.Cache.Redis;
-using eSystem.Core.Common.Network.Gateway;
+using eSystem.Core.Common.Gateway;
 using eSystem.Core.Security.Authentication.Oidc;
 using Microsoft.Extensions.Caching.Distributed;
 

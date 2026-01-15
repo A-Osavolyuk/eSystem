@@ -1,5 +1,4 @@
 using System.Text.Json.Serialization;
-using eSecurity.Core.Security.Authentication.SignIn.Session;
 
 namespace eSecurity.Core.Security.Authentication.SignIn;
 

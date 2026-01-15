@@ -1,6 +1,4 @@
-﻿using eSecurity.Core.Common.Requests;
-using eSecurity.Core.Security.Authentication.Oidc;
-using eSecurity.Server.Security.Authentication.Oidc.Token;
+﻿using eSecurity.Server.Security.Authentication.Oidc.Token;
 using eSecurity.Server.Security.Authentication.Oidc.Token.Strategies;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;

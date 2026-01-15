@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace eSystem.Core.Common.Network.Gateway;
+namespace eSystem.Core.Common.Gateway;
 
 public static class GatewayExtensions
 {

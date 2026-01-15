@@ -4,7 +4,7 @@ using eSecurity.Client.Common.JS;
 using eSecurity.Client.Common.State;
 using eSecurity.Client.Common.Storage;
 using eSecurity.Client.Security;
-using eSystem.Core.Common.Network.Gateway;
+using eSystem.Core.Common.Gateway;
 using eSystem.Core.Validation;
 using eSystem.ServiceDefaults;
 using MudBlazor;

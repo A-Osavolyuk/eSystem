@@ -1,4 +1,4 @@
-namespace eSystem.Core.Common.Network.Gateway;
+namespace eSystem.Core.Common.Gateway;
 
 public class GatewayOptions
 {

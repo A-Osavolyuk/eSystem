@@ -1,5 +1,4 @@
 ﻿using eCinema.Server.Security.Authentication.Oidc;
-using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.Oidc.Client;
 using MediatR;
 using Microsoft.Extensions.Options;

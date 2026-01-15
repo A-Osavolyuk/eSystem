@@ -1,5 +1,4 @@
 ﻿using eSecurity.Server.Data.Entities;
-using eSystem.Core.Data;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace eSecurity.Server.Data.Configurations;

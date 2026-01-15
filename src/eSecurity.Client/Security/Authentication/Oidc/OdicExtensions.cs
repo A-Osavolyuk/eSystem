@@ -1,5 +1,4 @@
 using eSecurity.Client.Security.Authentication.Oidc.Token;
-using eSystem.Core.Security.Authentication.Oidc;
 using eSystem.Core.Security.Authentication.Oidc.Client;
 using eSystem.Core.Security.Authentication.Oidc.Constants;
 

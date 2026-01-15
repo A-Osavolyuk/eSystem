@@ -1,4 +1,3 @@
-using eSecurity.Core.Common.Responses;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Oidc.Client;
 using eSecurity.Server.Security.Authentication.Oidc.Code;
@@ -12,7 +11,6 @@ using eSecurity.Server.Security.Identity.Claims.Factories;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
-using eSystem.Core.Security.Authentication.Oidc;
 using eSystem.Core.Security.Authentication.Oidc.Constants;
 using eSystem.Core.Security.Authentication.Oidc.Token;
 using eSystem.Core.Security.Cryptography.Protection.Constants;

@@ -1,6 +1,5 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Security.Authentication.SignIn;
-using eSecurity.Core.Security.Authentication.SignIn.Session;
 using eSecurity.Server.Security.Authentication.SignIn;
 using eSystem.Core.Http.Results;
 
