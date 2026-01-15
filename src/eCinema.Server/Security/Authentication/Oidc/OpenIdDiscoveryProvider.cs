@@ -45,6 +45,11 @@ public class OpenIdDiscoveryProvider(
             throw new Exception();
 
         var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
-        return JsonSerializer.Deserialize<JsonWebKeySet>(responseJson)!;
+        var jsonWebKeySet = JsonSerializer.Deserialize<JsonWebKeySet>(responseJson, new JsonSerializerOptions()
+        {
+            WriteIndented = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        })!;
+        return jsonWebKeySet;
     }
 }
