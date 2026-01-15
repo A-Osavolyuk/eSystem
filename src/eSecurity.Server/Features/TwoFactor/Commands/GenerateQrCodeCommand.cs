@@ -1,4 +1,5 @@
 ﻿using eSecurity.Core.Common.Requests;
+using eSecurity.Core.Security.Cryptography.Protection.Constants;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.TwoFactor.Authenticator;
@@ -6,7 +7,6 @@ using eSecurity.Server.Security.Authentication.TwoFactor.Secret;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Results;
-using eSystem.Core.Security.Cryptography.Protection.Constants;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Server.Features.TwoFactor.Commands;

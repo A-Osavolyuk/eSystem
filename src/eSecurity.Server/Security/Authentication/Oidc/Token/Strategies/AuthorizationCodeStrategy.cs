@@ -1,3 +1,4 @@
+using eSecurity.Core.Security.Cryptography.Protection.Constants;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Oidc.Client;
 using eSecurity.Server.Security.Authentication.Oidc.Code;
@@ -13,7 +14,6 @@ using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.Oidc.Constants;
 using eSystem.Core.Security.Authentication.Oidc.Token;
-using eSystem.Core.Security.Cryptography.Protection.Constants;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Server.Security.Authentication.Oidc.Token.Strategies;
