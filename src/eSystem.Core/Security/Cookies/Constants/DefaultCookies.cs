@@ -1,4 +1,4 @@
-﻿namespace eSecurity.Core.Security.Cookies.Constants;
+﻿namespace eSystem.Core.Security.Cookies.Constants;
 
 public static class DefaultCookies
 {

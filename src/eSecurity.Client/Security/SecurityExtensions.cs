@@ -11,7 +11,7 @@ using eSecurity.Client.Security.Authorization.OAuth;
 using eSecurity.Client.Security.Credentials.PublicKey;
 using eSecurity.Client.Security.Identity;
 using eSecurity.Core.Security.Cookies;
-using eSecurity.Core.Security.Cookies.Constants;
+using eSystem.Core.Security.Cookies.Constants;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 

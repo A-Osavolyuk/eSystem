@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace eSecurity.Core.Common.Responses;
+namespace eSystem.Core.Security.Authentication.Oidc.Token;
 
 public class TokenResponse
 {

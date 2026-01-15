@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace eSecurity.Core.Common.Requests;
+namespace eSystem.Core.Security.Authentication.Oidc.User;
 
 public class UserInfoRequest
 {

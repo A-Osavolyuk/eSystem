@@ -7,8 +7,8 @@ using eSystem.Core.Common.Network.Gateway;
 using eSystem.Core.Common.Versioning;
 using eSystem.Core.Http.Errors;
 using eSystem.Core.Security.Authentication.Oidc;
-using eSystem.Core.Security.Authentication.Oidc.Authorization;
 using eSystem.Core.Security.Authentication.Oidc.Client;
+using eSystem.Core.Security.Authentication.Oidc.Constants;
 using eSystem.ServiceDefaults;
 
 namespace eCinema.Server.Extensions;

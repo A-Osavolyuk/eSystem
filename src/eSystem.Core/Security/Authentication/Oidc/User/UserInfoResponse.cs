@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using eSystem.Core.Security.Identity.Claims;
 
-namespace eSecurity.Core.Common.Responses;
+namespace eSystem.Core.Security.Authentication.Oidc.User;
 
 public class UserInfoResponse
 {

@@ -1,5 +1,4 @@
-﻿using eSecurity.Core.Security.Cookies.Constants;
-using eSecurity.Server.Security.Authentication.Handlers;
+﻿using eSecurity.Server.Security.Authentication.Handlers;
 using eSecurity.Server.Security.Authentication.Lockout;
 using eSecurity.Server.Security.Authentication.Oidc;
 using eSecurity.Server.Security.Authentication.Oidc.Constants;
@@ -9,9 +8,10 @@ using eSecurity.Server.Security.Authentication.TwoFactor;
 using eSecurity.Server.Security.Authorization.OAuth;
 using eSystem.Core.Common.Configuration;
 using eSystem.Core.Security.Authentication.Oidc;
-using eSystem.Core.Security.Authentication.Oidc.Authorization;
+using eSystem.Core.Security.Authentication.Oidc.Constants;
 using eSystem.Core.Security.Authentication.Oidc.Token;
 using eSystem.Core.Security.Authentication.Schemes;
+using eSystem.Core.Security.Cookies.Constants;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace eSecurity.Server.Security.Authentication;

@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.Security.Authentication.Oidc.Introspection;
+﻿namespace eSystem.Core.Security.Authentication.Oidc.Constants;
 
 public static class IntrospectionTokenTypes
 {

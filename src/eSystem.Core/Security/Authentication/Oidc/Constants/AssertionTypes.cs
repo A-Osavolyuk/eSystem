@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.Security.Authentication.Oidc.Token;
+﻿namespace eSystem.Core.Security.Authentication.Oidc.Constants;
 
 public static class AssertionTypes
 {

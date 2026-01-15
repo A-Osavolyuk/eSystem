@@ -9,6 +9,8 @@ using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.Oidc;
+using eSystem.Core.Security.Authentication.Oidc.Constants;
+using eSystem.Core.Security.Authentication.Oidc.User;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.Connect.Queries;
