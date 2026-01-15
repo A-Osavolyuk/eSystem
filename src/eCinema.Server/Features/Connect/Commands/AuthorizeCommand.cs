@@ -17,13 +17,13 @@ public class AuthorizeCommandHandler(
 
     public async Task<Result> Handle(AuthorizeCommand request, CancellationToken cancellationToken)
     {
-        var openIdConfiguration = await _discoveryProvider.GetOpenIdConfigurationsAsync();
+        var openIdConfiguration = await _discoveryProvider.GetOpenIdConfigurationsAsync(cancellationToken);
         
         return Results.Found(QueryBuilder.Create()
             .WithUri(openIdConfiguration.AuthorizationEndpoint)
             .WithQueryParam("response_type", ResponseTypes.Code)
             .WithQueryParam("client_id", _clientOptions.ClientId)
-            .WithQueryParam("redirect_uri", _clientOptions.PostLogoutRedirectUri)
+            .WithQueryParam("redirect_uri", _clientOptions.CallbackUri)
             .WithQueryParam("state", Guid.NewGuid().ToString())
             .WithQueryParam("nonce", Guid.NewGuid().ToString())
             .WithQueryParam("scope", string.Join(" ", _clientOptions.SupportedScopes))
