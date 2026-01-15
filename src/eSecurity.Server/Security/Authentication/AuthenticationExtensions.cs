@@ -33,7 +33,7 @@ public static class AuthenticationExtensions
             cfg.UserinfoEndpoint = "https://localhost:6201/api/v1/connect/userinfo";
             cfg.IntrospectionEndpoint = "https://localhost:6201/api/v1/connect/introspection";
             cfg.RevocationEndpoint = "https://localhost:6201/api/v1/connect/revocation";
-            cfg.JwksUri = "https://localhost:6201/api/v1/connect/jwks.json";
+            cfg.JwksUri = "https://localhost:6201/api/v1/connect/.well-known/jwks.json";
 
             cfg.ResponseTypesSupported = [ResponseTypes.Code];
             cfg.GrantTypesSupported =
