@@ -46,14 +46,14 @@ public class ClientUriSeed : Seed<ClientUriEntity>
                 Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("307268b0-005c-4ee4-a0e8-a93bd0010382"),
                 Type = UriType.PostLogoutRedirect,
-                Uri = "https://localhost:6502/connect/logged-out",
+                Uri = "https://localhost:6511/connect/logged-out",
             },
             new()
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("307268b0-005c-4ee4-a0e8-a93bd0010382"),
                 Type = UriType.FrontChannelLogout,
-                Uri = "https://localhost:6502/connect/logout/callback",
+                Uri = "https://localhost:6511/connect/logout/callback",
             }
         ];
     }
