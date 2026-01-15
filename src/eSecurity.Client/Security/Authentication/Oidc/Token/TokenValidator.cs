@@ -15,7 +15,7 @@ public class TokenValidator(
     private readonly IConnectService _connectService = connectService;
     private readonly ClientOptions _clientOptions = clientOptions.Value;
 
-    public async ValueTask<Result> ValidateAsync(string token)
+    public async ValueTask<Result> ValidateAsync(string token, CancellationToken cancellationToken = default)
     {
         var keysResult = await _connectService.GetPublicKeysAsync();
         if (!keysResult.Succeeded) return Results.InternalServerError(keysResult.GetError().Description);
