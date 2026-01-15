@@ -1,8 +1,9 @@
 ﻿using eSystem.Core.Common.Cache.Redis;
 using eSystem.Core.Common.Documentation;
+using eSystem.Core.Common.Error;
 using eSystem.Core.Common.Versioning;
-using eSystem.Core.Http.Errors;
 using eSystem.ServiceDefaults;
+using eSystem.Storage.Api.Errors;
 using eSystem.Storage.Api.Interfaces;
 
 namespace eSystem.Storage.Api.Extensions;
@@ -19,8 +20,10 @@ public static class HostApplicationBuilderExtensions
             builder.AddRedisCache();
             builder.AddMediatR();
             builder.AddAzure();
-            builder.AddExceptionHandler();
             builder.AddDocumentation();
+            builder.AddExceptionHandling<GlobalExceptionHandler>();
+            
+            builder.Services.AddProblemDetails();
             builder.Services.AddControllers();
             builder.Services.AddValidatorsFromAssemblyContaining(typeof(IAssemblyMarker));
         }

@@ -1,11 +1,12 @@
 ﻿using System.Text.Json.Serialization;
 using eCinema.Server.Cache;
+using eCinema.Server.Errors;
 using eCinema.Server.Security.Authentication.Oidc;
 using eSystem.Core.Common.Cache.Redis;
 using eSystem.Core.Common.Documentation;
+using eSystem.Core.Common.Error;
 using eSystem.Core.Common.Gateway;
 using eSystem.Core.Common.Versioning;
-using eSystem.Core.Http.Errors;
 using eSystem.Core.Security.Authentication.Oidc.Client;
 using eSystem.Core.Security.Authentication.Oidc.Constants;
 using eSystem.ServiceDefaults;
@@ -19,10 +20,10 @@ public static class HostApplicationBuilderExtensions
         public void AddServices()
         {
             builder.AddServiceDefaults();
-            builder.AddExceptionHandler();
             builder.AddDocumentation();
             builder.AddVersioning();
             builder.AddRedisCache();
+            builder.AddExceptionHandling<GlobalExceptionHandler>();
             
             builder.Services.AddScoped<ICacheService, CacheService>();
             builder.Services.AddScoped<IOpenIdDiscoveryProvider, OpenIdDiscoveryProvider>();
@@ -54,6 +55,8 @@ public static class HostApplicationBuilderExtensions
                 ];
             });
 
+            builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+            builder.Services.AddProblemDetails();
             builder.Services.AddOpenApi();
             builder.Services.AddGateway();
             builder.Services.AddHttpContextAccessor();

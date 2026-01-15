@@ -1,5 +1,6 @@
-﻿using eSystem.Core.Http.Errors;
+﻿using eSystem.Core.Common.Error;
 using eSystem.MessageBus.Consumers;
+using eSystem.MessageBus.Errors;
 using eSystem.ServiceDefaults;
 using MassTransit;
 
@@ -12,8 +13,8 @@ public static class HostApplicationBuilderExtension
         public void AddServices()
         {
             builder.AddMessageBus();
-            builder.AddExceptionHandler();
             builder.AddServiceDefaults();
+            builder.AddExceptionHandling<GlobalExceptionHandler>();
         }
 
         private void AddMessageBus()

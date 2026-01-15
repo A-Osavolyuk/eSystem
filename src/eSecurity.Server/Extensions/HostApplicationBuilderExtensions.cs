@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using eSecurity.Server.Common.Errors;
 using eSecurity.Server.Common.Messaging;
 using eSecurity.Server.Common.Storage;
 using eSecurity.Server.Security;
@@ -6,8 +7,8 @@ using eSecurity.Server.Conventions;
 using eSecurity.Server.Data;
 using eSystem.Core.Common.Cache.Redis;
 using eSystem.Core.Common.Documentation;
+using eSystem.Core.Common.Error;
 using eSystem.Core.Common.Versioning;
-using eSystem.Core.Http.Errors;
 using eSystem.Core.Validation;
 
 namespace eSecurity.Server.Extensions;
@@ -25,10 +26,10 @@ public static class HostApplicationBuilderExtensions
             builder.AddSecurity();
             builder.AddRedisCache();
             builder.AddMsSqlDb();
-            builder.AddExceptionHandler();
             builder.AddDocumentation();
             builder.AddStorage();
-
+            builder.AddExceptionHandling<GlobalExceptionHandler>();
+            
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddDistributedMemoryCache();
             builder.Services

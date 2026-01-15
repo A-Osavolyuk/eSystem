@@ -1,8 +1,10 @@
 ﻿using eSystem.Core.Common.Cache.Redis;
 using eSystem.Core.Common.Documentation;
-using eSystem.Core.Http.Errors;
+using eSystem.Core.Common.Error;
 using eSystem.EmailSender.Api.Consumers;
+using eSystem.EmailSender.Api.Errors;
 using eSystem.EmailSender.Api.Services;
+using Microsoft.AspNetCore.Diagnostics;
 
 namespace eSystem.EmailSender.Api.Extensions;
 
@@ -14,10 +16,10 @@ public static class HostApplicationBuilderExtensions
         {
             builder.AddServiceDefaults();
             builder.AddMessageBus();
-            builder.AddExceptionHandler();
             builder.AddDependencyInjection();
             builder.AddDocumentation();
             builder.AddRedisCache();
+            builder.AddExceptionHandling<GlobalExceptionHandler>();
         }
 
         private void AddDependencyInjection()

@@ -1,7 +1,8 @@
 ﻿using eSystem.Core.Common.Cache.Redis;
 using eSystem.Core.Common.Documentation;
+using eSystem.Core.Common.Error;
 using eSystem.Core.Common.Versioning;
-using eSystem.Core.Http.Errors;
+using eSystem.Telegram.Bot.Errors;
 
 namespace eSystem.Telegram.Bot.Extensions;
 
@@ -15,10 +16,11 @@ public static class HostApplicationBuilderExtensions
             builder.AddVersioning();
             builder.AddMessageBus();
             builder.AddMediatR();
-            builder.AddExceptionHandler();
             builder.AddTelegramBot();
             builder.AddDocumentation();
             builder.AddRedisCache();
+            builder.AddExceptionHandling<GlobalExceptionHandler>();
+            
             builder.Services.AddControllers();
         }
 

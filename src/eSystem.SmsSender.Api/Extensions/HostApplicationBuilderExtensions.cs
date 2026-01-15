@@ -1,8 +1,9 @@
 ﻿using eSystem.Core.Common.Cache.Redis;
 using eSystem.Core.Common.Documentation;
+using eSystem.Core.Common.Error;
 using eSystem.Core.Common.Versioning;
-using eSystem.Core.Http.Errors;
 using eSystem.SmsSender.Api.Consumers;
+using eSystem.SmsSender.Api.Errors;
 using eSystem.SmsSender.Api.Interfaces;
 using FluentValidation;
 
@@ -21,8 +22,9 @@ public static class HostApplicationBuilderExtensions
             builder.AddMessageBus();
             builder.AddMediatR();
             builder.AddRedisCache();
-            builder.AddExceptionHandler();
             builder.AddDocumentation();
+            builder.AddExceptionHandling<GlobalExceptionHandler>();
+            
             builder.Services.AddControllers();
 
             return builder;
