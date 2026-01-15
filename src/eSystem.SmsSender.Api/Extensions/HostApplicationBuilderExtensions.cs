@@ -1,6 +1,5 @@
 ﻿using eSystem.Core.Common.Cache.Redis;
 using eSystem.Core.Common.Documentation;
-using eSystem.Core.Common.Logging;
 using eSystem.Core.Common.Versioning;
 using eSystem.Core.Http.Errors;
 using eSystem.SmsSender.Api.Consumers;
@@ -15,7 +14,6 @@ public static class HostApplicationBuilderExtensions
     {
         public IHostApplicationBuilder AddApiServices()
         {
-            builder.AddLogging();
             builder.AddServiceDefaults();
             builder.AddVersioning();
             builder.AddValidation();

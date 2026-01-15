@@ -1,6 +1,5 @@
 ﻿using eSystem.Core.Common.Cache.Redis;
 using eSystem.Core.Common.Documentation;
-using eSystem.Core.Common.Logging;
 using eSystem.Core.Http.Errors;
 using eSystem.EmailSender.Api.Consumers;
 using eSystem.EmailSender.Api.Services;
@@ -14,7 +13,6 @@ public static class HostApplicationBuilderExtensions
         public void AddApiServices()
         {
             builder.AddServiceDefaults();
-            builder.AddLogging();
             builder.AddMessageBus();
             builder.AddExceptionHandler();
             builder.AddDependencyInjection();
@@ -24,7 +22,7 @@ public static class HostApplicationBuilderExtensions
 
         private void AddDependencyInjection()
         {
-            builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("Configuration:Services:SMTP"));
+            builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("SMTP"));
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddOptions();
         }

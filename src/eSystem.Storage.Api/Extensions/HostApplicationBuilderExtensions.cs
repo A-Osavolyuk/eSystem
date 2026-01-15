@@ -1,6 +1,5 @@
 ﻿using eSystem.Core.Common.Cache.Redis;
 using eSystem.Core.Common.Documentation;
-using eSystem.Core.Common.Logging;
 using eSystem.Core.Common.Versioning;
 using eSystem.Core.Http.Errors;
 using eSystem.ServiceDefaults;
@@ -14,7 +13,6 @@ public static class HostApplicationBuilderExtensions
     {
         public void AddApiServices()
         {
-            builder.AddLogging();
             builder.AddVersioning();
             builder.AddDependencyInjection();
             builder.AddServiceDefaults();

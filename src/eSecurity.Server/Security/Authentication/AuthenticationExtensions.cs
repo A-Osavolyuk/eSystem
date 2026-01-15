@@ -98,8 +98,7 @@ public static class AuthenticationExtensions
             })
             .AddGoogle(options =>
             {
-                var settings =
-                    configuration.Get<OAuthOptions>("Configuration:Security:Authentication:Providers:Google");
+                var settings = configuration.Get<OAuthOptions>("Providers:Google");
 
                 options.ClientId = settings.ClientId;
                 options.ClientSecret = settings.ClientSecret;
@@ -109,8 +108,7 @@ public static class AuthenticationExtensions
             })
             .AddFacebook(options =>
             {
-                var settings =
-                    configuration.Get<OAuthOptions>("Configuration:Security:Authentication:Providers:Facebook");
+                var settings = configuration.Get<OAuthOptions>("Providers:Facebook");
 
                 options.ClientId = settings.ClientId;
                 options.ClientSecret = settings.ClientSecret;
@@ -120,8 +118,7 @@ public static class AuthenticationExtensions
             })
             .AddMicrosoftAccount(options =>
             {
-                var settings =
-                    configuration.Get<OAuthOptions>("Configuration:Security:Authentication:Providers:Microsoft");
+                var settings = configuration.Get<OAuthOptions>("Providers:Microsoft");
 
                 options.ClientId = settings.ClientId;
                 options.ClientSecret = settings.ClientSecret;

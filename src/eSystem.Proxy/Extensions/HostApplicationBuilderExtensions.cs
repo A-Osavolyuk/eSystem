@@ -1,5 +1,4 @@
-﻿using eSystem.Core.Common.Logging;
-using eSystem.ServiceDefaults;
+﻿using eSystem.ServiceDefaults;
 using Yarp.ReverseProxy.Configuration;
 
 namespace eSystem.Proxy.Extensions;
@@ -11,7 +10,6 @@ public static class HostApplicationBuilderExtensions
         public void AppApiServices()
         {
             builder.AddServiceDefaults();
-            builder.AddLogging();
             builder.AddReverseProxy();
             builder.AddCors();
         }

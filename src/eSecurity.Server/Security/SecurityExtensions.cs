@@ -24,7 +24,7 @@ public static class SecurityExtensions
             builder.AddIdentity();
             builder.AddCredentials(cfg =>
             {
-                var options = configuration.Get<CredentialOptions>("Configuration:Security:Credentials");
+                var options = configuration.Get<CredentialOptions>("Credentials");
             
                 cfg.Domain = options.Domain;
                 cfg.Server = options.Server;

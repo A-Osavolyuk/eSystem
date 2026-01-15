@@ -1,6 +1,5 @@
 ﻿using eSystem.Core.Common.Cache.Redis;
 using eSystem.Core.Common.Documentation;
-using eSystem.Core.Common.Logging;
 using eSystem.Core.Common.Versioning;
 using eSystem.Core.Http.Errors;
 
@@ -12,7 +11,6 @@ public static class HostApplicationBuilderExtensions
     {
         public void AddApiServices()
         {
-            builder.AddLogging();
             builder.AddServiceDefaults();
             builder.AddVersioning();
             builder.AddMessageBus();
@@ -34,7 +32,7 @@ public static class HostApplicationBuilderExtensions
 
         private void AddTelegramBot()
         {
-            var section = builder.Configuration.GetSection("Configuration:Services:Bots:Telegram");
+            var section = builder.Configuration.GetSection("Telegram");
             builder.Services.Configure<BotOptions>(section);
             builder.Services.AddHttpClient("tgwebhook")
                 .RemoveAllLoggers()
