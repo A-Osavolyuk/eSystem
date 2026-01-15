@@ -53,15 +53,15 @@ public class ApiClient(
             {
                 var content =
                     await httpResponseMessage.Content.ReadAsync<TResponse>(_serializationOptions, cancellationToken);
-                return HttpResponse<TResponse>.Success(content);
+                return HttpResponse.Success(content);
             }
 
             var error = await httpResponseMessage.Content.ReadAsync<Error>(_serializationOptions, cancellationToken);
-            return HttpResponse<TResponse>.Fail(error);
+            return HttpResponse.Fail<TResponse>(error);
         }
         catch (Exception ex)
         {
-            return HttpResponse<TResponse>.Fail(new Error()
+            return HttpResponse.Fail<TResponse>(new Error()
             {
                 Code = ErrorTypes.Common.InternalServerError,
                 Description = ex.Message
@@ -117,7 +117,7 @@ public class ApiClient(
 
     private async Task<HttpRequestMessage> InitializeAsync(HttpRequest httpRequest, HttpOptions httpOptions)
     {
-        var message = new HttpRequestMessage();
+        var message = new HttpRequestMessage(httpRequest.Method, new Uri($"{_gatewayOptions.Url}/{httpRequest.Url}"));
 
         if (httpOptions.Authentication == AuthenticationType.Bearer)
         {
@@ -138,9 +138,7 @@ public class ApiClient(
 
         if (httpOptions.WithLocale)
             message.Headers.WithLocale(await _localizationManager.GetLocaleAsync());
-
-        message.RequestUri = new Uri($"{_gatewayOptions.Url}/{httpRequest.Url}");
-        message.Method = httpRequest.Method;
+        
         message.Headers.WithUserAgent(_httpContext.GetUserAgent());
         message.Headers.WithCookies(_httpContext.GetCookies());
         message.AddContent(httpRequest, httpOptions);
@@ -153,10 +151,8 @@ public class ApiClient(
         HttpResponseMessage responseMessage,
         CancellationToken cancellationToken = default)
     {
-        var request = new HttpRequestMessage();
+        var request = new HttpRequestMessage(HttpMethod.Post, new Uri($"{_gatewayOptions.Url}/api/v1/Connect/token"));
         request.Headers.WithBasicAuthentication(_clientOptions.ClientId, _clientOptions.ClientSecret);
-        request.Method = HttpMethod.Post;
-        request.RequestUri = new Uri($"{_gatewayOptions.Url}/api/v1/Connect/token");
         request.Headers.WithCookies(_httpContext.GetCookies());
         request.Headers.WithUserAgent(_httpContext.GetUserAgent());
 
@@ -171,8 +167,7 @@ public class ApiClient(
             RefreshToken = await _tokenProvider.GetAsync(
                 $"{session.Id}:{TokenTypes.RefreshToken}", cancellationToken)
         });
-
-        request.Headers.Add(HeaderTypes.Accept, ContentTypes.Application.XwwwFormUrlEncoded);
+        
         request.Content = new FormUrlEncodedContent(content);
 
         var tokenResult = await _httpClient.SendAsync(request, cancellationToken);
@@ -208,7 +203,8 @@ public class ApiClient(
     {
         var retryRequestMessage = new HttpRequestMessage(request.Method, request.RequestUri);
 
-        var headers = request.Headers.Where(x => x.Key != HeaderTypes.Authorization);
+        var headers = request.Headers.Where(
+            x => x.Key != HeaderTypes.Authorization);
 
         foreach (var header in headers)
             retryRequestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value);

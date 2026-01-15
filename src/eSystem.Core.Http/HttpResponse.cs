@@ -1,36 +1,54 @@
-﻿using System.Text.Json;
-using eSystem.Core.Http.Results;
+﻿using eSystem.Core.Http.Results;
 
 namespace eSystem.Core.Http;
 
 public sealed class HttpResponse
 {
-    private Error? Error { get; set; }
-    public bool Succeeded { get; set; }
-    public static HttpResponse Success() => new(){ Succeeded = true };
-    public static HttpResponse Fail(Error error) => new(){ Succeeded = false, Error = error };
+    public bool Succeeded { get; init; }
+    private Error? Error { get; init; }
+    public static HttpResponse Success() 
+        => new(){ Succeeded = true };
+    public static HttpResponse<TResponse> Success<TResponse>(TResponse response) 
+        => new() { Succeeded = true, Result = response };
+    public static HttpResponse Fail(Error error) 
+        => new(){ Succeeded = false, Error = error };
+    public static HttpResponse<TResponse> Fail<TResponse>(Error error) 
+        => new(){ Succeeded = false, Error = error };
+    
     public Error GetError() => Error!;
+
+    public void Match(Action success, Action<Error> fail)
+    {
+        if (Succeeded) success();
+        else fail(Error!);
+    }
 }
 
 public sealed class HttpResponse<TResponse>
 {
-    private Error? Error { get; set; }
-    public bool Succeeded { get; set; }
-    private TResponse? Result { get; set; }
-
-    public static HttpResponse<TResponse> Success(TResponse response) => new()
-    {
-        Succeeded = true,
-        Result = response
-    };
+    public bool Succeeded { get; init; }
+    public Error? Error { private get; init; }
+    public TResponse? Result { private get; init; }
     
-    public static HttpResponse<TResponse> Fail(Error error) => new()
-    {
-        Succeeded = false,
-        Error = error
-    };
-    
-    public TResponse Get() => (TResponse)Result!;
+    public TResponse Get() => Result!;
     
     public Error GetError() => Error!;
+    
+    public void Match(Action<TResponse> success, Action<Error> fail)
+    {
+        if (Succeeded) success(Result!);
+        else fail(Error!);
+    }
+    
+    public async Task MatchAsync(Func<TResponse, Task> success, Action<Error> fail)
+    {
+        if (Succeeded) await success(Result!);
+        else fail(Error!);
+    }
+    
+    public async Task MatchAsync(Func<TResponse, Task> success, Func<Error, Task> fail)
+    {
+        if (Succeeded) await success(Result!);
+        else await fail(Error!);
+    }
 }
