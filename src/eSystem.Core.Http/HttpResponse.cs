@@ -30,18 +30,7 @@ public sealed class HttpResponse<TResponse>
         Error = error
     };
     
-    public TResponse Get()
-    {
-        var options = new JsonSerializerOptions()
-        {
-            WriteIndented = true, 
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        };
-        
-        var json = JsonSerializer.Serialize(Result, options);
-        var value = JsonSerializer.Deserialize<TResponse>(json, options)!;
-        return value;
-    }
+    public TResponse Get() => (TResponse)Result!;
     
     public Error GetError() => Error!;
 }
