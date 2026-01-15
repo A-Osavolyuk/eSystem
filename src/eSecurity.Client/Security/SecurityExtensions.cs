@@ -25,7 +25,6 @@ public static class SecurityExtensions
         {
             services.AddAuthorization();
             services.AddOidc();
-            services.AddCookies();
 
             services.AddAuthentication(options =>
             {

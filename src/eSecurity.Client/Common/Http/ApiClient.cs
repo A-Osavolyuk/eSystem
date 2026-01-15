@@ -23,7 +23,6 @@ public class ApiClient(
     TokenProvider tokenProvider,
     GatewayOptions gatewayOptions,
     NavigationManager navigationManager,
-    ICookieAccessor cookieAccessor,
     IFetchClient fetchClient,
     IOptions<ClientOptions> clientOptions,
     ILocalizationManager localizationManager,
@@ -34,7 +33,6 @@ public class ApiClient(
     private readonly TokenProvider _tokenProvider = tokenProvider;
     private readonly GatewayOptions _gatewayOptions = gatewayOptions;
     private readonly NavigationManager _navigationManager = navigationManager;
-    private readonly ICookieAccessor _cookieAccessor = cookieAccessor;
     private readonly IFetchClient _fetchClient = fetchClient;
     private readonly ILocalizationManager _localizationManager = localizationManager;
     private readonly ClientOptions _clientOptions = clientOptions.Value;
@@ -157,12 +155,12 @@ public class ApiClient(
         request.RequestUri = new Uri($"{_gatewayOptions.Url}/api/v1/Connect/token");
         request.Headers.WithCookies(_httpContext.GetCookies());
         request.Headers.WithUserAgent(_httpContext.GetUserAgent());
-
+        
         var content = FormUrl.Encode(new TokenRequest()
         {
             ClientId = _clientOptions.ClientId,
             ClientSecret = _clientOptions.ClientSecret,
-            RefreshToken = _cookieAccessor.Get(DefaultCookies.RefreshToken),
+            RefreshToken = _httpContext.Request.Cookies[DefaultCookies.RefreshToken],
             GrantType = GrantTypes.RefreshToken
         });
 

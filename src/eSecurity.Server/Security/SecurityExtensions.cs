@@ -16,7 +16,6 @@ public static class SecurityExtensions
         public void AddSecurity()
         {
             var configuration = builder.Configuration;
-            builder.Services.AddCookies();
 
             builder.AddAuthentication();
             builder.AddAuthorization();
