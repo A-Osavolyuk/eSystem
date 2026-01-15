@@ -16,23 +16,35 @@ public class OpenIdDiscoveryProvider(
     private readonly HttpClient _httpClient = httpClientFactory.CreateClient("oidc");
     private const string OpenIdConfigurationKey = "openid_configuration";
     
-    public async Task<OpenIdConfiguration> GetOpenIdConfigurationsAsync()
+    public async Task<OpenIdConfiguration> GetOpenIdConfigurationsAsync(CancellationToken cancellationToken = default)
     {
-        var openIdConfiguration = await _cacheService.GetAsync<OpenIdConfiguration>(OpenIdConfigurationKey);
-        if (openIdConfiguration is not null)
-            return openIdConfiguration;
+        var configuration = await _cacheService.GetAsync<OpenIdConfiguration>(OpenIdConfigurationKey, cancellationToken);
+        if (configuration is not null)
+            return configuration;
 
         var requestUri = new Uri($"{_gatewayOptions.Url}/api/v1/connect/.well-known/openid-configuration");
-        var response = await _httpClient.GetAsync(requestUri);
+        var response = await _httpClient.GetAsync(requestUri, cancellationToken);
 
         if (!response.IsSuccessStatusCode) 
             throw new Exception();
         
-        var responseJson = await response.Content.ReadAsStringAsync();
-        openIdConfiguration = JsonSerializer.Deserialize<OpenIdConfiguration>(responseJson)!;
+        var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
+        configuration = JsonSerializer.Deserialize<OpenIdConfiguration>(responseJson)!;
         var options = new DistributedCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromDays(1));
-        await _cacheService.SetAsync(OpenIdConfigurationKey, openIdConfiguration, options);
+        await _cacheService.SetAsync(OpenIdConfigurationKey, configuration, options, cancellationToken);
             
-        return openIdConfiguration;
+        return configuration;
+    }
+
+    public async Task<JsonWebKeySet> GetWebKeySetAsync(CancellationToken cancellationToken = default)
+    {
+        var configuration = await GetOpenIdConfigurationsAsync(cancellationToken);
+        var response = await _httpClient.GetAsync(configuration.JwksUri, cancellationToken);
+        
+        if (!response.IsSuccessStatusCode) 
+            throw new Exception();
+
+        var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
+        return JsonSerializer.Deserialize<JsonWebKeySet>(responseJson)!;
     }
 }
