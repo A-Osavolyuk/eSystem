@@ -6,6 +6,7 @@
 
 @inherits PageBase
 
+@inject SessionState SessionState
 @inject IFetchClient FetchClient
 @inject IConnectService ConnectService
 
@@ -115,9 +116,9 @@
         if (result.Succeeded)
         {
             var response = result.Get()!;
-            var cookie = new SessionCookie()
+            var session = new SessionCookie()
             {
-                SessionId = response.SessionId,
+                Id = response.SessionId,
                 UserId = request.UserId,
                 DeviceId = response.DeviceId,
                 IssuedAt = DateTimeOffset.UtcNow,
@@ -128,10 +129,11 @@
             {
                 Url = $"{NavigationManager.BaseUri}api/authentication/authorize",
                 Method = HttpMethod.Post,
-                Body = cookie
+                Body = session
             };
 
             await FetchClient.FetchAsync(fetchOptions);
+            SessionState.Session = session;
 
             var builder = QueryBuilder.Create()
                 .WithUri(decodedRedirectUri)

@@ -2,7 +2,6 @@
 
 public class SignIdentity
 {
-    public required string RefreshToken { get; set; }
     public required List<ClaimValue> Claims { get; set; }
     public required string Scheme { get; set; }
 }

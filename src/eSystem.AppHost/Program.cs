@@ -60,6 +60,7 @@ var proxy = builder.AddProject<Projects.eSystem_Proxy>("proxy")
     .WithReference(eStorageServer).WaitFor(eStorageServer);
 
 builder.AddProject<Projects.eSecurity_Client>("e-security-client")
+    .WithReference(redisCache)
     .WithReference(proxy).WaitFor(proxy);
 
 var eCinemaServer = builder.AddProject<Projects.eCinema_Server>("e-cinema-server")

@@ -7,5 +7,6 @@ public static class StateExtensions
     public static void AddState(this IServiceCollection services)
     {
         services.AddScoped<UserState>();
+        services.AddScoped<SessionState>();
     }
 }

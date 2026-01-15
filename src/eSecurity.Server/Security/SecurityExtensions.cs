@@ -1,5 +1,4 @@
-﻿using eSecurity.Core.Security.Cookies;
-using eSecurity.Server.Security.Authentication;
+﻿using eSecurity.Server.Security.Authentication;
 using eSecurity.Server.Security.Authorization;
 using eSecurity.Server.Security.Credentials;
 using eSecurity.Server.Security.Credentials.PublicKey.Credentials;

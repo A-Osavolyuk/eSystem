@@ -16,23 +16,6 @@ public class UserState : State
         Credentials = null;
         Identity = null;
     }
-
-    public void Map(UserStateDto state)
-    {
-        UserId = state.UserId;
-        Identity = new UserIdentity(state.Roles, state.Permissions);
-        Credentials = new UserCredentials
-        {
-            Username = state.Username, 
-            Email = state.Email, 
-            PhoneNumber = state.PhoneNumber,
-        };
-    }
-
-    public override async Task Change()
-    {
-        await StateChanged();
-    }
 }
 
 public class UserCredentials

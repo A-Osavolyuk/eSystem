@@ -4,7 +4,10 @@ public abstract class State
 {
     public event Func<Task>? OnChange;
 
-    public abstract Task Change();
+    public virtual async Task Change()
+    {
+        await StateChanged();
+    }
 
     protected async Task StateChanged() => await OnChange!.Invoke();
 }

@@ -1,6 +1,5 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
-using eSecurity.Client.Security.Authentication.Oidc.Token;
 using eSecurity.Core.Common.DTOs;
 using eSecurity.Core.Security.Cookies;
 using eSecurity.Core.Security.Cookies.Constants;
@@ -14,12 +13,9 @@ namespace eSecurity.Client.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthenticationController(
-    IDataProtectionProvider protectionProvider,
-    TokenProvider tokenProvider) : ControllerBase
+public class AuthenticationController(IDataProtectionProvider protectionProvider) : ControllerBase
 {
     private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
-    private readonly TokenProvider _tokenProvider = tokenProvider;
 
     [HttpPost("authorize")]
     public IActionResult Authorize([FromBody] SessionCookie cookie)
@@ -48,20 +44,6 @@ public class AuthenticationController(
         return Ok(Results.Ok());
     }
 
-    [HttpPost("refresh")]
-    public IActionResult Authorize([FromBody] string refreshToken)
-    {
-        var cookieOptions = new CookieOptions()
-        {
-            HttpOnly = true,
-            SameSite = SameSiteMode.Lax,
-            MaxAge = TimeSpan.FromDays(30)
-        };
-
-        Response.Cookies.Append(DefaultCookies.RefreshToken, refreshToken, cookieOptions);
-        return Ok(Results.Ok());
-    }
-
     [HttpPost("sign-in")]
     public async Task<IActionResult> SignInAsync([FromBody] SignIdentity identity)
     {
@@ -76,15 +58,6 @@ public class AuthenticationController(
             authenticationProperties
         );
 
-        var cookieOptions = new CookieOptions()
-        {
-            SameSite = SameSiteMode.Lax,
-            HttpOnly = true,
-            MaxAge = TimeSpan.FromDays(30)
-        };
-            
-        HttpContext.Response.Cookies.Append(DefaultCookies.RefreshToken, identity.RefreshToken, cookieOptions);
-
         return Ok(Results.Ok());
     }
 
@@ -92,7 +65,6 @@ public class AuthenticationController(
     public async Task<IActionResult> SignOutAsync()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        Response.Cookies.Delete(DefaultCookies.RefreshToken);
 
         return Ok(Results.Ok());
     }

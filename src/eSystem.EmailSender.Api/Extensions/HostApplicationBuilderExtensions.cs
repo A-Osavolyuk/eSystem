@@ -4,7 +4,6 @@ using eSystem.Core.Common.Error;
 using eSystem.EmailSender.Api.Consumers;
 using eSystem.EmailSender.Api.Errors;
 using eSystem.EmailSender.Api.Services;
-using Microsoft.AspNetCore.Diagnostics;
 
 namespace eSystem.EmailSender.Api.Extensions;
 

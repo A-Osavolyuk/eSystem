@@ -1,5 +1,6 @@
 using eSecurity.Client.Security.Authentication;
 using eSecurity.Client.Security.Authentication.Oidc;
+using eSecurity.Client.Security.Authentication.Oidc.Session;
 using eSecurity.Client.Security.Authentication.Oidc.Token;
 using eSecurity.Client.Security.Authentication.Password;
 using eSecurity.Client.Security.Authentication.TwoFactor;
@@ -10,7 +11,6 @@ using eSecurity.Client.Security.Authorization.LinkedAccounts;
 using eSecurity.Client.Security.Authorization.OAuth;
 using eSecurity.Client.Security.Credentials.PublicKey;
 using eSecurity.Client.Security.Identity;
-using eSecurity.Core.Security.Cookies;
 using eSecurity.Core.Security.Cookies.Constants;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -47,7 +47,8 @@ public static class SecurityExtensions
                 options.ReturnUrlParameter = "return_url";
             });
             
-            services.AddScoped<TokenProvider>();
+            services.AddScoped<ITokenProvider, TokenProvider>();
+            services.AddScoped<ISessionAccessor, SessionAccessor>();
             services.AddScoped<AuthenticationManager>();
             services.AddScoped<AuthenticationStateProvider, ClaimAuthenticationStateProvider>();
             
