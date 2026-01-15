@@ -4,9 +4,18 @@ namespace eSystem.Core.Http.Extensions;
 
 public static class HttpContentExtensions
 {
-    public static async Task<T> ReadAsync<T>(this HttpContent content, JsonSerializerOptions options)
+    extension(HttpContent content)
     {
-        var json = await content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<T>(json, options)!;
+        public async Task<T> ReadAsync<T>(CancellationToken cancellationToken = default)
+        {
+            var json = await content.ReadAsStringAsync(cancellationToken);
+            return JsonSerializer.Deserialize<T>(json)!;
+        }
+
+        public async Task<T> ReadAsync<T>(JsonSerializerOptions options, CancellationToken cancellationToken = default)
+        {
+            var json = await content.ReadAsStringAsync(cancellationToken);
+            return JsonSerializer.Deserialize<T>(json, options)!;
+        }
     }
 }
