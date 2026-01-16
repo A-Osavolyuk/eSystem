@@ -1,5 +1,4 @@
-﻿@using eSecurity.Client.Common.Storage
-@using eSecurity.Client.Security.Authentication
+﻿@using eSecurity.Client.Security.Authentication
 
 @inherits ComponentBase
 
@@ -10,5 +9,4 @@
     [Inject] public AuthenticationManager AuthenticationManager { get; set; } = null!;
     [Inject] public ISnackbar Snackbar { get; private set; } = null!;
     [Inject] public IJSRuntime Js { get; private set; } = null!;
-    [Inject] public IStorage LocalStorage { get; private set; } = null!;
 }

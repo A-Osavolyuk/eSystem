@@ -1,6 +1,5 @@
 using System.Web;
 using eSecurity.Client.Common.JS.Fetch;
-using eSecurity.Client.Common.Storage;
 using eSecurity.Core.Common.Routing;
 using eSystem.Core.Security.Authentication.Oidc.Client;
 using eSystem.Core.Security.Authentication.Oidc.Constants;
@@ -15,13 +14,11 @@ public sealed class AuthenticationManager(
     NavigationManager navigationManager,
     AuthenticationStateProvider authenticationStateProvider,
     IFetchClient fetchClient,
-    IStorage storage,
     IOptions<ClientOptions> clientOptions)
 {
     private readonly NavigationManager _navigationManager = navigationManager;
     private readonly AuthenticationStateProvider _authenticationStateProvider = authenticationStateProvider;
     private readonly IFetchClient _fetchClient = fetchClient;
-    private readonly IStorage _storage = storage;
     private readonly ClientOptions _clientOptions = clientOptions.Value;
 
     public void Authorize()
@@ -65,7 +62,6 @@ public sealed class AuthenticationManager(
         if (result.Succeeded)
         {
             await (_authenticationStateProvider as ClaimAuthenticationStateProvider)!.SignOutAsync();
-            await _storage.ClearAsync();
         }
     }
 

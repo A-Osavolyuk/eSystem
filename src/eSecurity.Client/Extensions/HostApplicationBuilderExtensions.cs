@@ -3,7 +3,6 @@ using eSecurity.Client.Common.Confirmation;
 using eSecurity.Client.Common.Http;
 using eSecurity.Client.Common.JS;
 using eSecurity.Client.Common.State;
-using eSecurity.Client.Common.Storage;
 using eSecurity.Client.Security;
 using eSystem.Core.Common.Cache.Redis;
 using eSystem.Core.Common.Gateway;
@@ -35,7 +34,6 @@ public static class HostApplicationBuilderExtensions
             builder.Services.AddConfirmation();
             builder.Services.AddJs();
             builder.Services.AddState();
-            builder.Services.AddStorage();
             builder.Services.AddGateway();
             builder.Services.AddLocalization(cfg => cfg.ResourcesPath = "Resources");
             builder.Services.AddMudExtensions();
