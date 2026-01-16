@@ -9,12 +9,12 @@ public class LinkedAccountService(IApiClient apiClient) : ILinkedAccountService
 
     public async ValueTask<HttpResponse> DisconnectAsync(DisconnectLinkedAccountRequest request)
         => await _apiClient.SendAsync(
-            new HttpRequest()
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "api/v1/LinkedAccount/disconnect"
-            }, new HttpOptions()
+            }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer

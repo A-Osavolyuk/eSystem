@@ -41,14 +41,14 @@ public class ApiClient(
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
-    public async ValueTask<HttpResponse<TResponse>> SendAsync<TResponse>(
-        HttpRequest httpRequest,
-        HttpOptions httpOptions,
+    public async ValueTask<ApiResponse<TResponse>> SendAsync<TResponse>(
+        HttpRequest apiRequest,
+        ApiOptions apiOptions,
         CancellationToken cancellationToken = default)
     {
         try
         {
-            var httpResponseMessage = await SendRequestAsync(httpRequest, httpOptions, cancellationToken);
+            var httpResponseMessage = await SendRequestAsync(apiRequest, apiOptions, cancellationToken);
             if (httpResponseMessage.IsSuccessStatusCode)
             {
                 var content =
@@ -70,13 +70,13 @@ public class ApiClient(
     }
 
     public async ValueTask<HttpResponse> SendAsync(
-        HttpRequest httpRequest,
-        HttpOptions httpOptions,
+        HttpRequest apiRequest,
+        ApiOptions apiOptions,
         CancellationToken cancellationToken = default)
     {
         try
         {
-            var httpResponseMessage = await SendRequestAsync(httpRequest, httpOptions, cancellationToken);
+            var httpResponseMessage = await SendRequestAsync(apiRequest, apiOptions, cancellationToken);
             if (httpResponseMessage.IsSuccessStatusCode)
             {
                 return HttpResponse.Success();
@@ -96,11 +96,11 @@ public class ApiClient(
     }
 
     private async ValueTask<HttpResponseMessage> SendRequestAsync(
-        HttpRequest httpRequest,
-        HttpOptions httpOptions,
+        HttpRequest apiRequest,
+        ApiOptions apiOptions,
         CancellationToken cancellationToken = default)
     {
-        var requestMessage = await InitializeAsync(httpRequest, httpOptions);
+        var requestMessage = await InitializeAsync(apiRequest, apiOptions);
         var responseMessage = await _httpClient.SendAsync(requestMessage, cancellationToken);
 
         if (responseMessage.StatusCode != HttpStatusCode.Unauthorized)
@@ -115,11 +115,11 @@ public class ApiClient(
         return await RefreshAsync(requestMessage, responseMessage, cancellationToken);
     }
 
-    private async Task<HttpRequestMessage> InitializeAsync(HttpRequest httpRequest, HttpOptions httpOptions)
+    private async Task<HttpRequestMessage> InitializeAsync(HttpRequest apiRequest, ApiOptions apiOptions)
     {
-        var message = new HttpRequestMessage(httpRequest.Method, new Uri($"{_gatewayOptions.Url}/{httpRequest.Url}"));
+        var message = new HttpRequestMessage(apiRequest.Method, new Uri($"{_gatewayOptions.Url}/{apiRequest.Url}"));
 
-        if (httpOptions.Authentication == AuthenticationType.Bearer)
+        if (apiOptions.Authentication == AuthenticationType.Bearer)
         {
             var session = _sessionAccessor.Get();
             if (session is not null)
@@ -128,20 +128,20 @@ public class ApiClient(
                 message.Headers.WithBearerAuthentication(token);
             }
         }
-        else if (httpOptions.Authentication == AuthenticationType.Basic)
+        else if (apiOptions.Authentication == AuthenticationType.Basic)
         {
             message.Headers.WithBasicAuthentication(_clientOptions.ClientId, _clientOptions.ClientSecret);
         }
 
-        if (httpOptions.WithTimezone)
+        if (apiOptions.WithTimezone)
             message.Headers.WithTimeZone(await _localizationManager.GetTimeZoneAsync());
 
-        if (httpOptions.WithLocale)
+        if (apiOptions.WithLocale)
             message.Headers.WithLocale(await _localizationManager.GetLocaleAsync());
         
         message.Headers.WithUserAgent(_httpContext.GetUserAgent());
         message.Headers.WithCookies(_httpContext.GetCookies());
-        message.AddContent(httpRequest, httpOptions);
+        message.AddContent(apiRequest, apiOptions);
 
         return message;
     }

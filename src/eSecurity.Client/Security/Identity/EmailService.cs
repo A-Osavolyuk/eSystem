@@ -14,7 +14,7 @@ public class EmailService(IApiClient apiClient) : IEmailService
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "api/v1/Email/add"
-            }, new HttpOptions()
+            }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
@@ -27,7 +27,7 @@ public class EmailService(IApiClient apiClient) : IEmailService
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "api/v1/Email/check"
-            }, new HttpOptions()
+            }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
@@ -40,7 +40,7 @@ public class EmailService(IApiClient apiClient) : IEmailService
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "api/v1/Email/change"
-            }, new HttpOptions()
+            }, new ApiOptions()
             {
 
                 ContentType = ContentTypes.Application.Json,
@@ -54,7 +54,7 @@ public class EmailService(IApiClient apiClient) : IEmailService
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "api/v1/Email/verify"
-            }, new HttpOptions()
+            }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
@@ -67,7 +67,7 @@ public class EmailService(IApiClient apiClient) : IEmailService
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "api/v1/Email/manage"
-            }, new HttpOptions()
+            }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
@@ -80,7 +80,7 @@ public class EmailService(IApiClient apiClient) : IEmailService
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "api/v1/Email/remove"
-            }, new HttpOptions()
+            }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
@@ -93,7 +93,7 @@ public class EmailService(IApiClient apiClient) : IEmailService
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "api/v1/Email/reset"
-            }, new HttpOptions()
+            }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer

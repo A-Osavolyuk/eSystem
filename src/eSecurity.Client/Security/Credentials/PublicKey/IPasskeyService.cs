@@ -5,9 +5,9 @@ namespace eSecurity.Client.Security.Credentials.PublicKey;
 
 public interface IPasskeyService
 {
-    public ValueTask<HttpResponse<PublicKeyCredentialRequestOptions>> GenerateRequestOptionsAsync(
+    public ValueTask<ApiResponse<PublicKeyCredentialRequestOptions>> GenerateRequestOptionsAsync(
         GenerateRequestOptionsRequest request);
-    public ValueTask<HttpResponse<PublicKeyCredentialCreationOptions>> GenerateCreationOptionsAsync(
+    public ValueTask<ApiResponse<PublicKeyCredentialCreationOptions>> GenerateCreationOptionsAsync(
         GenerateCreationOptionsRequest request);
     
     public ValueTask<HttpResponse> CreateAsync(CreatePasskeyRequest request);

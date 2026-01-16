@@ -14,7 +14,7 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "api/v1/Verification/code/send"
-            }, new HttpOptions()
+            }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
@@ -27,7 +27,7 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "api/v1/Verification/code/resend"
-            }, new HttpOptions()
+            }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
@@ -41,7 +41,7 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "api/v1/Verification/code/verify"
-            }, new HttpOptions()
+            }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
@@ -54,7 +54,7 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "api/v1/Verification/recovery-code/verify"
-            }, new HttpOptions()
+            }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
@@ -68,7 +68,7 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "api/v1/Verification/authenticator/verify"
-            }, new HttpOptions()
+            }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
@@ -82,7 +82,7 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "api/v1/Verification/passkey/verify"
-            }, new HttpOptions()
+            }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None

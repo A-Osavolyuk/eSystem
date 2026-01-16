@@ -2,13 +2,13 @@ namespace eSecurity.Client.Common.Http;
 
 public interface IApiClient
 {
-    public ValueTask<HttpResponse<TResponse>> SendAsync<TResponse>(
-        HttpRequest httpRequest, 
-        HttpOptions httpOptions, 
+    public ValueTask<ApiResponse<TResponse>> SendAsync<TResponse>(
+        ApiRequest apiRequest, 
+        ApiOptions apiOptions, 
         CancellationToken cancellationToken = default);
     
     public ValueTask<HttpResponse> SendAsync(
-        HttpRequest httpRequest, 
-        HttpOptions httpOptions, 
+        ApiRequest apiRequest, 
+        ApiOptions apiOptions, 
         CancellationToken cancellationToken = default);
 }

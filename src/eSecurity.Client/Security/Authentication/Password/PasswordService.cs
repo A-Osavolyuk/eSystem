@@ -15,20 +15,20 @@ public class PasswordService(IApiClient apiClient) : IPasswordService
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "api/v1/Password/add"
-            }, new HttpOptions()
+            }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 
-    public async ValueTask<HttpResponse<ForgotPasswordResponse>> ForgotPasswordAsync(ForgotPasswordRequest request)
+    public async ValueTask<ApiResponse<ForgotPasswordResponse>> ForgotPasswordAsync(ForgotPasswordRequest request)
         => await _apiClient.SendAsync<ForgotPasswordResponse>(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "api/v1/Password/forgot"
-            }, new HttpOptions()
+            }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
@@ -41,7 +41,7 @@ public class PasswordService(IApiClient apiClient) : IPasswordService
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "api/v1/Password/reset"
-            }, new HttpOptions()
+            }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
@@ -54,7 +54,7 @@ public class PasswordService(IApiClient apiClient) : IPasswordService
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "api/v1/Password/change"
-            }, new HttpOptions()
+            }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer

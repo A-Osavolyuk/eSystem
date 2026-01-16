@@ -14,7 +14,7 @@ public class UsernameService(IApiClient apiClient) : IUsernameService
                 Data = request,
                 Method = HttpMethod.Post,
                 Url = "api/v1/Username/set"
-            }, new HttpOptions()
+            }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
@@ -27,7 +27,7 @@ public class UsernameService(IApiClient apiClient) : IUsernameService
                 Data = request,
                 Method = HttpMethod.Put,
                 Url = "api/v1/Username/change"
-            }, new HttpOptions()
+            }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
@@ -40,7 +40,7 @@ public class UsernameService(IApiClient apiClient) : IUsernameService
                 Data = request,
                 Method = HttpMethod.Post,
                 Url = "api/v1/Username/check"
-            }, new HttpOptions()
+            }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None

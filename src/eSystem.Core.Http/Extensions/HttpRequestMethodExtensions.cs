@@ -11,7 +11,7 @@ public static class HttpRequestMethodExtensions
 {
     extension(HttpRequestMessage message)
     {
-        public void AddContent(HttpRequest request, HttpOptions options)
+        public void AddContent(ApiRequest request, ApiOptions options)
         {
             switch (options.ContentType)
             {

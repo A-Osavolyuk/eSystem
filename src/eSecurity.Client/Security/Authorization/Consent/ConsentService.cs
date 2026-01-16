@@ -8,27 +8,27 @@ public class ConsentService(IApiClient apiClient) : IConsentService
 {
     private readonly IApiClient _apiClient = apiClient;
 
-    public async ValueTask<HttpResponse<CheckConsentResponse>> CheckAsync(CheckConsentRequest request)
+    public async ValueTask<ApiResponse<CheckConsentResponse>> CheckAsync(CheckConsentRequest request)
         => await _apiClient.SendAsync<CheckConsentResponse>(
-            new HttpRequest()
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Url = "api/v1/Consent/check",
                 Data = request
-            }, new HttpOptions()
+            }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
             });
 
-    public async ValueTask<HttpResponse> GrantAsync(GrantConsentRequest request)
+    public async ValueTask<ApiResponse> GrantAsync(GrantConsentRequest request)
         => await _apiClient.SendAsync(
-            new HttpRequest()
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Url = "api/v1/Consent/grant",
                 Data = request
-            }, new HttpOptions()
+            }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None

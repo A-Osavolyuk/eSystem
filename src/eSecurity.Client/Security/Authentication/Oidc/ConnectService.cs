@@ -11,76 +11,76 @@ public class ConnectService(IApiClient apiClient) : IConnectService
 {
     private readonly IApiClient _apiClient = apiClient;
 
-    public async ValueTask<HttpResponse<JsonWebKeySet>> GetPublicKeysAsync()
+    public async ValueTask<ApiResponse<JsonWebKeySet>> GetPublicKeysAsync()
         => await _apiClient.SendAsync<JsonWebKeySet>(
             new HttpRequest()
             {
                 Method = HttpMethod.Get,
                 Url = "api/v1/Connect/.well-known/jwks.json",
-            }, new HttpOptions()
+            }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
             });
 
-    public async ValueTask<HttpResponse<OpenIdConfiguration>> GetOpenidConfigurationAsync()
+    public async ValueTask<ApiResponse<OpenIdConfiguration>> GetOpenidConfigurationAsync()
         => await _apiClient.SendAsync<OpenIdConfiguration>(
             new HttpRequest()
             {
                 Method = HttpMethod.Get,
                 Url = "api/v1/Connect/.well-known/openid-configuration",
-            }, new HttpOptions()
+            }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
             });
 
-    public async ValueTask<HttpResponse<ClientInfo>> GetClientInfoAsync(string clientId)
+    public async ValueTask<ApiResponse<ClientInfo>> GetClientInfoAsync(string clientId)
         => await _apiClient.SendAsync<ClientInfo>(
             new HttpRequest()
             {
                 Method = HttpMethod.Get,
                 Url = $"api/v1/Connect/clients/{clientId}",
-            }, new HttpOptions()
+            }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
             });
 
-    public async ValueTask<HttpResponse<AuthorizeResponse>> AuthorizeAsync(AuthorizeRequest request)
+    public async ValueTask<ApiResponse<AuthorizeResponse>> AuthorizeAsync(AuthorizeRequest request)
         => await _apiClient.SendAsync<AuthorizeResponse>(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
                 Url = "api/v1/Connect/authorize",
                 Data = request
-            }, new HttpOptions()
+            }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
             });
 
-    public async ValueTask<HttpResponse<TokenResponse>> TokenAsync(TokenRequest request)
+    public async ValueTask<ApiResponse<TokenResponse>> TokenAsync(TokenRequest request)
         => await _apiClient.SendAsync<TokenResponse>(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
                 Url = "api/v1/Connect/token",
                 Data = request
-            }, new HttpOptions()
+            }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.XwwwFormUrlEncoded,
                 Authentication = AuthenticationType.Basic
             });
 
-    public async ValueTask<HttpResponse<LogoutResponse>> LogoutAsync(LogoutRequest request)
+    public async ValueTask<ApiResponse<LogoutResponse>> LogoutAsync(LogoutRequest request)
         => await _apiClient.SendAsync<LogoutResponse>(
             new HttpRequest()
             {
                 Method = HttpMethod.Post,
                 Url = "api/v1/Connect/logout",
                 Data = request
-            }, new HttpOptions()
+            }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer

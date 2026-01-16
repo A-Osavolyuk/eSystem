@@ -4,13 +4,13 @@ namespace eSecurity.Client.Security.Identity;
 
 public interface IUserService
 {
-    public ValueTask<HttpResponse<UserVerificationData>> GetUserVerificationMethodsAsync(Guid id);
-    public ValueTask<HttpResponse<UserEmailDto>> GetUserPrimaryEmailAsync(Guid id);
-    public ValueTask<HttpResponse<List<UserEmailDto>>> GetUserEmailsAsync(Guid id);
-    public ValueTask<HttpResponse<UserDeviceDto>> GetUserDeviceAsync(Guid id, Guid deviceId);
-    public ValueTask<HttpResponse<List<UserDeviceDto>>> GetUserDevicesAsync(Guid id);
-    public ValueTask<HttpResponse<UserLinkedAccountData>> GetUserLinkedAccountsAsync(Guid id);
-    public ValueTask<HttpResponse<List<UserTwoFactorMethod>>> GetUserTwoFactorMethodsAsync(Guid id);
-    public ValueTask<HttpResponse<UserLoginMethodsDto>> GetUserLoginMethodsAsync(Guid id);
-    public ValueTask<HttpResponse<UserDto>> GetUserAsync(Guid id);
+    public ValueTask<ApiResponse<UserVerificationData>> GetUserVerificationMethodsAsync(Guid id);
+    public ValueTask<ApiResponse<UserEmailDto>> GetUserPrimaryEmailAsync(Guid id);
+    public ValueTask<ApiResponse<List<UserEmailDto>>> GetUserEmailsAsync(Guid id);
+    public ValueTask<ApiResponse<UserDeviceDto>> GetUserDeviceAsync(Guid id, Guid deviceId);
+    public ValueTask<ApiResponse<List<UserDeviceDto>>> GetUserDevicesAsync(Guid id);
+    public ValueTask<ApiResponse<UserLinkedAccountData>> GetUserLinkedAccountsAsync(Guid id);
+    public ValueTask<ApiResponse<List<UserTwoFactorMethod>>> GetUserTwoFactorMethodsAsync(Guid id);
+    public ValueTask<ApiResponse<UserLoginMethodsDto>> GetUserLoginMethodsAsync(Guid id);
+    public ValueTask<ApiResponse<UserDto>> GetUserAsync(Guid id);
 }

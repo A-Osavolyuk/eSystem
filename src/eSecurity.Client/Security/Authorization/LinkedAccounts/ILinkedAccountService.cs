@@ -4,5 +4,5 @@ namespace eSecurity.Client.Security.Authorization.LinkedAccounts;
 
 public interface ILinkedAccountService
 {
-    public ValueTask<HttpResponse> DisconnectAsync(DisconnectLinkedAccountRequest request);
+    public ValueTask<ApiResponse> DisconnectAsync(DisconnectLinkedAccountRequest request);
 }

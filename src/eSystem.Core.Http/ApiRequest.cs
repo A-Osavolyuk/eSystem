@@ -2,7 +2,7 @@
 
 namespace eSystem.Core.Http;
 
-public sealed class HttpRequest
+public sealed class ApiRequest
 {
     public required string Url { get; set; }
     public required HttpMethod Method { get; set; } = HttpMethod.Get;
