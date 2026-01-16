@@ -1,7 +1,7 @@
 ﻿using eSystem.Core.Http.Constants;
 using Microsoft.AspNetCore.Diagnostics;
 
-namespace eCinema.Server.Errors;
+namespace eCinema.Server.Common.Errors;
 
 public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IExceptionHandler
 {

@@ -2,7 +2,7 @@
 using eSystem.Core.Common.Cache.Redis;
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace eCinema.Server.Cache;
+namespace eCinema.Server.Common.Cache;
 
 public class CacheService(IDistributedCache distributedCache) : ICacheService
 {

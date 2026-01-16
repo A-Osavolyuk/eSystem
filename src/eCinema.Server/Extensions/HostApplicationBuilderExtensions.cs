@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
-using eCinema.Server.Cache;
-using eCinema.Server.Errors;
+using eCinema.Server.Common.Cache;
+using eCinema.Server.Common.Errors;
 using eCinema.Server.Security;
 using eSystem.Core.Common.Cache.Redis;
 using eSystem.Core.Common.Documentation;
