@@ -4,7 +4,6 @@ using eSecurity.Client.Common.JS.Localization;
 using eSecurity.Client.Common.State.States;
 using eSecurity.Client.Security.Authentication.Oidc.Session;
 using eSecurity.Client.Security.Authentication.Oidc.Token;
-using eSecurity.Core.Security.Cookies.Constants;
 using eSystem.Core.Common.Gateway;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Http.Results;

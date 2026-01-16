@@ -1,17 +1,14 @@
-﻿using System.Text.Json;
-using eCinema.Server.Security.Authentication.Oidc;
+﻿using eCinema.Server.Security.Authentication.Oidc;
 using eCinema.Server.Security.Authentication.Oidc.Constants;
 using eCinema.Server.Security.Authentication.Oidc.Session;
 using eCinema.Server.Security.Authentication.Oidc.Token;
 using eCinema.Server.Security.Cookies;
-using eCinema.Server.Security.Cryptography.Protection.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Security.Authentication.Oidc.Client;
 using eSystem.Core.Security.Authentication.Oidc.Constants;
 using eSystem.Core.Security.Authentication.Oidc.Token;
 using eSystem.Core.Security.Cryptography.Encoding;
 using MediatR;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Options;
 
 namespace eCinema.Server.Features.Connect.Commands;
