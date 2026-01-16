@@ -1,4 +1,5 @@
 ﻿using eCinema.Server.Security.Authentication.Oidc;
+using eCinema.Server.Security.Authentication.Oidc.Session;
 using eCinema.Server.Security.Authentication.Oidc.Token;
 using eSystem.Core.Security.Authentication.Oidc.Client;
 using eSystem.Core.Security.Authentication.Oidc.Constants;
@@ -12,6 +13,7 @@ public static class SecurityExtensions
         builder.Services.AddScoped<IOpenIdDiscoveryProvider, OpenIdDiscoveryProvider>();
         builder.Services.AddScoped<ITokenValidator, TokenValidator>();
         builder.Services.AddScoped<ITokenProvider, TokenProvider>();
+        builder.Services.AddScoped<ISessionProvider, SessionProvider>();
         
         builder.Services.AddClient(cfg =>
         {

@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using eCinema.Server.Security.Authentication.Oidc;
 using eCinema.Server.Security.Authentication.Oidc.Constants;
+using eCinema.Server.Security.Authentication.Oidc.Session;
 using eCinema.Server.Security.Authentication.Oidc.Token;
 using eCinema.Server.Security.Cookies;
 using eCinema.Server.Security.Cryptography.Protection.Constants;
@@ -25,20 +26,18 @@ public record AuthorizeCallbackCommand : IRequest<Result>
 
 public class AuthorizeCallbackCommandHandler(
     IOptions<ClientOptions> options,
+    ISessionProvider sessionProvider,
     IHttpClientFactory httpClientFactory,
     ITokenProvider tokenProvider,
     IOpenIdDiscoveryProvider discoveryProvider,
-    IHttpContextAccessor httpContextAccessor,
-    ITokenValidator tokenValidator,
-    IDataProtectionProvider dataProtectionProvider) : IRequestHandler<AuthorizeCallbackCommand, Result>
+    ITokenValidator tokenValidator) : IRequestHandler<AuthorizeCallbackCommand, Result>
 {
+    private readonly ISessionProvider _sessionProvider = sessionProvider;
     private readonly ITokenProvider _tokenProvider = tokenProvider;
     private readonly IOpenIdDiscoveryProvider _discoveryProvider = discoveryProvider;
     private readonly ITokenValidator _tokenValidator = tokenValidator;
-    private readonly IDataProtectionProvider _dataProtectionProvider = dataProtectionProvider;
     private readonly ClientOptions _clientOptions = options.Value;
     private readonly HttpClient _httpClient = httpClientFactory.CreateClient("oidc");
-    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(AuthorizeCallbackCommand request, CancellationToken cancellationToken)
     {
@@ -108,16 +107,7 @@ public class AuthorizeCallbackCommandHandler(
                 TimeSpan.FromDays(30), cancellationToken);
         }
         
-        var protector = _dataProtectionProvider.CreateProtector(ProtectionPurposes.Session);
-        var protectedSession = protector.Protect(JsonSerializer.Serialize(session));
-        
-        _httpContext.Response.Cookies.Append(DefaultCookies.Session, protectedSession, new CookieOptions()
-        {
-            HttpOnly = true,
-            SameSite = SameSiteMode.Lax,
-            Expires = session.ExpiresAt,
-            MaxAge = TimeSpan.FromDays(30)
-        });
+        _sessionProvider.Set(session);
 
         return Results.Found("https://localhost:6511/app");
     }
