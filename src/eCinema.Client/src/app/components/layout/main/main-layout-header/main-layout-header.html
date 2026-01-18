@@ -1,0 +1,9 @@
+<header class="header">
+  <div class="header-content">
+    <p class="brand-text" (click)="onBrandClick()"> eCinema </p>
+    <div class="buttons">
+      <app-button label="Sign-in" (onClick)="authService.login()"/>
+      <app-button label="Sign-up" (onClick)="authService.register()"/>
+    </div>
+  </div>
+</header>

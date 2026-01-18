@@ -1,0 +1,20 @@
+.button{
+  border: none;
+  border-radius: 5px;
+  padding: 8px 12px;
+  background-color: transparent;
+  cursor: pointer;
+
+  &:hover{
+    background-color: rgba(117, 34, 177, 0.2);
+    transition: 0.2s ease-in-out;
+    color: var(--light-color);
+  }
+}
+
+.button-text{
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: Arial, Roboto, sans-serif;
+  color: var(--primary-color);
+}

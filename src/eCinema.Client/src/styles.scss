@@ -1,1 +1,19 @@
-/* You can add global styles to this file, and also import other style files */
+:root{
+  --dark-color: #000000;
+  --light-color: #ffffff;
+  --primary-color: rgb(131, 57, 188)
+}
+
+* {
+  box-sizing: content-box;
+  margin: 0;
+  padding: 0;
+}
+
+body{
+  background-color: var(--dark-color);
+}
+
+p, strong, span, h1, h2, h3, h4, h5, h6 {
+  color: var(--light-color);
+}
