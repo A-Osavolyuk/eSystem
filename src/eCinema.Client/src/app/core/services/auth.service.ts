@@ -19,8 +19,12 @@ export class AuthService {
       }));
   }
 
-  public authorize = () : void => {
+  public login = () : void => {
     document.location.href = `${environment.backendUri}/api/v1/connect/authorize`;
+  }
+
+  public register = () : void => {
+    document.location.href = `${environment.registerUri}?from=eCinema`;
   }
 
   public logout = () : void => {
