@@ -1,5 +1,6 @@
 ﻿@page "/sign-up"
 @using eSecurity.Client.Components.Pages.OAuth
+@using eSecurity.Core.Common.Responses
 @using eSecurity.Client.Security
 @inherits PageBase
 
@@ -112,16 +113,13 @@
             };
 
             var result = await SecurityService.SignUpAsync(request);
-
-            if (result.Succeeded)
+            if (result.Succeeded && result.TryGetValue<SignUpResponse>(out var response))
             {
-                var response = result.Get()!;
-
-                Snackbar.Add("Successfully signed-up. Not you need to verify your email address.", Severity.Success);
+                Snackbar.Add("Successfully signed-up. Now you need to verify your email address.", Severity.Success);
 
                 var builder = QueryBuilder.Create()
                     .WithUri(Links.Common.CompleteRegistration)
-                    .WithQueryParam("id", response.UserId.ToString())
+                    .WithQueryParam("id", response!.UserId.ToString())
                     .WithQueryParam("return_url", Links.Common.SignIn);
                 
                 NavigationManager.NavigateTo(builder.Build());

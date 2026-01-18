@@ -1,6 +1,7 @@
 ﻿@page "/oauth/handle"
 
 @using eSecurity.Client.Security
+@using eSecurity.Core.Common.DTOs
 @using eSecurity.Core.Security.Authentication.SignIn.Session
 @using eSecurity.Core.Security.Authorization.OAuth
 
@@ -36,10 +37,9 @@
         else
         {
             var result = await SecurityService.LoadSignInSessionAsync(SessionId);
-            if (result.Succeeded)
+            if (result.Succeeded && result.TryGetValue<SignInSessionDto>(out var session))
             {
-                var session = result.Get();
-                if (!session.UserId.HasValue || string.IsNullOrEmpty(session.Provider) || !session.OAuthFlow.HasValue)
+                if (session?.UserId == null || string.IsNullOrEmpty(session.Provider) || !session.OAuthFlow.HasValue)
                 {
                     NavigationManager.NavigateTo(QueryBuilder.Create()
                         .WithUri(Links.OAuth.Error)

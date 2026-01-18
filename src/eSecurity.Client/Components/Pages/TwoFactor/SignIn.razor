@@ -78,10 +78,9 @@
     protected override async Task OnInitializedAsync()
     {
         var result = await SecurityService.LoadSignInSessionAsync(SessionId);
-        if (result.Succeeded)
+        if (result.Succeeded && result.TryGetValue<SignInSessionDto>(out var response))
         {
-            var response = result.Get();
-            if (response.UserId.HasValue)
+            if (response?.UserId is not null)
             {
                 UserState.UserId = response.UserId.Value;
                 await LoadMethods();
@@ -101,9 +100,9 @@
     private async Task LoadMethods()
     {
         var result = await UserService.GetUserTwoFactorMethodsAsync(UserState.UserId);
-        if (result.Succeeded)
+        if (result.Succeeded && result.TryGetValue<List<UserTwoFactorMethod>>(out var methods))
         {
-            _methods = result.Get()!;
+            _methods = methods!;
             _preferredMethod = _methods.Single(x => x.Preferred).Method;
         }
         else

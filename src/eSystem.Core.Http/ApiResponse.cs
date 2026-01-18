@@ -1,54 +1,37 @@
-﻿using eSystem.Core.Http.Results;
+﻿using System.Text.Json;
+using eSystem.Core.Http.Results;
 
 namespace eSystem.Core.Http;
 
 public sealed class ApiResponse
 {
-    public bool Succeeded { get; init; }
+    public bool Succeeded { get; private init; }
+    private string? Result { get; init; }
     private Error? Error { get; init; }
-    public static ApiResponse Success() 
-        => new(){ Succeeded = true };
-    public static ApiResponse<TResponse> Success<TResponse>(TResponse response) 
-        => new() { Succeeded = true, Result = response };
+    public static ApiResponse Success(string? result = null) 
+        => new(){ Succeeded = true, Result = result };
     public static ApiResponse Fail(Error error) 
         => new(){ Succeeded = false, Error = error };
-    public static ApiResponse<TResponse> Fail<TResponse>(Error error) 
-        => new(){ Succeeded = false, Error = error };
     
     public Error GetError() => Error!;
 
-    public void Match(Action success, Action<Error> fail)
+    public bool TryGetValue<TValue>(out TValue? value)
     {
-        if (Succeeded) success();
-        else fail(Error!);
-    }
-}
+        if (string.IsNullOrWhiteSpace(Result))
+        {
+            value = default;
+            return false;
+        }
 
-public sealed class ApiResponse<TResponse>
-{
-    public bool Succeeded { get; init; }
-    public Error? Error { private get; init; }
-    public TResponse? Result { private get; init; }
-    
-    public TResponse Get() => Result!;
-    
-    public Error GetError() => Error!;
-    
-    public void Match(Action<TResponse> success, Action<Error> fail)
-    {
-        if (Succeeded) success(Result!);
-        else fail(Error!);
-    }
-    
-    public async Task MatchAsync(Func<TResponse, Task> success, Action<Error> fail)
-    {
-        if (Succeeded) await success(Result!);
-        else fail(Error!);
-    }
-    
-    public async Task MatchAsync(Func<TResponse, Task> success, Func<Error, Task> fail)
-    {
-        if (Succeeded) await success(Result!);
-        else await fail(Error!);
+        try
+        {
+            value = JsonSerializer.Deserialize<TValue>(Result);
+            return true;
+        }
+        catch (JsonException)
+        {
+            value = default;
+            return false;
+        }
     }
 }

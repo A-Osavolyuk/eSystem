@@ -4,10 +4,10 @@ namespace eSecurity.Client.Security.Authorization.Access.Verification;
 
 public interface IVerificationService
 {
-    public ValueTask<HttpResponse> SendCodeAsync(SendCodeRequest request);
-    public ValueTask<HttpResponse> ResendCodeAsync(ResendCodeRequest request);
-    public ValueTask<HttpResponse> VerifyCodeAsync(VerifyCodeRequest request);
-    public ValueTask<HttpResponse> VerifyRecoveryCodeAsync(VerifyRecoveryCodeRequest request);
-    public ValueTask<HttpResponse> VerifyAuthenticatorCodeAsync(VerifyAuthenticatorCodeRequest request);
-    public ValueTask<HttpResponse> VerifyPasskeyAsync(VerifyPasskeyRequest request);
+    public ValueTask<ApiResponse> SendCodeAsync(SendCodeRequest request);
+    public ValueTask<ApiResponse> ResendCodeAsync(ResendCodeRequest request);
+    public ValueTask<ApiResponse> VerifyCodeAsync(VerifyCodeRequest request);
+    public ValueTask<ApiResponse> VerifyRecoveryCodeAsync(VerifyRecoveryCodeRequest request);
+    public ValueTask<ApiResponse> VerifyAuthenticatorCodeAsync(VerifyAuthenticatorCodeRequest request);
+    public ValueTask<ApiResponse> VerifyPasskeyAsync(VerifyPasskeyRequest request);
 }

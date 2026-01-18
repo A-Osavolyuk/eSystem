@@ -7,9 +7,9 @@ public class UsernameService(IApiClient apiClient) : IUsernameService
 {
     private readonly IApiClient _apiClient = apiClient;
 
-    public async ValueTask<HttpResponse> SetUsernameAsync(SetUsernameRequest request)
+    public async ValueTask<ApiResponse> SetUsernameAsync(SetUsernameRequest request)
         => await _apiClient.SendAsync(
-            new HttpRequest()
+            new ApiRequest()
             {
                 Data = request,
                 Method = HttpMethod.Post,
@@ -20,9 +20,9 @@ public class UsernameService(IApiClient apiClient) : IUsernameService
                 Authentication = AuthenticationType.None
             });
 
-    public async ValueTask<HttpResponse> ChangeUsernameAsync(ChangeUsernameRequest request)
+    public async ValueTask<ApiResponse> ChangeUsernameAsync(ChangeUsernameRequest request)
         => await _apiClient.SendAsync(
-            new HttpRequest()
+            new ApiRequest()
             {
                 Data = request,
                 Method = HttpMethod.Put,
@@ -33,9 +33,9 @@ public class UsernameService(IApiClient apiClient) : IUsernameService
                 Authentication = AuthenticationType.Bearer
             });
 
-    public async ValueTask<HttpResponse> CheckUsernameAsync(CheckUsernameRequest request)
+    public async ValueTask<ApiResponse> CheckUsernameAsync(CheckUsernameRequest request)
         => await _apiClient.SendAsync(
-            new HttpRequest()
+            new ApiRequest()
             {
                 Data = request,
                 Method = HttpMethod.Post,

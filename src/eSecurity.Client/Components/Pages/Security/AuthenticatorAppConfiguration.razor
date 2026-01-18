@@ -172,10 +172,9 @@
     {
         var request = new RegenerateQrCodeRequest() { UserId = UserState.UserId };
         var result = await TwoFactorService.RegenerateQrCodeAsync(request);
-
-        if (result.Succeeded)
+        if (result.Succeeded && result.TryGetValue<QrCode>(out var qrCode))
         {
-            _qrCode = result.Get()!;
+            _qrCode = qrCode!;
         }
         else Snackbar.Add(result.GetError().Description, Severity.Error);
     }

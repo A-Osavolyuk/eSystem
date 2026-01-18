@@ -115,10 +115,9 @@
         var request = new GenerateRequestOptionsRequest() { UserId = UserState.UserId! };
         var result = await PasskeyService.GenerateRequestOptionsAsync(request);
 
-        if (result.Succeeded)
+        if (result.Succeeded && result.TryGetValue<PublicKeyCredentialRequestOptions>(out var value))
         {
-            var options = result.Get()!;
-            await VerifyAsync(options);
+            await VerifyAsync(value!);
         }
         else
         {

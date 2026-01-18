@@ -2,9 +2,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
 using eSecurity.Core.Common.DTOs;
 using eSystem.Core.Http.Results;
+using eSystem.Core.Security.Authentication.Oidc;
 using eSystem.Core.Security.Authentication.Oidc.Client;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using JsonWebKeySet = Microsoft.IdentityModel.Tokens.JsonWebKeySet;
 
 namespace eSecurity.Client.Security.Authentication.Oidc.Token;
 
@@ -24,19 +26,23 @@ public class TokenValidator(
         var securityToken = handler.ReadJwtToken(token);
         if (securityToken is null) return Results.BadRequest("Invalid token.");
         
-        var keys = keysResult.Get();
-        var publicKey = keys.Keys.FirstOrDefault(x => x.KeyId == securityToken.Header.Kid);
+        if (!keysResult.TryGetValue<JsonWebKeySet>(out var jsonWebKeySet))
+            return Results.BadRequest("Invalid key.");
+        
+        var publicKey = jsonWebKeySet!.Keys.FirstOrDefault(x => x.KeyId == securityToken.Header.Kid);
         if (publicKey is null) return Results.BadRequest("Invalid key.");
 
         var openIdResult = await _connectService.GetOpenidConfigurationAsync();
         if (!openIdResult.Succeeded) return Results.InternalServerError(keysResult.GetError().Description);
 
-        var openIdOptions = openIdResult.Get();
+        if (!openIdResult.TryGetValue<OpenIdConfiguration>(out var openIdConfiguration))
+            return Results.InternalServerError("Invalid response");
+            
         var signingKey = new RsaSecurityKey(CreateRsaFromJwk(publicKey));
         var parameters = new TokenValidationParameters()
         {
             ValidateIssuer = true,
-            ValidIssuer = openIdOptions.Issuer,
+            ValidIssuer = openIdConfiguration!.Issuer,
             ValidateAudience = true,
             ValidAudience = _clientOptions.ClientAudience,
             ValidateLifetime = true,

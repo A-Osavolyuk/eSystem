@@ -9,9 +9,9 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
 {
     private readonly IApiClient _apiClient = apiClient;
 
-    public async ValueTask<ApiResponse<SignInResponse>> SignInAsync(SignInRequest request)
-        => await _apiClient.SendAsync<SignInResponse>(
-            new HttpRequest()
+    public async ValueTask<ApiResponse> SignInAsync(SignInRequest request)
+        => await _apiClient.SendAsync(
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Data = request,
@@ -24,9 +24,9 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 WithTimezone = true
             });
 
-    public async ValueTask<ApiResponse<SignUpResponse>> SignUpAsync(SignUpRequest request)
-        => await _apiClient.SendAsync<SignUpResponse>(
-            new HttpRequest()
+    public async ValueTask<ApiResponse> SignUpAsync(SignUpRequest request)
+        => await _apiClient.SendAsync(
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Data = request,
@@ -39,9 +39,9 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 WithTimezone = true
             });
 
-    public async ValueTask<ApiResponse<SignInSessionDto>> LoadSignInSessionAsync(Guid sid)
-        => await _apiClient.SendAsync<SignInSessionDto>(
-            new HttpRequest()
+    public async ValueTask<ApiResponse> LoadSignInSessionAsync(Guid sid)
+        => await _apiClient.SendAsync(
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Url = $"api/v1/Account/sign-in/session/{sid}"
@@ -51,9 +51,9 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 Authentication = AuthenticationType.None
             });
 
-    public async ValueTask<ApiResponse<CheckAccountResponse>> CheckAccountAsync(CheckAccountRequest request)
-        => await _apiClient.SendAsync<CheckAccountResponse>(
-            new HttpRequest()
+    public async ValueTask<ApiResponse> CheckAccountAsync(CheckAccountRequest request)
+        => await _apiClient.SendAsync(
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Data = request,
@@ -64,9 +64,9 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 Authentication = AuthenticationType.None
             });
 
-    public async ValueTask<HttpResponse> RecoverAccountAsync(RecoverAccountRequest request)
+    public async ValueTask<ApiResponse> RecoverAccountAsync(RecoverAccountRequest request)
         => await _apiClient.SendAsync(
-            new HttpRequest()
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Data = request,
@@ -77,9 +77,9 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 Authentication = AuthenticationType.None
             });
 
-    public async ValueTask<HttpResponse> UnlockAccountAsync(UnlockAccountRequest request)
+    public async ValueTask<ApiResponse> UnlockAccountAsync(UnlockAccountRequest request)
         => await _apiClient.SendAsync(
-            new HttpRequest()
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Data = request,

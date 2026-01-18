@@ -7,9 +7,9 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
 {
     private readonly IApiClient _apiClient = apiClient;
 
-    public async ValueTask<HttpResponse> SendCodeAsync(SendCodeRequest request)
+    public async ValueTask<ApiResponse> SendCodeAsync(SendCodeRequest request)
         => await _apiClient.SendAsync(
-            new HttpRequest()
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Data = request,
@@ -20,9 +20,9 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
                 Authentication = AuthenticationType.None
             });
 
-    public async ValueTask<HttpResponse> ResendCodeAsync(ResendCodeRequest request)
+    public async ValueTask<ApiResponse> ResendCodeAsync(ResendCodeRequest request)
         => await _apiClient.SendAsync(
-            new HttpRequest()
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Data = request,
@@ -34,9 +34,9 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
             });
 
 
-    public async ValueTask<HttpResponse> VerifyCodeAsync(VerifyCodeRequest request)
+    public async ValueTask<ApiResponse> VerifyCodeAsync(VerifyCodeRequest request)
         => await _apiClient.SendAsync(
-            new HttpRequest()
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Data = request,
@@ -47,9 +47,9 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
                 Authentication = AuthenticationType.None
             });
 
-    public async ValueTask<HttpResponse> VerifyRecoveryCodeAsync(VerifyRecoveryCodeRequest request)
+    public async ValueTask<ApiResponse> VerifyRecoveryCodeAsync(VerifyRecoveryCodeRequest request)
         => await _apiClient.SendAsync(
-            new HttpRequest()
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Data = request,
@@ -61,9 +61,9 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
             });
 
 
-    public async ValueTask<HttpResponse> VerifyAuthenticatorCodeAsync(VerifyAuthenticatorCodeRequest request)
+    public async ValueTask<ApiResponse> VerifyAuthenticatorCodeAsync(VerifyAuthenticatorCodeRequest request)
         => await _apiClient.SendAsync(
-            new HttpRequest()
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Data = request,
@@ -75,9 +75,9 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
             });
 
 
-    public async ValueTask<HttpResponse> VerifyPasskeyAsync(VerifyPasskeyRequest request)
+    public async ValueTask<ApiResponse> VerifyPasskeyAsync(VerifyPasskeyRequest request)
         => await _apiClient.SendAsync(
-            new HttpRequest()
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Data = request,

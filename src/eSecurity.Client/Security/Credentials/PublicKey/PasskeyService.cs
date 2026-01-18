@@ -8,10 +8,10 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
 {
     private readonly IApiClient _apiClient = apiClient;
 
-    public async ValueTask<ApiResponse<PublicKeyCredentialRequestOptions>> GenerateRequestOptionsAsync(
+    public async ValueTask<ApiResponse> GenerateRequestOptionsAsync(
         GenerateRequestOptionsRequest request)
-        => await _apiClient.SendAsync<PublicKeyCredentialRequestOptions>(
-            new HttpRequest()
+        => await _apiClient.SendAsync(
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Data = request,
@@ -22,10 +22,10 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
                 Authentication = AuthenticationType.None
             });
 
-    public async ValueTask<ApiResponse<PublicKeyCredentialCreationOptions>> GenerateCreationOptionsAsync(
+    public async ValueTask<ApiResponse> GenerateCreationOptionsAsync(
         GenerateCreationOptionsRequest request)
-        => await _apiClient.SendAsync<PublicKeyCredentialCreationOptions>(
-            new HttpRequest()
+        => await _apiClient.SendAsync(
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Data = request,
@@ -36,9 +36,9 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
                 Authentication = AuthenticationType.Bearer
             });
 
-    public async ValueTask<HttpResponse> CreateAsync(CreatePasskeyRequest request)
+    public async ValueTask<ApiResponse> CreateAsync(CreatePasskeyRequest request)
         => await _apiClient.SendAsync(
-            new HttpRequest()
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Data = request,
@@ -49,9 +49,9 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
                 Authentication = AuthenticationType.Bearer
             });
 
-    public async ValueTask<HttpResponse> ChangeNameAsync(ChangePasskeyNameRequest request)
+    public async ValueTask<ApiResponse> ChangeNameAsync(ChangePasskeyNameRequest request)
         => await _apiClient.SendAsync(
-            new HttpRequest()
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Data = request,
@@ -62,9 +62,9 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
                 Authentication = AuthenticationType.Bearer
             });
 
-    public async ValueTask<HttpResponse> RemoveAsync(RemovePasskeyRequest request)
+    public async ValueTask<ApiResponse> RemoveAsync(RemovePasskeyRequest request)
         => await _apiClient.SendAsync(
-            new HttpRequest()
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Data = request,

@@ -79,10 +79,9 @@
         if (firstRender)
         {
             var result = await UserService.GetUserPrimaryEmailAsync(UserId);
-            if (result.Succeeded)
+            if (result.Succeeded && result.TryGetValue<UserEmailDto>(out var email))
             {
-                var response = result.Get()!;
-                _email = response;
+                _email = email;
                 StateHasChanged();
 
                 await SendCodeAsync();
@@ -134,7 +133,6 @@
         };
 
         var result = await EmailService.VerifyEmailAsync(request);
-
         if (result.Succeeded)
         {
             Snackbar.Add(result.GetError().Description, Severity.Success);

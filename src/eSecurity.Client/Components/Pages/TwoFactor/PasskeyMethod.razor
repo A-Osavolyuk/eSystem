@@ -83,10 +83,9 @@
         var request = new GenerateRequestOptionsRequest() { UserId = UserState.UserId };
         var result = await PasskeyService.GenerateRequestOptionsAsync(request);
 
-        if (result.Succeeded)
+        if (result.Succeeded && result.TryGetValue<PublicKeyCredentialRequestOptions>(out var options))
         {
-            var options = result.Get()!;
-            var authenticateResult = await WebAuthNManager.AuthenticateAsync(options);
+            var authenticateResult = await WebAuthNManager.AuthenticateAsync(options!);
             if (authenticateResult.Success)
             {
                 var credential = authenticateResult.Get<PublicKeyCredential>();

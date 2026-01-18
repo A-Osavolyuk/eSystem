@@ -8,8 +8,8 @@ public class ConsentService(IApiClient apiClient) : IConsentService
 {
     private readonly IApiClient _apiClient = apiClient;
 
-    public async ValueTask<ApiResponse<CheckConsentResponse>> CheckAsync(CheckConsentRequest request)
-        => await _apiClient.SendAsync<CheckConsentResponse>(
+    public async ValueTask<ApiResponse> CheckAsync(CheckConsentRequest request)
+        => await _apiClient.SendAsync(
             new ApiRequest()
             {
                 Method = HttpMethod.Post,

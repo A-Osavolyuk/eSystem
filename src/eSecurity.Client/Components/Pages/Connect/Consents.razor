@@ -3,6 +3,8 @@
 @using eSecurity.Client.Security.Authentication.Oidc
 @using eSecurity.Client.Security.Authorization.Consent
 @using eSecurity.Client.Security.Identity
+@using eSecurity.Core.Common.DTOs
+@using eSecurity.Core.Common.Responses
 @using eSecurity.Core.Security.Authentication.Oidc.Client
 @using eSystem.Core.Security.Authentication.Oidc.Constants
 
@@ -184,16 +186,15 @@
         };
 
         var result = await ConsentService.CheckAsync(request);
-        if (result.Succeeded)
+        if (result.Succeeded && result.TryGetValue<CheckConsentResponse>(out var response))
         {
-            var response = result.Get();
             if (response is { Granted: true, RemainingScopes.Count: 0 })
             {
                 NavigationManager.NavigateTo(ReturnUrl);
             }
             else
             {
-                _scopes = response.RemainingScopes;
+                _scopes = response!.RemainingScopes;
                 await InitializeAsync();
             }
 
@@ -212,9 +213,9 @@
     private async Task InitializeAsync()
     {
         var result = await ConnectService.GetClientInfoAsync(_clientId);
-        if (result.Succeeded)
+        if (result.Succeeded && result.TryGetValue<ClientInfo>(out var clientInfo))
         {
-            _clientInfo = result.Get();
+            _clientInfo = clientInfo!;
             await LoadUserAsync();
         }
         else
@@ -231,10 +232,9 @@
     private async Task LoadUserAsync()
     {
         var result = await UserService.GetUserAsync(UserState.UserId);
-        if (result.Succeeded)
+        if (result.Succeeded && result.TryGetValue<UserDto>(out var user))
         {
-            var user = result.Get();
-            _username = user.Username;
+            _username = user!.Username;
         }
         else
         {

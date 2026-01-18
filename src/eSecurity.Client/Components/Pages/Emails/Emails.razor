@@ -90,15 +90,13 @@
     private async Task LoadEmailsAsync()
     {
         var result = await UserService.GetUserEmailsAsync(UserState.UserId);
-
-        if (result.Succeeded)
+        if (result.Succeeded && result.TryGetValue<List<UserEmailDto>>(out var emails))
         {
-            var emails = result.Get()!;
             _model = new()
             {
-                Emails = emails,
-                PrimaryEmail = emails.FirstOrDefault(x => x.Type == EmailType.Primary),
-                RecoveryEmail = emails.FirstOrDefault(x => x.Type == EmailType.Recovery)
+                Emails = emails!,
+                PrimaryEmail = emails!.FirstOrDefault(x => x.Type == EmailType.Primary),
+                RecoveryEmail = emails!.FirstOrDefault(x => x.Type == EmailType.Recovery)
             };
         }
         else Snackbar.Add(result.GetError().Description, Severity.Error);
@@ -107,8 +105,10 @@
     private async Task LoadLinkedAccountsAsync()
     {
         var result = await UserService.GetUserLinkedAccountsAsync(UserState.UserId);
-
-        if (result.Succeeded) _linkedAccountsData = result.Get()!;
+        if (result.Succeeded && result.TryGetValue<UserLinkedAccountData>(out var data))
+        {
+            _linkedAccountsData = data;
+        }
         else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 }

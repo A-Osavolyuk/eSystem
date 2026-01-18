@@ -103,8 +103,15 @@ else
     {
         var result = await UserService.GetUserVerificationMethodsAsync(UserState.UserId);
 
-        if (result.Succeeded) _model = result.Get()!;
-        else Snackbar.Add(result.GetError().Description, Severity.Error);
+        if (result.Succeeded && result.TryGetValue<UserVerificationData>(out var value))
+        {
+            _model = value;
+        }
+        else
+        {
+            var error = result.GetError();
+            Snackbar.Add(error.Description, Severity.Error);
+        }
     }
 
 }

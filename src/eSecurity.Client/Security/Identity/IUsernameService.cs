@@ -4,7 +4,7 @@ namespace eSecurity.Client.Security.Identity;
 
 public interface IUsernameService
 {
-    public ValueTask<HttpResponse> SetUsernameAsync(SetUsernameRequest request);
-    public ValueTask<HttpResponse> ChangeUsernameAsync(ChangeUsernameRequest request);
-    public ValueTask<HttpResponse> CheckUsernameAsync(CheckUsernameRequest request);
+    public ValueTask<ApiResponse> SetUsernameAsync(SetUsernameRequest request);
+    public ValueTask<ApiResponse> ChangeUsernameAsync(ChangeUsernameRequest request);
+    public ValueTask<ApiResponse> CheckUsernameAsync(CheckUsernameRequest request);
 }

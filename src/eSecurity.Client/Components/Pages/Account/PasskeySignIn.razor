@@ -3,6 +3,8 @@
 @using eSecurity.Client.Security
 @using eSecurity.Client.Security.Authentication
 @using eSecurity.Client.Security.Credentials.PublicKey
+@using eSecurity.Core.Common.DTOs
+@using eSecurity.Core.Common.Responses
 @using eSecurity.Core.Security.Authentication.SignIn
 @using eSecurity.Core.Security.Credentials.PublicKey
 
@@ -76,10 +78,9 @@ else
 
         var request = new GenerateRequestOptionsRequest();
         var result = await PasskeyService.GenerateRequestOptionsAsync(request);
-        if (result.Succeeded)
+        if (result.Succeeded && result.TryGetValue<PublicKeyCredentialRequestOptions>(out var value))
         {
-            var options = result.Get()!;
-            await VerifyAsync(options);
+            await VerifyAsync(value!);
         }
         else
         {
@@ -108,15 +109,12 @@ else
             };
 
             var result = await SecurityService.SignInAsync(request);
-            if (result.Succeeded)
+            if (result.Succeeded && result.TryGetValue<SignInResponse>(out var value))
             {
-                var response = result.Get()!;
-                var sessionResult = await SecurityService.LoadSignInSessionAsync(response.SessionId);
-                if (sessionResult.Succeeded)
+                var sessionResult = await SecurityService.LoadSignInSessionAsync(value!.SessionId);
+                if (sessionResult.Succeeded && sessionResult.TryGetValue<SignInSessionDto>(out var session))
                 {
-                    var session = sessionResult.Get();
-
-                    if (session.UserId.HasValue)
+                    if (session?.UserId != null)
                     {
                         UserState.UserId = session.UserId.Value;
                         AuthenticationManager.Authorize();

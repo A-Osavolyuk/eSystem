@@ -40,8 +40,8 @@ public class ApiClient(
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
-    public async ValueTask<ApiResponse<TResponse>> SendAsync<TResponse>(
-        HttpRequest apiRequest,
+    public async ValueTask<ApiResponse> SendAsync(
+        ApiRequest apiRequest,
         ApiOptions apiOptions,
         CancellationToken cancellationToken = default)
     {
@@ -50,43 +50,15 @@ public class ApiClient(
             var httpResponseMessage = await SendRequestAsync(apiRequest, apiOptions, cancellationToken);
             if (httpResponseMessage.IsSuccessStatusCode)
             {
-                var content =
-                    await httpResponseMessage.Content.ReadAsync<TResponse>(_serializationOptions, cancellationToken);
-                return HttpResponse.Success(content);
+                return ApiResponse.Success();
             }
 
             var error = await httpResponseMessage.Content.ReadAsync<Error>(_serializationOptions, cancellationToken);
-            return HttpResponse.Fail<TResponse>(error);
+            return ApiResponse.Fail(error);
         }
         catch (Exception ex)
         {
-            return HttpResponse.Fail<TResponse>(new Error()
-            {
-                Code = ErrorTypes.Common.InternalServerError,
-                Description = ex.Message
-            });
-        }
-    }
-
-    public async ValueTask<HttpResponse> SendAsync(
-        HttpRequest apiRequest,
-        ApiOptions apiOptions,
-        CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            var httpResponseMessage = await SendRequestAsync(apiRequest, apiOptions, cancellationToken);
-            if (httpResponseMessage.IsSuccessStatusCode)
-            {
-                return HttpResponse.Success();
-            }
-
-            var error = await httpResponseMessage.Content.ReadAsync<Error>(_serializationOptions, cancellationToken);
-            return HttpResponse.Fail(error);
-        }
-        catch (Exception ex)
-        {
-            return HttpResponse.Fail(new Error()
+            return ApiResponse.Fail(new Error()
             {
                 Code = ErrorTypes.Common.InternalServerError,
                 Description = ex.Message
@@ -95,7 +67,7 @@ public class ApiClient(
     }
 
     private async ValueTask<HttpResponseMessage> SendRequestAsync(
-        HttpRequest apiRequest,
+        ApiRequest apiRequest,
         ApiOptions apiOptions,
         CancellationToken cancellationToken = default)
     {
@@ -114,7 +86,7 @@ public class ApiClient(
         return await RefreshAsync(requestMessage, responseMessage, cancellationToken);
     }
 
-    private async Task<HttpRequestMessage> InitializeAsync(HttpRequest apiRequest, ApiOptions apiOptions)
+    private async Task<HttpRequestMessage> InitializeAsync(ApiRequest apiRequest, ApiOptions apiOptions)
     {
         var message = new HttpRequestMessage(apiRequest.Method, new Uri($"{_gatewayOptions.Url}/{apiRequest.Url}"));
 

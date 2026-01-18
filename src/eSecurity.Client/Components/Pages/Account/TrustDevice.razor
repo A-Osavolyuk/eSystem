@@ -3,6 +3,7 @@
 @using eSecurity.Client.Security.Authorization.Access.Verification
 @using eSecurity.Core.Security.Authentication.SignIn
 @using eSecurity.Core.Security.Authentication.SignIn.Session
+@using eSecurity.Core.Common.DTOs
 @using eSecurity.Client.Security.Identity
 
 @inherits PageBase
@@ -70,10 +71,9 @@
         if (firstRender)
         {
             var result = await SecurityService.LoadSignInSessionAsync(SessionId);
-            if (result.Succeeded)
+            if (result.Succeeded && result.TryGetValue<SignInSessionDto>(out var response))
             {
-                var response = result.Get();
-                if (response.UserId.HasValue)
+                if (response!.UserId.HasValue)
                 {
                     _userId = response.UserId.Value;
                 
@@ -96,11 +96,9 @@
     private async Task LoadAsync()
     {
         var result = await UserService.GetUserAsync(_userId);
-        if (result.Succeeded)
+        if (result.Succeeded && result.TryGetValue<UserDto>(out var user))
         {
-            var response = result.Get();
-            _email = response.Email;
-
+            _email = user?.Email;
             _context = new MessageContext()
             {
                 UserId = _userId,
@@ -157,10 +155,9 @@
         if (result.Succeeded)
         {
             var sessionResult = await SecurityService.LoadSignInSessionAsync(SessionId);
-            if (sessionResult.Succeeded)
+            if (sessionResult.Succeeded && result.TryGetValue<SignInSessionDto>(out var session))
             {
-                var session = sessionResult.Get()!;
-                if (session.NextStep == SignInStep.TwoFactor)
+                if (session!.NextStep == SignInStep.TwoFactor)
                 {
                     Snackbar.Add("Device successfully trusted", Severity.Success);
 

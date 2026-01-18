@@ -4,11 +4,11 @@ namespace eSecurity.Client.Security.Identity;
 
 public interface IEmailService
 {
-    public ValueTask<HttpResponse> AddEmailAsync(AddEmailRequest request);
-    public ValueTask<HttpResponse> CheckEmailAsync(CheckEmailRequest request);
-    public ValueTask<HttpResponse> ChangeEmailAsync(ChangeEmailRequest request);
-    public ValueTask<HttpResponse> VerifyEmailAsync(VerifyEmailRequest request);
-    public ValueTask<HttpResponse> ManageEmailAsync(ManageEmailRequest request);
-    public ValueTask<HttpResponse> RemoveEmailAsync(RemoveEmailRequest request);
-    public ValueTask<HttpResponse> ResetEmailAsync(ResetEmailRequest request);
+    public ValueTask<ApiResponse> AddEmailAsync(AddEmailRequest request);
+    public ValueTask<ApiResponse> CheckEmailAsync(CheckEmailRequest request);
+    public ValueTask<ApiResponse> ChangeEmailAsync(ChangeEmailRequest request);
+    public ValueTask<ApiResponse> VerifyEmailAsync(VerifyEmailRequest request);
+    public ValueTask<ApiResponse> ManageEmailAsync(ManageEmailRequest request);
+    public ValueTask<ApiResponse> RemoveEmailAsync(RemoveEmailRequest request);
+    public ValueTask<ApiResponse> ResetEmailAsync(ResetEmailRequest request);
 }

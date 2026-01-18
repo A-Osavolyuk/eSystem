@@ -2,6 +2,7 @@
 
 @using eSecurity.Client.Security
 @using eSecurity.Client.Security.Authorization.Access.Verification
+@using eSecurity.Core.Common.Responses
 
 @inherits PageBase
 
@@ -145,12 +146,9 @@
             };
 
             var result = await SecurityService.CheckAccountAsync(request);
-
-            if (result.Succeeded)
+            if (result.Succeeded && result.TryGetValue<CheckAccountResponse>(out var response))
             {
-                var response = result.Get()!;
-
-                if (!response.Exists)
+                if (!response!.Exists)
                 {
                     const string message = "Account with such username doesn't exist. Please, check entered your name.";
                     Snackbar.Add(message, Severity.Error);

@@ -2,6 +2,8 @@
 
 @using eSecurity.Client.Components.Pages.OAuth
 @using eSecurity.Client.Security
+@using eSecurity.Core.Common.DTOs
+@using eSecurity.Core.Common.Responses
 @using eSecurity.Core.Security.Authentication.SignIn
 @using eSecurity.Core.Security.Authentication.SignIn.Session
 
@@ -122,19 +124,15 @@
                     Login = _model.Login
                 }
             };
+            
             var result = await SecurityService.SignInAsync(request);
-
-            if (result.Succeeded)
+            if (result.Succeeded && result.TryGetValue<SignInResponse>(out var response))
             {
-                var response = result.Get()!;
-                var sid = response.SessionId;
-
+                var sid = response!.SessionId;
                 var sessionResult = await SecurityService.LoadSignInSessionAsync(sid);
-                if (sessionResult.Succeeded)
+                if (sessionResult.Succeeded && sessionResult.TryGetValue<SignInSessionDto>(out var session))
                 {
-                    var session = sessionResult.Get();
-
-                    if (!session.UserId.HasValue)
+                    if (!session!.UserId.HasValue)
                     {
                         Snackbar.Add("Invalid session", Severity.Error);
                         return;

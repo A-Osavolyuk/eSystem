@@ -187,11 +187,9 @@
             };
 
             var result = await PasskeyService.GenerateCreationOptionsAsync(request);
-
-            if (result.Succeeded)
+            if (result.Succeeded && result.TryGetValue<PublicKeyCredentialCreationOptions>(out var options))
             {
-                var options = result.Get()!;
-                await VerifyPasskeyAsync(options);
+                await VerifyPasskeyAsync(options!);
             }
             else Snackbar.Add(result.GetError().Description, Severity.Error);
         }

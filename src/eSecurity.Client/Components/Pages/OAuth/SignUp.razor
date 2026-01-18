@@ -1,6 +1,7 @@
 ﻿@page "/oauth/sign-up"
 
 @using eSecurity.Client.Security
+@using eSecurity.Core.Common.DTOs
 @using eSecurity.Client.Security.Identity
 
 @inherits PageBase
@@ -76,10 +77,9 @@
     protected override async Task OnInitializedAsync()
     {
         var result = await SecurityService.LoadSignInSessionAsync(SessionId);
-        if (result.Succeeded)
+        if (result.Succeeded && result.TryGetValue<SignInSessionDto>(out var session))
         {
-            var session = result.Get();
-            if (!session.UserId.HasValue || string.IsNullOrEmpty(session.Provider))
+            if (session?.UserId == null || string.IsNullOrEmpty(session.Provider))
             {
                 NavigationManager.NavigateTo(QueryBuilder.Create()
                     .WithUri(Links.OAuth.Error)

@@ -8,9 +8,9 @@ public class PasswordService(IApiClient apiClient) : IPasswordService
 {
     private readonly IApiClient _apiClient = apiClient;
 
-    public async ValueTask<HttpResponse> AddPasswordAsync(AddPasswordRequest request)
+    public async ValueTask<ApiResponse> AddPasswordAsync(AddPasswordRequest request)
         => await _apiClient.SendAsync(
-            new HttpRequest()
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Data = request,
@@ -21,9 +21,9 @@ public class PasswordService(IApiClient apiClient) : IPasswordService
                 Authentication = AuthenticationType.Bearer
             });
 
-    public async ValueTask<ApiResponse<ForgotPasswordResponse>> ForgotPasswordAsync(ForgotPasswordRequest request)
-        => await _apiClient.SendAsync<ForgotPasswordResponse>(
-            new HttpRequest()
+    public async ValueTask<ApiResponse> ForgotPasswordAsync(ForgotPasswordRequest request)
+        => await _apiClient.SendAsync(
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Data = request,
@@ -34,9 +34,9 @@ public class PasswordService(IApiClient apiClient) : IPasswordService
                 Authentication = AuthenticationType.None
             });
 
-    public async ValueTask<HttpResponse> ResetPasswordAsync(ResetPasswordRequest request)
+    public async ValueTask<ApiResponse> ResetPasswordAsync(ResetPasswordRequest request)
         => await _apiClient.SendAsync(
-            new HttpRequest()
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Data = request,
@@ -47,9 +47,9 @@ public class PasswordService(IApiClient apiClient) : IPasswordService
                 Authentication = AuthenticationType.None
             });
 
-    public async ValueTask<HttpResponse> ChangePasswordAsync(ChangePasswordRequest request)
+    public async ValueTask<ApiResponse> ChangePasswordAsync(ChangePasswordRequest request)
         => await _apiClient.SendAsync(
-            new HttpRequest()
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Data = request,

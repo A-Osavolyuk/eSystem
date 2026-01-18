@@ -231,9 +231,9 @@
             var request = new LoadRecoveryCodesRequest() { UserId = UserState.UserId };
             var result = await TwoFactorService.LoadRecoveryCodesAsync(request);
 
-            if (result.Succeeded)
+            if (result.Succeeded && result.TryGetValue<List<string>>(out var recoveryCodes))
             {
-                _codes = result.Get()!;
+                _codes = recoveryCodes!;
                 StateHasChanged();
             }
             else Snackbar.Add(result.GetError().Description, Severity.Error);
@@ -254,9 +254,9 @@
         var request = new GenerateRecoveryCodesRequest() { UserId = UserState.UserId };
         var result = await TwoFactorService.GenerateRecoveryCodesAsync(request);
 
-        if (result.Succeeded)
+        if (result.Succeeded && result.TryGetValue<List<string>>(out var recoveryCodes))
         {
-            _codes = result.Get()!;
+            _codes = recoveryCodes!;
             _recoveryCodesRegenerated = true;
         }
         else Snackbar.Add(result.GetError().Description, Severity.Error);

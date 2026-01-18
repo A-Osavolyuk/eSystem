@@ -321,7 +321,10 @@
         var request = new GenerateQrCodeRequest() { UserId = UserState.UserId };
         var result = await TwoFactorService.GenerateQrCodeAsync(request);
 
-        if (result.Succeeded) QrCode = result.Get()!;
+        if (result.Succeeded && result.TryGetValue<QrCode>(out var qrCode))
+        {
+            QrCode = qrCode!;
+        }
         else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 
@@ -346,10 +349,9 @@
     {
         var request = new GenerateRecoveryCodesRequest() { UserId = UserState.UserId };
         var result = await TwoFactorService.GenerateRecoveryCodesAsync(request);
-
-        if (result.Succeeded)
+        if (result.Succeeded && result.TryGetValue<List<string>>(out var recoveryCodes))
         {
-            Codes = result.Get()!;
+            Codes = recoveryCodes!;
             await _stepper.StepNextAsync();
         }
         else Snackbar.Add(result.GetError().Description, Severity.Error);
@@ -396,7 +398,10 @@
     {
         var result = await UserService.GetUserTwoFactorMethodsAsync(UserState.UserId);
 
-        if (result.Succeeded) Methods = result.Get()!;
+        if (result.Succeeded && result.TryGetValue<List<UserTwoFactorMethod>>(out var methods))
+        {
+            Methods = methods!;
+        }
         else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 

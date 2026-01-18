@@ -1,6 +1,7 @@
 @page "/connect/logout"
 
 @using eSecurity.Client.Security.Authentication.Oidc
+@using eSecurity.Core.Common.Responses
 @using eSystem.Core.Security.Authentication.Oidc.Client
 
 @inherits PageBase
@@ -80,12 +81,10 @@
         };
 
         var result = await ConnectService.LogoutAsync(request);
-        if (result.Succeeded)
+        if (result.Succeeded && result.TryGetValue<LogoutResponse>(out var response))
         {
             await AuthenticationManager.LogoutAsync();
-
-            var response = result.Get();
-            NavigationContext.Value = response.FrontChannelLogoutUris;
+            NavigationContext.Value = response!.FrontChannelLogoutUris;
 
             var builder = QueryBuilder.Create().WithUri(Links.Connect.LoggedOut);
             if (!IsLocal.HasValue)

@@ -7,9 +7,9 @@ public class UserService(IApiClient apiClient) : IUserService
 {
     private readonly IApiClient _apiClient = apiClient;
 
-    public async ValueTask<ApiResponse<UserVerificationData>> GetUserVerificationMethodsAsync(Guid id)
-        => await _apiClient.SendAsync<UserVerificationData>(
-            new HttpRequest()
+    public async ValueTask<ApiResponse> GetUserVerificationMethodsAsync(Guid id)
+        => await _apiClient.SendAsync(
+            new ApiRequest()
             {
                 Method = HttpMethod.Get,
                 Url = $"api/v1/User/{id}/verification/methods"
@@ -20,9 +20,9 @@ public class UserService(IApiClient apiClient) : IUserService
             });
 
 
-    public async ValueTask<ApiResponse<UserEmailDto>> GetUserPrimaryEmailAsync(Guid id)
-        => await _apiClient.SendAsync<UserEmailDto>(
-            new HttpRequest()
+    public async ValueTask<ApiResponse> GetUserPrimaryEmailAsync(Guid id)
+        => await _apiClient.SendAsync(
+            new ApiRequest()
             {
                 Method = HttpMethod.Get,
                 Url = $"api/v1/User/{id}/emails/primary"
@@ -32,9 +32,9 @@ public class UserService(IApiClient apiClient) : IUserService
                 Authentication = AuthenticationType.None
             });
 
-    public async ValueTask<ApiResponse<List<UserEmailDto>>> GetUserEmailsAsync(Guid id)
-        => await _apiClient.SendAsync<List<UserEmailDto>>(
-            new HttpRequest()
+    public async ValueTask<ApiResponse> GetUserEmailsAsync(Guid id)
+        => await _apiClient.SendAsync(
+            new ApiRequest()
             {
                 Method = HttpMethod.Get,
                 Url = $"api/v1/User/{id}/emails"
@@ -44,9 +44,9 @@ public class UserService(IApiClient apiClient) : IUserService
                 Authentication = AuthenticationType.Bearer
             });
 
-    public async ValueTask<ApiResponse<UserDeviceDto>> GetUserDeviceAsync(Guid id, Guid deviceId)
-        => await _apiClient.SendAsync<UserDeviceDto>(
-            new HttpRequest()
+    public async ValueTask<ApiResponse> GetUserDeviceAsync(Guid id, Guid deviceId)
+        => await _apiClient.SendAsync(
+            new ApiRequest()
             {
                 Method = HttpMethod.Get,
                 Url = $"api/v1/User/{id}/devices/{deviceId}"
@@ -56,9 +56,9 @@ public class UserService(IApiClient apiClient) : IUserService
                 Authentication = AuthenticationType.None
             });
 
-    public async ValueTask<ApiResponse<List<UserDeviceDto>>> GetUserDevicesAsync(Guid id)
-        => await _apiClient.SendAsync<List<UserDeviceDto>>(
-            new HttpRequest()
+    public async ValueTask<ApiResponse> GetUserDevicesAsync(Guid id)
+        => await _apiClient.SendAsync(
+            new ApiRequest()
             {
                 Method = HttpMethod.Get,
                 Url = $"api/v1/User/{id}/devices"
@@ -68,9 +68,9 @@ public class UserService(IApiClient apiClient) : IUserService
                 Authentication = AuthenticationType.Bearer
             });
 
-    public async ValueTask<ApiResponse<UserLinkedAccountData>> GetUserLinkedAccountsAsync(Guid id)
-        => await _apiClient.SendAsync<UserLinkedAccountData>(
-            new HttpRequest()
+    public async ValueTask<ApiResponse> GetUserLinkedAccountsAsync(Guid id)
+        => await _apiClient.SendAsync(
+            new ApiRequest()
             {
                 Method = HttpMethod.Get,
                 Url = $"api/v1/User/{id}/linked-accounts"
@@ -80,9 +80,9 @@ public class UserService(IApiClient apiClient) : IUserService
                 Authentication = AuthenticationType.Bearer
             });
 
-    public async ValueTask<ApiResponse<List<UserTwoFactorMethod>>> GetUserTwoFactorMethodsAsync(Guid id)
-        => await _apiClient.SendAsync<List<UserTwoFactorMethod>>(
-            new HttpRequest()
+    public async ValueTask<ApiResponse> GetUserTwoFactorMethodsAsync(Guid id)
+        => await _apiClient.SendAsync(
+            new ApiRequest()
             {
                 Method = HttpMethod.Get,
                 Url = $"api/v1/User/{id}/2fa/methods"
@@ -92,9 +92,9 @@ public class UserService(IApiClient apiClient) : IUserService
                 Authentication = AuthenticationType.None
             });
 
-    public async ValueTask<ApiResponse<UserLoginMethodsDto>> GetUserLoginMethodsAsync(Guid id)
-        => await _apiClient.SendAsync<UserLoginMethodsDto>(
-            new HttpRequest()
+    public async ValueTask<ApiResponse> GetUserLoginMethodsAsync(Guid id)
+        => await _apiClient.SendAsync(
+            new ApiRequest()
             {
                 Method = HttpMethod.Get,
                 Url = $"api/v1/User/{id}/login-methods"
@@ -104,9 +104,9 @@ public class UserService(IApiClient apiClient) : IUserService
                 Authentication = AuthenticationType.Bearer
             });
 
-    public async ValueTask<ApiResponse<UserDto>> GetUserAsync(Guid id)
-        => await _apiClient.SendAsync<UserDto>(
-            new HttpRequest()
+    public async ValueTask<ApiResponse> GetUserAsync(Guid id)
+        => await _apiClient.SendAsync(
+            new ApiRequest()
             {
                 Method = HttpMethod.Get,
                 Url = $"api/v1/User/{id}"

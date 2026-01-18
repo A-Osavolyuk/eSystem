@@ -89,12 +89,10 @@ else
             };
 
             var result = await ConnectService.TokenAsync(request);
-            if (result.Succeeded)
+            if (result.Succeeded && result.TryGetValue<TokenResponse>(out var response))
             {
-                var response = result.Get();
-
                 await SignInAsync(
-                    response.AccessToken,
+                    response!.AccessToken,
                     response.IdToken!,
                     response.RefreshToken!
                 );

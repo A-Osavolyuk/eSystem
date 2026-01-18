@@ -6,12 +6,12 @@ namespace eSecurity.Client.Security;
 
 public interface ISecurityService
 {
-    public ValueTask<ApiResponse<SignInResponse>> SignInAsync(SignInRequest request);
-    public ValueTask<ApiResponse<SignUpResponse>> SignUpAsync(SignUpRequest request);
+    public ValueTask<ApiResponse> SignInAsync(SignInRequest request);
+    public ValueTask<ApiResponse> SignUpAsync(SignUpRequest request);
     
-    public ValueTask<ApiResponse<SignInSessionDto>> LoadSignInSessionAsync(Guid sid);
+    public ValueTask<ApiResponse> LoadSignInSessionAsync(Guid sid);
     
-    public ValueTask<ApiResponse<CheckAccountResponse>> CheckAccountAsync(CheckAccountRequest request);
-    public ValueTask<HttpResponse> RecoverAccountAsync(RecoverAccountRequest request);
-    public ValueTask<HttpResponse> UnlockAccountAsync(UnlockAccountRequest request);
+    public ValueTask<ApiResponse> CheckAccountAsync(CheckAccountRequest request);
+    public ValueTask<ApiResponse> RecoverAccountAsync(RecoverAccountRequest request);
+    public ValueTask<ApiResponse> UnlockAccountAsync(UnlockAccountRequest request);
 }

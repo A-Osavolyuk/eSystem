@@ -7,9 +7,9 @@ public class EmailService(IApiClient apiClient) : IEmailService
 {
     private readonly IApiClient _apiClient = apiClient;
     
-        public async ValueTask<HttpResponse> AddEmailAsync(AddEmailRequest request)
+        public async ValueTask<ApiResponse> AddEmailAsync(AddEmailRequest request)
         => await _apiClient.SendAsync(
-            new HttpRequest()
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Data = request,
@@ -20,9 +20,9 @@ public class EmailService(IApiClient apiClient) : IEmailService
                 Authentication = AuthenticationType.Bearer
             });
 
-    public async ValueTask<HttpResponse> CheckEmailAsync(CheckEmailRequest request)
+    public async ValueTask<ApiResponse> CheckEmailAsync(CheckEmailRequest request)
         => await _apiClient.SendAsync(
-            new HttpRequest()
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Data = request,
@@ -33,9 +33,9 @@ public class EmailService(IApiClient apiClient) : IEmailService
                 Authentication = AuthenticationType.None
             });
 
-    public async ValueTask<HttpResponse> ChangeEmailAsync(ChangeEmailRequest request)
+    public async ValueTask<ApiResponse> ChangeEmailAsync(ChangeEmailRequest request)
         => await _apiClient.SendAsync(
-            new HttpRequest()
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Data = request,
@@ -47,9 +47,9 @@ public class EmailService(IApiClient apiClient) : IEmailService
                 Authentication = AuthenticationType.Bearer
             });
 
-    public async ValueTask<HttpResponse> VerifyEmailAsync(VerifyEmailRequest request)
+    public async ValueTask<ApiResponse> VerifyEmailAsync(VerifyEmailRequest request)
         => await _apiClient.SendAsync(
-            new HttpRequest()
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Data = request,
@@ -60,9 +60,9 @@ public class EmailService(IApiClient apiClient) : IEmailService
                 Authentication = AuthenticationType.None
             });
 
-    public async ValueTask<HttpResponse> ManageEmailAsync(ManageEmailRequest request)
+    public async ValueTask<ApiResponse> ManageEmailAsync(ManageEmailRequest request)
         => await _apiClient.SendAsync(
-            new HttpRequest()
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Data = request,
@@ -73,9 +73,9 @@ public class EmailService(IApiClient apiClient) : IEmailService
                 Authentication = AuthenticationType.Bearer
             });
 
-    public async ValueTask<HttpResponse> RemoveEmailAsync(RemoveEmailRequest request)
+    public async ValueTask<ApiResponse> RemoveEmailAsync(RemoveEmailRequest request)
         => await _apiClient.SendAsync(
-            new HttpRequest()
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Data = request,
@@ -86,9 +86,9 @@ public class EmailService(IApiClient apiClient) : IEmailService
                 Authentication = AuthenticationType.Bearer
             });
 
-    public async ValueTask<HttpResponse> ResetEmailAsync(ResetEmailRequest request)
+    public async ValueTask<ApiResponse> ResetEmailAsync(ResetEmailRequest request)
         => await _apiClient.SendAsync(
-            new HttpRequest()
+            new ApiRequest()
             {
                 Method = HttpMethod.Post,
                 Data = request,

@@ -1,5 +1,6 @@
 ﻿@page "/settings/devices"
 
+@using eSecurity.Core.Common.DTOs
 @using eSecurity.Client.Security.Identity
 @inherits PageBase
 
@@ -40,12 +41,9 @@
     private async Task LoadAsync()
     {
         var result = await UserService.GetUserDevicesAsync(UserState.UserId);
-
-        if (result.Succeeded)
+        if (result.Succeeded && result.TryGetValue<List<UserDeviceDto>>(out var devices))
         {
-            var devices = result.Get();
-
-            _model = new UserDevicesModel() { Devices = devices };
+            _model = new UserDevicesModel() { Devices = devices! };
         }
         else
         {
