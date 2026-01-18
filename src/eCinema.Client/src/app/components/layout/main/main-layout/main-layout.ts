@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {RouterOutlet} from '@angular/router';
 import {MainLayoutSidebar} from '../main-layout-sidebar/main-layout-sidebar';
 import {MainLayoutHeader} from '../main-layout-header/main-layout-header';
 
 @Component({
-  selector: 'app-main-layout',
+  selector: 'e-main-layout',
   imports: [
     RouterOutlet,
     MainLayoutSidebar,

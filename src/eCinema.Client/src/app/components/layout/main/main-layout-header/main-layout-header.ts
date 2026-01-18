@@ -4,7 +4,7 @@ import {AuthService} from '../../../../core/services/auth.service';
 import {Button} from '../../../common/button/button';
 
 @Component({
-  selector: 'app-main-layout-header',
+  selector: 'e-main-layout-header',
   imports: [
     Button
   ],
