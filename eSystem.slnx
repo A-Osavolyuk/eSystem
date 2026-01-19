@@ -33,4 +33,7 @@
     <Project Path="src\eSystem.Proxy/eSystem.Proxy.csproj" />
   </Folder>
   <Folder Name="/tests/" />
+  <Folder Name="/tests/Units/">
+    <Project Path="tests/System.Core.Http.Tests/System.Core.Http.Tests.csproj" />
+  </Folder>
 </Solution>
