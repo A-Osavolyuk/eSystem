@@ -13,7 +13,7 @@ public class PasswordService(IApiClient apiClient) : IPasswordService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/Password/add"
+                Url = "/api/v1/Password/add"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -26,7 +26,7 @@ public class PasswordService(IApiClient apiClient) : IPasswordService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/Password/forgot"
+                Url = "/api/v1/Password/forgot"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -39,7 +39,7 @@ public class PasswordService(IApiClient apiClient) : IPasswordService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/Password/reset"
+                Url = "/api/v1/Password/reset"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -52,7 +52,7 @@ public class PasswordService(IApiClient apiClient) : IPasswordService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/Password/change"
+                Url = "/api/v1/Password/change"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,

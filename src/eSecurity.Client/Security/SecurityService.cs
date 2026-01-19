@@ -13,7 +13,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/Account/sign-in"
+                Url = "/api/v1/Account/sign-in"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -28,7 +28,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/Account/sign-up"
+                Url = "/api/v1/Account/sign-up"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -55,7 +55,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/Account/check"
+                Url = "/api/v1/Account/check"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -68,7 +68,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/Account/recover"
+                Url = "/api/v1/Account/recover"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -81,7 +81,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/Account/unlock"
+                Url = "/api/v1/Account/unlock"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,

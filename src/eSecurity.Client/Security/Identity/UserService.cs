@@ -11,7 +11,7 @@ public class UserService(IApiClient apiClient) : IUserService
             new ApiRequest()
             {
                 Method = HttpMethod.Get,
-                Url = $"api/v1/User/{id}/verification/methods"
+                Url = $"/api/v1/User/{id}/verification/methods"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -24,7 +24,7 @@ public class UserService(IApiClient apiClient) : IUserService
             new ApiRequest()
             {
                 Method = HttpMethod.Get,
-                Url = $"api/v1/User/{id}/emails/primary"
+                Url = $"/api/v1/User/{id}/emails/primary"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -36,7 +36,7 @@ public class UserService(IApiClient apiClient) : IUserService
             new ApiRequest()
             {
                 Method = HttpMethod.Get,
-                Url = $"api/v1/User/{id}/emails"
+                Url = $"/api/v1/User/{id}/emails"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -48,7 +48,7 @@ public class UserService(IApiClient apiClient) : IUserService
             new ApiRequest()
             {
                 Method = HttpMethod.Get,
-                Url = $"api/v1/User/{id}/devices/{deviceId}"
+                Url = $"/api/v1/User/{id}/devices/{deviceId}"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -60,7 +60,7 @@ public class UserService(IApiClient apiClient) : IUserService
             new ApiRequest()
             {
                 Method = HttpMethod.Get,
-                Url = $"api/v1/User/{id}/devices"
+                Url = $"/api/v1/User/{id}/devices"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -72,7 +72,7 @@ public class UserService(IApiClient apiClient) : IUserService
             new ApiRequest()
             {
                 Method = HttpMethod.Get,
-                Url = $"api/v1/User/{id}/linked-accounts"
+                Url = $"/api/v1/User/{id}/linked-accounts"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -84,7 +84,7 @@ public class UserService(IApiClient apiClient) : IUserService
             new ApiRequest()
             {
                 Method = HttpMethod.Get,
-                Url = $"api/v1/User/{id}/2fa/methods"
+                Url = $"/api/v1/User/{id}/2fa/methods"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -96,7 +96,7 @@ public class UserService(IApiClient apiClient) : IUserService
             new ApiRequest()
             {
                 Method = HttpMethod.Get,
-                Url = $"api/v1/User/{id}/login-methods"
+                Url = $"/api/v1/User/{id}/login-methods"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -108,7 +108,7 @@ public class UserService(IApiClient apiClient) : IUserService
             new ApiRequest()
             {
                 Method = HttpMethod.Get,
-                Url = $"api/v1/User/{id}"
+                Url = $"/api/v1/User/{id}"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,

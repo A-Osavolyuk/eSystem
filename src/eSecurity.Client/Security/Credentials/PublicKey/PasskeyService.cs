@@ -14,7 +14,7 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/Passkey/options/request"
+                Url = "/api/v1/Passkey/options/request"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -28,7 +28,7 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/Passkey/options/creation"
+                Url = "/api/v1/Passkey/options/creation"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -41,7 +41,7 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/Passkey/create"
+                Url = "/api/v1/Passkey/create"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -54,7 +54,7 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/Passkey/change-name"
+                Url = "/api/v1/Passkey/change-name"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -67,7 +67,7 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/Passkey/remove"
+                Url = "/api/v1/Passkey/remove"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,

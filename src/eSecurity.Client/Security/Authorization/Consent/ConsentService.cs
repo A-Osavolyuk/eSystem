@@ -12,7 +12,7 @@ public class ConsentService(IApiClient apiClient) : IConsentService
             new ApiRequest()
             {
                 Method = HttpMethod.Post,
-                Url = "api/v1/Consent/check",
+                Url = "/api/v1/Consent/check",
                 Data = request
             }, new ApiOptions()
             {
@@ -25,7 +25,7 @@ public class ConsentService(IApiClient apiClient) : IConsentService
             new ApiRequest()
             {
                 Method = HttpMethod.Post,
-                Url = "api/v1/Consent/grant",
+                Url = "/api/v1/Consent/grant",
                 Data = request
             }, new ApiOptions()
             {

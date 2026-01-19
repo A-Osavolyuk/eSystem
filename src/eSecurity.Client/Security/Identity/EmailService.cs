@@ -13,7 +13,7 @@ public class EmailService(IApiClient apiClient) : IEmailService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/Email/add"
+                Url = "/api/v1/Email/add"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -26,7 +26,7 @@ public class EmailService(IApiClient apiClient) : IEmailService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/Email/check"
+                Url = "/api/v1/Email/check"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -39,7 +39,7 @@ public class EmailService(IApiClient apiClient) : IEmailService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/Email/change"
+                Url = "/api/v1/Email/change"
             }, new ApiOptions()
             {
 
@@ -53,7 +53,7 @@ public class EmailService(IApiClient apiClient) : IEmailService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/Email/verify"
+                Url = "/api/v1/Email/verify"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -66,7 +66,7 @@ public class EmailService(IApiClient apiClient) : IEmailService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/Email/manage"
+                Url = "/api/v1/Email/manage"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -79,7 +79,7 @@ public class EmailService(IApiClient apiClient) : IEmailService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/Email/remove"
+                Url = "/api/v1/Email/remove"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -92,7 +92,7 @@ public class EmailService(IApiClient apiClient) : IEmailService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/Email/reset"
+                Url = "/api/v1/Email/reset"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,

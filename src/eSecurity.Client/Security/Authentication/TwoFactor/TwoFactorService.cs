@@ -13,7 +13,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/TwoFactor/enable"
+                Url = "/api/v1/TwoFactor/enable"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -26,7 +26,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/TwoFactor/disable"
+                Url = "/api/v1/TwoFactor/disable"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -39,7 +39,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/TwoFactor/prefer"
+                Url = "/api/v1/TwoFactor/prefer"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -52,7 +52,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/TwoFactor/qr-code/generate"
+                Url = "/api/v1/TwoFactor/qr-code/generate"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -65,7 +65,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/TwoFactor/qr-code/regenerate"
+                Url = "/api/v1/TwoFactor/qr-code/regenerate"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -78,7 +78,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/TwoFactor/authenticator/reconfigure"
+                Url = "/api/v1/TwoFactor/authenticator/reconfigure"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -91,7 +91,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/TwoFactor/authenticator/verify"
+                Url = "/api/v1/TwoFactor/authenticator/verify"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -104,7 +104,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/TwoFactor/recovery-codes/generate"
+                Url = "/api/v1/TwoFactor/recovery-codes/generate"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -117,7 +117,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/TwoFactor/recovery-codes/load"
+                Url = "/api/v1/TwoFactor/recovery-codes/load"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,

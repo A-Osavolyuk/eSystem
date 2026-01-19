@@ -13,7 +13,7 @@ public class ConnectService(IApiClient apiClient) : IConnectService
             new ApiRequest()
             {
                 Method = HttpMethod.Get,
-                Url = "api/v1/Connect/.well-known/jwks.json",
+                Url = "/api/v1/Connect/.well-known/jwks.json",
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -25,7 +25,7 @@ public class ConnectService(IApiClient apiClient) : IConnectService
             new ApiRequest()
             {
                 Method = HttpMethod.Get,
-                Url = "api/v1/Connect/.well-known/openid-configuration",
+                Url = "/api/v1/Connect/.well-known/openid-configuration",
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -49,7 +49,7 @@ public class ConnectService(IApiClient apiClient) : IConnectService
             new ApiRequest()
             {
                 Method = HttpMethod.Post,
-                Url = "api/v1/Connect/authorize",
+                Url = "/api/v1/Connect/authorize",
                 Data = request
             }, new ApiOptions()
             {
@@ -62,7 +62,7 @@ public class ConnectService(IApiClient apiClient) : IConnectService
             new ApiRequest()
             {
                 Method = HttpMethod.Post,
-                Url = "api/v1/Connect/token",
+                Url = "/api/v1/Connect/token",
                 Data = request
             }, new ApiOptions()
             {
@@ -75,7 +75,7 @@ public class ConnectService(IApiClient apiClient) : IConnectService
             new ApiRequest()
             {
                 Method = HttpMethod.Post,
-                Url = "api/v1/Connect/logout",
+                Url = "/api/v1/Connect/logout",
                 Data = request
             }, new ApiOptions()
             {

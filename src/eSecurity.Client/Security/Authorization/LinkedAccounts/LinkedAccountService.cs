@@ -13,7 +13,7 @@ public class LinkedAccountService(IApiClient apiClient) : ILinkedAccountService
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "api/v1/LinkedAccount/disconnect"
+                Url = "/api/v1/LinkedAccount/disconnect"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,

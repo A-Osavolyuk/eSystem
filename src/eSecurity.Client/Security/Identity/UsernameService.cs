@@ -13,7 +13,7 @@ public class UsernameService(IApiClient apiClient) : IUsernameService
             {
                 Data = request,
                 Method = HttpMethod.Post,
-                Url = "api/v1/Username/set"
+                Url = "/api/v1/Username/set"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -26,7 +26,7 @@ public class UsernameService(IApiClient apiClient) : IUsernameService
             {
                 Data = request,
                 Method = HttpMethod.Put,
-                Url = "api/v1/Username/change"
+                Url = "/api/v1/Username/change"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
@@ -39,7 +39,7 @@ public class UsernameService(IApiClient apiClient) : IUsernameService
             {
                 Data = request,
                 Method = HttpMethod.Post,
-                Url = "api/v1/Username/check"
+                Url = "/api/v1/Username/check"
             }, new ApiOptions()
             {
                 ContentType = ContentTypes.Application.Json,
