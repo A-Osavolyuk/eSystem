@@ -39,4 +39,31 @@ public class ConnectService(
 
         return await _apiClient.SendAsync(apiRequest, apiOptions, cancellationToken);
     }
+
+    public async ValueTask<ApiResponse> GetUserInfoAsync(CancellationToken cancellationToken = default)
+    {
+        var openIdConfiguration = await _openIdDiscoveryProvider.GetOpenIdConfigurationsAsync(cancellationToken);
+        if (openIdConfiguration is null)
+        {
+            return ApiResponse.Fail(new Error()
+            {
+                Code = ErrorTypes.OAuth.ServerError,
+                Description = "Server error"
+            });
+        }
+
+        var apiRequest = new ApiRequest()
+        {
+            Method = HttpMethod.Post,
+            Url = openIdConfiguration.UserinfoEndpoint,
+        };
+
+        var apiOptions = new ApiOptions()
+        {
+            Authentication = AuthenticationType.Bearer,
+            ContentType = ContentTypes.Application.Json
+        };
+
+        return await _apiClient.SendAsync(apiRequest, apiOptions, cancellationToken);
+    }
 }

@@ -6,4 +6,5 @@ namespace eCinema.Server.Security.Authentication.Oidc;
 public interface IConnectService
 {
     public ValueTask<ApiResponse> TokenAsync(TokenRequest request, CancellationToken cancellationToken = default);
+    public ValueTask<ApiResponse> GetUserInfoAsync(CancellationToken cancellationToken = default);
 }
