@@ -1,4 +1,3 @@
-using eSecurity.Client.Common.Http;
 using eSecurity.Core.Common.Requests;
 using eSystem.Core.Security.Authentication.Oidc.Token;
 

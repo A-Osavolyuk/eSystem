@@ -1,5 +1,4 @@
-﻿using eSystem.Core.Http;
-using eSystem.Core.Http.Results;
+﻿using eSystem.Core.Http.Results;
 
 namespace eSystem.Core.Http.Tests;
 

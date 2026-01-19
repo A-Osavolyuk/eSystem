@@ -1,5 +1,3 @@
-using eSecurity.Client.Common.Http;
-
 namespace eSecurity.Client.Security.Identity;
 
 public class UserService(IApiClient apiClient) : IUserService
