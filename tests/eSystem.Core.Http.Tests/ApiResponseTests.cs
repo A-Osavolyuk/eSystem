@@ -1,7 +1,7 @@
 ﻿using eSystem.Core.Http;
 using eSystem.Core.Http.Results;
 
-namespace System.Core.Http.Tests;
+namespace eSystem.Core.Http.Tests;
 
 public class ApiResponseTests
 {
