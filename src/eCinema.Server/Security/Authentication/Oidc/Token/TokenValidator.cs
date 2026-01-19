@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
+using eSystem.Core.Http.Constants;
 using eSystem.Core.Security.Authentication.Oidc.Client;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -15,8 +16,16 @@ public class TokenValidator(
 
     public async Task<Result> ValidateAsync(string token, CancellationToken cancellationToken = default)
     {
-        var openIdConfiguration = await _openIdDiscoveryProvider.GetOpenIdConfigurationsAsync(cancellationToken);
         var jsonWebKeySet = await _openIdDiscoveryProvider.GetWebKeySetAsync(cancellationToken);
+        if (jsonWebKeySet is null)
+        {
+            return Results.InternalServerError(new Error()
+            {
+                Code = ErrorTypes.OAuth.ServerError,
+                Description = "Server error"
+            });
+        }
+        
         var handler = new JwtSecurityTokenHandler { MapInboundClaims = false };
         var securityToken = handler.ReadJwtToken(token);
         if (securityToken is null) return Results.BadRequest("Invalid token.");
@@ -24,7 +33,16 @@ public class TokenValidator(
         var publicKey = jsonWebKeySet.Keys.FirstOrDefault(x => x.KeyId == securityToken.Header.Kid);
         if (publicKey is null) return Results.BadRequest("Invalid key.");
         
-        var signingKey = new RsaSecurityKey(CreateRsaFromJwk(publicKey));
+        var openIdConfiguration = await _openIdDiscoveryProvider.GetOpenIdConfigurationsAsync(cancellationToken);
+        if (openIdConfiguration is null)
+        {
+            return Results.InternalServerError(new Error()
+            {
+                Code = ErrorTypes.OAuth.ServerError,
+                Description = "Server error"
+            });
+        }
+        
         var parameters = new TokenValidationParameters()
         {
             ValidateIssuer = true,
@@ -34,7 +52,7 @@ public class TokenValidator(
             ValidateLifetime = true,
             ClockSkew = TimeSpan.FromMinutes(5),
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = signingKey,
+            IssuerSigningKey = new RsaSecurityKey(CreateRsaFromJwk(publicKey)),
         };
         
         var principal = handler.ValidateToken(token, parameters, out _);
