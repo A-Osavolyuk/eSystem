@@ -3,7 +3,6 @@ using System.Text.Json;
 using eSecurity.Client.Common.JS.Localization;
 using eSecurity.Client.Security.Authentication.Oidc.Session;
 using eSecurity.Client.Security.Authentication.Oidc.Token;
-using eSystem.Core.Common.Gateway;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.Oidc.Client;
@@ -16,7 +15,6 @@ namespace eSecurity.Client.Common.Http;
 
 public class ApiClient(
     HttpClient httpClient,
-    GatewayOptions gatewayOptions,
     ITokenProvider tokenProvider,
     ISessionAccessor sessionAccessor,
     IOptions<ClientOptions> clientOptions,
@@ -26,7 +24,6 @@ public class ApiClient(
     private readonly HttpClient _httpClient = httpClient;
     private readonly ITokenProvider _tokenProvider = tokenProvider;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
-    private readonly GatewayOptions _gatewayOptions = gatewayOptions;
     private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
     private readonly ILocalizationManager _localizationManager = localizationManager;
     private readonly ClientOptions _clientOptions = clientOptions.Value;
@@ -86,8 +83,7 @@ public class ApiClient(
 
     private async Task<HttpRequestMessage> InitializeAsync(ApiRequest apiRequest, ApiOptions apiOptions)
     {
-        var message = new HttpRequestMessage(apiRequest.Method, new Uri($"{_gatewayOptions.Url}/{apiRequest.Url}"));
-
+        var message = new HttpRequestMessage(apiRequest.Method, apiRequest.Url);
         if (apiOptions.Authentication == AuthenticationType.Bearer)
         {
             var session = _sessionAccessor.Get();
@@ -120,7 +116,7 @@ public class ApiClient(
         HttpResponseMessage responseMessage,
         CancellationToken cancellationToken = default)
     {
-        var request = new HttpRequestMessage(HttpMethod.Post, new Uri($"{_gatewayOptions.Url}/api/v1/Connect/token"));
+        var request = new HttpRequestMessage(HttpMethod.Post, new Uri("/api/v1/Connect/token"));
         request.Headers.WithBasicAuthentication(_clientOptions.ClientId, _clientOptions.ClientSecret);
         request.Headers.WithCookies(_httpContext.GetCookies());
         request.Headers.WithUserAgent(_httpContext.GetUserAgent());

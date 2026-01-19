@@ -26,8 +26,12 @@ public static class HostApplicationBuilderExtensions
             builder.AddRedisCache();
             
             builder.Services.AddHttpContextAccessor();
-            builder.Services.AddHttpClient("Raw");
-            builder.Services.AddHttpClient<IApiClient, ApiClient>();
+            builder.Services.AddHttpClient<IApiClient, ApiClient>(client =>
+            {
+                var gatewayUrl = builder.Configuration.GetValue<string>("PROXY_HTTPS");
+                client.BaseAddress = new Uri(gatewayUrl ?? throw new NullReferenceException("Gateway URI is empty."));
+            });
+            
             builder.Services.AddScoped<NavigationContext>();
             builder.Services.AddScoped<ICacheService, CacheService>();
             builder.Services.AddSecurity();
@@ -35,7 +39,6 @@ public static class HostApplicationBuilderExtensions
             builder.Services.AddJs();
             builder.Services.AddState();
             builder.Services.AddGateway();
-            builder.Services.AddLocalization(cfg => cfg.ResourcesPath = "Resources");
             builder.Services.AddMudExtensions();
             builder.Services.AddControllers();
             builder.Services.AddRazorComponents()
