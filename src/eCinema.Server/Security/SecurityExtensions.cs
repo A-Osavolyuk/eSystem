@@ -13,6 +13,7 @@ public static class SecurityExtensions
         builder.Services.AddScoped<IOpenIdDiscoveryProvider, OpenIdDiscoveryProvider>();
         builder.Services.AddScoped<ITokenValidator, TokenValidator>();
         builder.Services.AddScoped<ITokenProvider, TokenProvider>();
+        builder.Services.AddScoped<IConnectService, ConnectService>();
         builder.Services.AddScoped<ISessionProvider, SessionProvider>();
         
         builder.Services.AddClient(cfg =>

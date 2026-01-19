@@ -1,4 +1,5 @@
 ﻿using eCinema.Server.Security.Authentication.Oidc;
+using eSystem.Core.Http.Constants;
 using eSystem.Core.Security.Authentication.Oidc.Client;
 using eSystem.Core.Security.Authentication.Oidc.Constants;
 using MediatR;
@@ -18,6 +19,14 @@ public class AuthorizeCommandHandler(
     public async Task<Result> Handle(AuthorizeCommand request, CancellationToken cancellationToken)
     {
         var openIdConfiguration = await _discoveryProvider.GetOpenIdConfigurationsAsync(cancellationToken);
+        if (openIdConfiguration is null)
+        {
+            return Results.Found(QueryBuilder.Create()
+                .WithUri("https://localhost:6511/connect/error")
+                .WithQueryParam("error", ErrorTypes.OAuth.ServerError)
+                .WithQueryParam("error_description", "Server error")
+                .Build());
+        }
         
         return Results.Found(QueryBuilder.Create()
             .WithUri(openIdConfiguration.AuthorizationEndpoint)

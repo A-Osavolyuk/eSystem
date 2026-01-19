@@ -3,11 +3,10 @@ using eCinema.Server.Security.Authentication.Oidc.Constants;
 using eCinema.Server.Security.Authentication.Oidc.Session;
 using eCinema.Server.Security.Authentication.Oidc.Token;
 using eCinema.Server.Security.Cookies;
-using eSystem.Core.Http.Extensions;
+using eSystem.Core.Http.Constants;
 using eSystem.Core.Security.Authentication.Oidc.Client;
 using eSystem.Core.Security.Authentication.Oidc.Constants;
 using eSystem.Core.Security.Authentication.Oidc.Token;
-using eSystem.Core.Security.Cryptography.Encoding;
 using MediatR;
 using Microsoft.Extensions.Options;
 
@@ -23,18 +22,16 @@ public record AuthorizeCallbackCommand : IRequest<Result>
 
 public class AuthorizeCallbackCommandHandler(
     IOptions<ClientOptions> options,
+    IConnectService connectService,
     ISessionProvider sessionProvider,
-    IHttpClientFactory httpClientFactory,
     ITokenProvider tokenProvider,
-    IOpenIdDiscoveryProvider discoveryProvider,
     ITokenValidator tokenValidator) : IRequestHandler<AuthorizeCallbackCommand, Result>
 {
+    private readonly IConnectService _connectService = connectService;
     private readonly ISessionProvider _sessionProvider = sessionProvider;
     private readonly ITokenProvider _tokenProvider = tokenProvider;
-    private readonly IOpenIdDiscoveryProvider _discoveryProvider = discoveryProvider;
     private readonly ITokenValidator _tokenValidator = tokenValidator;
     private readonly ClientOptions _clientOptions = options.Value;
-    private readonly HttpClient _httpClient = httpClientFactory.CreateClient("oidc");
 
     public async Task<Result> Handle(AuthorizeCallbackCommand request, CancellationToken cancellationToken)
     {
@@ -46,10 +43,7 @@ public class AuthorizeCallbackCommandHandler(
                 .WithQueryParam("error_description", request.ErrorDescription)
                 .Build());
         }
-
-        var openIdConfigurations = await _discoveryProvider.GetOpenIdConfigurationsAsync(cancellationToken);
-        var requestMessage = new HttpRequestMessage(HttpMethod.Post, openIdConfigurations.TokenEndpoint);
-
+        
         var tokenRequest = new TokenRequest()
         {
             ClientId = _clientOptions.ClientId,
@@ -58,21 +52,26 @@ public class AuthorizeCallbackCommandHandler(
             RedirectUri = _clientOptions.CallbackUri
         };
         
-        requestMessage.Content = new FormUrlEncodedContent(FormUrl.Encode(tokenRequest));
-        requestMessage.Headers.WithBasicAuthentication(_clientOptions.ClientId, _clientOptions.ClientSecret);
-        
-        var response = await _httpClient.SendAsync(requestMessage, cancellationToken);
-        if (!response.IsSuccessStatusCode)
+        var response = await _connectService.TokenAsync(tokenRequest, cancellationToken);
+        if (!response.Succeeded)
         {
-            var error = await response.Content.ReadAsync<Error>(cancellationToken);
+            var error = response.GetError();
             return Results.Found(QueryBuilder.Create()
                 .WithUri("https://localhost:6511/connect/error")
                 .WithQueryParam("error", error.Code)
                 .WithQueryParam("error_description", error.Description)
                 .Build());
         }
+
+        if (!response.TryGetValue<TokenResponse>(out var tokenResponse) || tokenResponse is null)
+        {
+            return Results.Found(QueryBuilder.Create()
+                .WithUri("https://localhost:6511/connect/error")
+                .WithQueryParam("error", ErrorTypes.OAuth.ServerError)
+                .WithQueryParam("error_description", "Server error")
+                .Build());
+        }
         
-        var tokenResponse = await response.Content.ReadAsync<TokenResponse>(cancellationToken);
         var accessTokenResult = await _tokenValidator.ValidateAsync(tokenResponse.AccessToken, cancellationToken);
         if (!accessTokenResult.Succeeded) return accessTokenResult;
 
@@ -89,6 +88,8 @@ public class AuthorizeCallbackCommandHandler(
             ExpiresAt = DateTimeOffset.UtcNow.AddDays(30),
         };
         
+        _sessionProvider.Set(session);
+        
         await _tokenProvider.SetAsync($"{session.Id}:{TokenTypes.AccessToken}", tokenResponse.AccessToken, 
             TimeSpan.FromMinutes(5), cancellationToken);
 
@@ -103,8 +104,6 @@ public class AuthorizeCallbackCommandHandler(
             await _tokenProvider.SetAsync($"{session.Id}:{TokenTypes.RefreshToken}", tokenResponse.RefreshToken, 
                 TimeSpan.FromDays(30), cancellationToken);
         }
-        
-        _sessionProvider.Set(session);
 
         return Results.Found("https://localhost:6511/app");
     }
