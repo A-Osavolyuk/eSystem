@@ -17,7 +17,6 @@ namespace eSecurity.Client.Common.Http;
 
 public class ApiClient(
     HttpClient httpClient,
-    SessionState sessionState,
     GatewayOptions gatewayOptions,
     ITokenProvider tokenProvider,
     ISessionAccessor sessionAccessor,
@@ -26,7 +25,6 @@ public class ApiClient(
     IHttpContextAccessor httpContextAccessor) : IApiClient
 {
     private readonly HttpClient _httpClient = httpClient;
-    private readonly SessionState _sessionState = sessionState;
     private readonly ITokenProvider _tokenProvider = tokenProvider;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly GatewayOptions _gatewayOptions = gatewayOptions;
@@ -34,26 +32,27 @@ public class ApiClient(
     private readonly ILocalizationManager _localizationManager = localizationManager;
     private readonly ClientOptions _clientOptions = clientOptions.Value;
 
-    private readonly JsonSerializerOptions _serializationOptions = new JsonSerializerOptions()
-    {
-        WriteIndented = true,
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-    };
-
     public async ValueTask<ApiResponse> SendAsync(
-        ApiRequest apiRequest,
-        ApiOptions apiOptions,
+        ApiRequest request,
+        ApiOptions options,
         CancellationToken cancellationToken = default)
     {
         try
         {
-            var httpResponseMessage = await SendRequestAsync(apiRequest, apiOptions, cancellationToken);
-            if (httpResponseMessage.IsSuccessStatusCode)
+            var response = await SendRequestAsync(request, options, cancellationToken);
+            if (response.IsSuccessStatusCode)
             {
-                return ApiResponse.Success();
+                var content = await response.Content.ReadAsStringAsync(cancellationToken);
+                return ApiResponse.Success(content);
             }
 
-            var error = await httpResponseMessage.Content.ReadAsync<Error>(_serializationOptions, cancellationToken);
+            var serializationOptions = new JsonSerializerOptions()
+            {
+                WriteIndented = true,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            };
+            
+            var error = await response.Content.ReadAsync<Error>(serializationOptions, cancellationToken);
             return ApiResponse.Fail(error);
         }
         catch (Exception ex)

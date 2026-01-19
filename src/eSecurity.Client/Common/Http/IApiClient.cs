@@ -3,7 +3,7 @@ namespace eSecurity.Client.Common.Http;
 public interface IApiClient
 {
     public ValueTask<ApiResponse> SendAsync(
-        ApiRequest apiRequest, 
-        ApiOptions apiOptions, 
+        ApiRequest request, 
+        ApiOptions options, 
         CancellationToken cancellationToken = default);
 }
