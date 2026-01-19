@@ -1,4 +1,4 @@
-namespace eSecurity.Client.Common.Http;
+namespace eSystem.Core.Http;
 
 public interface IApiClient
 {
