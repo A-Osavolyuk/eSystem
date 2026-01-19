@@ -4,90 +4,52 @@ namespace eSystem.Core.Tests;
 
 public class QueryBuilderTests
 {
-    [Fact]
-    public void Build_WithEmptyUriAndNoQueryParams_ShouldReturnEmptyString()
+    public static TheoryData<string, Dictionary<string, string>, string> QueryParserTestData =>
+        new()
+        {
+            { "", [], "" },
+            {
+                "https://example.com",
+                new Dictionary<string, string>(),
+                "https://example.com"
+            },
+            {
+                "https://example.com",
+                new Dictionary<string, string> { { "key", "some" } },
+                "https://example.com?key=some"
+            },
+            {
+                "https://example.com",
+                new Dictionary<string, string> { { "key", "some" }, { "token", "1234" } },
+                "https://example.com?key=some&token=1234"
+            },
+            {
+                "https://example.com?key=some",
+                new Dictionary<string, string> { { "token", "1234" } },
+                "https://example.com?key=some&token=1234"
+            },
+            {
+                "https://example.com",
+                new Dictionary<string, string> { { "key", "a b&c" } },
+                "https://example.com?key=a+b%26c"
+            }
+        };
+
+    [Theory]
+    [MemberData(nameof(QueryParserTestData))]
+    public void Build_ShouldReturnExpectedUri(string uri, Dictionary<string, string> queryParams, string expected)
     {
         //Arrange
-        var builder = QueryBuilder.Create().WithUri("");
+        var builder = QueryBuilder.Create().WithUri(uri);
+        foreach (var param in queryParams)
+        {
+            builder.WithQueryParam(param.Key, param.Value);
+        } 
 
         //Act
         var result = builder.Build();
 
         //Assert
-        Assert.Equal("", result);
-    }
-    
-    [Fact]
-    public void Build_WithUriAndNoQueryParams_ShouldReturnUri()
-    {
-        //Arrange
-        var builder = QueryBuilder.Create().WithUri("https://example.com");
-
-        //Act
-        var result = builder.Build();
-
-        //Assert
-        Assert.Equal("https://example.com", result);
-    }
-    
-    [Fact]
-    public void Build_WithSingleQueryParam_ShouldReturnCorrectUri()
-    {
-        //Arrange
-        var builder = QueryBuilder.Create()
-            .WithUri("https://example.com")
-            .WithQueryParam("key", "some");
-
-        //Act
-        var result = builder.Build();
-
-        //Assert
-        Assert.Equal("https://example.com?key=some", result);
-    }
-    
-    [Fact]
-    public void Build_WithMultipleQueryParams_ShouldReturnCorrectUri()
-    {
-        //Arrange
-        var builder = QueryBuilder.Create()
-            .WithUri("https://example.com")
-            .WithQueryParam("key", "some")
-            .WithQueryParam("token", "1234");
-
-        //Act
-        var result = builder.Build();
-
-        //Assert
-        Assert.Equal("https://example.com?key=some&token=1234", result);
-    }
-    
-    [Fact]
-    public void Build_WithExistingQuery_ShouldUseAmpersand()
-    {
-        //Arrange
-        var builder = QueryBuilder.Create()
-            .WithUri("https://example.com?key=some")
-            .WithQueryParam("token", "1234");
-
-        //Act
-        var result = builder.Build();
-
-        //Assert
-        Assert.Equal("https://example.com?key=some&token=1234", result);
-    }
-    
-    [Fact]
-    public void Build_WithSpecialCharacters_ShouldUrlEncodeValues()
-    {
-        //Arrange
-        var builder = QueryBuilder.Create()
-            .WithUri("https://example.com")
-            .WithQueryParam("key", "a b&c");
-
-        //Act
-        var result = builder.Build();
-
-        //Assert
-        Assert.Equal("https://example.com?key=a+b%26c", result);
+        Assert.Equal(expected, result);
     }
 }
