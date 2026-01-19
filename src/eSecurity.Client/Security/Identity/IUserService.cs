@@ -1,5 +1,3 @@
-using eSecurity.Core.Common.DTOs;
-
 namespace eSecurity.Client.Security.Identity;
 
 public interface IUserService

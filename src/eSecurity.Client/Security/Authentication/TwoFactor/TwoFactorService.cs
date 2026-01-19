@@ -1,5 +1,4 @@
 using eSecurity.Client.Common.Http;
-using eSecurity.Core.Common.DTOs;
 using eSecurity.Core.Common.Requests;
 
 namespace eSecurity.Client.Security.Authentication.TwoFactor;

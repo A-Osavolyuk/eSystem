@@ -1,5 +1,4 @@
 using eSecurity.Client.Common.Http;
-using eSecurity.Core.Common.DTOs;
 
 namespace eSecurity.Client.Security.Identity;
 
