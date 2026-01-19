@@ -7,13 +7,12 @@ public sealed class ApiResponse
 {
     public bool Succeeded { get; private init; }
     private string? Result { get; init; }
-    private Error? Error { get; init; }
-    public static ApiResponse Success(string? result = null) 
-        => new(){ Succeeded = true, Result = result };
-    public static ApiResponse Fail(Error error) 
-        => new(){ Succeeded = false, Error = error };
+    private Error Error { get; init; } = null!;
     
-    public Error GetError() => Error!;
+    public static ApiResponse Success(string? result = null) => new(){ Succeeded = true, Result = result };
+    public static ApiResponse Fail(Error error) => new(){ Succeeded = false, Error = error };
+    
+    public Error GetError() => Error;
 
     public bool TryGetValue<TValue>(out TValue? value)
     {
