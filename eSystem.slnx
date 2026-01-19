@@ -35,5 +35,6 @@
   <Folder Name="/tests/" />
   <Folder Name="/tests/Units/">
     <Project Path="tests/eSystem.Core.Http.Tests/eSystem.Core.Http.Tests.csproj" />
+    <Project Path="tests/eSystem.Core.Tests/eSystem.Core.Tests.csproj" />
   </Folder>
 </Solution>
