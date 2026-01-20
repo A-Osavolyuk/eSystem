@@ -31,11 +31,14 @@ public class TokenValidator(
             var incomingHash = hasher.Hash(token);
             var opaqueToken = await _tokenManager.FindByHashAsync(incomingHash, cancellationToken);
             if (opaqueToken is null || !opaqueToken.IsValid || opaqueToken.TokenType == OpaqueTokenType.RefreshToken)
+            {
                 return Results.Unauthorized(new Error()
                 {
                     Code = ErrorTypes.OAuth.InvalidToken,
                     Description = "Invalid token"
                 });
+
+            }
 
             var scopes = opaqueToken.Scopes.Select(x => x.Scope.Name);
             var claims = new List<Claim>()
@@ -58,35 +61,68 @@ public class TokenValidator(
         var handler = new JwtSecurityTokenHandler() { MapInboundClaims = false };
         var securityToken = handler.ReadJwtToken(token);
         if (securityToken is null)
+        {
             return Results.Unauthorized(new Error()
             {
                 Code = ErrorTypes.OAuth.InvalidToken,
                 Description = "Invalid token"
             });
+
+        }
 
         var kid = Guid.Parse(securityToken.Header.Kid);
         var certificate = await _certificateProvider.FindByIdAsync(kid, cancellationToken);
         if (certificate is null)
+        {
             return Results.Unauthorized(new Error()
             {
                 Code = ErrorTypes.OAuth.InvalidToken,
                 Description = "Invalid token"
             });
 
+        }
+        
         var publicKey = certificate.Certificate.GetRSAPublicKey()!;
-        var audiences = await _clientManager.GetAudiencesAsync(cancellationToken);
-
         var validationParameters = new TokenValidationParameters()
         {
             ValidateIssuer = true,
             ValidIssuer = _tokenOptions.Issuer,
             ValidateAudience = true,
-            ValidAudiences = audiences,
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new RsaSecurityKey(publicKey),
             ValidateLifetime = true,
             ClockSkew = TimeSpan.FromMinutes(5)
         };
+
+        if (securityToken.Header.Typ == JwtTokenTypes.IdToken)
+        {
+            var audClaim = securityToken.Claims.FirstOrDefault(x => x.Type == AppClaimTypes.Aud);
+            if (audClaim is null)
+            {
+                return Results.Unauthorized(new Error()
+                {
+                    Code = ErrorTypes.OAuth.InvalidToken,
+                    Description = "Invalid token"
+                });
+
+            }
+
+            var client = await _clientManager.FindByIdAsync(audClaim.Value, cancellationToken);
+            if (client is null)
+            {
+                return Results.Unauthorized(new Error()
+                {
+                    Code = ErrorTypes.OAuth.InvalidToken,
+                    Description = "Invalid token"
+                });
+            }
+
+            validationParameters.ValidAudience = client.Id.ToString();
+        }
+        else if (securityToken.Header.Typ == JwtTokenTypes.AccessToken)
+        {
+            validationParameters.ValidAudiences = await _clientManager.GetAudiencesAsync(cancellationToken);
+        }
 
         try
         {
