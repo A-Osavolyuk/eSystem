@@ -1,0 +1,26 @@
+﻿export interface UserInfo {
+  sub: string,
+  name: string | null,
+  given_name: string | null,
+  family_name: string | null,
+  middle_name: string | null,
+  nickname: string | null,
+  profile: string | null,
+  gender: string | null,
+  birthdate: string | null,
+  updated_at: number | null,
+  zoneinfo: string | null,
+  locale: string | null,
+  preferred_username: string | null,
+  email: string | null,
+  email_verified: boolean | null,
+  phone: string | null,
+  phone_verified: boolean | null,
+  address: {
+    street_address: string,
+    locality: string,
+    region: string,
+    postal_code: string,
+    country_code: string,
+  } | null
+}

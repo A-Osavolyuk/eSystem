@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {environment} from '../../../environments/environment';
 import {User} from '../interfaces/user.interface';
 import {catchError, Observable, of} from 'rxjs';
+import {UserInfo} from '../interfaces/userinfo.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -10,8 +11,8 @@ import {catchError, Observable, of} from 'rxjs';
 export class AuthService {
   private httpClient = inject(HttpClient)
 
-  public getMe = () : Observable<any | null> => {
-    return this.httpClient.get<any | null>(`${environment.backendUri}/api/v1/connect/userinfo`)
+  public getMe = () : Observable<UserInfo | null> => {
+    return this.httpClient.get<UserInfo>(`${environment.backendUri}/api/v1/connect/userinfo`)
       .pipe(
         catchError((error) => {
           console.error('[AuthService] getMe error', error);
