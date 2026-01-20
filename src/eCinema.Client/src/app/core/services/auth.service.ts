@@ -10,8 +10,8 @@ import {catchError, Observable, of} from 'rxjs';
 export class AuthService {
   private httpClient = inject(HttpClient)
 
-  public getMe = () : Observable<User | null> => {
-    return this.httpClient.get<User | null>(`${environment.backendUri}/api/v1/authentication/me`)
+  public getMe = () : Observable<any | null> => {
+    return this.httpClient.get<any | null>(`${environment.backendUri}/api/v1/connect/userinfo`, { withCredentials: true })
       .pipe(
         catchError((error) => {
           console.error('[AuthService] getMe error', error);
@@ -20,7 +20,7 @@ export class AuthService {
   }
 
   public login = () : void => {
-    document.location.href = `${environment.backendUri}/api/v1/connect/login`;
+    document.location.href = `${environment.backendUri}/api/authentication/login`;
   }
 
   public register = () : void => {
@@ -28,6 +28,6 @@ export class AuthService {
   }
 
   public logout = () : void => {
-    document.location.href = `${environment.backendUri}/api/v1/connect/logout`;
+    document.location.href = `${environment.backendUri}/api/authentication/logout`;
   }
 }
