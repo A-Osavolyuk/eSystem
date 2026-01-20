@@ -35,7 +35,7 @@ public class ClientManager(AuthDbContext context) : IClientManager
         CancellationToken cancellationToken = default)
     {
         return await _context.Clients
-            .Where(c => c.Audience == audience)
+            .Where(c => c.Audience == audience || c.Id == Guid.Parse(audience))
             .Include(x => x.Uris)
             .Include(x => x.AllowedScopes)
             .ThenInclude(x => x.Scope)
