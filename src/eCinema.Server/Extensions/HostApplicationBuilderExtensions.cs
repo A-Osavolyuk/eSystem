@@ -29,7 +29,7 @@ public static class HostApplicationBuilderExtensions
             builder.Services.AddAuthentication(options =>
                 {
                     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = "OIDC";
+                    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
                 })
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                 {
@@ -41,7 +41,7 @@ public static class HostApplicationBuilderExtensions
                     options.ExpireTimeSpan = TimeSpan.FromDays(30);
                     options.SlidingExpiration = true;
                 })
-                .AddOpenIdConnect("OIDC", options =>
+                .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
                 {
                     var gatewayUrl = builder.Configuration.GetValue<string>("PROXY_HTTPS");
                     options.Authority = $"{gatewayUrl}/api/v1/connect";
