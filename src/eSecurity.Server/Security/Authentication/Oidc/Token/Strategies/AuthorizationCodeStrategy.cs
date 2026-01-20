@@ -158,7 +158,7 @@ public class AuthorizationCodeStrategy(
             Nonce = authorizationCode.Nonce
         }, cancellationToken);
 
-        var accessTokenContext = new JwtTokenContext { Claims = accessClaims };
+        var accessTokenContext = new JwtTokenContext { Claims = accessClaims, Type = JwtTokenTypes.AccessToken };
         var jwtTokenFactory = _tokenFactoryProvider.GetFactory<JwtTokenContext, string>();
         var response = new TokenResponse()
         {
@@ -205,7 +205,7 @@ public class AuthorizationCodeStrategy(
                 AuthTime = DateTimeOffset.UtcNow,
             }, cancellationToken);
 
-            var idTokenContext = new JwtTokenContext { Claims = idClaims };
+            var idTokenContext = new JwtTokenContext { Claims = idClaims, Type = JwtTokenTypes.IdToken };
             response.IdToken = await jwtTokenFactory.CreateTokenAsync(idTokenContext, cancellationToken);
         }
 

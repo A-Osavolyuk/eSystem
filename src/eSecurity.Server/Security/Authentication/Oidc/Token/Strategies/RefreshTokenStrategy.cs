@@ -131,7 +131,7 @@ public class RefreshTokenStrategy(
             Sid = refreshToken.Session.Id.ToString()
         }, cancellationToken);
 
-        var accessTokenContext = new JwtTokenContext { Claims = accessTokenClaims };
+        var accessTokenContext = new JwtTokenContext { Claims = accessTokenClaims, Type = JwtTokenTypes.IdToken };
         var jwtTokenFactory = _tokenFactoryProvider.GetFactory<JwtTokenContext, string>();
         var response = new TokenResponse()
         {
@@ -182,7 +182,7 @@ public class RefreshTokenStrategy(
                 AuthTime = DateTimeOffset.UtcNow
             }, cancellationToken);
 
-            var idTokenContext = new JwtTokenContext { Claims = idClaims };
+            var idTokenContext = new JwtTokenContext { Claims = idClaims, Type = JwtTokenTypes.IdToken };
             response.IdToken = await jwtTokenFactory.CreateTokenAsync(idTokenContext, cancellationToken);
         }
 

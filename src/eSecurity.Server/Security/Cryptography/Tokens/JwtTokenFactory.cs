@@ -8,6 +8,7 @@ namespace eSecurity.Server.Security.Cryptography.Tokens;
 public sealed class JwtTokenContext : TokenContext
 {
     public required IEnumerable<Claim> Claims { get; set; }
+    public required string Type { get; set; }
 }
 
 public class JwtTokenFactory(
@@ -25,6 +26,6 @@ public class JwtTokenFactory(
 
         var securityKey = new RsaSecurityKey(privateKey) { KeyId = certificate.Id.ToString() };
         var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.RsaSha256);
-        return _signer.Sign(context.Claims, signingCredentials);
+        return _signer.Sign(context.Claims, signingCredentials, context.Type);
     }
 }

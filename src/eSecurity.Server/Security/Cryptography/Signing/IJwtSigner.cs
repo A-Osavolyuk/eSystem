@@ -4,5 +4,5 @@ namespace eSecurity.Server.Security.Cryptography.Signing;
 
 public interface IJwtSigner
 {
-    public string Sign(IEnumerable<Claim> claims, SigningCredentials signingCredentials);
+    public string Sign(IEnumerable<Claim> claims, SigningCredentials signingCredentials, string tokenType);
 }

@@ -5,10 +5,15 @@ namespace eSecurity.Server.Security.Cryptography.Signing;
 
 public class JwtSigner() : IJwtSigner
 {
-    public string Sign(IEnumerable<Claim> claims, SigningCredentials signingCredentials)
+    public string Sign(IEnumerable<Claim> claims, SigningCredentials signingCredentials, string tokenType)
     {
-        var securityToken = new JwtSecurityToken(claims: claims, signingCredentials: signingCredentials);
+        var payload = new JwtPayload(claims);
+        var header = new JwtHeader(signingCredentials)
+        {
+            ["typ"] = tokenType
+        };
+        var token = new JwtSecurityToken(header, payload);
         var handler = new JwtSecurityTokenHandler();
-        return handler.WriteToken(securityToken);
+        return handler.WriteToken(token);
     }
 }
