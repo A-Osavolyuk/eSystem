@@ -11,7 +11,7 @@ export class AuthService {
   private httpClient = inject(HttpClient)
 
   public getMe = () : Observable<any | null> => {
-    return this.httpClient.get<any | null>(`${environment.backendUri}/api/v1/connect/userinfo`, { withCredentials: true })
+    return this.httpClient.get<any | null>(`${environment.backendUri}/api/v1/connect/userinfo`)
       .pipe(
         catchError((error) => {
           console.error('[AuthService] getMe error', error);
