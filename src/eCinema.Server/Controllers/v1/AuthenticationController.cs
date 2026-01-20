@@ -1,5 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,5 +23,16 @@ public class AuthenticationController(ISender sender) : ControllerBase
             IsPersistent = true,
             RedirectUri = "https://localhost:6511"
         });
+    }
+
+    [HttpGet("logout")]
+    [EndpointSummary("Logout")]
+    public IActionResult Logout()
+    {
+        return SignOut(
+            new AuthenticationProperties(),
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            OpenIdConnectDefaults.AuthenticationScheme
+        );
     }
 }

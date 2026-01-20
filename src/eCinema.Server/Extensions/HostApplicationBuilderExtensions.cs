@@ -130,10 +130,14 @@ public static class HostApplicationBuilderExtensions
                     options.ResponseType = ResponseTypes.Code;
                     options.UsePkce = true;
 
-                    options.SaveTokens = oauthOptions.SaveTokens;
                     options.MapInboundClaims = false;
+                    options.GetClaimsFromUserInfoEndpoint = true;
+                    options.SaveTokens = oauthOptions.SaveTokens;
                     options.CallbackPath = oauthOptions.CallbackPath;
                     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    
+                    options.SignedOutCallbackPath = oauthOptions.SignedOutCallbackPath;
+                    options.SignedOutRedirectUri = oauthOptions.SignedOutRedirectUri;
 
                     options.TokenValidationParameters = new TokenValidationParameters
                     {

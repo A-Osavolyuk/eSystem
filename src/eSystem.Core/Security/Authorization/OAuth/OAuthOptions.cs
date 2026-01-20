@@ -6,6 +6,8 @@ public class OAuthOptions
     public string ClientSecret { get; set; } = string.Empty;
     public bool SaveTokens { get; set; }
     public string CallbackPath { get; set; } = string.Empty;
+    public string SignedOutCallbackPath { get; set; } = string.Empty;
     public string Authority { get; set; } = string.Empty;
     public string ErrorPath { get; set; } = string.Empty;
+    public string SignedOutRedirectUri { get; set; } = string.Empty;
 }
