@@ -155,7 +155,7 @@
         if (result.Succeeded)
         {
             var sessionResult = await SecurityService.LoadSignInSessionAsync(SessionId);
-            if (sessionResult.Succeeded && result.TryGetValue<SignInSessionDto>(out var session))
+            if (sessionResult.Succeeded && sessionResult.TryGetValue<SignInSessionDto>(out var session))
             {
                 if (session!.NextStep == SignInStep.TwoFactor)
                 {
