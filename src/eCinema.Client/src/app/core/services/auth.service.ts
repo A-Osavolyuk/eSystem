@@ -20,7 +20,7 @@ export class AuthService {
   }
 
   public login = () : void => {
-    document.location.href = `${environment.backendUri}/api/v1/connect/authorize`;
+    document.location.href = `${environment.backendUri}/api/v1/connect/login`;
   }
 
   public register = () : void => {
