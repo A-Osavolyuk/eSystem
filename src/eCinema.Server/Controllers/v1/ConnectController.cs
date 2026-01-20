@@ -1,6 +1,5 @@
-﻿using eCinema.Server.Features.Connect.Commands;
-using eSystem.Core.Http.Extensions;
-using MediatR;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,31 +13,14 @@ public class ConnectController(ISender sender) : ControllerBase
 {
     private readonly ISender _sender = sender;
 
-    [HttpGet("authorize")]
-    [EndpointSummary("Authorize")]
-    public async ValueTask<IActionResult> Authorize()
+    [HttpGet("login")]
+    [EndpointSummary("Login")]
+    public IActionResult Login()
     {
-        var result = await _sender.Send(new AuthorizeCommand());
-        return HttpContext.HandleResult(result);
-    }
-
-    [HttpGet("callback")]
-    [EndpointSummary("Callback")]
-    public async ValueTask<IActionResult> Callback(
-        [FromQuery(Name = "code")] string? code,
-        [FromQuery(Name = "state")] string? state,
-        [FromQuery(Name = "error")] string? error,
-        [FromQuery(Name = "error_description")]
-        string? description)
-    {
-        var result = await _sender.Send(new AuthorizeCallbackCommand()
+        return Challenge(new AuthenticationProperties()
         {
-            Code = code,
-            State = state,
-            Error = error,
-            ErrorDescription = description
+            IsPersistent = true,
+            RedirectUri = "https://localhost:6511/home"
         });
-        
-        return HttpContext.HandleResult(result);
     }
 }
