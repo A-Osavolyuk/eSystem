@@ -1,0 +1,8 @@
+@if(!auth.state().isAuthenticated){
+  <div class="buttons">
+    <e-button label="Sign-in" (onClick)="auth.login()"/>
+    <e-button label="Sign-up" (onClick)="auth.register()"/>
+  </div>
+} @else{
+  <e-button label="Logout" (onClick)="auth.logout()" />
+}

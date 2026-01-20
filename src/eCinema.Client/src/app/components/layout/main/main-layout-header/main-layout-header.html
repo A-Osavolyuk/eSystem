@@ -1,11 +1,6 @@
 <header class="header">
   <div class="header-content">
     <p class="brand-text" routerLink="/app"> eCinema </p>
-    @if(!authService.state().isAuthenticated){
-      <div class="buttons">
-        <e-button label="Sign-in" (onClick)="authService.login()"/>
-        <e-button label="Sign-up" (onClick)="authService.register()"/>
-      </div>
-    }
+    <e-authentication-outlet/>
   </div>
 </header>
