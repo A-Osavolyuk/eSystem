@@ -36,7 +36,7 @@ public static class HostApplicationBuilderExtensions
                 })
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                 {
-                    options.Cookie.Name = "eCinema.Authenticatio.State";
+                    options.Cookie.Name = "eCinema.Authentication.State";
                     options.Cookie.HttpOnly = true;
                     options.Cookie.SameSite = SameSiteMode.Lax;
                     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
