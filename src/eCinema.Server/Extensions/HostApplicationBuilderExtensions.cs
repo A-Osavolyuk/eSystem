@@ -1,18 +1,20 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Net.Http.Headers;
+using System.Text.Json.Serialization;
 using eCinema.Server.Common.Errors;
-using eSystem.Core.Common.Cache.Redis;
 using eSystem.Core.Common.Configuration;
 using eSystem.Core.Common.Documentation;
 using eSystem.Core.Common.Error;
 using eSystem.Core.Common.Gateway;
 using eSystem.Core.Common.Versioning;
+using eSystem.Core.Http.Constants;
 using eSystem.Core.Security.Authentication.Oidc.Constants;
 using eSystem.Core.Security.Identity.Claims;
 using eSystem.ServiceDefaults;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
+using Yarp.ReverseProxy.Configuration;
+using Yarp.ReverseProxy.Transforms;
 using OAuthOptions = eSystem.Core.Security.Authorization.OAuth.OAuthOptions;
 
 namespace eCinema.Server.Extensions;
@@ -23,12 +25,84 @@ public static class HostApplicationBuilderExtensions
     {
         public void AddServices()
         {
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<TokenHandler>();
+            
             builder.AddServiceDefaults();
             builder.AddDocumentation();
-            builder.AddVersioning();
-            builder.AddRedisCache();
             builder.AddExceptionHandling<GlobalExceptionHandler>();
-            
+            builder.AddProxy();
+            builder.AddAuthentication();
+
+            builder.Services.AddMediatR(cfg => { cfg.RegisterServicesFromAssemblyContaining<IAssemblyMarker>(); });
+
+            builder.Services.AddOpenApi();
+            builder.Services.AddGateway();
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(policy =>
+                {
+                    policy.WithOrigins("https://localhost:6511");
+                    policy.AllowAnyHeader();
+                    policy.AllowAnyMethod();
+                    policy.AllowCredentials();
+                });
+            });
+
+            builder.Services.AddControllers()
+                .AddJsonOptions(cfg =>
+                {
+                    cfg.JsonSerializerOptions.WriteIndented = true;
+                    cfg.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                });
+        }
+
+        private void AddProxy()
+        {
+            builder.Services.AddReverseProxy()
+                .LoadFromMemory(
+                    [
+                        new RouteConfig()
+                        {
+                            RouteId = "proxy-route", ClusterId = "proxy-cluster",
+                            Match = new RouteMatch { Path = "/api/v1/{**catch-all}" }
+                        }
+                    ],
+                    [
+                        new ClusterConfig()
+                        {
+                            ClusterId = "proxy-cluster",
+                            Destinations = new Dictionary<string, DestinationConfig>()
+                            {
+                                ["security-destination"] = new()
+                                {
+                                    Address = builder.Configuration["PROXY_HTTPS"]!
+                                }
+                            }
+                        }
+                    ])
+                .AddTransforms(context =>
+                {
+                    context.AddRequestTransform(async request =>
+                    {
+                        var httpContent = request.HttpContext;
+                        if (httpContent.User.Identity?.IsAuthenticated == true)
+                        {
+                            var tokenHandler = httpContent.RequestServices.GetRequiredService<TokenHandler>();
+                            var accessToken = await tokenHandler.GetTokenAsync();
+                            if (!string.IsNullOrEmpty(accessToken))
+                            {
+                                var header = new AuthenticationHeaderValue(AuthenticationTypes.Bearer, accessToken);
+                                request.ProxyRequest.Headers.Authorization = header;
+                            }
+                        }
+                    });
+                });
+        }
+
+        private void AddAuthentication()
+        {
+            builder.Services.Configure<OAuthOptions>(builder.Configuration.GetSection("OAuth"));
             builder.Services.AddAuthentication(options =>
                 {
                     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -40,7 +114,7 @@ public static class HostApplicationBuilderExtensions
                     options.Cookie.HttpOnly = true;
                     options.Cookie.SameSite = SameSiteMode.Lax;
                     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-                    
+
                     options.ExpireTimeSpan = TimeSpan.FromDays(30);
                     options.SlidingExpiration = true;
                 })
@@ -48,27 +122,27 @@ public static class HostApplicationBuilderExtensions
                 {
                     var gatewayUrl = builder.Configuration.GetValue<string>("PROXY_HTTPS");
                     var oauthOptions = builder.Configuration.Get<OAuthOptions>("OAuth");
-                    
+
                     options.Authority = $"{gatewayUrl}{oauthOptions.Authority}";
-                    
+
                     options.ClientId = oauthOptions.ClientId;
                     options.ClientSecret = oauthOptions.ClientSecret;
                     options.ResponseType = ResponseTypes.Code;
                     options.UsePkce = true;
-                    
+
                     options.SaveTokens = oauthOptions.SaveTokens;
                     options.MapInboundClaims = false;
                     options.CallbackPath = oauthOptions.CallbackPath;
                     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    
+
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         NameClaimType = AppClaimTypes.PreferredUsername,
                         RoleClaimType = AppClaimTypes.Role
                     };
-                    
+
                     options.Prompt = "login consent";
-                    
+
                     options.Scope.Clear();
                     options.Scope.Add(Scopes.OpenId);
                     options.Scope.Add(Scopes.OfflineAccess);
@@ -76,7 +150,7 @@ public static class HostApplicationBuilderExtensions
                     options.Scope.Add(Scopes.Phone);
                     options.Scope.Add(Scopes.Profile);
                     options.Scope.Add(Scopes.Address);
-                    
+
                     options.Events = new OpenIdConnectEvents
                     {
                         OnRemoteFailure = ctx =>
@@ -87,28 +161,6 @@ public static class HostApplicationBuilderExtensions
                         }
                     };
                 });
-            
-            builder.Services.AddMediatR(cfg =>
-            {
-                cfg.RegisterServicesFromAssemblyContaining<IAssemblyMarker>();
-            });
-            
-            builder.Services.AddOpenApi();
-            builder.Services.AddGateway();
-            builder.Services.AddHttpContextAccessor();
-            builder.Services.AddSession(options =>
-            {
-                options.IdleTimeout = TimeSpan.FromMinutes(5);
-                options.Cookie.HttpOnly = true;
-                options.Cookie.IsEssential = true;
-            });
-
-            builder.Services.AddControllers()
-                .AddJsonOptions(cfg =>
-                {
-                    cfg.JsonSerializerOptions.WriteIndented = true;
-                    cfg.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-                });;
         }
     }
 }

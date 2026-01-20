@@ -11,9 +11,10 @@ public static class WebApplicationExtensions
         {
             app.UseExceptionHandler();
             app.UseRouting();
-            app.UseSession();
+            app.UseCors();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.MapReverseProxy();
             app.MapControllers();
             app.MapOpenApi();
             app.MapScalarApiReference();

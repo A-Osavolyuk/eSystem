@@ -7,9 +7,8 @@ namespace eCinema.Server.Controllers.v1;
 
 [ApiController]
 [AllowAnonymous]
-[ApiVersion("1.0")]
-[Route("api/v{version:apiVersion}/[controller]")]
-public class ConnectController(ISender sender) : ControllerBase
+[Route("api/[controller]")]
+public class AuthenticationController(ISender sender) : ControllerBase
 {
     private readonly ISender _sender = sender;
 
