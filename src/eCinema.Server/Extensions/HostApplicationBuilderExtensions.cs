@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using eCinema.Server.Common.Errors;
 using eSystem.Core.Common.Cache.Redis;
+using eSystem.Core.Common.Configuration;
 using eSystem.Core.Common.Documentation;
 using eSystem.Core.Common.Error;
 using eSystem.Core.Common.Gateway;
@@ -9,8 +10,10 @@ using eSystem.Core.Security.Authentication.Oidc.Constants;
 using eSystem.Core.Security.Identity.Claims;
 using eSystem.ServiceDefaults;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
+using OAuthOptions = eSystem.Core.Security.Authorization.OAuth.OAuthOptions;
 
 namespace eCinema.Server.Extensions;
 
@@ -44,16 +47,18 @@ public static class HostApplicationBuilderExtensions
                 .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
                 {
                     var gatewayUrl = builder.Configuration.GetValue<string>("PROXY_HTTPS");
-                    options.Authority = $"{gatewayUrl}/api/v1/connect";
+                    var oauthOptions = builder.Configuration.Get<OAuthOptions>("OAuth");
                     
-                    options.ClientId = "307268b0-005c-4ee4-a0e8-a93bd0010382";
-                    options.ClientSecret = "7fd5a079ecd90974a56532138e204ec0c42df875a06a0dedbe69797b609150c10162abed";
+                    options.Authority = $"{gatewayUrl}{oauthOptions.Authority}";
+                    
+                    options.ClientId = oauthOptions.ClientId;
+                    options.ClientSecret = oauthOptions.ClientSecret;
                     options.ResponseType = ResponseTypes.Code;
                     options.UsePkce = true;
                     
-                    options.SaveTokens = true;
+                    options.SaveTokens = oauthOptions.SaveTokens;
                     options.MapInboundClaims = false;
-                    options.CallbackPath = "/callback-oidc";
+                    options.CallbackPath = oauthOptions.CallbackPath;
                     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                     
                     options.TokenValidationParameters = new TokenValidationParameters
@@ -76,7 +81,7 @@ public static class HostApplicationBuilderExtensions
                     {
                         OnRemoteFailure = ctx =>
                         {
-                            ctx.Response.Redirect("/error?message=" + ctx.Failure?.Message);
+                            ctx.Response.Redirect(oauthOptions.ErrorPath + ctx.Failure?.Message);
                             ctx.HandleResponse();
                             return Task.CompletedTask;
                         }
