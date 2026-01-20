@@ -1,21 +1,17 @@
 import {Component, inject} from '@angular/core';
-import {Router} from '@angular/router';
-import {AuthService} from '../../../../core/services/auth.service';
+import {RouterLink} from '@angular/router';
 import {Button} from '../../../common/button/button';
+import {AuthService} from '../../../../auth/auth.service';
 
 @Component({
   selector: 'e-main-layout-header',
   imports: [
-    Button
+    Button,
+    RouterLink
   ],
   templateUrl: './main-layout-header.html',
   styleUrl: './main-layout-header.scss',
 })
 export class MainLayoutHeader {
-  private router = inject(Router)
   protected authService = inject(AuthService)
-
-  protected onBrandClick = () => {
-    this.router.navigate(['/app']);
-  }
 }

@@ -8,7 +8,7 @@ export const routes: Routes = [
         .then(c => c.MainLayout),
     children: [
       {
-        path: 'app',
+        path: '',
         loadComponent: () => import('./pages/home/home-page.component')
           .then(c => c.HomePage),
       },

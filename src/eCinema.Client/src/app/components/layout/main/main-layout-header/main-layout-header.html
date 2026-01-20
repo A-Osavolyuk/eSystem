@@ -1,9 +1,11 @@
 <header class="header">
   <div class="header-content">
-    <p class="brand-text" (click)="onBrandClick()"> eCinema </p>
-    <div class="buttons">
-      <e-button label="Sign-in" (onClick)="authService.login()"/>
-      <e-button label="Sign-up" (onClick)="authService.register()"/>
-    </div>
+    <p class="brand-text" routerLink="/app"> eCinema </p>
+    @if(!authService.state().isAuthenticated){
+      <div class="buttons">
+        <e-button label="Sign-in" (onClick)="authService.login()"/>
+        <e-button label="Sign-up" (onClick)="authService.register()"/>
+      </div>
+    }
   </div>
 </header>

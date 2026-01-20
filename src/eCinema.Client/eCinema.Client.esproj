@@ -14,6 +14,7 @@
     <PackageLockHashFile>$(ProjectDir)package-lock.hash</PackageLockHashFile>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="src\app\core\services\" />
     <Folder Include="src\app\interceptors\" />
   </ItemGroup>
   <Target Name="CheckNpmPackages" BeforeTargets="Build">
