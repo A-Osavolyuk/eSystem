@@ -19,7 +19,7 @@ public class AuthenticationController(ISender sender) : ControllerBase
         return Challenge(new AuthenticationProperties()
         {
             IsPersistent = true,
-            RedirectUri = "https://localhost:6511/home"
+            RedirectUri = "https://localhost:6511"
         });
     }
 }
