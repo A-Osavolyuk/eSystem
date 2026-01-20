@@ -55,7 +55,7 @@ public class TokenValidator(
             return Results.Ok(claimsPrincipal);
         }
 
-        var handler = new JwtSecurityTokenHandler();
+        var handler = new JwtSecurityTokenHandler() { MapInboundClaims = false };
         var securityToken = handler.ReadJwtToken(token);
         if (securityToken is null)
             return Results.Unauthorized(new Error()
