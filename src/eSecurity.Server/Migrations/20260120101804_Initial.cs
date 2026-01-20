@@ -753,7 +753,7 @@ namespace eSecurity.Server.Migrations
                     ClientId = table.Column<Guid>(type: "uuid", nullable: false),
                     DeviceId = table.Column<Guid>(type: "uuid", nullable: false),
                     Code = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
-                    Nonce = table.Column<string>(type: "character varying(36)", maxLength: 36, nullable: false),
+                    Nonce = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     RedirectUri = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     CodeChallenge = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     CodeChallengeMethod = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: true),

@@ -12,7 +12,7 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20260113135339_Initial")]
+    [Migration("20260120101804_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -59,8 +59,8 @@ namespace eSecurity.Server.Migrations
 
                     b.Property<string>("Nonce")
                         .IsRequired()
-                        .HasMaxLength(36)
-                        .HasColumnType("character varying(36)");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.Property<string>("RedirectUri")
                         .IsRequired()
