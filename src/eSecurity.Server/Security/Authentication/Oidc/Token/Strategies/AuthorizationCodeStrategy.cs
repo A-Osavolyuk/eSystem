@@ -198,7 +198,8 @@ public class AuthorizationCodeStrategy(
             var idClaimFactory = _claimFactoryProvider.GetClaimFactory<IdClaimsContext>();
             var idClaims = await idClaimFactory.GetClaimsAsync(user, new IdClaimsContext()
             {
-                Aud = client.Audience,
+                Aud = client.Id.ToString(),
+                Nonce = authorizationCode.Nonce,
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Name),
                 Sid = session.Id.ToString(),
                 AuthTime = DateTimeOffset.UtcNow,

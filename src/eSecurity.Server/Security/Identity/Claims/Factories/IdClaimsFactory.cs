@@ -47,6 +47,11 @@ public sealed class IdClaimsFactory(
             new(AppClaimTypes.AuthenticationTime, authTime),
         };
 
+        if (!string.IsNullOrEmpty(context.Nonce))
+        {
+            claims.Add(new(AppClaimTypes.Nonce, context.Nonce));
+        }
+
         if (context.Scopes.Contains(Scopes.Email))
         {
             var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);

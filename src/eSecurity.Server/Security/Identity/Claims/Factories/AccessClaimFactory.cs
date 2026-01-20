@@ -6,7 +6,7 @@ namespace eSecurity.Server.Security.Identity.Claims.Factories;
 
 public sealed class AccessClaimsContext : ClaimsContext
 {
-    public string? Nonce { get; set; }
+
 }
 
 public sealed class AccessClaimFactory(IOptions<TokenOptions> options) : IClaimFactory<AccessClaimsContext>

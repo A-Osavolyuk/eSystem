@@ -176,7 +176,7 @@ public class RefreshTokenStrategy(
             var idClaimFactory = _claimFactoryProvider.GetClaimFactory<IdClaimsContext>();
             var idClaims = await idClaimFactory.GetClaimsAsync(user, new IdClaimsContext()
             {
-                Aud = client.Audience,
+                Aud = client.Id.ToString(),
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Name),
                 Sid = refreshToken.Session.Id.ToString(),
                 AuthTime = DateTimeOffset.UtcNow

@@ -8,6 +8,7 @@ public abstract class ClaimsContext
     public required IEnumerable<string> Scopes { get; set; }
     public required string Aud { get; set; }
     public required string Sid { get; set; }
+    public string? Nonce { get; set; }
 
     public DateTimeOffset? Nbf { get; set; }
 }
