@@ -1,4 +1,4 @@
-﻿namespace eSecurity.Core.Security.Cookies;
+﻿namespace eSecurity.Client.Security.Cookies;
 
 public class SessionCookie
 {

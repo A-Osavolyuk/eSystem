@@ -8,9 +8,9 @@ using eSecurity.Client.Security.Authorization.Consent;
 using eSecurity.Client.Security.Authorization.Devices;
 using eSecurity.Client.Security.Authorization.LinkedAccounts;
 using eSecurity.Client.Security.Authorization.OAuth;
+using eSecurity.Client.Security.Cookies.Constants;
 using eSecurity.Client.Security.Credentials.PublicKey;
 using eSecurity.Client.Security.Identity;
-using eSecurity.Core.Security.Cookies.Constants;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 

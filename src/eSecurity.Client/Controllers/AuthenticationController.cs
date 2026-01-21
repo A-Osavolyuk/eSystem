@@ -1,9 +1,9 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
 using eSecurity.Client.Security.Authentication;
+using eSecurity.Client.Security.Cookies;
+using eSecurity.Client.Security.Cookies.Constants;
 using eSecurity.Core.Common.DTOs;
-using eSecurity.Core.Security.Cookies;
-using eSecurity.Core.Security.Cookies.Constants;
 using eSecurity.Core.Security.Cryptography.Protection.Constants;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;

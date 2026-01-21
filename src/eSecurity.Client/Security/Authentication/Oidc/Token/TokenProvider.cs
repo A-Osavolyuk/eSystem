@@ -1,6 +1,6 @@
 using System.Text.Json;
 using eSecurity.Client.Common.JS.Fetch;
-using eSecurity.Core.Security.Cookies.Constants;
+using eSecurity.Client.Security.Cookies.Constants;
 using eSecurity.Core.Security.Cryptography.Protection.Constants;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.DataProtection;

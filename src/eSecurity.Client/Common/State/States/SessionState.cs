@@ -1,4 +1,4 @@
-﻿using eSecurity.Core.Security.Cookies;
+﻿using eSecurity.Client.Security.Cookies;
 
 namespace eSecurity.Client.Common.State.States;
 
