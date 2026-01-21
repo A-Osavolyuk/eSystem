@@ -4,7 +4,6 @@ using eSecurity.Client.Security.Cookies.Constants;
 using eSecurity.Client.Security.Cryptography.Protection.Constants;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.Extensions.Caching.Distributed;
 
 namespace eSecurity.Client.Security.Authentication.Oidc.Token;
 
