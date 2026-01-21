@@ -3,13 +3,12 @@ using eSystem.Core.Http.Extensions;
 using eSystem.Core.Security.Authentication.Oidc;
 using eSystem.Core.Security.Authentication.Oidc.Constants;
 using eSystem.Core.Security.Authentication.Oidc.Token;
-using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Cryptography.Encoding;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Options;
 
-namespace eCinema.Server;
+namespace eCinema.Server.Security.Authentication.OpenIdConnect.Token;
 
 public class TokenHandler(
     IHttpContextAccessor httpContextAccessor,

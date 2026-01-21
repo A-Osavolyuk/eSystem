@@ -1,11 +1,11 @@
 ﻿using System.Net.Http.Headers;
 using System.Text.Json.Serialization;
 using eCinema.Server.Common.Errors;
+using eCinema.Server.Security.Cors;
 using eSystem.Core.Common.Configuration;
 using eSystem.Core.Common.Documentation;
 using eSystem.Core.Common.Error;
 using eSystem.Core.Common.Gateway;
-using eSystem.Core.Common.Versioning;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Security.Authentication.Oidc.Constants;
 using eSystem.Core.Security.Identity.Claims;
@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using Yarp.ReverseProxy.Configuration;
 using Yarp.ReverseProxy.Transforms;
-using OAuthOptions = eSystem.Core.Security.Authorization.OAuth.OAuthOptions;
 
 namespace eCinema.Server.Extensions;
 
@@ -34,18 +33,23 @@ public static class HostApplicationBuilderExtensions
             builder.AddProxy();
             builder.AddAuthentication();
 
-            builder.Services.AddMediatR(cfg => { cfg.RegisterServicesFromAssemblyContaining<IAssemblyMarker>(); });
-
             builder.Services.AddOpenApi();
             builder.Services.AddGateway();
             builder.Services.AddCors(options =>
             {
-                options.AddDefaultPolicy(policy =>
+                options.AddPolicy(CorsPolicies.SpaOnly, policy =>
                 {
                     policy.WithOrigins("https://localhost:6511");
                     policy.AllowAnyHeader();
                     policy.AllowAnyMethod();
                     policy.AllowCredentials();
+                });
+                
+                options.AddPolicy(CorsPolicies.ExternalOnly, policy =>
+                {
+                    policy.AllowAnyOrigin();
+                    policy.AllowAnyHeader();
+                    policy.AllowAnyMethod();
                 });
             });
 

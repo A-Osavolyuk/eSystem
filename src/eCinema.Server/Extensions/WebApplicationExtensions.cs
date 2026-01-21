@@ -1,4 +1,5 @@
-﻿using eSystem.ServiceDefaults;
+﻿using eCinema.Server.Security.Cors;
+using eSystem.ServiceDefaults;
 using Scalar.AspNetCore;
 
 namespace eCinema.Server.Extensions;
@@ -11,7 +12,7 @@ public static class WebApplicationExtensions
         {
             app.UseExceptionHandler();
             app.UseRouting();
-            app.UseCors();
+            app.UseCors(CorsPolicies.SpaOnly);
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapReverseProxy();

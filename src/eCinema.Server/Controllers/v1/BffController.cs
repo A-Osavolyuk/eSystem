@@ -1,8 +1,10 @@
-﻿using MediatR;
+﻿using eCinema.Server.Security.Cors;
+using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eCinema.Server.Controllers.v1;
@@ -10,6 +12,7 @@ namespace eCinema.Server.Controllers.v1;
 [ApiController]
 [AllowAnonymous]
 [Route("[controller]")]
+[EnableCors(CorsPolicies.SpaOnly)]
 public class BffController(ISender sender) : ControllerBase
 {
     private readonly ISender _sender = sender;
