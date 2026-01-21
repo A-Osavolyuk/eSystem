@@ -44,7 +44,7 @@ public class TokenValidator(
             ValidateIssuer = true,
             ValidIssuer = openIdConfiguration!.Issuer,
             ValidateAudience = true,
-            ValidAudience = _clientOptions.ClientAudience,
+            ValidAudience = _clientOptions.ClientId,
             ValidateLifetime = true,
             ClockSkew = TimeSpan.FromMinutes(5),
             ValidateIssuerSigningKey = true,
