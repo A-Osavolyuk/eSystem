@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text.Json;
 using eSecurity.Client.Common.JS.Localization;
-using eSecurity.Client.Security.Authentication.Oidc.Session;
+using eSecurity.Client.Security.Authentication;
 using eSecurity.Client.Security.Authentication.Oidc.Token;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Http.Results;
@@ -9,6 +9,8 @@ using eSystem.Core.Security.Authentication.Oidc.Client;
 using eSystem.Core.Security.Authentication.Oidc.Constants;
 using eSystem.Core.Security.Authentication.Oidc.Token;
 using eSystem.Core.Security.Cryptography.Encoding;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Options;
 
 namespace eSecurity.Client.Common.Http;
@@ -16,7 +18,6 @@ namespace eSecurity.Client.Common.Http;
 public class ApiClient(
     HttpClient httpClient,
     ITokenProvider tokenProvider,
-    ISessionAccessor sessionAccessor,
     IOptions<ClientOptions> clientOptions,
     ILocalizationManager localizationManager,
     IHttpContextAccessor httpContextAccessor) : IApiClient
@@ -24,7 +25,6 @@ public class ApiClient(
     private readonly HttpClient _httpClient = httpClient;
     private readonly ITokenProvider _tokenProvider = tokenProvider;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
-    private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
     private readonly ILocalizationManager _localizationManager = localizationManager;
     private readonly ClientOptions _clientOptions = clientOptions.Value;
 
@@ -47,7 +47,7 @@ public class ApiClient(
                 WriteIndented = true,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
-            
+
             var error = await response.Content.ReadAsync<Error>(serializationOptions, cancellationToken);
             return ApiResponse.Fail(error);
         }
@@ -86,12 +86,8 @@ public class ApiClient(
         var message = new HttpRequestMessage(apiRequest.Method, apiRequest.Url);
         if (apiOptions.Authentication == AuthenticationType.Bearer)
         {
-            var session = _sessionAccessor.Get();
-            if (session is not null)
-            {
-                var token = await _tokenProvider.GetAsync($"{session.Id}:{TokenTypes.AccessToken}");
-                message.Headers.WithBearerAuthentication(token);
-            }
+            var token = _tokenProvider.Get(TokenTypes.AccessToken);
+            message.Headers.WithBearerAuthentication(token);
         }
         else if (apiOptions.Authentication == AuthenticationType.Basic)
         {
@@ -103,7 +99,7 @@ public class ApiClient(
 
         if (apiOptions.WithLocale)
             message.Headers.WithLocale(await _localizationManager.GetLocaleAsync());
-        
+
         message.Headers.WithUserAgent(_httpContext.GetUserAgent());
         message.Headers.WithCookies(_httpContext.GetCookies());
         message.AddContent(apiRequest, apiOptions);
@@ -121,18 +117,14 @@ public class ApiClient(
         request.Headers.WithCookies(_httpContext.GetCookies());
         request.Headers.WithUserAgent(_httpContext.GetUserAgent());
 
-        var session = _sessionAccessor.Get();
-        if (session is null) return responseMessage;
-
         var content = FormUrl.Encode(new TokenRequest()
         {
             ClientId = _clientOptions.ClientId,
             ClientSecret = _clientOptions.ClientSecret,
             GrantType = GrantTypes.RefreshToken,
-            RefreshToken = await _tokenProvider.GetAsync(
-                $"{session.Id}:{TokenTypes.RefreshToken}", cancellationToken)
+            RefreshToken = _tokenProvider.Get(TokenTypes.RefreshToken)
         });
-        
+
         request.Content = new FormUrlEncodedContent(content);
 
         var tokenResult = await _httpClient.SendAsync(request, cancellationToken);
@@ -142,20 +134,17 @@ public class ApiClient(
         var tokenResponse = JsonSerializer.Deserialize<TokenResponse>(tokenResponseJson);
         if (tokenResponse is null) return responseMessage;
 
-        await _tokenProvider.SetAsync($"{session.Id}:{TokenTypes.AccessToken}",
-            tokenResponse.AccessToken, TimeSpan.FromMinutes(5), cancellationToken);
-
-        if (!string.IsNullOrEmpty(tokenResponse.IdToken))
+        var metadata = new AuthenticationMetadata()
         {
-            await _tokenProvider.SetAsync($"{session.Id}:{TokenTypes.IdToken}",
-                tokenResponse.IdToken, TimeSpan.FromMinutes(5), cancellationToken);
-        }
-
-        if (!string.IsNullOrEmpty(tokenResponse.RefreshToken))
-        {
-            await _tokenProvider.SetAsync($"{session.Id}:{TokenTypes.RefreshToken}",
-                tokenResponse.RefreshToken, TimeSpan.FromDays(30), cancellationToken);
-        }
+            Tokens =
+            [
+                new AuthenticationToken { Name = TokenTypes.AccessToken, Value = tokenResponse.AccessToken },
+                new AuthenticationToken { Name = TokenTypes.RefreshToken, Value = tokenResponse.RefreshToken! },
+                new AuthenticationToken { Name = TokenTypes.IdToken, Value = tokenResponse.IdToken! }
+            ]
+        };
+        
+        await _tokenProvider.SetAsync(metadata, cancellationToken);
 
         var retry = await CloneAsync(requestMessage, cancellationToken);
         retry.Headers.WithBearerAuthentication(tokenResponse.AccessToken);
@@ -168,8 +157,7 @@ public class ApiClient(
     {
         var retryRequestMessage = new HttpRequestMessage(request.Method, request.RequestUri);
 
-        var headers = request.Headers.Where(
-            x => x.Key != HeaderTypes.Authorization);
+        var headers = request.Headers.Where(x => x.Key != HeaderTypes.Authorization);
 
         foreach (var header in headers)
             retryRequestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value);

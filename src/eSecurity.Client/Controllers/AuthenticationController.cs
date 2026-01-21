@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
+using eSecurity.Client.Security.Authentication;
 using eSecurity.Core.Common.DTOs;
 using eSecurity.Core.Security.Cookies;
 using eSecurity.Core.Security.Cookies.Constants;
@@ -50,10 +51,29 @@ public class AuthenticationController(IDataProtectionProvider protectionProvider
         var claims = identity.Claims.Select(x => new Claim(x.Type, x.Value));
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-        var authenticationProperties = new AuthenticationProperties() { IsPersistent = true };
+        var authenticationProperties = new AuthenticationProperties { IsPersistent = true };
+
+        var cookie = new AuthenticationMetadata()
+        {
+            Tokens = identity.Tokens
+        };
+        
+        var cookieJson = JsonSerializer.Serialize(cookie);
+        var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Token);
+        var protectedCookie = protector.Protect(cookieJson);
+        var cookieOptions = new CookieOptions()
+        {
+            Domain = "localhost",
+            HttpOnly = true,
+            SameSite = SameSiteMode.Lax,
+            Expires = DateTimeOffset.UtcNow.AddDays(30),
+            MaxAge = TimeSpan.FromDays(30)
+        };
+        
+        Response.Cookies.Append(DefaultCookies.Payload, protectedCookie, cookieOptions);
         
         await HttpContext.SignInAsync(
-            identity.Scheme,
+            CookieAuthenticationDefaults.AuthenticationScheme,
             claimsPrincipal,
             authenticationProperties
         );
@@ -65,7 +85,27 @@ public class AuthenticationController(IDataProtectionProvider protectionProvider
     public async Task<IActionResult> SignOutAsync()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        Response.Cookies.Delete(DefaultCookies.Payload);
 
+        return Ok(Results.Ok());
+    }
+
+    [HttpPost("refresh")]
+    public IActionResult Refresh([FromBody] AuthenticationMetadata metadata)
+    {
+        var cookieJson = JsonSerializer.Serialize(metadata);
+        var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Token);
+        var protectedCookie = protector.Protect(cookieJson);
+        var cookieOptions = new CookieOptions()
+        {
+            Domain = "localhost",
+            HttpOnly = true,
+            SameSite = SameSiteMode.Lax,
+            Expires = DateTimeOffset.UtcNow.AddDays(30),
+            MaxAge = TimeSpan.FromDays(30)
+        };
+
+        Response.Cookies.Append(DefaultCookies.Payload, protectedCookie, cookieOptions);
         return Ok(Results.Ok());
     }
 }

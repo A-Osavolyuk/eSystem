@@ -23,14 +23,6 @@ public class ClaimAuthenticationStateProvider(
         return Task.FromResult(new AuthenticationState(_httpContext.User));
     }
 
-    public void SignIn(ClaimsPrincipal principal)
-    {
-        InitializeState(principal);
-        
-        var state = new AuthenticationState(principal);
-        NotifyAuthenticationStateChanged(Task.FromResult(state));
-    }
-
     public Task SignOutAsync()
     {
         _userState.Clear();

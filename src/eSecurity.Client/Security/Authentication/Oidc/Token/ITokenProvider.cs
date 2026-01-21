@@ -2,6 +2,6 @@
 
 public interface ITokenProvider
 {
-    public Task<string?> GetAsync(string key, CancellationToken cancellationToken = default);
-    public Task SetAsync(string key, string token, TimeSpan timeStamp, CancellationToken cancellationToken = default);
+    public string? Get(string key);
+    public Task SetAsync(AuthenticationMetadata metadata, CancellationToken cancellationToken = default);
 }

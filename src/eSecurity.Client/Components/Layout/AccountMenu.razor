@@ -1,11 +1,10 @@
-﻿@using eSecurity.Client.Security.Authentication.Oidc.Session
-@using eSecurity.Client.Security.Authentication.Oidc.Token
+﻿@using eSecurity.Client.Security.Authentication.Oidc.Token
 @using eSystem.Core.Security.Authentication.Oidc.Client
 
 @inject UserState UserState
-@inject ITokenProvider TokenProvider
-@inject ISessionAccessor SessionAccessor
+@inject NavigationManager NavigationManager
 @inject IOptions<ClientOptions> ClientOptions
+@inject ITokenProvider TokenProvider
 
 <MudAvatar @onclick="DrawerToggle">
     <MudImage
@@ -78,7 +77,7 @@
         </MudNavLink>
         <MudDivider Class="my-2"/>
         <MudNavLink
-            OnClick="@(async () => await OnLogoutAsync())"
+            OnClick="@(() => OnLogout())"
             Match="NavLinkMatch.All"
             Icon="@Icons.Material.Filled.Logout">
             Logout
@@ -91,23 +90,22 @@
 
     private void DrawerToggle() => _isDrawerOpen = !_isDrawerOpen;
 
-    private async Task OnLogoutAsync()
+    private void OnLogout()
     {
-        var session = SessionAccessor.Get();
-        if (session is not null)
+        var idToken = TokenProvider.Get(TokenTypes.IdToken);
+        if (!string.IsNullOrEmpty(idToken))
         {
-            var idToken = await TokenProvider.GetAsync($"{session.Id}:{TokenTypes.IdToken}");
-            if (!string.IsNullOrEmpty(idToken))
-            {
-                QueryBuilder.Create()
-                    .WithUri(Links.Connect.Logout)
-                    .WithQueryParam("id_token_hint", idToken)
-                    .WithQueryParam("post_logout_redirect_uri", ClientOptions.Value.PostLogoutRedirectUri)
-                    .WithQueryParam("state", Guid.CreateVersion7().ToString())
-                    .WithQueryParam("client_id", ClientOptions.Value.ClientId)
-                    .WithQueryParam("local", "true")
-                    .Build();
-            }
+            NavigationManager.NavigateTo(QueryBuilder.Create()
+                .WithUri(Links.Connect.Logout)
+                .WithQueryParam("id_token_hint", idToken)
+                .WithQueryParam("post_logout_redirect_uri", ClientOptions.Value.PostLogoutRedirectUri)
+                .WithQueryParam("state", Guid.CreateVersion7().ToString())
+                .WithQueryParam("client_id", ClientOptions.Value.ClientId)
+                .WithQueryParam("local", "true")
+                .Build());
+            
+            DrawerToggle();
         }
     }
+
 }

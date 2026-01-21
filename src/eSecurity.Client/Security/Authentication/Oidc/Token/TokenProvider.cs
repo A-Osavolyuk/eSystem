@@ -1,5 +1,8 @@
+using System.Text.Json;
+using eSecurity.Client.Common.JS.Fetch;
+using eSecurity.Core.Security.Cookies.Constants;
 using eSecurity.Core.Security.Cryptography.Protection.Constants;
-using eSystem.Core.Common.Cache.Redis;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Caching.Distributed;
 
@@ -7,23 +10,35 @@ namespace eSecurity.Client.Security.Authentication.Oidc.Token;
 
 public class TokenProvider(
     IDataProtectionProvider protectionProvider,
-    ICacheService cacheService) : ITokenProvider
+    IHttpContextAccessor httpContextAccessor,
+    IFetchClient fetchClient,
+    NavigationManager navigationManager) : ITokenProvider
 {
-    private readonly ICacheService _cacheService = cacheService;
+    private readonly IFetchClient _fetchClient = fetchClient;
+    private readonly NavigationManager _navigationManager = navigationManager;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly IDataProtector _protector = protectionProvider.CreateProtector(ProtectionPurposes.Token);
 
-    public async Task<string?> GetAsync(string key, CancellationToken cancellationToken = default)
+    public string? Get(string key)
     {
-        var protectedValue = await _cacheService.GetAsync<string>(key, cancellationToken);
-        return string.IsNullOrEmpty(protectedValue) ? null : _protector.Unprotect(protectedValue);
-    }
+        var cookie = _httpContext.Request.Cookies[DefaultCookies.Payload];
+        if (string.IsNullOrEmpty(cookie)) return null;
         
-
-    public async Task SetAsync(string key, string token, TimeSpan timeStamp,
+        var cookieJson = _protector.Unprotect(cookie);
+        var authenticationMetadata = JsonSerializer.Deserialize<AuthenticationMetadata>(cookieJson);
+        return authenticationMetadata?.Tokens.FirstOrDefault(x => x.Name == key)?.Value;
+    }
+    
+    public async Task SetAsync(AuthenticationMetadata metadata,
         CancellationToken cancellationToken = default)
     {
-        var protectedValue = _protector.Protect(token);
-        var options = new DistributedCacheEntryOptions().SetAbsoluteExpiration(timeStamp);
-        await _cacheService.SetAsync(key, protectedValue, options, cancellationToken);
+        var fetchOptions = new FetchOptions()
+        {
+            Body = metadata,
+            Method = HttpMethod.Post,
+            Url = $"{_navigationManager.BaseUri}api/authentication/refresh"
+        };
+        
+        await _fetchClient.FetchAsync(fetchOptions);
     }
 }

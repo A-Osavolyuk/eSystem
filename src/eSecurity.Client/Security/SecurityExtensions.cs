@@ -1,6 +1,5 @@
 using eSecurity.Client.Security.Authentication;
 using eSecurity.Client.Security.Authentication.Oidc;
-using eSecurity.Client.Security.Authentication.Oidc.Session;
 using eSecurity.Client.Security.Authentication.Oidc.Token;
 using eSecurity.Client.Security.Authentication.Password;
 using eSecurity.Client.Security.Authentication.TwoFactor;
@@ -48,7 +47,6 @@ public static class SecurityExtensions
             });
             
             services.AddScoped<ITokenProvider, TokenProvider>();
-            services.AddScoped<ISessionAccessor, SessionAccessor>();
             services.AddScoped<AuthenticationManager>();
             services.AddScoped<AuthenticationStateProvider, ClaimAuthenticationStateProvider>();
             

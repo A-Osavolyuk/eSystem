@@ -1,14 +1,13 @@
 @page "/connect/callback"
 
 @using eSecurity.Client.Common.JS.Fetch
-@using eSecurity.Client.Security.Authentication
 @using eSecurity.Client.Security.Authentication.Oidc
-@using eSecurity.Client.Security.Authentication.Oidc.Session
 @using eSecurity.Client.Security.Authentication.Oidc.Token
 @using eSecurity.Core.Common.DTOs
 @using eSystem.Core.Security.Authentication.Oidc.Client
 @using eSystem.Core.Security.Authentication.Oidc.Constants
 @using eSystem.Core.Security.Authentication.Oidc.Token
+@using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Authentication.Cookies
 
 @inherits PageBase
@@ -17,9 +16,6 @@
 @inject IOptions<ClientOptions> ClientOptions
 @inject IFetchClient FetchClient
 @inject ITokenValidator TokenValidator
-@inject ITokenProvider TokenProvider
-@inject ISessionAccessor SessionAccessor
-@inject AuthenticationStateProvider AuthenticationStateProvider
 
 @if (!string.IsNullOrEmpty(Code))
 {
@@ -89,62 +85,39 @@ else
             };
 
             var result = await ConnectService.TokenAsync(request);
-            if (result.Succeeded && result.TryGetValue<TokenResponse>(out var response))
+            if (result.Succeeded && result.TryGetValue<TokenResponse>(out var response) && response is not null)
             {
-                await SignInAsync(
-                    response!.AccessToken,
-                    response.IdToken!,
-                    response.RefreshToken!
-                );
+                var tokenResult = await TokenValidator.ValidateAsync(response.IdToken!);
+                if (!tokenResult.Succeeded)
+                {
+                    var error = tokenResult.GetError();
+                    Snackbar.Add(error.Description, Severity.Error);
+                }
+                
+                var tokenIdentity = new SignIdentity()
+                {
+                    Claims = tokenResult.Get<List<ClaimValue>>(),
+                    Tokens =
+                    [
+                        new AuthenticationToken { Name = TokenTypes.AccessToken, Value = response.AccessToken },
+                        new AuthenticationToken { Name = TokenTypes.IdToken, Value = response.IdToken! },
+                        new AuthenticationToken { Name = TokenTypes.RefreshToken, Value = response.RefreshToken! },
+                    ]
+                };
 
-                NavigationManager.NavigateTo(Links.Common.Profile);
+                var fetchOptions = new FetchOptions()
+                {
+                    Url = $"{NavigationManager.BaseUri}api/authentication/sign-in",
+                    Method = HttpMethod.Post,
+                    Body = tokenIdentity
+                };
+
+                var signResult = await FetchClient.FetchAsync(fetchOptions);
+                if (signResult.Succeeded)
+                {
+                    NavigationManager.NavigateTo(Links.Common.Profile, true);
+                }
             }
-        }
-    }
-
-    private async Task SignInAsync(string accessToken, string idToken, string refreshToken)
-    {
-        var session = SessionAccessor.Get();
-        if (session is not null)
-        {
-            await TokenProvider.SetAsync($"{session.Id}:{TokenTypes.AccessToken}",
-                accessToken, TimeSpan.FromMinutes(5));
-
-            await TokenProvider.SetAsync($"{session.Id}:{TokenTypes.IdToken}",
-                idToken, TimeSpan.FromMinutes(5));
-
-            await TokenProvider.SetAsync($"{session.Id}:{TokenTypes.RefreshToken}",
-                refreshToken, TimeSpan.FromDays(30));
-        }
-
-        var tokenResult = await TokenValidator.ValidateAsync(idToken);
-        if (!tokenResult.Succeeded)
-        {
-            var error = tokenResult.GetError();
-            Snackbar.Add(error.Description, Severity.Error);
-        }
-
-        var claimValues = tokenResult.Get<List<ClaimValue>>();
-        var tokenIdentity = new SignIdentity()
-        {
-            Claims = claimValues,
-            Scheme = CookieAuthenticationDefaults.AuthenticationScheme
-        };
-
-        var fetchOptions = new FetchOptions()
-        {
-            Url = $"{NavigationManager.BaseUri}api/authentication/sign-in",
-            Method = HttpMethod.Post,
-            Body = tokenIdentity
-        };
-
-        var result = await FetchClient.FetchAsync(fetchOptions);
-        if (result.Succeeded)
-        {
-            var claims = claimValues.Select(c => new Claim(c.Type, c.Value));
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var claimPrincipal = new ClaimsPrincipal(claimsIdentity);
-            (AuthenticationStateProvider as ClaimAuthenticationStateProvider)!.SignIn(claimPrincipal);
         }
     }
 

@@ -1,9 +1,11 @@
-﻿namespace eSecurity.Core.Common.DTOs;
+﻿using Microsoft.AspNetCore.Authentication;
+
+namespace eSecurity.Core.Common.DTOs;
 
 public class SignIdentity
 {
     public required List<ClaimValue> Claims { get; set; }
-    public required string Scheme { get; set; }
+    public required List<AuthenticationToken> Tokens { get; set; }
 }
 
 public class ClaimValue
