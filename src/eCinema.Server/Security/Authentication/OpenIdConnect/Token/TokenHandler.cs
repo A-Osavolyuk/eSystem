@@ -1,8 +1,8 @@
 ﻿using eSystem.Core.Common.Gateway;
 using eSystem.Core.Http.Extensions;
-using eSystem.Core.Security.Authentication.Oidc;
-using eSystem.Core.Security.Authentication.Oidc.Constants;
-using eSystem.Core.Security.Authentication.Oidc.Token;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Token;
 using eSystem.Core.Security.Cryptography.Encoding;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;

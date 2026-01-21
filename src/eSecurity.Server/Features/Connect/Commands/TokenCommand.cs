@@ -1,10 +1,10 @@
-﻿using eSecurity.Server.Security.Authentication.Oidc.Token;
-using eSecurity.Server.Security.Authentication.Oidc.Token.Strategies;
+﻿using eSecurity.Server.Security.Authentication.OpenIdConnect.Token;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Strategies;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
-using eSystem.Core.Security.Authentication.Oidc;
-using eSystem.Core.Security.Authentication.Oidc.Constants;
-using eSystem.Core.Security.Authentication.Oidc.Token;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Token;
 
 namespace eSecurity.Server.Features.Connect.Commands;
 

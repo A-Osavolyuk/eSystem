@@ -4,7 +4,7 @@ using eSecurity.Core.Security.Authentication.SignIn;
 using eSecurity.Core.Security.Authentication.SignIn.Session;
 using eSecurity.Core.Security.Authorization.Access;
 using eSecurity.Server.Security.Authentication.Lockout;
-using eSecurity.Server.Security.Authentication.Oidc.Session;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authentication.SignIn.Session;
 using eSecurity.Server.Security.Authorization.Access.Verification;
 using eSecurity.Server.Security.Authorization.Devices;

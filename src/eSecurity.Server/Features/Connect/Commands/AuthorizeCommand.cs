@@ -1,16 +1,16 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Common.Responses;
 using eSecurity.Server.Data.Entities;
-using eSecurity.Server.Security.Authentication.Oidc.Client;
-using eSecurity.Server.Security.Authentication.Oidc.Code;
-using eSecurity.Server.Security.Authentication.Oidc.Session;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Code;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authorization.Consents;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Http.Results;
-using eSystem.Core.Security.Authentication.Oidc;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
 
 namespace eSecurity.Server.Features.Connect.Commands;
 

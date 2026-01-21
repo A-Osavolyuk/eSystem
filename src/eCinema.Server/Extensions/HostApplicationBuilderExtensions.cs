@@ -7,7 +7,7 @@ using eSystem.Core.Common.Documentation;
 using eSystem.Core.Common.Error;
 using eSystem.Core.Common.Gateway;
 using eSystem.Core.Http.Constants;
-using eSystem.Core.Security.Authentication.Oidc.Constants;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Security.Identity.Claims;
 using eSystem.ServiceDefaults;
 using Microsoft.AspNetCore.Authentication.Cookies;

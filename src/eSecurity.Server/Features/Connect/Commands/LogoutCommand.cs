@@ -2,9 +2,9 @@
 using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Common.Responses;
 using eSecurity.Server.Data.Entities;
-using eSecurity.Server.Security.Authentication.Oidc.Client;
-using eSecurity.Server.Security.Authentication.Oidc.Session;
-using eSecurity.Server.Security.Authentication.Oidc.Token;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Token;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Identity.Claims;

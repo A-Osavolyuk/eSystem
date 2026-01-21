@@ -1,13 +1,13 @@
 ﻿using eSecurity.Server.Security.Authentication.Handlers;
 using eSecurity.Server.Security.Authentication.Lockout;
-using eSecurity.Server.Security.Authentication.Oidc;
-using eSecurity.Server.Security.Authentication.Oidc.Constants;
+using eSecurity.Server.Security.Authentication.OpenIdConnect;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
 using eSecurity.Server.Security.Authentication.Password;
 using eSecurity.Server.Security.Authentication.SignIn;
 using eSecurity.Server.Security.Authentication.TwoFactor;
 using eSecurity.Server.Security.Cookies;
 using eSystem.Core.Common.Configuration;
-using eSystem.Core.Security.Authentication.Oidc.Constants;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Security.Authentication.Schemes;
 using eSystem.Core.Security.Authorization.OAuth;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -24,7 +24,7 @@ public static class AuthenticationExtensions
         builder.Services.AddSignInStrategies();
         builder.Services.Add2Fa();
         builder.Services.AddLockout();
-        builder.Services.AddOidc(cfg =>
+        builder.Services.AddOpenIdConnect(cfg =>
         {
             cfg.Issuer = "https://localhost:6201";
             cfg.AuthorizationEndpoint = "https://localhost:6501/connect/authorize";

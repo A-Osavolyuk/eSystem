@@ -1,14 +1,14 @@
 ﻿using System.Security.Claims;
 using eSecurity.Core.Security.Identity;
-using eSecurity.Server.Security.Authentication.Oidc.Token;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Token;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Phone;
 using eSecurity.Server.Security.Identity.Privacy;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
-using eSystem.Core.Security.Authentication.Oidc.Constants;
-using eSystem.Core.Security.Authentication.Oidc.User;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
+using eSystem.Core.Security.Authentication.OpenIdConnect.User;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.Connect.Queries;

@@ -1,6 +1,6 @@
-using eSecurity.Core.Security.Authentication.Oidc.Client;
-using eSecurity.Server.Security.Authentication.Oidc.Client;
-using eSecurity.Server.Security.Authentication.Oidc.Constants;
+using eSecurity.Core.Security.Authentication.OpenIdConnect.Client;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Features.Connect.Queries;

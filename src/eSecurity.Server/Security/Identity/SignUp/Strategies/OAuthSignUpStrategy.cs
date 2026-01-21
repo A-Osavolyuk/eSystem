@@ -4,7 +4,7 @@ using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Common.Messaging;
 using eSecurity.Server.Common.Messaging.Messages.Email;
 using eSecurity.Server.Data.Entities;
-using eSecurity.Server.Security.Authentication.Oidc.Session;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authentication.SignIn.Session;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;

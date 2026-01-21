@@ -1,0 +1,78 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Cryptography;
+using eSecurity.Core.Common.DTOs;
+using eSystem.Core.Http.Results;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using JsonWebKeySet = Microsoft.IdentityModel.Tokens.JsonWebKeySet;
+
+namespace eSecurity.Client.Security.Authentication.OpenIdConnect.Token;
+
+public class TokenValidator(
+    IConnectService connectService,
+    IOptions<ClientOptions> clientOptions) : ITokenValidator
+{
+    private readonly IConnectService _connectService = connectService;
+    private readonly ClientOptions _clientOptions = clientOptions.Value;
+
+    public async ValueTask<Result> ValidateAsync(string token, CancellationToken cancellationToken = default)
+    {
+        var keysResult = await _connectService.GetPublicKeysAsync();
+        if (!keysResult.Succeeded) return Results.InternalServerError(keysResult.GetError().Description);
+
+        var handler = new JwtSecurityTokenHandler { MapInboundClaims = false };
+        var securityToken = handler.ReadJwtToken(token);
+        if (securityToken is null) return Results.BadRequest("Invalid token.");
+        
+        if (!keysResult.TryGetValue<JsonWebKeySet>(out var jsonWebKeySet))
+            return Results.BadRequest("Invalid key.");
+        
+        var publicKey = jsonWebKeySet!.Keys.FirstOrDefault(x => x.KeyId == securityToken.Header.Kid);
+        if (publicKey is null) return Results.BadRequest("Invalid key.");
+
+        var openIdResult = await _connectService.GetOpenidConfigurationAsync();
+        if (!openIdResult.Succeeded) return Results.InternalServerError(keysResult.GetError().Description);
+
+        if (!openIdResult.TryGetValue<OpenIdConfiguration>(out var openIdConfiguration))
+            return Results.InternalServerError("Invalid response");
+            
+        var signingKey = new RsaSecurityKey(CreateRsaFromJwk(publicKey));
+        var parameters = new TokenValidationParameters()
+        {
+            ValidateIssuer = true,
+            ValidIssuer = openIdConfiguration!.Issuer,
+            ValidateAudience = true,
+            ValidAudience = _clientOptions.ClientId,
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.FromMinutes(5),
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = signingKey,
+        };
+        
+        var principal = handler.ValidateToken(token, parameters, out _);
+        if (principal is null) return Results.BadRequest("Invalid token.");
+
+        var claims = principal.Claims.Select(x => new ClaimValue()
+        {
+            Type = x.Type, 
+            Value = x.Value
+        }).ToList();
+        return Results.Ok(claims);
+    }
+    
+    private RSA CreateRsaFromJwk(JsonWebKey jwk)
+    {
+        var rsa = RSA.Create();
+
+        var parameters = new RSAParameters
+        {
+            Modulus = Base64UrlEncoder.DecodeBytes(jwk.N),
+            Exponent = Base64UrlEncoder.DecodeBytes(jwk.E)
+        };
+
+        rsa.ImportParameters(parameters);
+        return rsa;
+    }
+}

@@ -1,6 +1,6 @@
 ﻿using eSecurity.Server.Data.Entities;
 using eSystem.Core.Data.Seeding;
-using eSystem.Core.Security.Authentication.Oidc.Constants;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 
 namespace eSecurity.Server.Data.Seeding;
 

@@ -1,6 +1,6 @@
 using System.Security.Claims;
 using System.Text.Encodings.Web;
-using eSecurity.Server.Security.Authentication.Oidc.Token;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Token;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
 using Microsoft.AspNetCore.Authentication;

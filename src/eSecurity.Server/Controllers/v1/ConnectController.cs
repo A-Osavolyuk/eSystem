@@ -4,10 +4,10 @@ using eSecurity.Server.Features.Connect.Queries;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Http.Results;
-using eSystem.Core.Security.Authentication.Oidc.Introspection;
-using eSystem.Core.Security.Authentication.Oidc.Revocation;
-using eSystem.Core.Security.Authentication.Oidc.Token;
-using eSystem.Core.Security.Authentication.Oidc.User;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Introspection;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Revocation;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Token;
+using eSystem.Core.Security.Authentication.OpenIdConnect.User;
 using eSystem.Core.Security.Authentication.Schemes;
 
 namespace eSecurity.Server.Controllers.v1;

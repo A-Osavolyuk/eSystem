@@ -1,5 +1,5 @@
 using eSystem.Core.Http.Results;
-using eSystem.Core.Security.Authentication.Oidc;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
 
 namespace eSecurity.Server.Features.Connect.Queries;
 

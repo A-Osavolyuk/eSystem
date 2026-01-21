@@ -1,6 +1,6 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Common.Responses;
-using eSecurity.Server.Security.Authentication.Oidc.Client;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authorization.Consents;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Results;

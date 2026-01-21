@@ -1,5 +1,5 @@
 ﻿using eSecurity.Server.Data.Entities;
-using eSecurity.Server.Security.Authentication.Oidc.Client;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Data.Seeding;
 
 namespace eSecurity.Server.Data.Seeding;

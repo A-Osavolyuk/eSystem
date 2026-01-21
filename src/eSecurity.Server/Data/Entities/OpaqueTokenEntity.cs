@@ -1,4 +1,4 @@
-﻿using eSecurity.Server.Security.Authentication.Oidc.Token;
+﻿using eSecurity.Server.Security.Authentication.OpenIdConnect.Token;
 using eSystem.Core.Data.Entities;
 
 namespace eSecurity.Server.Data.Entities;
