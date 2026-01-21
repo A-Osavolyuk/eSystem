@@ -131,7 +131,7 @@ public class RefreshTokenStrategy(
             Sid = refreshToken.Session.Id.ToString()
         }, cancellationToken);
 
-        var accessTokenContext = new JwtTokenContext { Claims = accessTokenClaims, Type = JwtTokenTypes.IdToken };
+        var accessTokenContext = new JwtTokenContext { Claims = accessTokenClaims, Type = JwtTokenTypes.AccessToken };
         var jwtTokenFactory = _tokenFactoryProvider.GetFactory<JwtTokenContext, string>();
         var response = new TokenResponse()
         {
