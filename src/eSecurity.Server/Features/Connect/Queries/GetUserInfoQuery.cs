@@ -1,6 +1,9 @@
-﻿using System.Security.Claims;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using eSecurity.Core.Security.Identity;
-using eSecurity.Server.Security.Authentication.OpenIdConnect.Token;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Validation;
+using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Phone;
 using eSecurity.Server.Security.Identity.Privacy;
@@ -16,24 +19,23 @@ namespace eSecurity.Server.Features.Connect.Queries;
 public record GetUserInfoQuery(string? AccessToken = null) : IRequest<Result>;
 
 public class GetUserInfoQueryHandler(
-    ITokenValidator tokenValidator,
     IUserManager userManager,
     IEmailManager emailManager,
     IPhoneManager phoneManager,
     IPersonalDataManager personalDataManager,
-    IHttpContextAccessor httpContextAccessor) : IRequestHandler<GetUserInfoQuery, Result>
+    IHttpContextAccessor httpContextAccessor,
+    ITokenValidationProvider validationProvider) : IRequestHandler<GetUserInfoQuery, Result>
 {
-    private readonly ITokenValidator _tokenValidator = tokenValidator;
     private readonly IUserManager _userManager = userManager;
     private readonly IEmailManager _emailManager = emailManager;
     private readonly IPhoneManager _phoneManager = phoneManager;
     private readonly IPersonalDataManager _personalDataManager = personalDataManager;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
+    private readonly ITokenValidator _validator = validationProvider.CreateValidator(TokenTypes.Jwt);
 
     public async Task<Result> Handle(GetUserInfoQuery request, CancellationToken cancellationToken)
     {
         var token = request.AccessToken;
-        ;
         if (string.IsNullOrWhiteSpace(token))
         {
             var header = _httpContext.Request.Headers.Authorization.ToString();
@@ -55,18 +57,20 @@ public class GetUserInfoQueryHandler(
             });
         }
 
-        var validationResult = await _tokenValidator.ValidateAsync(token, cancellationToken);
-        if (!validationResult.Succeeded)
+        var validationResult = await _validator.ValidateAsync(token, cancellationToken);
+        if (!validationResult.IsValid || validationResult.ClaimsPrincipal is null)
         {
-            var error = validationResult.GetError();
-
             _httpContext.Response.Headers.Append(HeaderTypes.WwwAuthenticate,
-                $"Bearer error=\"{error.Code}\", error_description=\"{error.Description}\"");
+                $"Bearer error=\"{ErrorTypes.OAuth.InvalidToken}\", error_description=\"Invalid token\"");
 
-            return validationResult;
+            return Results.Unauthorized(new Error
+            {
+                Code = ErrorTypes.OAuth.InvalidToken,
+                Description = "Invalid token"
+            });
         }
 
-        var claimsPrincipal = validationResult.Get<ClaimsPrincipal>();
+        var claimsPrincipal = validationResult.ClaimsPrincipal;
         var scopeClaim = claimsPrincipal.Claims.FirstOrDefault(x => x.Type == AppClaimTypes.Scope);
         if (scopeClaim is null || !scopeClaim.Value.Contains(Scopes.OpenId))
         {

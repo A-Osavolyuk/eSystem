@@ -165,7 +165,7 @@ public class AuthorizationCodeStrategy(
         {
             AccessToken = await jwtTokenFactory.CreateTokenAsync(accessTokenContext, cancellationToken),
             ExpiresIn = (int)_options.AccessTokenLifetime.TotalSeconds,
-            TokenType = TokenTypes.Bearer,
+            TokenType = ResponseTokenTypes.Bearer,
         };
 
         if (client.AllowOfflineAccess && client.HasScope(Scopes.OfflineAccess))

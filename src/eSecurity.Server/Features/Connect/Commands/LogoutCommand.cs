@@ -1,10 +1,11 @@
-﻿using System.Security.Claims;
-using eSecurity.Core.Common.Requests;
+﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Common.Responses;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
-using eSecurity.Server.Security.Authentication.OpenIdConnect.Token;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Validation;
+using eSecurity.Server.Security.Cryptography.Tokens;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Identity.Claims;
@@ -16,41 +17,52 @@ public record LogoutCommand(LogoutRequest Request) : IRequest<Result>;
 public class LogoutCommandHandler(
     IClientManager clientManager,
     ISessionManager sessionManager,
-    ITokenValidator tokenValidator,
-    IOptions<TokenOptions> tokenOptions) : IRequestHandler<LogoutCommand, Result>
+    ITokenValidationProvider validationProvider) : IRequestHandler<LogoutCommand, Result>
 {
     private readonly IClientManager _clientManager = clientManager;
     private readonly ISessionManager _sessionManager = sessionManager;
-    private readonly ITokenValidator _tokenValidator = tokenValidator;
-    private readonly TokenOptions _tokenOptions = tokenOptions.Value;
+    private readonly ITokenValidator _validator = validationProvider.CreateValidator(TokenTypes.Jwt);
 
     public async Task<Result> Handle(LogoutCommand request, CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(request.Request.PostLogoutRedirectUri))
+        {
             return Results.BadRequest(new Error()
             {
                 Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "post_logout_redirect_uri is required."
             });
+        }
 
         if (string.IsNullOrEmpty(request.Request.IdTokenHint))
+        {
             return Results.BadRequest(new Error()
             {
                 Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "id_token_hint is required."
             });
+        }
 
-        var validationResult = await _tokenValidator.ValidateAsync(request.Request.IdTokenHint, cancellationToken);
-        if (!validationResult.Succeeded) return validationResult;
-        
-        var principal = validationResult.Get<ClaimsPrincipal>();
-        var sid = principal.Claims.FirstOrDefault(x => x.Type == AppClaimTypes.Sid);
-        if (sid is null)
+        var validationResult = await _validator.ValidateAsync(request.Request.IdTokenHint, cancellationToken);
+        if (!validationResult.IsValid || validationResult.ClaimsPrincipal is null)
+        {
             return Results.BadRequest(new Error()
             {
                 Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "id_token_hint is invalid."
             });
+        }
+        
+        var principal = validationResult.ClaimsPrincipal;
+        var sid = principal.Claims.FirstOrDefault(x => x.Type == AppClaimTypes.Sid);
+        if (sid is null)
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = ErrorTypes.OAuth.InvalidRequest,
+                Description = "id_token_hint is invalid."
+            });
+        }
 
         var session = await _sessionManager.FindByIdAsync(Guid.Parse(sid.Value), cancellationToken);
         if (session is null)

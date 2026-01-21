@@ -1,9 +1,13 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
-using eSecurity.Server.Security.Authentication.OpenIdConnect.Token;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Validation;
+using eSecurity.Server.Security.Cryptography.Tokens;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
 using Microsoft.AspNetCore.Authentication;
+using TokenValidationResult = eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Validation.TokenValidationResult;
 
 namespace eSecurity.Server.Security.Authentication.Handlers;
 
@@ -13,9 +17,11 @@ public class JwtAuthenticationHandler(
     IOptionsMonitor<JwtAuthenticationSchemeOptions> options, 
     ILoggerFactory logger, 
     UrlEncoder encoder,
-    ITokenValidator tokenValidator) : AuthenticationHandler<JwtAuthenticationSchemeOptions>(options, logger, encoder)
+    ITokenValidationProvider validationProvider
+    ) : AuthenticationHandler<JwtAuthenticationSchemeOptions>(options, logger, encoder)
 {
-    private readonly ITokenValidator _tokenValidator = tokenValidator;
+    private readonly ITokenValidationProvider _validationProvider = validationProvider;
+    private readonly JwtSecurityTokenHandler _handler = new JwtSecurityTokenHandler();
 
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
@@ -27,19 +33,17 @@ public class JwtAuthenticationHandler(
         }
         
         var token = header.Split(" ").Last();
-        var result = await _tokenValidator.ValidateAsync(token);
+        var tokenType = _handler.CanReadToken(token) ? TokenTypes.Jwt : TokenTypes.Opaque;
+        var validator = _validationProvider.CreateValidator(tokenType);
+        var result = await validator.ValidateAsync(token);
         
-        if (!result.Succeeded)
+        if (!result.IsValid || result.ClaimsPrincipal is null)
         {
-            var error = result.GetError();
-            Context.Items["error"] = error.Code;
-            
-            return AuthenticateResult.Fail(error.Description);
+            Context.Items["error"] = ErrorTypes.OAuth.InvalidToken;
+            return AuthenticateResult.Fail("Invalid token");
         }
         
-        var claimPrincipal = result.Get<ClaimsPrincipal>();
-        var ticket = new AuthenticationTicket(claimPrincipal, JwtBearerDefaults.AuthenticationScheme);
-            
+        var ticket = new AuthenticationTicket(result.ClaimsPrincipal, JwtBearerDefaults.AuthenticationScheme);
         return AuthenticateResult.Success(ticket);
     }
 
