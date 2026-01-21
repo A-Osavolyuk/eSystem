@@ -116,7 +116,7 @@ public class ApiClient(
         HttpResponseMessage responseMessage,
         CancellationToken cancellationToken = default)
     {
-        var request = new HttpRequestMessage(HttpMethod.Post, new Uri("/api/v1/Connect/token"));
+        var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/Connect/token");
         request.Headers.WithBasicAuthentication(_clientOptions.ClientId, _clientOptions.ClientSecret);
         request.Headers.WithCookies(_httpContext.GetCookies());
         request.Headers.WithUserAgent(_httpContext.GetUserAgent());
