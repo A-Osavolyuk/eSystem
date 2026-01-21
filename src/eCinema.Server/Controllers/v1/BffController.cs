@@ -9,8 +9,8 @@ namespace eCinema.Server.Controllers.v1;
 
 [ApiController]
 [AllowAnonymous]
-[Route("api/[controller]")]
-public class AuthenticationController(ISender sender) : ControllerBase
+[Route("[controller]")]
+public class BffController(ISender sender) : ControllerBase
 {
     private readonly ISender _sender = sender;
 

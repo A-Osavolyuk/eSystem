@@ -56,7 +56,7 @@ export class AuthService {
   }
 
   public login = (): void => {
-    document.location.href = `${environment.backendUri}/api/authentication/login`;
+    document.location.href = `${environment.backendUri}/bff/login`;
   }
 
   public register = (): void => {
@@ -64,6 +64,6 @@ export class AuthService {
   }
 
   public logout = (): void => {
-    document.location.href = `${environment.backendUri}/api/authentication/logout`;
+    document.location.href = `${environment.backendUri}/bff/logout`;
   }
 }
