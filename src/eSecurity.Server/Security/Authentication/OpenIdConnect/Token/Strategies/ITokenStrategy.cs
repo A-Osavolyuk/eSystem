@@ -1,6 +1,6 @@
 using eSystem.Core.Http.Results;
 
-namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Token;
+namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Strategies;
 
 public interface ITokenStrategy
 {
