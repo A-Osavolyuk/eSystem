@@ -4,6 +4,7 @@ using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Security.Authentication.Schemes;
 using Microsoft.AspNetCore.Authentication;
 

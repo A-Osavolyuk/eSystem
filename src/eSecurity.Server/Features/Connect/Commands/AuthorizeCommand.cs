@@ -11,6 +11,7 @@ using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 
 namespace eSecurity.Server.Features.Connect.Commands;
 

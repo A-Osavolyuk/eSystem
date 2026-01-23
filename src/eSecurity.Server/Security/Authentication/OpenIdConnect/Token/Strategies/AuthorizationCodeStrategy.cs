@@ -13,6 +13,7 @@ using eSecurity.Server.Security.Identity.Claims.Factories;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Token;
 using Microsoft.AspNetCore.DataProtection;
