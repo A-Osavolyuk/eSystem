@@ -1,4 +1,4 @@
-﻿namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
+﻿namespace eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 
 public static class JwtTokenTypes
 {
