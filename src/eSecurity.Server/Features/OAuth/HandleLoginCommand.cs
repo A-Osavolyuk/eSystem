@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using eSecurity.Core.Security.Authentication.SignIn;
 using eSecurity.Core.Security.Authorization.OAuth;
-using eSecurity.Server.Security.Authentication;
 using eSecurity.Server.Security.Authentication.SignIn;
 using eSecurity.Server.Security.Identity.SignUp;
 using eSecurity.Server.Security.Identity.SignUp.Strategies;

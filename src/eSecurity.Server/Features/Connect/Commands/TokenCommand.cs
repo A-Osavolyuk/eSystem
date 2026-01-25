@@ -3,9 +3,7 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Strategies;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Token;
-using TokenContext = eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Strategies.TokenContext;
 
 namespace eSecurity.Server.Features.Connect.Commands;
 

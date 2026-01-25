@@ -2,9 +2,7 @@ using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
-using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Cryptography.Hashing;
-using eSecurity.Server.Security.Cryptography.Protection.Constants;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.Claims;
 using eSecurity.Server.Security.Identity.Claims.Factories;
@@ -13,7 +11,6 @@ using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Token;
-using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Strategies;
 
@@ -25,7 +22,6 @@ public sealed class RefreshTokenContext : TokenContext
 }
 
 public class RefreshTokenStrategy(
-    IDataProtectionProvider protectionProvider,
     ITokenFactoryProvider tokenFactoryProvider,
     IClientManager clientManager,
     ITokenManager tokenManager,
@@ -35,7 +31,6 @@ public class RefreshTokenStrategy(
     IClaimFactoryProvider claimFactoryProvider,
     IOptions<TokenOptions> options) : ITokenStrategy
 {
-    private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly IClientManager _clientManager = clientManager;
     private readonly ITokenManager _tokenManager = tokenManager;
@@ -69,11 +64,9 @@ public class RefreshTokenStrategy(
                 Description = $"'{refreshPayload.GrantType}' is not supported by client."
             });
         }
-
-        var protector = _protectionProvider.CreateProtector(ProtectionPurposes.RefreshToken);
+        
         var hasher = _hasherProvider.GetHasher(HashAlgorithm.Sha512);
-        var unprotectedToken = protector.Unprotect(refreshPayload.RefreshToken!);
-        var incomingHash = hasher.Hash(unprotectedToken);
+        var incomingHash = hasher.Hash(refreshPayload.RefreshToken!);
         var refreshToken = await _tokenManager.FindByHashAsync(incomingHash, cancellationToken);
         if (refreshToken is null || !refreshToken.IsValid || !refreshToken.SessionId.HasValue)
         {
@@ -186,14 +179,12 @@ public class RefreshTokenStrategy(
 
             var revokeResult = await _tokenManager.RevokeAsync(refreshToken, cancellationToken);
             if (!revokeResult.Succeeded) return revokeResult;
-
-            var protectedToken = protector.Protect(rawToken);
-            response.RefreshToken = protectedToken;
+            
+            response.RefreshToken = rawToken;
         }
         else
         {
-            var protectedToken = protector.Protect(refreshToken.TokenHash);
-            response.RefreshToken = protectedToken;
+            response.RefreshToken = refreshPayload.RefreshToken;
         }
 
         if (requestedScopes.Contains(Scopes.OpenId))

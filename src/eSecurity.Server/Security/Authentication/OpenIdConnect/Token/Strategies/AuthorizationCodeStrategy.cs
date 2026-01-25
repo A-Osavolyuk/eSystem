@@ -6,7 +6,6 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Pkce;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Cryptography.Hashing;
-using eSecurity.Server.Security.Cryptography.Protection.Constants;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.Claims;
 using eSecurity.Server.Security.Identity.Claims.Factories;
@@ -16,7 +15,6 @@ using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Token;
-using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Strategies;
 
@@ -35,7 +33,6 @@ public class AuthorizationCodeStrategy(
     IClientManager clientManager,
     IHasherProvider hasherProvider,
     ISessionManager sessionManager,
-    IDataProtectionProvider protectionProvider,
     IClaimFactoryProvider claimFactoryProvider,
     ITokenFactoryProvider tokenFactoryProvider,
     IAuthorizationCodeManager authorizationCodeManager,
@@ -50,7 +47,6 @@ public class AuthorizationCodeStrategy(
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly IPkceHandler _pkceHandler = pkceHandler;
     private readonly IHasherProvider _hasherProvider = hasherProvider;
-    private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
     private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
     private readonly TokenOptions _options = options.Value;
 
@@ -189,10 +185,7 @@ public class AuthorizationCodeStrategy(
             var scopes = client.AllowedScopes.Select(x => x.Scope);
             var tokenResult = await _tokenManager.CreateAsync(refreshToken, scopes, cancellationToken);
             if (!tokenResult.Succeeded) return tokenResult;
-
-            var protector = _protectionProvider.CreateProtector(ProtectionPurposes.RefreshToken);
-            var protectedRefreshToken = protector.Protect(rawToken);
-            response.RefreshToken = protectedRefreshToken;
+            response.RefreshToken = rawToken;
         }
 
         if (client.HasScope(Scopes.OpenId))
