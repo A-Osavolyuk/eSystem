@@ -173,7 +173,7 @@ public class RefreshTokenStrategy(
                 ClientId = client.Id,
                 TokenHash = hasher.Hash(rawToken),
                 TokenType = OpaqueTokenType.AccessToken,
-                ExpiredDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime)
+                ExpiredDate = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime)
             };
 
             var scopes = client.AllowedScopes.Select(x => x.Scope);
