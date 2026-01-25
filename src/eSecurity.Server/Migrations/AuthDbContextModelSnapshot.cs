@@ -339,7 +339,7 @@ namespace eSecurity.Server.Migrations
                     b.Property<DateTimeOffset?>("RevokedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("SessionId")
+                    b.Property<Guid?>("SessionId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("TokenHash")
@@ -1375,8 +1375,7 @@ namespace eSecurity.Server.Migrations
                     b.HasOne("eSecurity.Server.Data.Entities.SessionEntity", "Session")
                         .WithMany("OpaqueTokens")
                         .HasForeignKey("SessionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Client");
 

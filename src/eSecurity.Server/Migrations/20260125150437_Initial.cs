@@ -900,7 +900,7 @@ namespace eSecurity.Server.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     ClientId = table.Column<Guid>(type: "uuid", nullable: false),
-                    SessionId = table.Column<Guid>(type: "uuid", nullable: false),
+                    SessionId = table.Column<Guid>(type: "uuid", nullable: true),
                     TokenType = table.Column<string>(type: "text", nullable: false),
                     TokenHash = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     Revoked = table.Column<bool>(type: "boolean", nullable: false),
