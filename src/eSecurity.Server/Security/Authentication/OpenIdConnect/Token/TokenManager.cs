@@ -14,8 +14,6 @@ public sealed class TokenManager(
     {
         return await _context.OpaqueTokens
             .Where(x => x.TokenHash == hash && x.TokenType == type)
-            .Include(x => x.Session)
-            .ThenInclude(x => x.Device)
             .Include(x => x.Client)
             .Include(x => x.Scopes)
             .ThenInclude(x => x.Scope)
@@ -27,8 +25,6 @@ public sealed class TokenManager(
     {
         return await _context.OpaqueTokens
             .Where(x => x.TokenHash == hash)
-            .Include(x => x.Session)
-            .ThenInclude(x => x.Device)
             .Include(x => x.Client)
             .Include(x => x.Scopes)
             .ThenInclude(x => x.Scope)

@@ -2,6 +2,7 @@ using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
+using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Cryptography.Protection.Constants;
 using eSecurity.Server.Security.Cryptography.Tokens;
@@ -52,34 +53,50 @@ public class RefreshTokenStrategy(
 
         var client = await _clientManager.FindByIdAsync(refreshPayload.ClientId, cancellationToken);
         if (client is null)
+        {
             return Results.Unauthorized(new Error()
             {
                 Code = ErrorTypes.OAuth.InvalidClient,
                 Description = "Invalid client."
             });
+        }
 
         if (!client.HasGrantType(refreshPayload.GrantType))
+        {
             return Results.BadRequest(new Error()
             {
                 Code = ErrorTypes.OAuth.UnsupportedGrantType,
                 Description = $"'{refreshPayload.GrantType}' is not supported by client."
             });
+        }
 
         var protector = _protectionProvider.CreateProtector(ProtectionPurposes.RefreshToken);
         var hasher = _hasherProvider.GetHasher(HashAlgorithm.Sha512);
         var unprotectedToken = protector.Unprotect(refreshPayload.RefreshToken!);
         var incomingHash = hasher.Hash(unprotectedToken);
         var refreshToken = await _tokenManager.FindByHashAsync(incomingHash, cancellationToken);
-        if (refreshToken is null || !refreshToken.IsValid)
+        if (refreshToken is null || !refreshToken.IsValid || !refreshToken.SessionId.HasValue)
+        {
             return Results.NotFound(new Error()
             {
                 Code = ErrorTypes.OAuth.InvalidGrant,
                 Description = "Invalid refresh token."
             });
+        }
+        
+        var session = await _sessionManager.FindByIdAsync(refreshToken.SessionId.Value, cancellationToken);
+        if (session is null)
+        {
+            return Results.NotFound(new Error()
+            {
+                Code = ErrorTypes.OAuth.InvalidGrant,
+                Description = "Invalid refresh token."
+            });
+        }
 
         if (refreshToken.Revoked)
         {
-            var sessionResult = await _sessionManager.RemoveAsync(refreshToken.Session, cancellationToken);
+            var sessionResult = await _sessionManager.RemoveAsync(session, cancellationToken);
             if (!sessionResult.Succeeded)
             {
                 return Results.InternalServerError(new Error()
@@ -91,45 +108,52 @@ public class RefreshTokenStrategy(
         }
 
         if (client.Id != refreshToken.ClientId)
+        {
             return Results.BadRequest(new Error()
             {
                 Code = ErrorTypes.OAuth.InvalidGrant,
                 Description = "Invalid refresh token"
             });
+        }
 
         var requestedScopes = string.IsNullOrEmpty(refreshPayload.Scope)
             ? client.AllowedScopes.Select(x => x.Scope.Name).ToList()
             : refreshPayload.Scope!.Split(' ').ToList();
 
         if (!client.HasScopes(requestedScopes))
+        {
             return Results.BadRequest(new Error()
             {
                 Code = ErrorTypes.OAuth.InvalidScope,
                 Description = "Requested scopes exceed originally granted scopes."
             });
+        }
 
         if (requestedScopes.Contains(Scopes.OfflineAccess) && !client.AllowOfflineAccess)
+        {
             return Results.BadRequest(new Error()
             {
                 Code = ErrorTypes.OAuth.InvalidScope,
                 Description = "offline_access scope was not originally granted."
             });
-
-        var device = refreshToken.Session.Device;
-        var user = await _userManager.FindByIdAsync(device.UserId, cancellationToken);
+        }
+        
+        var user = await _userManager.FindByIdAsync(session.Device.UserId, cancellationToken);
         if (user is null)
+        {
             return Results.NotFound(new Error()
             {
                 Code = ErrorTypes.OAuth.InvalidGrant,
                 Description = "Invalid refresh token."
             });
+        }
 
         var accessClaimFactory = _claimFactoryProvider.GetClaimFactory<AccessTokenClaimsContext, UserEntity>();
         var accessTokenClaims = await accessClaimFactory.GetClaimsAsync(user, new AccessTokenClaimsContext()
         {
             Aud = client.Audience,
             Scopes = client.AllowedScopes.Select(x => x.Scope.Name),
-            Sid = refreshToken.Session.Id.ToString()
+            Sid = session.Id.ToString()
         }, cancellationToken);
 
         var accessTokenContext = new JwtTokenContext { Claims = accessTokenClaims, Type = JwtTokenTypes.AccessToken };
@@ -150,7 +174,7 @@ public class RefreshTokenStrategy(
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = client.Id,
-                SessionId = refreshToken.Session.Id,
+                SessionId = session.Id,
                 TokenHash = hasher.Hash(rawToken),
                 TokenType = OpaqueTokenType.RefreshToken,
                 ExpiredDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime)
@@ -179,7 +203,7 @@ public class RefreshTokenStrategy(
             {
                 Aud = client.Id.ToString(),
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Name),
-                Sid = refreshToken.Session.Id.ToString(),
+                Sid = session.Id.ToString(),
                 AuthTime = DateTimeOffset.UtcNow
             }, cancellationToken);
 

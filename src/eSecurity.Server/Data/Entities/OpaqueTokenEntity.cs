@@ -7,7 +7,7 @@ public class OpaqueTokenEntity : Entity
 {
     public Guid Id { get; set; }
     public Guid ClientId { get; set; }
-    public Guid SessionId { get; set; }
+    public Guid? SessionId { get; set; }
 
     public required OpaqueTokenType TokenType { get; set; }
     public required string TokenHash { get; set; }
@@ -18,6 +18,6 @@ public class OpaqueTokenEntity : Entity
     public DateTimeOffset ExpiredDate { get; set; }
     
     public ClientEntity Client { get; set; } = null!;
-    public SessionEntity Session { get; set; } = null!;
+    public SessionEntity? Session { get; set; }
     public ICollection<OpaqueTokenScopeEntity> Scopes { get; set; } = null!;
 }

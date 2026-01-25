@@ -27,10 +27,10 @@ public class OpaqueTokenValidator(
         var claims = new List<Claim>()
         {
             new(AppClaimTypes.Jti, opaqueToken.Id.ToString()),
-            new(AppClaimTypes.Sid, opaqueToken.SessionId.ToString()),
+            new(AppClaimTypes.Sid, opaqueToken.SessionId!.Value.ToString()),
             new(AppClaimTypes.Aud, opaqueToken.Client.Audience),
             new(AppClaimTypes.Iss, _tokenOptions.Issuer),
-            new(AppClaimTypes.Sub, opaqueToken.Session.Device.UserId.ToString()),
+            new(AppClaimTypes.Sub, opaqueToken.Session!.Device.UserId.ToString()),
             new(AppClaimTypes.Iat, opaqueToken.CreateDate!.Value.ToUnixTimeSeconds().ToString()),
             new(AppClaimTypes.Exp, opaqueToken.ExpiredDate.ToUnixTimeSeconds().ToString()),
             new(AppClaimTypes.Scope, string.Join(" ", scopes)),

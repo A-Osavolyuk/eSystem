@@ -13,7 +13,9 @@ public class SessionManager(
 
     public async ValueTask<SessionEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _context.Sessions.FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
+        return await _context.Sessions
+            .Include(x => x.Device)
+            .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
     }
 
     public async ValueTask<SessionEntity?> FindAsync(UserDeviceEntity device, CancellationToken cancellationToken = default)

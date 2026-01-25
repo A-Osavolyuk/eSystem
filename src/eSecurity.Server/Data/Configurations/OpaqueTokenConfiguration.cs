@@ -19,6 +19,7 @@ public sealed class OpaqueTokenConfiguration : IEntityTypeConfiguration<OpaqueTo
         builder.HasOne(x => x.Session)
             .WithMany(x => x.OpaqueTokens)
             .HasForeignKey(x => x.SessionId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Cascade)
+            .IsRequired(false);
     }
 }
