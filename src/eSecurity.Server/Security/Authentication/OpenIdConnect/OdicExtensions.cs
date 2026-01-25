@@ -35,6 +35,7 @@ public static class OdicExtensions
             services.AddScoped<ITokenStrategyResolver, TokenStrategyResolver>();
             services.AddKeyedScoped<ITokenStrategy, AuthorizationCodeStrategy>(GrantTypes.AuthorizationCode);
             services.AddKeyedScoped<ITokenStrategy, RefreshTokenStrategy>(GrantTypes.RefreshToken);
+            services.AddKeyedScoped<ITokenStrategy, ClientCredentialsStrategy>(GrantTypes.ClientCredentials);
             services.AddScoped<ITokenContextFactory, TokenContextFactory>();
             
             services.AddSession(cfg => { cfg.Timestamp = TimeSpan.FromDays(30); });
