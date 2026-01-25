@@ -140,29 +140,54 @@ public class RefreshTokenStrategy(
                 Description = "Invalid refresh token."
             });
         }
-
-        var accessClaimFactory = _claimFactoryProvider.GetClaimFactory<AccessTokenClaimsContext, UserEntity>();
-        var accessTokenClaims = await accessClaimFactory.GetClaimsAsync(user, new AccessTokenClaimsContext()
-        {
-            Aud = client.Audience,
-            Scopes = client.AllowedScopes.Select(x => x.Scope.Name),
-            Sid = session.Id.ToString()
-        }, cancellationToken);
-
-        var accessTokenContext = new JwtTokenContext { Claims = accessTokenClaims, Type = JwtTokenTypes.AccessToken };
-        var jwtTokenFactory = _tokenFactoryProvider.GetFactory<JwtTokenContext, string>();
+        
         var response = new TokenResponse()
         {
-            AccessToken = await jwtTokenFactory.CreateTokenAsync(accessTokenContext, cancellationToken),
             ExpiresIn = (int)_options.AccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenTypes.Bearer,
         };
 
+        if (client.AccessTokenType == AccessTokenType.Jwt)
+        {
+            var claimsFactory = _claimFactoryProvider.GetClaimFactory<AccessTokenClaimsContext, UserEntity>();
+            var claims = await claimsFactory.GetClaimsAsync(user, new AccessTokenClaimsContext()
+            {
+                Aud = client.Audience,
+                Scopes = client.AllowedScopes.Select(x => x.Scope.Name),
+                Sid = session.Id.ToString()
+            }, cancellationToken);
+
+            var tokenContext = new JwtTokenContext { Claims = claims, Type = JwtTokenTypes.AccessToken };
+            var tokenFactory = _tokenFactoryProvider.GetFactory<JwtTokenContext, string>();
+
+            response.AccessToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
+        }
+        else
+        {
+            var tokenContext = new OpaqueTokenContext() { Length = _options.RefreshTokenLength };
+            var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
+            var rawToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
+            var newRefreshToken = new OpaqueTokenEntity()
+            {
+                Id = Guid.CreateVersion7(),
+                ClientId = client.Id,
+                TokenHash = hasher.Hash(rawToken),
+                TokenType = OpaqueTokenType.AccessToken,
+                ExpiredDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime)
+            };
+
+            var scopes = client.AllowedScopes.Select(x => x.Scope);
+            var createResult = await _tokenManager.CreateAsync(newRefreshToken, scopes, cancellationToken);
+            if (!createResult.Succeeded) return createResult;
+            
+            response.AccessToken = rawToken;
+        }
+
         if (client.RefreshTokenRotationEnabled)
         {
-            var opaqueTokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
-            var refreshTokenContext = new OpaqueTokenContext() { Length = _options.RefreshTokenLength };
-            var rawToken = await opaqueTokenFactory.CreateTokenAsync(refreshTokenContext, cancellationToken);
+            var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
+            var tokenContext = new OpaqueTokenContext() { Length = _options.RefreshTokenLength };
+            var rawToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
             var newRefreshToken = new OpaqueTokenEntity()
             {
                 Id = Guid.CreateVersion7(),
@@ -189,8 +214,8 @@ public class RefreshTokenStrategy(
 
         if (requestedScopes.Contains(Scopes.OpenId))
         {
-            var idClaimFactory = _claimFactoryProvider.GetClaimFactory<IdTokenClaimsContext, UserEntity>();
-            var idClaims = await idClaimFactory.GetClaimsAsync(user, new IdTokenClaimsContext()
+            var claimsFactory = _claimFactoryProvider.GetClaimFactory<IdTokenClaimsContext, UserEntity>();
+            var claims = await claimsFactory.GetClaimsAsync(user, new IdTokenClaimsContext()
             {
                 Aud = client.Id.ToString(),
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Name),
@@ -198,8 +223,10 @@ public class RefreshTokenStrategy(
                 AuthTime = DateTimeOffset.UtcNow
             }, cancellationToken);
 
-            var idTokenContext = new JwtTokenContext { Claims = idClaims, Type = JwtTokenTypes.IdToken };
-            response.IdToken = await jwtTokenFactory.CreateTokenAsync(idTokenContext, cancellationToken);
+            var tokenContext = new JwtTokenContext { Claims = claims, Type = JwtTokenTypes.IdToken };
+            var tokenFactory = _tokenFactoryProvider.GetFactory<JwtTokenContext, string>();
+            
+            response.IdToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
         }
 
         return Results.Ok(response);
