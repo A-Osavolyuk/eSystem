@@ -4,10 +4,10 @@ namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Strategie
 
 public interface ITokenStrategy
 {
-    public ValueTask<Result> ExecuteAsync(TokenPayload payload, CancellationToken cancellationToken = default);
+    public ValueTask<Result> ExecuteAsync(TokenContext context, CancellationToken cancellationToken = default);
 }
 
-public abstract class TokenPayload
+public abstract class TokenContext
 {
     public required string ClientId { get; set; }
     public required string GrantType { get; set; }

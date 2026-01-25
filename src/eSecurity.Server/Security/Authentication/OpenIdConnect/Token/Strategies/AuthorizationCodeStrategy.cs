@@ -20,7 +20,7 @@ using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Strategies;
 
-public sealed class AuthorizationCodeTokenPayload : TokenPayload
+public sealed class AuthorizationCodeContext : TokenContext
 {
     public string? RedirectUri { get; set; }
     public string? Code { get; set; }
@@ -54,10 +54,10 @@ public class AuthorizationCodeStrategy(
     private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
     private readonly TokenOptions _options = options.Value;
 
-    public async ValueTask<Result> ExecuteAsync(TokenPayload payload,
+    public async ValueTask<Result> ExecuteAsync(TokenContext context,
         CancellationToken cancellationToken = default)
     {
-        if (payload is not AuthorizationCodeTokenPayload authorizationPayload)
+        if (context is not AuthorizationCodeContext authorizationPayload)
             throw new NotSupportedException("Payload type must be 'AuthorizationCodeTokenPayload'");
 
         if (string.IsNullOrEmpty(authorizationPayload.RedirectUri))

@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Strategies;
 
-public sealed class RefreshTokenPayload : TokenPayload
+public sealed class RefreshTokenContext : TokenContext
 {
     public string? RefreshToken { get; set; }
     public string? RedirectUri { get; set; }
@@ -44,10 +44,10 @@ public class RefreshTokenStrategy(
     private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
     private readonly TokenOptions _options = options.Value;
 
-    public async ValueTask<Result> ExecuteAsync(TokenPayload payload,
+    public async ValueTask<Result> ExecuteAsync(TokenContext context,
         CancellationToken cancellationToken = default)
     {
-        if (payload is not RefreshTokenPayload refreshPayload)
+        if (context is not RefreshTokenContext refreshPayload)
             throw new NotSupportedException("Payload type must be 'RefreshTokenPayload'.");
 
         var client = await _clientManager.FindByIdAsync(refreshPayload.ClientId, cancellationToken);
