@@ -10,7 +10,6 @@ public static class SignInExtensions
         public void AddSignInStrategies()
         {
             services.AddScoped<ISignInResolver, SignInResolver>();
-            services.AddScoped<ISignInManager, SignInManager>();
             services.AddScoped<ISignInSessionManager, SignInSessionManager>();
             services.AddKeyedScoped<ISignInStrategy, PasswordSignInStrategy>(SignInType.Password);
             services.AddKeyedScoped<ISignInStrategy, PasskeySignInStrategy>(SignInType.Passkey);
