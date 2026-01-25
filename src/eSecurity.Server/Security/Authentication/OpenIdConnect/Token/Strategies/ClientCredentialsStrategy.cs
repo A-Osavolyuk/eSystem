@@ -1,6 +1,7 @@
 ﻿using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
+using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.Claims;
 using eSecurity.Server.Security.Identity.Claims.Factories;
@@ -21,11 +22,15 @@ public sealed class ClientCredentialsStrategy(
     IClientManager clientManager,
     IClaimFactoryProvider claimFactoryProvider,
     ITokenFactoryProvider tokenFactoryProvider,
+    IHasherProvider hasherProvider,
+    ITokenManager tokenManager,
     IOptions<TokenOptions> options) : ITokenStrategy
 {
     private readonly IClientManager _clientManager = clientManager;
     private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
+    private readonly IHasherProvider _hasherProvider = hasherProvider;
+    private readonly ITokenManager _tokenManager = tokenManager;
     private readonly TokenOptions _options = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(TokenContext context, 
@@ -108,11 +113,32 @@ public sealed class ClientCredentialsStrategy(
             
             var tokenFactory = _tokenFactoryProvider.GetFactory<JwtTokenContext, string>();
             var token = await tokenFactory.CreateTokenAsync(jwtTokenContext, cancellationToken);
+            
             response.AccessToken = token;
         }
         else
         {
-            //TODO: Implement Opaque Token generation
+            var tokenContext = new OpaqueTokenContext() { Length = _options.RefreshTokenLength };
+            var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
+            var rawToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
+            var hasher = _hasherProvider.GetHasher(HashAlgorithm.Sha512);
+            var newRefreshToken = new OpaqueTokenEntity()
+            {
+                Id = Guid.CreateVersion7(),
+                ClientId = client.Id,
+                TokenHash = hasher.Hash(rawToken),
+                TokenType = OpaqueTokenType.AccessToken,
+                ExpiredDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime)
+            };
+
+            var scopes = client.AllowedScopes
+                .Where(x => allowedScopes.Contains(x.Scope.Name))
+                .Select(x => x.Scope);
+            
+            var createResult = await _tokenManager.CreateAsync(newRefreshToken, scopes, cancellationToken);
+            if (!createResult.Succeeded) return createResult;
+            
+            response.AccessToken = rawToken;
         }
         
         return Results.Ok(response);
