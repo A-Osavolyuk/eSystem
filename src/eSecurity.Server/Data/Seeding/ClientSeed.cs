@@ -14,7 +14,7 @@ public class ClientSeed : Seed<ClientEntity>
             new ClientEntity
             {
                 Id = Guid.Parse("392e390f-33bd-4f30-af70-ccbe04bbb2c4"),
-                Secret = "2f213a036e325a55dc19320f03c2fad7c13f0169788b5968686cb4931341c393a651d7e6",
+                Secret = "09ba08a500f11aa321fb1dfd8c40ed017e2c1b70f992b86dac6d591089e33cb2",
                 Name = "eSecurity",
                 Audience = "eSecurity",
                 RequireClientSecret = true,
@@ -28,7 +28,7 @@ public class ClientSeed : Seed<ClientEntity>
             new ClientEntity
             {
                 Id = Guid.Parse("307268b0-005c-4ee4-a0e8-a93bd0010382"),
-                Secret = "7fd5a079ecd90974a56532138e204ec0c42df875a06a0dedbe69797b609150c10162abed",
+                Secret = "09ba08a500f11aa321fb1dfd8c40ed017e2c1b70f992b86dac6d591089e33cb2",
                 Name = "eCinema",
                 Audience = "eCinema",
                 RequireClientSecret = true,
@@ -37,6 +37,20 @@ public class ClientSeed : Seed<ClientEntity>
                 RefreshTokenLifetime = TimeSpan.FromDays(30),
                 ClientType = ClientType.Confidential,
                 AccessTokenType = AccessTokenType.Jwt,
+                SubjectType = SubjectType.Public,
+            },
+            new ClientEntity
+            {
+                Id = Guid.Parse("fc1c1662-cd80-4fab-b924-a39168765558"),
+                Secret = "09ba08a500f11aa321fb1dfd8c40ed017e2c1b70f992b86dac6d591089e33cb2",
+                Name = "eMessage",
+                Audience = "eMessage",
+                RequireClientSecret = true,
+                AllowOfflineAccess = false,
+                RefreshTokenRotationEnabled = false,
+                RefreshTokenLifetime = TimeSpan.FromDays(30),
+                ClientType = ClientType.Confidential,
+                AccessTokenType = AccessTokenType.Reference,
                 SubjectType = SubjectType.Public,
             }
         ];

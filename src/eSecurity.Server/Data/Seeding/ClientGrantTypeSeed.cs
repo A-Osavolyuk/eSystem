@@ -37,6 +37,14 @@ public class ClientGrantTypeSeed : Seed<ClientGrantTypeEntity>
                 ClientId = Guid.Parse("307268b0-005c-4ee4-a0e8-a93bd0010382"),
                 Type = GrantTypes.AuthorizationCode,
             },
+            
+            // eMessage
+            new ClientGrantTypeEntity
+            {
+                Id = Guid.CreateVersion7(),
+                ClientId = Guid.Parse("fc1c1662-cd80-4fab-b924-a39168765558"),
+                Type = GrantTypes.ClientCredentials,
+            },
         ];
     }
 }
