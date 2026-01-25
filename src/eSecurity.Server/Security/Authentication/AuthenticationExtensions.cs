@@ -44,7 +44,8 @@ public static class AuthenticationExtensions
             cfg.GrantTypesSupported =
             [
                 GrantTypes.AuthorizationCode,
-                GrantTypes.RefreshToken
+                GrantTypes.RefreshToken,
+                GrantTypes.ClientCredentials
             ];
 
             cfg.PromptValuesSupported =
