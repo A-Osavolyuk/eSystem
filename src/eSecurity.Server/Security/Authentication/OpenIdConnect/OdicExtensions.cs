@@ -6,7 +6,6 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Token;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Strategies;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Validation;
-using eSecurity.Server.Security.Cryptography.Tokens;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using SessionOptions = eSecurity.Server.Security.Authentication.OpenIdConnect.Session.SessionOptions;

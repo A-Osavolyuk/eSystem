@@ -1,9 +1,6 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using eSecurity.Core.Security.Identity;
+﻿using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Validation;
-using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Phone;
 using eSecurity.Server.Security.Identity.Privacy;

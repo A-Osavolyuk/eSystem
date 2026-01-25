@@ -1,13 +1,10 @@
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Text.Encodings.Web;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Validation;
-using eSecurity.Server.Security.Cryptography.Tokens;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
 using Microsoft.AspNetCore.Authentication;
-using TokenValidationResult = eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Validation.TokenValidationResult;
 
 namespace eSecurity.Server.Security.Authentication.Handlers;
 

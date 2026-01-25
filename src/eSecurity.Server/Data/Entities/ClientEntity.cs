@@ -1,5 +1,4 @@
 ﻿using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
-using eSecurity.Server.Security.Authentication.OpenIdConnect.Token;
 using eSystem.Core.Data.Entities;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 

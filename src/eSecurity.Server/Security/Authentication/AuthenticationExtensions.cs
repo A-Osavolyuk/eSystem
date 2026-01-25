@@ -1,4 +1,5 @@
 ﻿using eSecurity.Server.Security.Authentication.Handlers;
+using eSecurity.Server.Security.Authentication.Handlers.Basic;
 using eSecurity.Server.Security.Authentication.Lockout;
 using eSecurity.Server.Security.Authentication.OpenIdConnect;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
@@ -18,6 +19,10 @@ public static class AuthenticationExtensions
 {
     public static void AddAuthentication(this IHostApplicationBuilder builder)
     {
+        builder.Services.AddScoped<IBasicAuthenticationStrategy, HeaderBasicAuthenticationStrategy>();
+        builder.Services.AddScoped<IBasicAuthenticationStrategy, FormDataBasicAuthenticationStrategy>();
+        builder.Services.AddScoped<IBasicAuthenticationStrategyResolver, BasicAuthenticationStrategyResolver>();
+        
         var configuration = builder.Configuration;
 
         builder.Services.AddPasswordManagement();
