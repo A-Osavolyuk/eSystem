@@ -1,0 +1,39 @@
+﻿using eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Strategies;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Token;
+using TokenContext = eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Strategies.TokenContext;
+
+namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Token;
+
+public class TokenContextFactory : ITokenContextFactory
+{
+    public TokenContext? CreateContext(TokenRequest request)
+    {
+        return request.GrantType switch
+        {
+            GrantTypes.AuthorizationCode => new AuthorizationCodeContext()
+            {
+                ClientId = request.ClientId,
+                GrantType = request.GrantType,
+                CodeVerifier = request.CodeVerifier,
+                RedirectUri = request.RedirectUri,
+                Code = request.Code
+            },
+            GrantTypes.RefreshToken => new RefreshTokenContext()
+            {
+                ClientId = request.ClientId,
+                GrantType = request.GrantType,
+                RefreshToken = request.RefreshToken,
+                Scope = request.Scope
+            },
+            GrantTypes.ClientCredentials => new ClientCredentialsContext()
+            {
+                ClientId = request.ClientId,
+                ClientSecret = request.ClientSecret,
+                GrantType = request.GrantType,
+                Scope = request.Scope
+            },
+            _ => null
+        };
+    }
+}
