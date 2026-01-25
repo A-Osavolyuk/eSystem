@@ -8,31 +8,34 @@ using eSecurity.Server.Security.Identity.SignUp.Strategies;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
+using eSystem.Core.Security.Authentication.Schemes;
 using eSystem.Core.Utilities.Query;
+using Microsoft.AspNetCore.Authentication;
 using AuthenticationTypes = eSecurity.Core.Security.Authorization.OAuth.Constants.AuthenticationTypes;
 
 namespace eSecurity.Server.Features.OAuth;
 
-public sealed record HandleLoginCommand(
-    AuthenticationResult AuthenticationResult,
-    string? RemoteError,
-    string ReturnUri) : IRequest<Result>;
+public sealed record HandleLoginCommand(string? RemoteError, string ReturnUri) : IRequest<Result>;
 
 public sealed class HandleOAuthLoginCommandHandler(
     IUserManager userManager,
     ISignUpResolver signUpResolver,
-    ISignInResolver signInResolver) : IRequestHandler<HandleLoginCommand, Result>
+    ISignInResolver signInResolver,
+    IHttpContextAccessor contextAccessor) : IRequestHandler<HandleLoginCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly ISignUpResolver _signUpResolver = signUpResolver;
     private readonly ISignInResolver _signInResolver = signInResolver;
+    private readonly HttpContext _httpContext = contextAccessor.HttpContext!;
 
     public async Task<Result> Handle(HandleLoginCommand request,
         CancellationToken cancellationToken)
     {
-        var authenticationResult = request.AuthenticationResult;
-        var items = authenticationResult.Properties.Items;
-        var provider = request.AuthenticationResult.Principal.Identity!.AuthenticationType!;
+        var authenticateResult = await _httpContext.AuthenticateAsync(ExternalAuthenticationDefaults.AuthenticationScheme);
+        var principal = authenticateResult.Principal ?? throw new NullReferenceException("Principal is null");
+        var properties = authenticateResult.Properties ?? throw new NullReferenceException("Properties is null");
+        var items = properties.Items;
+        var provider = principal.Identity!.AuthenticationType!;
         var sessionId = items["sid"]!;
         var state = items["state"]!;
 
@@ -54,9 +57,7 @@ public sealed class HandleOAuthLoginCommandHandler(
                 .Build());
         }
 
-        var email = request.AuthenticationResult.Principal.Claims
-            .FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
-
+        var email = principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
         if (email is null)
         {
             return Results.Found(QueryBuilder.Create()

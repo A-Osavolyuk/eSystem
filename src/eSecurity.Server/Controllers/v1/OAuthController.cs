@@ -1,9 +1,7 @@
 ﻿using eSecurity.Server.Common.Responses;
 using eSecurity.Server.Features.OAuth;
-using eSecurity.Server.Security.Authentication.SignIn;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
-using eSystem.Core.Security.Authentication.Schemes;
 
 namespace eSecurity.Server.Controllers.v1;
 
@@ -12,10 +10,9 @@ namespace eSecurity.Server.Controllers.v1;
 [ApiVersion("1.0")]
 [Produces(ContentTypes.Application.Json)]
 [Route("v{version:apiVersion}/[controller]")]
-public class OAuthController(ISender sender, ISignInManager signInManager) : ControllerBase
+public class OAuthController(ISender sender) : ControllerBase
 {
     private readonly ISender _sender = sender;
-    private readonly ISignInManager _signInManager = signInManager;
     
     [EndpointSummary("OAuth login")]
     [EndpointDescription("OAuth login")]
@@ -40,10 +37,7 @@ public class OAuthController(ISender sender, ISignInManager signInManager) : Con
     [HttpGet("handle")]
     public async ValueTask<IActionResult> HandleOAuthLoginAsync(string returnUri, string? remoteError = null)
     {
-        var authenticationResult = await _signInManager.AuthenticateAsync(
-            ExternalAuthenticationDefaults.AuthenticationScheme);
-        
-        var result = await _sender.Send(new HandleLoginCommand(authenticationResult, remoteError, returnUri));
+        var result = await _sender.Send(new HandleLoginCommand(remoteError, returnUri));
         return HttpContext.HandleResult(result);
     }
 }
