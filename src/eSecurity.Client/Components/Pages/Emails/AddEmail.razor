@@ -59,7 +59,7 @@
 
         if (_form is { IsValid: true, IsTouched: true })
         {
-            var request = new CheckEmailRequest()
+            var request = new CheckEmailRequest
             {
                 UserId = UserState.UserId,
                 Email = Model.Email!
@@ -84,7 +84,7 @@
 
     private async Task AddEmailAsync()
     {
-        var request = new AddEmailRequest()
+        var request = new AddEmailRequest
         {
             UserId = UserState.UserId,
             Email = Model.Email!,

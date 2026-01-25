@@ -28,7 +28,7 @@ public class RemovePasswordCommandHandler(
 
         if (!await _passwordManager.HasAsync(user, cancellationToken))
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidPassword,
                 Description = "User doesn't have a password."

@@ -24,7 +24,7 @@ public class AuthenticationController(IDataProtectionProvider protectionProvider
         var cookieJson = JsonSerializer.Serialize(cookie);
         var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Session);
         var protectedCookie = protector.Protect(cookieJson);
-        var cookieOptions = new CookieOptions()
+        var cookieOptions = new CookieOptions
         {
             Domain = "localhost",
             HttpOnly = true,
@@ -53,7 +53,7 @@ public class AuthenticationController(IDataProtectionProvider protectionProvider
         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
         var authenticationProperties = new AuthenticationProperties { IsPersistent = true };
 
-        var cookie = new AuthenticationMetadata()
+        var cookie = new AuthenticationMetadata
         {
             Tokens = identity.Tokens
         };
@@ -61,7 +61,7 @@ public class AuthenticationController(IDataProtectionProvider protectionProvider
         var cookieJson = JsonSerializer.Serialize(cookie);
         var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Token);
         var protectedCookie = protector.Protect(cookieJson);
-        var cookieOptions = new CookieOptions()
+        var cookieOptions = new CookieOptions
         {
             Domain = "localhost",
             HttpOnly = true,
@@ -96,7 +96,7 @@ public class AuthenticationController(IDataProtectionProvider protectionProvider
         var cookieJson = JsonSerializer.Serialize(metadata);
         var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Token);
         var protectedCookie = protector.Protect(cookieJson);
-        var cookieOptions = new CookieOptions()
+        var cookieOptions = new CookieOptions
         {
             Domain = "localhost",
             HttpOnly = true,

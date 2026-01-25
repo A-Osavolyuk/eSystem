@@ -18,7 +18,7 @@ public class PasswordManager(
     public async ValueTask<Result> AddAsync(UserEntity user, string password,
         CancellationToken cancellationToken = default)
     {
-        var passwordEntity = new PasswordEntity()
+        var passwordEntity = new PasswordEntity
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,

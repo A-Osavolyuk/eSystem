@@ -8,12 +8,12 @@ public class PasswordService(IApiClient apiClient) : IPasswordService
 
     public async ValueTask<ApiResponse> AddPasswordAsync(AddPasswordRequest request)
         => await _apiClient.SendAsync(
-            new ApiRequest()
+            new ApiRequest
             {
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "/api/v1/Password/add"
-            }, new ApiOptions()
+            }, new ApiOptions
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
@@ -21,12 +21,12 @@ public class PasswordService(IApiClient apiClient) : IPasswordService
 
     public async ValueTask<ApiResponse> ForgotPasswordAsync(ForgotPasswordRequest request)
         => await _apiClient.SendAsync(
-            new ApiRequest()
+            new ApiRequest
             {
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "/api/v1/Password/forgot"
-            }, new ApiOptions()
+            }, new ApiOptions
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
@@ -34,12 +34,12 @@ public class PasswordService(IApiClient apiClient) : IPasswordService
 
     public async ValueTask<ApiResponse> ResetPasswordAsync(ResetPasswordRequest request)
         => await _apiClient.SendAsync(
-            new ApiRequest()
+            new ApiRequest
             {
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "/api/v1/Password/reset"
-            }, new ApiOptions()
+            }, new ApiOptions
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
@@ -47,12 +47,12 @@ public class PasswordService(IApiClient apiClient) : IPasswordService
 
     public async ValueTask<ApiResponse> ChangePasswordAsync(ChangePasswordRequest request)
         => await _apiClient.SendAsync(
-            new ApiRequest()
+            new ApiRequest
             {
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "/api/v1/Password/change"
-            }, new ApiOptions()
+            }, new ApiOptions
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer

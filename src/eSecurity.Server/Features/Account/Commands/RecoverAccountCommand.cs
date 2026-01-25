@@ -28,7 +28,7 @@ public class RecoverAccountCommandHandler(
         var userPrimaryEmail = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
         if (userPrimaryEmail is null || !userPrimaryEmail.IsVerified)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidEmail,
                 Description = "Invalid primary email"
@@ -38,7 +38,7 @@ public class RecoverAccountCommandHandler(
         var userRecoveryEmail = await _emailManager.FindByTypeAsync(user, EmailType.Recovery, cancellationToken);
         if (userRecoveryEmail is null || !userRecoveryEmail.IsVerified)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidEmail,
                 Description = "Invalid recovery email"

@@ -8,12 +8,12 @@ public class UsernameService(IApiClient apiClient) : IUsernameService
 
     public async ValueTask<ApiResponse> SetUsernameAsync(SetUsernameRequest request)
         => await _apiClient.SendAsync(
-            new ApiRequest()
+            new ApiRequest
             {
                 Data = request,
                 Method = HttpMethod.Post,
                 Url = "/api/v1/Username/set"
-            }, new ApiOptions()
+            }, new ApiOptions
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
@@ -21,12 +21,12 @@ public class UsernameService(IApiClient apiClient) : IUsernameService
 
     public async ValueTask<ApiResponse> ChangeUsernameAsync(ChangeUsernameRequest request)
         => await _apiClient.SendAsync(
-            new ApiRequest()
+            new ApiRequest
             {
                 Data = request,
                 Method = HttpMethod.Put,
                 Url = "/api/v1/Username/change"
-            }, new ApiOptions()
+            }, new ApiOptions
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
@@ -34,12 +34,12 @@ public class UsernameService(IApiClient apiClient) : IUsernameService
 
     public async ValueTask<ApiResponse> CheckUsernameAsync(CheckUsernameRequest request)
         => await _apiClient.SendAsync(
-            new ApiRequest()
+            new ApiRequest
             {
                 Data = request,
                 Method = HttpMethod.Post,
                 Url = "/api/v1/Username/check"
-            }, new ApiOptions()
+            }, new ApiOptions
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None

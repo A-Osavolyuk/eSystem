@@ -52,7 +52,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
 
     public async ValueTask<Result> CreateAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
-        var lockoutState = new UserLockoutStateEntity()
+        var lockoutState = new UserLockoutStateEntity
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,

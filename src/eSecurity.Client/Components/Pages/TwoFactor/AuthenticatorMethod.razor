@@ -96,7 +96,7 @@
 
         if (_form.IsValid)
         {
-            var request = new VerifyAuthenticatorCodeRequest()
+            var request = new VerifyAuthenticatorCodeRequest
             {
                 UserId = UserState.UserId,
                 Code = _model.Code,

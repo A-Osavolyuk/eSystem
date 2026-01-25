@@ -27,7 +27,7 @@ public class IntrospectionCommandHandler(
     public async Task<Result> Handle(IntrospectionCommand request, CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(request.Request.Token))
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "token is required"
@@ -57,7 +57,7 @@ public class IntrospectionCommandHandler(
             _ => throw new NotSupportedException("Unsupported token type")
         };
 
-        var response = new IntrospectionResponse()
+        var response = new IntrospectionResponse
         {
             Active = true,
             TokenType = tokenType,

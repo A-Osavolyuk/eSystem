@@ -21,7 +21,7 @@ public class AddPasswordCommandHandler(
         if (user is null) return Results.NotFound("User not found.");
         
         if (await _passwordManager.HasAsync(user, cancellationToken)) 
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidPassword,
                 Description = "User already has a password."

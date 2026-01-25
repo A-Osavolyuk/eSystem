@@ -34,7 +34,7 @@ public class ConsentManager(AuthDbContext context) : IConsentManager
     public async ValueTask<Result> GrantAsync(ConsentEntity consent, ScopeEntity scope,
         CancellationToken cancellationToken = default)
     {
-        var grantedScope = new GrantedScopeEntity()
+        var grantedScope = new GrantedScopeEntity
         {
             ConsentId = consent.Id,
             ScopeId = scope.Id

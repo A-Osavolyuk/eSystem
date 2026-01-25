@@ -58,7 +58,7 @@ public sealed class OAuthSignUpStrategy(
     {
         if (payload is not OAuthSignUpPayload oauthPayload)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidPayloadType,
                 Description = "Invalid payload"
@@ -68,7 +68,7 @@ public sealed class OAuthSignUpStrategy(
         var session = await _signInSessionManager.FindByIdAsync(oauthPayload.SessionId, cancellationToken);
         if (session is null)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.NotFound,
                 Description = "Session not found"
@@ -78,14 +78,14 @@ public sealed class OAuthSignUpStrategy(
         var taken = await _emailManager.IsTakenAsync(oauthPayload.Email, cancellationToken);
         if (taken)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.EmailTaken,
                 Description = "Email is already taken"
             });
         }
 
-        var user = new UserEntity()
+        var user = new UserEntity
         {
             Id = Guid.CreateVersion7(),
             Username = oauthPayload.Email,
@@ -119,7 +119,7 @@ public sealed class OAuthSignUpStrategy(
         var ipAddress = _httpContext.GetIpV4();
         var clientInfo = _httpContext.GetClientInfo();
 
-        var newDevice = new UserDeviceEntity()
+        var newDevice = new UserDeviceEntity
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
@@ -139,9 +139,9 @@ public sealed class OAuthSignUpStrategy(
         var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
         if (email is null) return Results.NotFound("Email not found");
         
-        var message = new OAuthSignUpMessage()
+        var message = new OAuthSignUpMessage
         {
-            Credentials = new Dictionary<string, string>()
+            Credentials = new Dictionary<string, string>
             {
                 { "To", email.Email },
                 { "Subject", $"Account registered with {oauthPayload.Type.ToString()}" },
@@ -155,7 +155,7 @@ public sealed class OAuthSignUpStrategy(
 
         await _messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
 
-        var userLinkedAccount = new UserLinkedAccountEntity()
+        var userLinkedAccount = new UserLinkedAccountEntity
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,

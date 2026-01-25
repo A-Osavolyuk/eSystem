@@ -63,7 +63,7 @@ public class ConnectController(ISender sender) : ControllerBase
             Response.Headers.Append(HeaderTypes.WwwAuthenticate,
                 $"Bearer error=\"{ErrorTypes.OAuth.InvalidRequest}\", error_description=\"{description}\"");
             
-            return BadRequest(new Error()
+            return BadRequest(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = description

@@ -24,7 +24,7 @@ public sealed class ApiResponse
 
         try
         {
-            value = JsonSerializer.Deserialize<TValue>(Result, new JsonSerializerOptions()
+            value = JsonSerializer.Deserialize<TValue>(Result, new JsonSerializerOptions
             {
                 WriteIndented = true,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase

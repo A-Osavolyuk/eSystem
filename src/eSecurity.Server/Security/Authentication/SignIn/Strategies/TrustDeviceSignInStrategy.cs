@@ -35,7 +35,7 @@ public sealed class TrustDeviceSignInStrategy(
     {
         if (payload is not TrustDeviceSignInPayload trustPayload)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidPayloadType,
                 Description = "Invalid payload type"
@@ -54,7 +54,7 @@ public sealed class TrustDeviceSignInStrategy(
         var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
         if (device is null || device.IsBlocked)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidDevice,
                 Description = "Invalid device."
@@ -86,6 +86,6 @@ public sealed class TrustDeviceSignInStrategy(
         var sessionResult = await _signInSessionManager.UpdateAsync(session, cancellationToken);
         if (!sessionResult.Succeeded) return sessionResult;
 
-        return Results.Ok(new SignInResponse() { SessionId = session.Id });
+        return Results.Ok(new SignInResponse { SessionId = session.Id });
     }
 }

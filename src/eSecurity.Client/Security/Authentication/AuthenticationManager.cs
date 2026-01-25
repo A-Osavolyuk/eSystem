@@ -52,7 +52,7 @@ public sealed class AuthenticationManager(
 
     public async Task SignOutAsync()
     {
-        var fetchOptions = new FetchOptions()
+        var fetchOptions = new FetchOptions
         {
             Method = HttpMethod.Post,
             Url = $"{_navigationManager.BaseUri}api/authentication/sign-out",
@@ -67,7 +67,7 @@ public sealed class AuthenticationManager(
 
     public async Task LogoutAsync()
     {
-        var fetchOptions = new FetchOptions()
+        var fetchOptions = new FetchOptions
         {
             Method = HttpMethod.Post,
             Url = $"{_navigationManager.BaseUri}api/authentication/logout",

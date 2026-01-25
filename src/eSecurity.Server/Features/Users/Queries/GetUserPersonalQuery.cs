@@ -22,7 +22,7 @@ public class GetUserPersonalQueryHandler(
         var personalData = await _personalDataManager.GetAsync(user, cancellationToken);
         if (personalData is null) return Results.NotFound("Personal data not found.");
         
-        var response = new UserPersonalDto()
+        var response = new UserPersonalDto
         {
             UserId = user.Id,
             FirstName = personalData.FirstName,

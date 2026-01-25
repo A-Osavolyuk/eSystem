@@ -70,7 +70,7 @@
 
     protected override void OnInitialized()
     {
-        _context = new MessageContext()
+        _context = new MessageContext
         {
             UserId = UserState.UserId,
             Sender = SenderType.Email,
@@ -89,7 +89,7 @@
 
         if (_form.IsValid)
         {
-            var request = new UnlockAccountRequest()
+            var request = new UnlockAccountRequest
             {
                 Code = _model.Code,
                 UserId = UserId

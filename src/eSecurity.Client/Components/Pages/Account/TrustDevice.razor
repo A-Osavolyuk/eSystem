@@ -99,7 +99,7 @@
         if (result.Succeeded && result.TryGetValue<UserDto>(out var user))
         {
             _email = user?.Email;
-            _context = new MessageContext()
+            _context = new MessageContext
             {
                 UserId = _userId,
                 Sender = SenderType.Email,
@@ -145,7 +145,7 @@
     {
         var request = new SignInRequest
         {
-            Payload = new TrustDeviceSignInPayload()
+            Payload = new TrustDeviceSignInPayload
             {
                 Sid = SessionId
             }

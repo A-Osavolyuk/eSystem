@@ -39,7 +39,7 @@ public class TwoFactorSignInStrategy(
     {
         if (payload is not TwoFactorSignInPayload twoFactorPayload)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidPayloadType,
                 Description = "Invalid payload type"
@@ -49,7 +49,7 @@ public class TwoFactorSignInStrategy(
         var session = await _signInSessionManager.FindByIdAsync(twoFactorPayload.Sid, cancellationToken);
         if (session is null || !session.IsActive || !session.UserId.HasValue)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidSession,
                 Description = "Invalid sign-in session."
@@ -64,7 +64,7 @@ public class TwoFactorSignInStrategy(
         var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
         if (device is null || device.IsBlocked)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidDevice,
                 Description = "Invalid device."
@@ -78,7 +78,7 @@ public class TwoFactorSignInStrategy(
         {
             user.FailedLoginAttempts += 1;
             if (user.FailedLoginAttempts < _options.MaxFailedLoginAttempts)
-                return Results.BadRequest(new Error()
+                return Results.BadRequest(new Error
                 {
                     Code = ErrorTypes.Common.FailedLoginAttempt, 
                     Description = "Invalid recovery code.",
@@ -96,7 +96,7 @@ public class TwoFactorSignInStrategy(
                 LockoutType.TooManyFailedLoginAttempts, cancellationToken: cancellationToken);
 
             if (!lockoutResult.Succeeded) return lockoutResult;
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.AccountLockedOut,
                 Description = "Account is locked out due to too many failed login attempts",
@@ -120,6 +120,6 @@ public class TwoFactorSignInStrategy(
         if (!sessionResult.Succeeded) return sessionResult;
         
         await _sessionManager.CreateAsync(device, cancellationToken);
-        return Results.Ok(new SignInResponse() { SessionId = session.Id });
+        return Results.Ok(new SignInResponse { SessionId = session.Id });
     }
 }

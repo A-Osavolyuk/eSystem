@@ -34,7 +34,7 @@ public class CheckAccountCommandHandler(
         var lockoutState = await _lockoutManager.GetAsync(user, cancellationToken);
         if (lockoutState is null)
         {
-            return Results.NotFound(new Error()
+            return Results.NotFound(new Error
             {
                 Code = ErrorTypes.Common.InvalidLockoutState,
                 Description = "Invalid state"

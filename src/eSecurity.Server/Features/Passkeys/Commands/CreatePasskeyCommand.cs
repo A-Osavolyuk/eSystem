@@ -49,7 +49,7 @@ public class CreatePasskeyCommandHandler(
         var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
         if (device is null || device.IsBlocked || !device.IsTrusted)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidDevice,
                 Description = "Invalid device."
@@ -65,7 +65,7 @@ public class CreatePasskeyCommandHandler(
         var clientData = ClientData.Parse(credentialResponse.Response.ClientDataJson);
         if (clientData is null || clientData.Type != ClientDataTypes.Create)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidCredentials,
                 Description = "Invalid credentials."
@@ -76,7 +76,7 @@ public class CreatePasskeyCommandHandler(
         var savedChallenge = _sessionStorage.Get(ChallengeSessionKeys.Attestation);
         if (savedChallenge != base64Challenge)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidChallenge,
                 Description = "Challenge mismatch"
@@ -88,14 +88,14 @@ public class CreatePasskeyCommandHandler(
         var rpHash = SHA256.HashData(source);
         if (!authData.RpIdHash.SequenceEqual(rpHash))
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidRp,
                 Description = "Invalid RP ID"
             });
         }
 
-        var passkey = new PasskeyEntity()
+        var passkey = new PasskeyEntity
         {
             Id = Guid.CreateVersion7(),
             AuthenticatorId = new Guid(authData.AaGuid),

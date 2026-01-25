@@ -21,13 +21,13 @@ public class GetUserLinkedAccountDataQueryHandler(
         if (user is null) return Results.NotFound("User not found.");
 
         var linkedAccounts = await _linkedAccountManager.GetAllAsync(user, cancellationToken);
-        var response = new UserLinkedAccountData()
+        var response = new UserLinkedAccountData
         {
             GoogleConnected = linkedAccounts.Any(x => x.Type == LinkedAccountType.Google),
             MicrosoftConnected = linkedAccounts.Any(x => x.Type == LinkedAccountType.Microsoft),
             FacebookConnected = linkedAccounts.Any(x => x.Type == LinkedAccountType.Facebook),
             XConnected = linkedAccounts.Any(x => x.Type == LinkedAccountType.X),
-            LinkedAccounts = linkedAccounts.Select(x => new UserLinkedAccountDto()
+            LinkedAccounts = linkedAccounts.Select(x => new UserLinkedAccountDto
             {
                 Id = x.Id,
                 Type = x.Type,

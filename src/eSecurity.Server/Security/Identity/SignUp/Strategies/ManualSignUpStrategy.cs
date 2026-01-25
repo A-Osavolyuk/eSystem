@@ -52,7 +52,7 @@ public sealed class ManualSignUpStrategy(
         if (_options.RequireUniqueUsername && 
             await _usernameManager.IsTakenAsync(manualPayload.Username, cancellationToken))
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.UsernameTaken,
                 Description = "This username is already taken"
@@ -62,14 +62,14 @@ public sealed class ManualSignUpStrategy(
         if (_options.RequireUniqueEmail && 
             await _emailManager.IsTakenAsync(manualPayload.Email, cancellationToken))
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.EmailTaken,
                 Description = "This email is already taken."
             });
         }
 
-        var user = new UserEntity()
+        var user = new UserEntity
         {
             Id = Guid.CreateVersion7(),
             Username = manualPayload.Username,
@@ -110,7 +110,7 @@ public sealed class ManualSignUpStrategy(
         var ipAddress = _httpContext.GetIpV4();
         var clientInfo = _httpContext.GetClientInfo();
 
-        var newDevice = new UserDeviceEntity()
+        var newDevice = new UserDeviceEntity
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
@@ -127,7 +127,7 @@ public sealed class ManualSignUpStrategy(
         var deviceResult = await _deviceManager.CreateAsync(newDevice, cancellationToken);
         if (!deviceResult.Succeeded) return deviceResult;
 
-        var response = new SignUpResponse()
+        var response = new SignUpResponse
         {
             UserId = user.Id,
         };

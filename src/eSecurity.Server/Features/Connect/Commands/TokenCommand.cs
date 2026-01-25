@@ -22,7 +22,7 @@ public class TokenCommandHandler(
     {
         if (string.IsNullOrEmpty(request.Request.GrantType))
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "grant_type is required"
@@ -31,7 +31,7 @@ public class TokenCommandHandler(
 
         if (string.IsNullOrEmpty(request.Request.ClientId))
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "client_id is required"
@@ -40,7 +40,7 @@ public class TokenCommandHandler(
 
         if (!_configuration.GrantTypesSupported.Contains(request.Request.GrantType))
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidGrant,
                 Description = $"'{request.Request.GrantType}' grant type is not supported"

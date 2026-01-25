@@ -180,7 +180,7 @@
 
         if (_form.IsValid)
         {
-            var request = new GenerateCreationOptionsRequest()
+            var request = new GenerateCreationOptionsRequest
             {
                 UserId = UserState.UserId,
                 DisplayName = _model.DisplayName
@@ -201,7 +201,7 @@
         if (assertResult.Success)
         {
             var assertResponse = assertResult.Get<PublicKeyCredentialCreationResponse>();
-            var request = new CreatePasskeyRequest()
+            var request = new CreatePasskeyRequest
             {
                 UserId = UserState.UserId,
                 DisplayName = _model.DisplayName,

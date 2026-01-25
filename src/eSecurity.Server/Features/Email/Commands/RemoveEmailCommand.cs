@@ -34,7 +34,7 @@ public class RemoveEmailCommandHandler(
         var email = await _emailManager.FindByEmailAsync(user, request.Request.Email, cancellationToken);
         if (email is null)
         {
-            return Results.NotFound(new Error()
+            return Results.NotFound(new Error
             {
                 Code = ErrorTypes.Common.InvalidEmail,
                 Description = "User doesn't owe this email."
@@ -46,7 +46,7 @@ public class RemoveEmailCommandHandler(
             var passkeys = await _passkeyManager.GetAllAsync(user, cancellationToken);
             if (passkeys.Count == 0)
             {
-                return Results.BadRequest(new Error()
+                return Results.BadRequest(new Error
                 {
                     Code = ErrorTypes.Common.InvalidEmail,
                     Description = "Cannot remove the primary email, because it is the only authentication method"
@@ -55,7 +55,7 @@ public class RemoveEmailCommandHandler(
 
             if (await _linkedAccountManager.HasAsync(user, cancellationToken))
             {
-                return Results.BadRequest(new Error()
+                return Results.BadRequest(new Error
                 {
                     Code = ErrorTypes.Common.LinkedAccountConnected,
                     Description = "Cannot remove the primary email, because there are one or more linked accounts"

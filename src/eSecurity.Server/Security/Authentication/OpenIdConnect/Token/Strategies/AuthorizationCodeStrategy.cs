@@ -57,7 +57,7 @@ public class AuthorizationCodeStrategy(
             throw new NotSupportedException("Payload type must be 'AuthorizationCodeTokenPayload'");
 
         if (string.IsNullOrEmpty(authorizationPayload.RedirectUri))
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "redirect_uri is required"
@@ -65,14 +65,14 @@ public class AuthorizationCodeStrategy(
 
         var client = await _clientManager.FindByIdAsync(authorizationPayload.ClientId, cancellationToken);
         if (client is null)
-            return Results.Unauthorized(new Error()
+            return Results.Unauthorized(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidClient,
                 Description = "Client was not found."
             });
 
         if (!client.HasGrantType(authorizationPayload.GrantType))
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.OAuth.UnsupportedGrantType,
                 Description = $"'{authorizationPayload.GrantType}' grant is not supported by client."
@@ -89,7 +89,7 @@ public class AuthorizationCodeStrategy(
             client.Id != authorizationCode.ClientId ||
             !client.HasUri(redirectUri, UriType.Redirect))
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidGrant,
                 Description = "Invalid authorization code."
@@ -102,7 +102,7 @@ public class AuthorizationCodeStrategy(
                 || string.IsNullOrWhiteSpace(authorizationCode.CodeChallengeMethod)
                 || string.IsNullOrWhiteSpace(authorizationPayload.CodeVerifier))
             {
-                return Results.BadRequest(new Error()
+                return Results.BadRequest(new Error
                 {
                     Code = ErrorTypes.OAuth.InvalidGrant,
                     Description = "Invalid authorization code."
@@ -116,7 +116,7 @@ public class AuthorizationCodeStrategy(
             );
 
             if (!isValidPkce)
-                return Results.BadRequest(new Error()
+                return Results.BadRequest(new Error
                 {
                     Code = ErrorTypes.OAuth.InvalidGrant,
                     Description = "Invalid authorization code."
@@ -126,7 +126,7 @@ public class AuthorizationCodeStrategy(
         var device = await _deviceManager.FindByIdAsync(authorizationCode.DeviceId, cancellationToken);
         if (device is null)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidGrant,
                 Description = "Invalid authorization code."
@@ -137,7 +137,7 @@ public class AuthorizationCodeStrategy(
         var user = await _userManager.FindByIdAsync(device.UserId, cancellationToken);
         if (session is null || session.ExpireDate < DateTimeOffset.UtcNow || user is null)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidGrant,
                 Description = "Invalid authorization code."
@@ -147,7 +147,7 @@ public class AuthorizationCodeStrategy(
         var codeResult = await _authorizationCodeManager.UseAsync(authorizationCode, cancellationToken);
         if (!codeResult.Succeeded) return codeResult;
         
-        var response = new TokenResponse()
+        var response = new TokenResponse
         {
             ExpiresIn = (int)_options.AccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenTypes.Bearer,
@@ -156,7 +156,7 @@ public class AuthorizationCodeStrategy(
         if (client.AccessTokenType == AccessTokenType.Jwt)
         {
             var claimsFactory = _claimFactoryProvider.GetClaimFactory<AccessTokenClaimsContext, UserEntity>();
-            var claims = await claimsFactory.GetClaimsAsync(user, new AccessTokenClaimsContext()
+            var claims = await claimsFactory.GetClaimsAsync(user, new AccessTokenClaimsContext
             {
                 Aud = client.Audience,
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Name),
@@ -171,11 +171,11 @@ public class AuthorizationCodeStrategy(
         }
         else
         {
-            var tokenContext = new OpaqueTokenContext() { Length = _options.RefreshTokenLength };
+            var tokenContext = new OpaqueTokenContext { Length = _options.RefreshTokenLength };
             var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
             var rawToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
             var hasher = _hasherProvider.GetHasher(HashAlgorithm.Sha512);
-            var newRefreshToken = new OpaqueTokenEntity()
+            var newRefreshToken = new OpaqueTokenEntity
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = client.Id,
@@ -193,12 +193,12 @@ public class AuthorizationCodeStrategy(
 
         if (client.AllowOfflineAccess && client.HasScope(Scopes.OfflineAccess))
         {
-            var tokenContext = new OpaqueTokenContext() { Length = _options.RefreshTokenLength };
+            var tokenContext = new OpaqueTokenContext { Length = _options.RefreshTokenLength };
             var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
             var rawToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
             var hasher = _hasherProvider.GetHasher(HashAlgorithm.Sha512);
             var hash = hasher.Hash(rawToken);
-            var refreshToken = new OpaqueTokenEntity()
+            var refreshToken = new OpaqueTokenEntity
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = client.Id,
@@ -217,7 +217,7 @@ public class AuthorizationCodeStrategy(
         if (client.HasScope(Scopes.OpenId))
         {
             var claimsFactory = _claimFactoryProvider.GetClaimFactory<IdTokenClaimsContext, UserEntity>();
-            var claims = await claimsFactory.GetClaimsAsync(user, new IdTokenClaimsContext()
+            var claims = await claimsFactory.GetClaimsAsync(user, new IdTokenClaimsContext
             {
                 Aud = client.Id.ToString(),
                 Nonce = authorizationCode.Nonce,

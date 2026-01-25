@@ -80,7 +80,7 @@
 
     private async Task OnSignInAsync()
     {
-        var request = new GenerateRequestOptionsRequest() { UserId = UserState.UserId };
+        var request = new GenerateRequestOptionsRequest { UserId = UserState.UserId };
         var result = await PasskeyService.GenerateRequestOptionsAsync(request);
 
         if (result.Succeeded && result.TryGetValue<PublicKeyCredentialRequestOptions>(out var options))
@@ -97,7 +97,7 @@
 
     private async Task SignInAsync(PublicKeyCredential credential)
     {
-        var request = new VerifyPasskeyRequest()
+        var request = new VerifyPasskeyRequest
         {
             UserId = UserState.UserId,
             Credential = credential,

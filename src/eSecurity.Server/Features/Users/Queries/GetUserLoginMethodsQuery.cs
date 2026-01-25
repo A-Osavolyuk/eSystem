@@ -41,7 +41,7 @@ public class GetUserLoginMethodsQueryHandler(
         var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
         if (device is null || device.IsBlocked || !device.IsTrusted)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidDevice,
                 Description = "Invalid device"
@@ -52,14 +52,14 @@ public class GetUserLoginMethodsQueryHandler(
         var linkedAccounts = await _linkedAccountManager.GetAllAsync(user, cancellationToken);
         var passkeys = await _passkeyManager.GetAllAsync(user, cancellationToken);
 
-        var response = new UserLoginMethodsDto()
+        var response = new UserLoginMethodsDto
         {
-            PasswordData = new PasswordData()
+            PasswordData = new PasswordData
             {
                 HasPassword = password is not null,
                 LastChange = password?.UpdateDate
             },
-            TwoFactorData = new TwoFactorData()
+            TwoFactorData = new TwoFactorData
             {
                 PreferredMethod = (await _twoFactorManager.GetPreferredAsync(user, cancellationToken))?.Method,
                 Enabled = await _twoFactorManager.IsEnabledAsync(user, cancellationToken),
@@ -69,20 +69,20 @@ public class GetUserLoginMethodsQueryHandler(
                 AuthenticatorEnabled = await _twoFactorManager.HasMethodAsync(
                     user, TwoFactorMethod.AuthenticatorApp, cancellationToken),
             },
-            LinkedAccountsData = new LinkedAccountsData()
+            LinkedAccountsData = new LinkedAccountsData
             {
                 HasLinkedAccounts = linkedAccounts.Count > 0,
-                LinkedAccounts = linkedAccounts.Select(linkedAccount => new UserLinkedAccountDto()
+                LinkedAccounts = linkedAccounts.Select(linkedAccount => new UserLinkedAccountDto
                 {
                     Id = linkedAccount.Id,
                     Type = linkedAccount.Type,
                     LinkedDate = linkedAccount.CreateDate
                 }).ToList()
             },
-            PasskeysData = new PasskeysData()
+            PasskeysData = new PasskeysData
             {
                 HasPasskeys = await _passkeyManager.HasAsync(user, cancellationToken),
-                Passkeys = passkeys.Select(passkey => new UserPasskeyDto()
+                Passkeys = passkeys.Select(passkey => new UserPasskeyDto
                     {
                         Id = passkey.Id,
                         CurrentKey = passkey.DeviceId == device.Id,

@@ -25,7 +25,7 @@ public sealed class ResetPasswordCommandHandler(
         if (user is null) return Results.NotFound("User not found.");
         
         if (!await _passwordManager.HasAsync(user, cancellationToken)) 
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidPassword,
                 Description = "User does not have a password."

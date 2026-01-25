@@ -100,9 +100,9 @@ else
         if (authenticateResult.Success)
         {
             var credential = authenticateResult.Get<PublicKeyCredential>();
-            var request = new SignInRequest()
+            var request = new SignInRequest
             {
-                Payload = new PasskeySignInPayload()
+                Payload = new PasskeySignInPayload
                 {
                     Credential = credential
                 }

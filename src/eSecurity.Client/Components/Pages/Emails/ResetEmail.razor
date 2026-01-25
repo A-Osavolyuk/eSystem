@@ -156,7 +156,7 @@
 
     protected override void OnInitialized()
     {
-        _confirmationContext = new ConfirmationContext()
+        _confirmationContext = new ConfirmationContext
         {
             Action = ActionType.Reset,
             Purpose = PurposeType.Email
@@ -169,7 +169,7 @@
 
         if (_resetForm.IsValid)
         {
-            _messageContext = new MessageContext()
+            _messageContext = new MessageContext
             {
                 UserId = UserState.UserId,
                 Sender = SenderType.Email,
@@ -181,7 +181,7 @@
                 }
             };
 
-            var request = new CheckEmailRequest()
+            var request = new CheckEmailRequest
             {
                 UserId = UserState.UserId,
                 Email = _resetModel.NewEmail
@@ -219,7 +219,7 @@
 
     private async Task VerifyAsync()
     {
-        var request = new ResetEmailRequest()
+        var request = new ResetEmailRequest
         {
             UserId = UserState.UserId,
             NewEmail = _resetModel.NewEmail,

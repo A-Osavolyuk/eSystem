@@ -39,7 +39,7 @@ public class TokenValidator(
             return Results.InternalServerError("Invalid response");
             
         var signingKey = new RsaSecurityKey(CreateRsaFromJwk(publicKey));
-        var parameters = new TokenValidationParameters()
+        var parameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidIssuer = openIdConfiguration!.Issuer,
@@ -54,7 +54,7 @@ public class TokenValidator(
         var principal = handler.ValidateToken(token, parameters, out _);
         if (principal is null) return Results.BadRequest("Invalid token.");
 
-        var claims = principal.Claims.Select(x => new ClaimValue()
+        var claims = principal.Claims.Select(x => new ClaimValue
         {
             Type = x.Type, 
             Value = x.Value

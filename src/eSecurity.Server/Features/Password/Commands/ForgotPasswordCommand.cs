@@ -24,14 +24,14 @@ public sealed class ForgotPasswordCommandHandler(
 
         if (!await _passwordManager.HasAsync(user, cancellationToken))
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidPassword,
                 Description = "Password was not provided."
             });
         }
 
-        var response = new ForgotPasswordResponse() { UserId = user.Id };
+        var response = new ForgotPasswordResponse { UserId = user.Id };
         return Results.Ok(response);
     }
 }

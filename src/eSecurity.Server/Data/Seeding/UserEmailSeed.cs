@@ -10,7 +10,7 @@ public class UserEmailSeed : Seed<UserEmailEntity>
     {
         return
         [
-            new UserEmailEntity()
+            new UserEmailEntity
             {
                 Id = Guid.CreateVersion7(),
                 UserId = Guid.Parse("188c7286-b0b9-4cb1-8f7f-503c6349bc65"),

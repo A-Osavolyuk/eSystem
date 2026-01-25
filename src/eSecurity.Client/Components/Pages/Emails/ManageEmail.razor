@@ -115,7 +115,7 @@
             _ => throw new NotSupportedException("Unsupported email type")
         };
 
-        var request = new ManageEmailRequest()
+        var request = new ManageEmailRequest
         {
             UserId = UserState.UserId,
             Email = Email,

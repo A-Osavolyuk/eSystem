@@ -14,7 +14,7 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
         _logger.LogInformation("Handling global exception");
 
         httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
-        await httpContext.Response.WriteAsJsonAsync(new Error()
+        await httpContext.Response.WriteAsJsonAsync(new Error
         {
             Code = ErrorTypes.OAuth.ServerError,
             Description = exception.Message

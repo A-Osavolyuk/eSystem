@@ -21,7 +21,7 @@ public class BearerTokenTransformer : IOpenApiDocumentTransformer
         document.SecurityRequirements?.Add(new OpenApiSecurityRequirement
         {
             {
-                new OpenApiSecurityScheme()
+                new OpenApiSecurityScheme
                 {
                     Reference = new OpenApiReference
                     {

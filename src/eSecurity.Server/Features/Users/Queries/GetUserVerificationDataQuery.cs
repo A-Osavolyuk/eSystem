@@ -39,7 +39,7 @@ public class GetUserVerificationMethodsQueryHandler(
         var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
         if (device is null)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidDevice,
                 Description = "Invalid device"
@@ -49,7 +49,7 @@ public class GetUserVerificationMethodsQueryHandler(
         var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
         if (email is null)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidEmail,
                 Description = "Invalid email"
@@ -59,7 +59,7 @@ public class GetUserVerificationMethodsQueryHandler(
         var passkey = await _passkeyManager.FindByDeviceAsync(device, cancellationToken);
         var twoFactorEnabled = await _twoFactorManager.IsEnabledAsync(user, cancellationToken);
         
-        var response = new UserVerificationData()
+        var response = new UserVerificationData
         {
             EmailEnabled = true,
             PasskeyEnabled = passkey is not null,

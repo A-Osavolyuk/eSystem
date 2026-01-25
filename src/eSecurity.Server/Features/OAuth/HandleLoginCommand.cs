@@ -70,7 +70,7 @@ public sealed class HandleOAuthLoginCommandHandler(
         if (user is null)
         {
             var signUpStrategy = _signUpResolver.Resolve(SignUpType.OAuth);
-            var signUpPayload = new OAuthSignUpPayload()
+            var signUpPayload = new OAuthSignUpPayload
             {
                 Type = linkedAccountType,
                 Email = email,
@@ -91,7 +91,7 @@ public sealed class HandleOAuthLoginCommandHandler(
 
         }
 
-        var signInPayload = new OAuthSignInPayload()
+        var signInPayload = new OAuthSignInPayload
         {
             Email = email,
             State = state,

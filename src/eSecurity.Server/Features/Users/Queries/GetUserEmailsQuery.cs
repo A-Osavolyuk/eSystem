@@ -20,7 +20,7 @@ public class GetUserEmailsQueryHandler(
         if (user is null) return Results.NotFound("User not found.");
         
         var emails = await _emailManager.GetAllAsync(user, cancellationToken);
-        var response = emails.Select(email => new UserEmailDto()
+        var response = emails.Select(email => new UserEmailDto
         {
             Id = email.Id,
             Email = email.Email,

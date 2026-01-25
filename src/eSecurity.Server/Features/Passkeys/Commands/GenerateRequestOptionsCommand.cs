@@ -35,7 +35,7 @@ public class GenerateRequestOptionsCommandHandler(
     public async Task<Result> Handle(GenerateRequestOptionsCommand request, CancellationToken cancellationToken)
     {
         var challenge = _challengeFactory.Create();
-        var options = new PublicKeyCredentialRequestOptions()
+        var options = new PublicKeyCredentialRequestOptions
         {
             Challenge = challenge,
             Timeout = _credentialOptions.Timeout,
@@ -53,7 +53,7 @@ public class GenerateRequestOptionsCommandHandler(
             var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
             if (device is null)
             {
-                return Results.BadRequest(new Error()
+                return Results.BadRequest(new Error
                 {
                     Code = ErrorTypes.Common.InvalidDevice,
                     Description = "Invalid device."
@@ -63,7 +63,7 @@ public class GenerateRequestOptionsCommandHandler(
             var passkey = await _passkeyManager.FindByDeviceAsync(device, cancellationToken);
             if (passkey is null)
             {
-                return Results.BadRequest(new Error()
+                return Results.BadRequest(new Error
                 {
                     Code = ErrorTypes.Common.InvalidDevice,
                     Description = "This device does not have a passkey."

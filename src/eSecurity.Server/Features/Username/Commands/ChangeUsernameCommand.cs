@@ -28,7 +28,7 @@ public class ChangeUsernameCommandHandler(
         if (_options.RequireUniqueUsername &&
             await _usernameManager.IsTakenAsync(request.Request.Username, cancellationToken))
         {
-            return Results.NotFound(new Error()
+            return Results.NotFound(new Error
             {
                 Code = ErrorTypes.Common.UsernameTaken,
                 Description = "Username is already taken"

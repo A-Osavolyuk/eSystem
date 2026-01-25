@@ -116,9 +116,9 @@
 
         if (_form.IsValid)
         {
-            var request = new SignInRequest()
+            var request = new SignInRequest
             {
-                Payload = new PasswordSignInPayload()
+                Payload = new PasswordSignInPayload
                 {
                     Password = _model.Password,
                     Login = _model.Login

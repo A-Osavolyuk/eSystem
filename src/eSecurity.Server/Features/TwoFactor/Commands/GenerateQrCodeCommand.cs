@@ -41,7 +41,7 @@ public class GenerateQrCodeCommandHandler(
         {
             var secret = _secretManager.Generate();
             var protectedSecret = protector.Protect(secret);
-            userSecret = new UserSecretEntity()
+            userSecret = new UserSecretEntity
             {
                 Id = Guid.CreateVersion7(),
                 UserId = user.Id,

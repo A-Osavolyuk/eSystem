@@ -24,7 +24,7 @@ internal sealed class UploadFilesCommandHandler(
             return Results.InternalServerError($"Cannot upload files of type '{metadata.Type}' with identifier '{metadata.Identifier}'.");
         }
 
-        var response = new UploadFiledResponse() { Files = list };
+        var response = new UploadFiledResponse { Files = list };
         
         return Results.Ok(response);
     }

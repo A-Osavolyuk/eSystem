@@ -37,5 +37,5 @@ public class IntrospectionResponse
     [JsonPropertyName("scope")]
     public string? Scope { get; set; }
 
-    public static IntrospectionResponse Fail() => new IntrospectionResponse() { Active = false };
+    public static IntrospectionResponse Fail() => new IntrospectionResponse { Active = false };
 }

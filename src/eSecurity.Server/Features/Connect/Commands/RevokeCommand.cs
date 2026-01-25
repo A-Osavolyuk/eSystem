@@ -19,7 +19,7 @@ public class RevokeCommandHandler(
     public async Task<Result> Handle(RevokeCommand request, CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(request.Request.Token))
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "Token is missing."

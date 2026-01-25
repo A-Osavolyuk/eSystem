@@ -23,7 +23,7 @@ public class GetUserPrimaryPhoneNumberQueryHandler(
         var phoneNumber = await _phoneManager.FindByTypeAsync(user, PhoneNumberType.Primary, cancellationToken);
         if (phoneNumber is null) return Results.BadRequest("User does not have a primary phone number.");
 
-        var response = new UserPhoneNumberDto()
+        var response = new UserPhoneNumberDto
         {
             Id = phoneNumber.Id,
             PhoneNumber = phoneNumber.PhoneNumber,

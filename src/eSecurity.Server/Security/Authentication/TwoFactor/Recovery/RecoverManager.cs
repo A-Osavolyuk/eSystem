@@ -34,7 +34,7 @@ public sealed class RecoverManager(
         var codes = _recoveryCodeFactory.Create().ToList();
         var entities = codes
             .Select(code => _protector.Protect(code))
-            .Select(hash => new UserRecoveryCodeEntity()
+            .Select(hash => new UserRecoveryCodeEntity
             {
                 Id = Guid.CreateVersion7(),
                 UserId = user.Id,

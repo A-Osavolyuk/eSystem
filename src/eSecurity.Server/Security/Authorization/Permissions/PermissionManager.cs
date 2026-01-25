@@ -28,7 +28,7 @@ public sealed class PermissionManager(AuthDbContext context) : IPermissionManage
             return Results.Ok();
         }
 
-        var entity = new UserPermissionsEntity() { UserId = user.Id, PermissionId = permission!.Id };
+        var entity = new UserPermissionsEntity { UserId = user.Id, PermissionId = permission!.Id };
         await _context.UserPermissions.AddAsync(entity, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         return Results.Ok();

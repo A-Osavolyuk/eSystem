@@ -18,7 +18,7 @@ public static class WebApplicationExtensions
                 if (response.StatusCode == StatusCodes.Status405MethodNotAllowed)
                 {
                     response.ContentType = ContentTypes.Application.Json;
-                    var error = new Error()
+                    var error = new Error
                     {
                         Code = ErrorTypes.Common.MethodNotAllowed,
                         Description = "Method not allowed"
@@ -29,7 +29,7 @@ public static class WebApplicationExtensions
                 else if (response.StatusCode == StatusCodes.Status415UnsupportedMediaType)
                 {
                     response.ContentType = ContentTypes.Application.Json;
-                    var error = new Error()
+                    var error = new Error
                     {
                         Code = ErrorTypes.Common.UnsupportedMediaType,
                         Description = "Unsupported media type"

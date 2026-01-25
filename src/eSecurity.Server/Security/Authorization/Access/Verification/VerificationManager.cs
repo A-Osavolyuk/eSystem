@@ -19,7 +19,7 @@ public class VerificationManager(AuthDbContext context) : IVerificationManager
 
         if (existedEntity is not null) _context.Verifications.Remove(existedEntity);
         
-        var entity = new VerificationEntity()
+        var entity = new VerificationEntity
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,

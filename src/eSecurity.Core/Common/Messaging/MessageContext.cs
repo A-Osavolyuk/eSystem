@@ -14,7 +14,7 @@ public class MessageContext
 
     public SendCodeRequest ToSendCodeRequest()
     {
-        return new SendCodeRequest()
+        return new SendCodeRequest
         {
             UserId = UserId,
             Sender = Sender,
@@ -26,7 +26,7 @@ public class MessageContext
     
     public VerifyCodeRequest ToVerifyCodeRequest(string code)
     {
-        return new VerifyCodeRequest()
+        return new VerifyCodeRequest
         {
             UserId = UserId,
             Sender = Sender,

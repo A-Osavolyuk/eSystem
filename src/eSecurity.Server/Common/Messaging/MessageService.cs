@@ -12,7 +12,7 @@ public sealed class MessageService(IBus bus) : IMessageService
         var body = message.Build();
         var credentials = message.Credentials;
         
-        var request = new MessageRequest()
+        var request = new MessageRequest
         {
             Type = type,
             Body = body,

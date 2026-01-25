@@ -92,7 +92,7 @@
 
     private async Task SendCodeAsync()
     {
-        _context = new MessageContext()
+        _context = new MessageContext
         {
             UserId = UserId,
             Sender = SenderType.Email,
@@ -126,7 +126,7 @@
 
     private async Task VerifyAsync()
     {
-        var request = new VerifyEmailRequest()
+        var request = new VerifyEmailRequest
         {
             UserId = UserId,
             Email = _email?.Email!

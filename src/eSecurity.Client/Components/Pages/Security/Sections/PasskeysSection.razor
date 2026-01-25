@@ -124,7 +124,7 @@
 
     private async Task OnChange(UserPasskeyDto passkey)
     {
-        var request = new ChangePasskeyNameRequest()
+        var request = new ChangePasskeyNameRequest
         {
             UserId = UserState.UserId,
             PasskeyId = passkey.Id,
@@ -142,7 +142,7 @@
         var confirmationResult = await ConfirmationManager.InitiateAsync(PurposeType.Passkey, ActionType.Remove);
         if (!confirmationResult!.Canceled)
         {
-            var request = new RemovePasskeyRequest()
+            var request = new RemovePasskeyRequest
             {
                 UserId = UserState.UserId,
                 PasskeyId = passkey.Id

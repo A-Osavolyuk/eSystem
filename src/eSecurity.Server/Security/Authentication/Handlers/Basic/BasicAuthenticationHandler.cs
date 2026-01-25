@@ -38,7 +38,7 @@ public class BasicAuthenticationHandler(
             Response.StatusCode = StatusCodes.Status500InternalServerError;
             Response.ContentType = ContentTypes.Application.Json;
         
-            await Response.WriteAsJsonAsync(new Error()
+            await Response.WriteAsJsonAsync(new Error
             {
                 Code = ErrorTypes.OAuth.ServerError, 
                 Description = "Server error."
@@ -49,7 +49,7 @@ public class BasicAuthenticationHandler(
             Response.StatusCode = StatusCodes.Status401Unauthorized;
             Response.ContentType = ContentTypes.Application.Json;
         
-            await Response.WriteAsJsonAsync(new Error()
+            await Response.WriteAsJsonAsync(new Error
             {
                 Code = error, 
                 Description = "Invalid client."

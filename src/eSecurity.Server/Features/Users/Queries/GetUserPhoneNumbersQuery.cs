@@ -20,7 +20,7 @@ public class GetUserPhoneNumbersQueryHandler(
         if (user is null) return Results.NotFound("User not found.");
 
         var phoneNumbers = await _phoneManager.GetAllAsync(user, cancellationToken);
-        var response = phoneNumbers.Select(phoneNumber => new UserPhoneNumberDto()
+        var response = phoneNumbers.Select(phoneNumber => new UserPhoneNumberDto
         {
             Id = phoneNumber.Id,
             PhoneNumber = phoneNumber.PhoneNumber,

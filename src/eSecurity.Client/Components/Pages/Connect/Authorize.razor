@@ -100,7 +100,7 @@
                 .Build());
         }
         
-        var request = new AuthorizeRequest()
+        var request = new AuthorizeRequest
         {
             UserId = UserState.UserId,
             ResponseType = ResponseType,
@@ -116,7 +116,7 @@
         var result = await ConnectService.AuthorizeAsync(request);
         if (result.Succeeded && result.TryGetValue<AuthorizeResponse>(out var response))
         {
-            var session = new SessionCookie()
+            var session = new SessionCookie
             {
                 Id = response!.SessionId,
                 UserId = request.UserId,
@@ -125,7 +125,7 @@
                 ExpiresAt = DateTimeOffset.UtcNow.AddDays(30)
             };
 
-            var fetchOptions = new FetchOptions()
+            var fetchOptions = new FetchOptions
             {
                 Url = $"{NavigationManager.BaseUri}api/authentication/authorize",
                 Method = HttpMethod.Post,

@@ -99,7 +99,7 @@
 
         if (_form.IsValid)
         {
-            var request = new VerifyRecoveryCodeRequest()
+            var request = new VerifyRecoveryCodeRequest
             {
                 UserId = UserState.UserId,
                 Code = _model.Code,

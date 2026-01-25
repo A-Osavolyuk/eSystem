@@ -41,7 +41,7 @@ public class EmailManager(AuthDbContext context) : IEmailManager
     public async ValueTask<Result> SetAsync(UserEntity user, string email, EmailType type,
         CancellationToken cancellationToken = default)
     {
-        var userEmail = new UserEmailEntity()
+        var userEmail = new UserEmailEntity
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
@@ -158,7 +158,7 @@ public class EmailManager(AuthDbContext context) : IEmailManager
         if (await _context.UserEmails.AnyAsync(x => x.Email == email, cancellationToken))
             return Results.BadRequest("Email is already taken");
 
-        var userEmail = new UserEmailEntity()
+        var userEmail = new UserEmailEntity
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,

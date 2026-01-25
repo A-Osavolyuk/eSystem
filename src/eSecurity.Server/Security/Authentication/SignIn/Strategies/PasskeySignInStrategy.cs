@@ -37,7 +37,7 @@ public sealed class PasskeySignInStrategy(
         CancellationToken cancellationToken = default)
     {
         if (payload is not PasskeySignInPayload passkeyPayload)
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidPayloadType, 
                 Description = "Invalid payload type"
@@ -61,7 +61,7 @@ public sealed class PasskeySignInStrategy(
         if (lockoutState is null) return Results.NotFound("State not found");
         
         if (lockoutState.Enabled)
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.AccountLockedOut, 
                 Description = "Account is locked out",
@@ -73,14 +73,14 @@ public sealed class PasskeySignInStrategy(
         var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
         if (device is null)
         {
-            return Results.NotFound(new Error()
+            return Results.NotFound(new Error
             {
                 Code = ErrorTypes.Common.InvalidDevice, 
                 Description = "Invalid device."
             });
         }
 
-        var session = new SignInSessionEntity()
+        var session = new SignInSessionEntity
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
@@ -96,6 +96,6 @@ public sealed class PasskeySignInStrategy(
         if (!sessionResult.Succeeded) return sessionResult;
 
         await _sessionManager.CreateAsync(device, cancellationToken);
-        return Results.Ok(new SignInResponse() { SessionId = session.Id, });
+        return Results.Ok(new SignInResponse { SessionId = session.Id, });
     }
 }

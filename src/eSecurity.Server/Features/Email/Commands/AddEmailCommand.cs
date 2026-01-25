@@ -27,7 +27,7 @@ public class AddEmailCommandHandler(
         var secondaryEmails = await _emailManager.GetAllAsync(user, EmailType.Secondary, cancellationToken);
         if (secondaryEmails.Count >= _options.SecondaryEmailMaxCount)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.MaxEmailsCount,
                 Description = "User already has maximum count of secondary emails."
@@ -37,7 +37,7 @@ public class AddEmailCommandHandler(
         if (_options.RequireUniqueEmail)
         {
             var taken = await _emailManager.IsTakenAsync(request.Request.Email, cancellationToken);
-            if (taken) return Results.BadRequest(new Error()
+            if (taken) return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.EmailTaken,
                 Description = "Email is already taken"

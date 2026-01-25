@@ -40,7 +40,7 @@ public class GenerateCreationOptionsCommandHandler(
         var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
         if (device is null)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidDevice,
                 Description = "Invalid device."
@@ -53,7 +53,7 @@ public class GenerateCreationOptionsCommandHandler(
         var identifier = $"{user.Id}_{device.Device}_{browser}";
         var identifierBytes = Encoding.UTF8.GetBytes(identifier);
         var identifierBase64 = Convert.ToBase64String(identifierBytes);
-        var options = new PublicKeyCredentialCreationOptions()
+        var options = new PublicKeyCredentialCreationOptions
         {
             Challenge = challenge,
             PublicKeyCredentialUser = new PublicKeyCredentialUser
@@ -73,7 +73,7 @@ public class GenerateCreationOptionsCommandHandler(
                 new PublicKeyCredentialParameter { Algorithm = Algorithms.Es256, Type = KeyType.PublicKey },
                 new PublicKeyCredentialParameter { Algorithm = Algorithms.Rs256, Type = KeyType.PublicKey },
             ],
-            ReplyingParty = new ReplyingParty()
+            ReplyingParty = new ReplyingParty
             {
                 Domain = _credentialOptions.Domain,
                 Name = _credentialOptions.Server,

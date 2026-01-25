@@ -9,13 +9,13 @@ public class TokenValidationResult
     
     private TokenValidationResult(){}
 
-    public static TokenValidationResult Success(ClaimsPrincipal principal) => new TokenValidationResult()
+    public static TokenValidationResult Success(ClaimsPrincipal principal) => new TokenValidationResult
     {
         IsValid = true,
         ClaimsPrincipal = principal
     };
     
-    public static TokenValidationResult Fail() => new TokenValidationResult()
+    public static TokenValidationResult Fail() => new TokenValidationResult
     {
         IsValid = false,
     };

@@ -11,7 +11,7 @@ public class FetchClient(IJSRuntime jSRuntime) : IFetchClient
     public async ValueTask<Result> FetchAsync(FetchOptions options)
     {
         var body = options.Body is null ? string.Empty : JsonSerializer.Serialize(options.Body);
-        var headers = new Dictionary<string, string>()
+        var headers = new Dictionary<string, string>
         {
             { "Accept", "application/json" },
             { "Content-Type", "application/json" }

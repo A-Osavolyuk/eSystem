@@ -16,7 +16,7 @@ public sealed class SignUpCommandHandler(ISignUpResolver resolver) : IRequestHan
     {
         var strategy = _resolver.Resolve(SignUpType.Manual);
 
-        var payload = new ManualSignUpPayload()
+        var payload = new ManualSignUpPayload
         {
             Username = request.Request.Username,
             Email = request.Request.Email,

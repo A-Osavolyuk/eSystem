@@ -26,7 +26,7 @@ public class LogoutCommandHandler(
     {
         if (string.IsNullOrEmpty(request.Request.PostLogoutRedirectUri))
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "post_logout_redirect_uri is required."
@@ -35,7 +35,7 @@ public class LogoutCommandHandler(
 
         if (string.IsNullOrEmpty(request.Request.IdTokenHint))
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "id_token_hint is required."
@@ -45,7 +45,7 @@ public class LogoutCommandHandler(
         var validationResult = await _validator.ValidateAsync(request.Request.IdTokenHint, cancellationToken);
         if (!validationResult.IsValid || validationResult.ClaimsPrincipal is null)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "id_token_hint is invalid."
@@ -56,7 +56,7 @@ public class LogoutCommandHandler(
         var sid = principal.Claims.FirstOrDefault(x => x.Type == AppClaimTypes.Sid);
         if (sid is null)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "id_token_hint is invalid."
@@ -65,7 +65,7 @@ public class LogoutCommandHandler(
 
         var session = await _sessionManager.FindByIdAsync(Guid.Parse(sid.Value), cancellationToken);
         if (session is null)
-            return Results.InternalServerError(new Error()
+            return Results.InternalServerError(new Error
             {
                 Code = ErrorTypes.OAuth.ServerError,
                 Description = "Invalid session."
@@ -83,7 +83,7 @@ public class LogoutCommandHandler(
         }
 
         if (client is null)
-            return Results.Unauthorized(new Error()
+            return Results.Unauthorized(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidClient,
                 Description = "Invalid client."
@@ -91,7 +91,7 @@ public class LogoutCommandHandler(
         
         var postLogoutRedirectUri = client.Uris.FirstOrDefault(x => x.Type == UriType.PostLogoutRedirect);
         if (postLogoutRedirectUri is null)
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "post_logout_redirect_uri is invalid."
@@ -105,7 +105,7 @@ public class LogoutCommandHandler(
             .Select(x => x.Uri)
             .ToList();
         
-        var response = new LogoutResponse()
+        var response = new LogoutResponse
         {
             State = request.Request.State,
             PostLogoutRedirectUri = postLogoutRedirectUri.Uri,

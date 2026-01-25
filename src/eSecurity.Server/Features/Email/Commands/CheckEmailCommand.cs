@@ -23,7 +23,7 @@ public class CheckEmailCommandHandler(
         var isTaken = await _emailManager.IsTakenAsync(request.Request.Email, cancellationToken);
         if (isTaken)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.EmailTaken,
                 Description = "Email is already taken"

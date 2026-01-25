@@ -8,12 +8,12 @@ public class ConsentService(IApiClient apiClient) : IConsentService
 
     public async ValueTask<ApiResponse> CheckAsync(CheckConsentRequest request)
         => await _apiClient.SendAsync(
-            new ApiRequest()
+            new ApiRequest
             {
                 Method = HttpMethod.Post,
                 Url = "/api/v1/Consent/check",
                 Data = request
-            }, new ApiOptions()
+            }, new ApiOptions
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
@@ -21,12 +21,12 @@ public class ConsentService(IApiClient apiClient) : IConsentService
 
     public async ValueTask<ApiResponse> GrantAsync(GrantConsentRequest request)
         => await _apiClient.SendAsync(
-            new ApiRequest()
+            new ApiRequest
             {
                 Method = HttpMethod.Post,
                 Url = "/api/v1/Consent/grant",
                 Data = request
-            }, new ApiOptions()
+            }, new ApiOptions
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None

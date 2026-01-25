@@ -11,13 +11,13 @@ public class ClientGrantTypeSeed : Seed<ClientGrantTypeEntity>
         return
         [
             // eSecurity.Client
-            new ClientGrantTypeEntity()
+            new ClientGrantTypeEntity
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("392e390f-33bd-4f30-af70-ccbe04bbb2c4"),
                 Type = GrantTypes.RefreshToken,
             },
-            new ClientGrantTypeEntity()
+            new ClientGrantTypeEntity
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("392e390f-33bd-4f30-af70-ccbe04bbb2c4"),
@@ -25,13 +25,13 @@ public class ClientGrantTypeSeed : Seed<ClientGrantTypeEntity>
             },
             
             // eCinema.Client
-            new ClientGrantTypeEntity()
+            new ClientGrantTypeEntity
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("307268b0-005c-4ee4-a0e8-a93bd0010382"),
                 Type = GrantTypes.RefreshToken,
             },
-            new ClientGrantTypeEntity()
+            new ClientGrantTypeEntity
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("307268b0-005c-4ee4-a0e8-a93bd0010382"),

@@ -116,7 +116,7 @@ public static class HostApplicationBuilderExtensions
                 new ClusterConfig
                 {
                     ClusterId = "security-cluster",
-                    Destinations = new Dictionary<string, DestinationConfig>()
+                    Destinations = new Dictionary<string, DestinationConfig>
                     {
                         ["security-destination"] = new() { Address = configuration["E_SECURITY_SERVER_HTTPS"]! }
                     }
@@ -124,7 +124,7 @@ public static class HostApplicationBuilderExtensions
                 new ClusterConfig
                 {
                     ClusterId = "files-cluster",
-                    Destinations = new Dictionary<string, DestinationConfig>()
+                    Destinations = new Dictionary<string, DestinationConfig>
                     {
                         ["files-destination"] = new() { Address = configuration["STORAGE_API_HTTPS"]! }
                     }

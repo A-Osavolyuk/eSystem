@@ -140,7 +140,7 @@
 
         if (_checkAccountForm.IsValid)
         {
-            var request = new CheckAccountRequest()
+            var request = new CheckAccountRequest
             {
                 Username = _recoverAccountModel.Username
             };
@@ -172,7 +172,7 @@
                 _userId = response.UserId;
                 _recoveryEmail = response.RecoveryEmail;
                 
-                _context = new MessageContext()
+                _context = new MessageContext
                 {
                     UserId = _userId,
                     Sender = SenderType.Email,
@@ -215,7 +215,7 @@
 
     private async Task VerifyAsync()
     {
-        var request = new RecoverAccountRequest() { UserId = _userId };
+        var request = new RecoverAccountRequest { UserId = _userId };
         var result = await SecurityService.RecoverAccountAsync(request);
 
         if (result.Succeeded)

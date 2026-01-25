@@ -22,7 +22,7 @@ public class GetLockoutStateQueryHandler(
         var lockoutState = await _lockoutManager.GetAsync(user, cancellationToken);
         if (lockoutState is null) return Results.NotFound("State not found");
         
-        var response = new LockoutStateDto()
+        var response = new LockoutStateDto
         {
             Id = lockoutState.Id,
             Type = lockoutState.Type,

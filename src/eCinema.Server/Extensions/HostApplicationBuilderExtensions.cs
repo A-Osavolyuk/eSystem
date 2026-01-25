@@ -66,17 +66,17 @@ public static class HostApplicationBuilderExtensions
             builder.Services.AddReverseProxy()
                 .LoadFromMemory(
                     [
-                        new RouteConfig()
+                        new RouteConfig
                         {
                             RouteId = "proxy-route", ClusterId = "proxy-cluster",
                             Match = new RouteMatch { Path = "/api/v1/{**catch-all}" }
                         }
                     ],
                     [
-                        new ClusterConfig()
+                        new ClusterConfig
                         {
                             ClusterId = "proxy-cluster",
-                            Destinations = new Dictionary<string, DestinationConfig>()
+                            Destinations = new Dictionary<string, DestinationConfig>
                             {
                                 ["security-destination"] = new()
                                 {

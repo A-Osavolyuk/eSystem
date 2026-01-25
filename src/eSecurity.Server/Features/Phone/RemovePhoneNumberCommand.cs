@@ -31,7 +31,7 @@ public class RemovePhoneNumberCommandHandler(
 
         if (!await _phoneManager.HasAsync(user, PhoneNumberType.Primary, cancellationToken))
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidPhone,
                 Description = "Cannot remove phone number. Phone number is not provided."
@@ -40,7 +40,7 @@ public class RemovePhoneNumberCommandHandler(
 
         if (await _twoFactorManager.HasMethodAsync(user, TwoFactorMethod.Sms, cancellationToken))
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidPhone,
                 Description = "Cannot remove phone number. First disable 2FA with SMS."

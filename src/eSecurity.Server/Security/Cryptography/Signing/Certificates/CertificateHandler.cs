@@ -34,7 +34,7 @@ public class CertificateHandler(
         var password = _keyFactory.Create(20);
         var certificateBytes = certificate.Export(X509ContentType.Pkcs12, password);
 
-        return new ProtectedCertificate()
+        return new ProtectedCertificate
         {
             ProtectedCertificateBytes = _certificateProtector.Protect(certificateBytes),
             ProtectedPasswordBytes = _passwordProtector.Protect(Encoding.UTF8.GetBytes(password)),

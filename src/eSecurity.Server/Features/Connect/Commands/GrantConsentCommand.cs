@@ -26,7 +26,7 @@ public class GrantConsentCommandHandler(
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null)
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "user_id is invalid."
@@ -34,7 +34,7 @@ public class GrantConsentCommandHandler(
 
         var client = await _clientManager.FindByIdAsync(request.Request.ClientId, cancellationToken);
         if (client is null)
-            return Results.Unauthorized(new Error()
+            return Results.Unauthorized(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidClient,
                 Description = "Invalid client."
@@ -43,7 +43,7 @@ public class GrantConsentCommandHandler(
         var consent = await _consentManager.FindAsync(user, client, cancellationToken);
         if (consent is null)
         {
-            consent = new ConsentEntity()
+            consent = new ConsentEntity
             {
                 UserId = user.Id,
                 ClientId = client.Id,
@@ -57,7 +57,7 @@ public class GrantConsentCommandHandler(
                 var scope = await _scopeManager.FindByNameAsync(requestedScope, cancellationToken);
                 if (scope is null)
                 {
-                    return Results.BadRequest(new Error()
+                    return Results.BadRequest(new Error
                     {
                         Code = ErrorTypes.OAuth.InvalidScope,
                         Description = $"'{requestedScope}' scope is not supported."
@@ -78,7 +78,7 @@ public class GrantConsentCommandHandler(
                 var scope = await _scopeManager.FindByNameAsync(requestedScope, cancellationToken);
                 if (scope is null)
                 {
-                    return Results.BadRequest(new Error()
+                    return Results.BadRequest(new Error
                     {
                         Code = ErrorTypes.OAuth.InvalidScope,
                         Description = $"'{requestedScope}' scope is not supported."

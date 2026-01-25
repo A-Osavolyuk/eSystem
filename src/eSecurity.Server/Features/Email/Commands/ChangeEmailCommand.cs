@@ -33,7 +33,7 @@ public sealed class RequestChangeEmailCommandHandler(
         if (user is null) return Results.NotFound("User not found.");
 
         if (request.Request.Type is EmailType.Secondary)
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidEmail,
                 Description = "Cannot change a secondary phone number."
@@ -42,7 +42,7 @@ public sealed class RequestChangeEmailCommandHandler(
         var currentEmail = await _emailManager.FindByTypeAsync(user, request.Request.Type, cancellationToken);
         if (currentEmail is null)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidEmail,
                 Description = "User's primary email address is missing"
@@ -54,7 +54,7 @@ public sealed class RequestChangeEmailCommandHandler(
             var isTaken = await _emailManager.IsTakenAsync(request.Request.NewEmail, cancellationToken);
             if (isTaken)
             {
-                return Results.BadRequest(new Error()
+                return Results.BadRequest(new Error
                 {
                     Code = ErrorTypes.Common.EmailTaken,
                     Description = "Email address is already taken"
@@ -63,7 +63,7 @@ public sealed class RequestChangeEmailCommandHandler(
         }
 
         if (await _linkedAccountManager.HasAsync(user, cancellationToken))
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.LinkedAccountConnected,
                 Description = "Cannot change email, first disconnect linked accounts."

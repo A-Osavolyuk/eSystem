@@ -32,7 +32,7 @@ public class ResendCodeCommandHandler(
 
         if (user.CodeResendAttempts >= _options.MaxCodeResendAttempts)
         {
-            response = new ResendCodeResponse()
+            response = new ResendCodeResponse
             {
                 CodeResendAttempts = user.CodeResendAttempts,
                 MaxCodeResendAttempts = _options.MaxCodeResendAttempts,
@@ -74,7 +74,7 @@ public class ResendCodeCommandHandler(
         message.Initialize(payload);
         await _messageService.SendMessageAsync(sender, message, cancellationToken);
 
-        response = new ResendCodeResponse()
+        response = new ResendCodeResponse
         {
             CodeResendAttempts = user.CodeResendAttempts,
             MaxCodeResendAttempts = _options.MaxCodeResendAttempts,

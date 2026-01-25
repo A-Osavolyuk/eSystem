@@ -24,7 +24,7 @@ public class BasicAuthenticationTransformer : IOpenApiDocumentTransformer
             {
                 new OpenApiSecurityScheme
                 {
-                    Reference = new OpenApiReference()
+                    Reference = new OpenApiReference
                     {
                         Type = ReferenceType.SecurityScheme,
                         Id = BasicAuthenticationDefaults.AuthenticationScheme

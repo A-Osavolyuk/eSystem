@@ -22,7 +22,7 @@ public class CertificateProvider(
             certificateEntity.ProtectedPassword
         );
 
-        return new SigningCertificate()
+        return new SigningCertificate
         {
             Id = certificateEntity.Id,
             Certificate = certificate
@@ -38,7 +38,7 @@ public class CertificateProvider(
         {
             var protectedCertificate = _certificateHandler.CreateCertificate();
 
-            var entity = new SigningCertificateEntity()
+            var entity = new SigningCertificateEntity
             {
                 Id = Guid.CreateVersion7(),
                 IsActive = true,
@@ -50,7 +50,7 @@ public class CertificateProvider(
             await _context.Certificates.AddAsync(entity, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            return new SigningCertificate()
+            return new SigningCertificate
             {
                 Id = entity.Id,
                 Certificate = protectedCertificate.Certificate
@@ -61,7 +61,7 @@ public class CertificateProvider(
             certificateEntity.ProtectedCertificate,
             certificateEntity.ProtectedPassword);
 
-        return new SigningCertificate()
+        return new SigningCertificate
         {
             Id = certificateEntity.Id,
             Certificate = certificate

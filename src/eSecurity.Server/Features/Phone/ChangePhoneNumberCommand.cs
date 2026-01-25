@@ -31,7 +31,7 @@ public sealed class RequestChangePhoneNumberCommandHandler(
 
         if (request.Request.Type is PhoneNumberType.Secondary)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidPhone,
                 Description = "Cannot change a secondary phone number."
@@ -41,7 +41,7 @@ public sealed class RequestChangePhoneNumberCommandHandler(
         var phoneNumber = await _phoneManager.FindByTypeAsync(user, request.Request.Type, cancellationToken);
         if (phoneNumber is null)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidPhone,
                 Description = "User's phone number is missing."
@@ -53,7 +53,7 @@ public sealed class RequestChangePhoneNumberCommandHandler(
             var isTaken = await _phoneManager.IsTakenAsync(request.Request.NewPhoneNumber, cancellationToken);
             if (isTaken)
             {
-                return Results.BadRequest(new Error()
+                return Results.BadRequest(new Error
                 {
                     Code = ErrorTypes.Common.PhoneTaken,
                     Description = "This phone number is already taken"

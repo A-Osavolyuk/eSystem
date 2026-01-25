@@ -22,7 +22,7 @@ public class GetUserDeviceQueryHandler(
         var device = await _deviceManager.FindByIdAsync(request.DeviceId, cancellationToken);
         if (device is null) return Results.NotFound("Device not found.");
 
-        var response = new UserDeviceDto()
+        var response = new UserDeviceDto
         {
             Id = device.Id,
             Browser = device.Browser,

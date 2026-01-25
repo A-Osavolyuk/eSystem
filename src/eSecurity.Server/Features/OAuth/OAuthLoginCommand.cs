@@ -31,7 +31,7 @@ public sealed class OAuthLoginCommandHandler(
                 .Build());
         }
         
-        var session = new SignInSessionEntity()
+        var session = new SignInSessionEntity
         {
             Id = Guid.NewGuid(),
             Provider = request.Provider,
@@ -58,7 +58,7 @@ public sealed class OAuthLoginCommandHandler(
         
         await _signInSessionManager.CreateAsync(session, cancellationToken);
         
-        var result = Results.Ok(new OAuthLoginResponse()
+        var result = Results.Ok(new OAuthLoginResponse
         {
             Provider = request.Provider,
             AuthenticationProperties = properties

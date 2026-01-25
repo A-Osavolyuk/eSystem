@@ -43,7 +43,7 @@
         var result = await UserService.GetUserDevicesAsync(UserState.UserId);
         if (result.Succeeded && result.TryGetValue<List<UserDeviceDto>>(out var devices))
         {
-            _model = new UserDevicesModel() { Devices = devices! };
+            _model = new UserDevicesModel { Devices = devices! };
         }
         else
         {

@@ -74,7 +74,7 @@ else
         if (firstRender && string.IsNullOrEmpty(Error) && string.IsNullOrEmpty(ErrorDescription))
         {
             var options = ClientOptions.Value;
-            var request = new TokenRequest()
+            var request = new TokenRequest
             {
                 ClientId = options.ClientId,
                 ClientSecret = options.ClientSecret,
@@ -93,7 +93,7 @@ else
                     Snackbar.Add(error.Description, Severity.Error);
                 }
                 
-                var tokenIdentity = new SignIdentity()
+                var tokenIdentity = new SignIdentity
                 {
                     Claims = tokenResult.Get<List<ClaimValue>>(),
                     Tokens =
@@ -104,7 +104,7 @@ else
                     ]
                 };
 
-                var fetchOptions = new FetchOptions()
+                var fetchOptions = new FetchOptions
                 {
                     Url = $"{NavigationManager.BaseUri}api/authentication/sign-in",
                     Method = HttpMethod.Post,

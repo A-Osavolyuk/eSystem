@@ -15,7 +15,7 @@ public class GetPasskeyQueryHandler(IPasskeyManager passkeyManager) : IRequestHa
         var passkey = await _passkeyManager.FindByIdAsync(request.Id, cancellationToken);
         if (passkey is null) return Results.NotFound("Passkey not found");
         
-        var response = new UserPasskeyDto()
+        var response = new UserPasskeyDto
         {
             Id = passkey.Id,
             DisplayName = passkey.DisplayName,

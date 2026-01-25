@@ -66,7 +66,7 @@
         if (!string.IsNullOrEmpty(ReturnUrl))
         {
             var queryParams = QueryParser.GetQueryParameters(ReturnUrl);
-            state = new OAuthState()
+            state = new OAuthState
             {
                 ResponseType = queryParams.GetValueOrDefault("response_type"),
                 ClientId = queryParams.GetValueOrDefault("client_id"),
@@ -80,7 +80,7 @@
         else
         {
             var options = ClientOptions.Value;
-            state = new OAuthState()
+            state = new OAuthState
             {
                 ResponseType = ResponseTypes.Code,
                 ClientId = options.ClientId,

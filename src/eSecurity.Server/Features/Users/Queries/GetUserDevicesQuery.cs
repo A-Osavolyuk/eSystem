@@ -20,7 +20,7 @@ public class GetUserDevicesQueryHandler(
         if (user is null) return Results.NotFound("User not found.");
 
         var devices = await _deviceManager.GetAllAsync(user, cancellationToken);
-        var response = devices.Select(device => new UserDeviceDto()
+        var response = devices.Select(device => new UserDeviceDto
         {
             Id = device.Id,
             IsTrusted = device.IsTrusted,

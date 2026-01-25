@@ -10,7 +10,7 @@ public sealed class JsResult
     
     public T Get<T>()
     {
-        var options = new JsonSerializerOptions()
+        var options = new JsonSerializerOptions
         {
             WriteIndented = true, 
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase

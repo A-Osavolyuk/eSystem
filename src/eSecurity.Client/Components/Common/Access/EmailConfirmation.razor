@@ -108,7 +108,7 @@
 
     private async Task OnSendAsync()
     {
-        var request = new SendCodeRequest()
+        var request = new SendCodeRequest
         {
             UserId = UserState.UserId,
             Sender = SenderType.Email,
@@ -132,7 +132,7 @@
 
         if (_form.IsValid)
         {
-            var request = new VerifyCodeRequest()
+            var request = new VerifyCodeRequest
             {
                 UserId = UserState.UserId,
                 Code = CodeModel.Code,

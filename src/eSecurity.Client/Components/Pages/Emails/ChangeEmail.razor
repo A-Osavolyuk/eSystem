@@ -204,7 +204,7 @@
 
     protected override void OnInitialized()
     {
-        _confirmationContext = new ConfirmationContext()
+        _confirmationContext = new ConfirmationContext
         {
             Purpose = PurposeType.Email,
             Action = ActionType.Change
@@ -217,7 +217,7 @@
 
         if (_changeForm.IsValid)
         {
-            _messageContext = new MessageContext()
+            _messageContext = new MessageContext
             {
                 UserId = UserState.UserId,
                 Sender = SenderType.Email,
@@ -245,7 +245,7 @@
             _ => throw new NotSupportedException("Unsupported email type")
         };
 
-        var request = new ChangeEmailRequest()
+        var request = new ChangeEmailRequest
         {
             UserId = UserState.UserId,
             NewEmail = ChangeModel.NewEmail,

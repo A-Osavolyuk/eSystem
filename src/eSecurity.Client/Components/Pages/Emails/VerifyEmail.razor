@@ -143,7 +143,7 @@
                 _ => throw new NotSupportedException("Unsupported email type")
             };
 
-            _context = new MessageContext()
+            _context = new MessageContext
             {
                 UserId = UserState.UserId,
                 Sender = SenderType.Email,
@@ -190,7 +190,7 @@
             _ => throw new NotSupportedException("Unsupported email type")
         };
 
-        var request = new VerifyEmailRequest()
+        var request = new VerifyEmailRequest
         {
             UserId = UserState.UserId,
             Email = email

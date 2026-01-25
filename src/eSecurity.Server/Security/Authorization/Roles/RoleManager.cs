@@ -41,7 +41,7 @@ public sealed class RoleManager(AuthDbContext context) : IRoleManager
             return Results.Ok();
         }
         
-        var userRole = new UserRoleEntity()
+        var userRole = new UserRoleEntity
         {
             UserId = user.Id,
             RoleId = role.Id

@@ -42,7 +42,7 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
             _context.UserTwoFactorMethods.Update(preferredMethod);
         }
 
-        var userProvider = new UserTwoFactorMethodEntity()
+        var userProvider = new UserTwoFactorMethodEntity
         {
             UserId = user.Id,
             Method = method,

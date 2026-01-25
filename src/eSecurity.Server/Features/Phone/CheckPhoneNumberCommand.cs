@@ -23,7 +23,7 @@ public class CheckPhoneNumberCommandHandler(
         var isTaken = await _phoneManager.IsTakenAsync(request.Request.PhoneNumber, cancellationToken);
         if (isTaken)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.PhoneTaken,
                 Description = "Phone number is already taken."

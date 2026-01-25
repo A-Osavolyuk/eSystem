@@ -16,7 +16,7 @@ public class CheckUsernameCommandHandler(
     {
         if (await _usernameManager.IsTakenAsync(request.Request.Username, cancellationToken))
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.UsernameTaken,
                 Description = "The username is already taken."

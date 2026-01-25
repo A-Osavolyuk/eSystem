@@ -20,7 +20,7 @@ public class GetUserProvidersQueryHandler(
         if (user is null) return Results.NotFound("User not found.");
 
         var methods = await _twoFactorManager.GetAllAsync(user, cancellationToken);
-        var response = methods.Select(provider => new UserTwoFactorMethod()
+        var response = methods.Select(provider => new UserTwoFactorMethod
         {
             Method = provider.Method,
             Preferred = provider.Preferred,

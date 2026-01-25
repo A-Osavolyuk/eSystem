@@ -20,7 +20,7 @@ public class CheckPasswordCommandHandler(
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
-        var response = new CheckPasswordResponse()
+        var response = new CheckPasswordResponse
         {
             HasPassword = await _passwordManager.HasAsync(user, cancellationToken)
         };

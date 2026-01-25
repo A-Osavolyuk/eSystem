@@ -31,7 +31,7 @@ public class ResetPhoneNumberCommandHandler(
         var phoneNumber = await _phoneManager.FindByTypeAsync(user, PhoneNumberType.Primary, cancellationToken);
         if (phoneNumber is null)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidPhone,
                 Description = "User's primary phone number is missing"
@@ -43,7 +43,7 @@ public class ResetPhoneNumberCommandHandler(
             var isTaken = await _phoneManager.IsTakenAsync(request.Request.NewPhoneNumber, cancellationToken);
             if (isTaken)
             {
-                return Results.BadRequest(new Error()
+                return Results.BadRequest(new Error
                 {
                     Code = ErrorTypes.Common.PhoneTaken,
                     Description = "This phone number is already taken"

@@ -33,7 +33,7 @@ public class ResetEmailCommandHandler(
         var userCurrentEmail = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
         if (userCurrentEmail is null)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidEmail,
                 Description = "User's primary email address is missing"
@@ -45,7 +45,7 @@ public class ResetEmailCommandHandler(
             var isTaken = await _emailManager.IsTakenAsync(request.Request.NewEmail, cancellationToken);
             if (isTaken)
             {
-                return Results.BadRequest(new Error()
+                return Results.BadRequest(new Error
                 {
                     Code = ErrorTypes.Common.EmailTaken,
                     Description = "User's primary email address is missing"

@@ -18,7 +18,7 @@ public class LoadSignInSessionCommandHandler(
         var session = await _signInSessionManager.FindByIdAsync(request.Sid, cancellationToken);
         if (session is null)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidSession,
                 Description = "Session not found."
@@ -35,7 +35,7 @@ public class LoadSignInSessionCommandHandler(
                 if (!sessionResult.Succeeded) return sessionResult;
             }
             
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidSession,
                 Description = "Session is expired."
@@ -44,14 +44,14 @@ public class LoadSignInSessionCommandHandler(
         
         if (session.Status == SignInStatus.Cancelled)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidSession,
                 Description = "Session is cancelled."
             });
         }
         
-        var response = new SignInSessionDto()
+        var response = new SignInSessionDto
         {
             Id = session.Id,
             UserId = session.UserId,

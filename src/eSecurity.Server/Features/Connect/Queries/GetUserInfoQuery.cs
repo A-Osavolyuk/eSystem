@@ -99,7 +99,7 @@ public class GetUserInfoQueryHandler(
             });
         }
 
-        var response = new UserInfoResponse() { Subject = subjectClaim.Value };
+        var response = new UserInfoResponse { Subject = subjectClaim.Value };
         var scopes = scopeClaim.Value.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         if (scopes.Contains(Scopes.Email))
         {
@@ -142,7 +142,7 @@ public class GetUserInfoQueryHandler(
 
         if (scopes.Contains(Scopes.Address) && personalData?.Address is not null)
         {
-            response.Address = new AddressClaim()
+            response.Address = new AddressClaim
             {
                 Country = personalData.Address.Country,
                 Locality = personalData.Address.Locality,

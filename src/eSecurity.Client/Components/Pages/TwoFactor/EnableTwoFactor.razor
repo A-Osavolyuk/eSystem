@@ -300,7 +300,7 @@
 
     protected override void OnInitialized()
     {
-        _confirmationContext = new ConfirmationContext()
+        _confirmationContext = new ConfirmationContext
         {
             Purpose = PurposeType.TwoFactor,
             Action = ActionType.Enable,
@@ -318,7 +318,7 @@
 
     private async Task OnGenerateQrCodeAsync()
     {
-        var request = new GenerateQrCodeRequest() { UserId = UserState.UserId };
+        var request = new GenerateQrCodeRequest { UserId = UserState.UserId };
         var result = await TwoFactorService.GenerateQrCodeAsync(request);
 
         if (result.Succeeded && result.TryGetValue<QrCode>(out var qrCode))
@@ -331,7 +331,7 @@
     private async Task OnVerifyAsync()
     {
         _showError = false;
-        var request = new VerifyAuthenticatorCodeRequest()
+        var request = new VerifyAuthenticatorCodeRequest
         {
             UserId = UserState.UserId,
             Purpose = PurposeType.AuthenticatorApp,
@@ -347,7 +347,7 @@
 
     private async Task GenerateRecoveryCodesAsync()
     {
-        var request = new GenerateRecoveryCodesRequest() { UserId = UserState.UserId };
+        var request = new GenerateRecoveryCodesRequest { UserId = UserState.UserId };
         var result = await TwoFactorService.GenerateRecoveryCodesAsync(request);
         if (result.Succeeded && result.TryGetValue<List<string>>(out var recoveryCodes))
         {
@@ -359,7 +359,7 @@
 
     private async Task ShowSetupKeyAsync()
     {
-        var options = new DialogOptions()
+        var options = new DialogOptions
         {
             BackdropClick = true,
             CloseButton = true,
@@ -367,7 +367,7 @@
             MaxWidth = MaxWidth.ExtraExtraLarge
         };
 
-        var parameters = new DialogParameters<AuthenticatorSecretDialog>()
+        var parameters = new DialogParameters<AuthenticatorSecretDialog>
         {
             { dialog => dialog.Secret, QrCode.Secret }
         };
@@ -383,7 +383,7 @@
 
     private async Task OnEnableAsync()
     {
-        var request = new EnableTwoFactorRequest() { UserId = UserState.UserId };
+        var request = new EnableTwoFactorRequest { UserId = UserState.UserId };
         var result = await TwoFactorService.EnableAsync(request);
 
         if (result.Succeeded)

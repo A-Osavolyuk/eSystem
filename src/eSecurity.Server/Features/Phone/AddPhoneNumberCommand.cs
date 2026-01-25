@@ -28,7 +28,7 @@ public class AddPhoneNumberCommandHandler(
         if (phoneNumbers.Count(x => x.Type is PhoneNumberType.Primary)
             >= _options.PrimaryPhoneNumberMaxCount && request.Request.Type is PhoneNumberType.Primary)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidPhone,
                 Description = "User already has a primary phone number."
@@ -38,7 +38,7 @@ public class AddPhoneNumberCommandHandler(
         if (phoneNumbers.Count(x => x.Type is PhoneNumberType.Recovery)
             >= _options.RecoveryPhoneNumberMaxCount && request.Request.Type is PhoneNumberType.Recovery)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidPhone,
                 Description = "User already has a recovery phone number."
@@ -48,7 +48,7 @@ public class AddPhoneNumberCommandHandler(
         if (phoneNumbers.Count(x => x.Type is PhoneNumberType.Secondary)
             >= _options.SecondaryPhoneNumberMaxCount && request.Request.Type is PhoneNumberType.Secondary)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidPhone,
                 Description = "User already has maximum count of secondary phone numbers."
@@ -60,7 +60,7 @@ public class AddPhoneNumberCommandHandler(
             var isTaken = await _phoneManager.IsTakenAsync(request.Request.PhoneNumber, cancellationToken);
             if (isTaken)
             {
-                return Results.BadRequest(new Error()
+                return Results.BadRequest(new Error
                 {
                     Code = ErrorTypes.Common.PhoneTaken,
                     Description = "This phone number is already taken"

@@ -27,7 +27,7 @@ public class BlockDeviceCommandHandler(
         var device = await _deviceManager.FindByIdAsync(request.Request.DeviceId, cancellationToken);
         if (device is null || device.IsBlocked || !device.IsTrusted)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidDevice,
                 Description = "Invalid device."

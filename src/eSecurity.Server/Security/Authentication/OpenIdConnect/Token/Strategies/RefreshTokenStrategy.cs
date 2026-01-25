@@ -49,7 +49,7 @@ public class RefreshTokenStrategy(
         var client = await _clientManager.FindByIdAsync(refreshPayload.ClientId, cancellationToken);
         if (client is null)
         {
-            return Results.Unauthorized(new Error()
+            return Results.Unauthorized(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidClient,
                 Description = "Invalid client."
@@ -58,7 +58,7 @@ public class RefreshTokenStrategy(
 
         if (!client.HasGrantType(refreshPayload.GrantType))
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.OAuth.UnsupportedGrantType,
                 Description = $"'{refreshPayload.GrantType}' is not supported by client."
@@ -70,7 +70,7 @@ public class RefreshTokenStrategy(
         var refreshToken = await _tokenManager.FindByHashAsync(incomingHash, cancellationToken);
         if (refreshToken is null || !refreshToken.IsValid || !refreshToken.SessionId.HasValue)
         {
-            return Results.NotFound(new Error()
+            return Results.NotFound(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidGrant,
                 Description = "Invalid refresh token."
@@ -80,7 +80,7 @@ public class RefreshTokenStrategy(
         var session = await _sessionManager.FindByIdAsync(refreshToken.SessionId.Value, cancellationToken);
         if (session is null)
         {
-            return Results.NotFound(new Error()
+            return Results.NotFound(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidGrant,
                 Description = "Invalid refresh token."
@@ -92,7 +92,7 @@ public class RefreshTokenStrategy(
             var sessionResult = await _sessionManager.RemoveAsync(session, cancellationToken);
             if (!sessionResult.Succeeded)
             {
-                return Results.InternalServerError(new Error()
+                return Results.InternalServerError(new Error
                 {
                     Code = ErrorTypes.OAuth.ServerError,
                     Description = "Server error"
@@ -102,7 +102,7 @@ public class RefreshTokenStrategy(
 
         if (client.Id != refreshToken.ClientId)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidGrant,
                 Description = "Invalid refresh token"
@@ -115,7 +115,7 @@ public class RefreshTokenStrategy(
 
         if (!client.HasScopes(requestedScopes))
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidScope,
                 Description = "Requested scopes exceed originally granted scopes."
@@ -124,7 +124,7 @@ public class RefreshTokenStrategy(
 
         if (requestedScopes.Contains(Scopes.OfflineAccess) && !client.AllowOfflineAccess)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidScope,
                 Description = "offline_access scope was not originally granted."
@@ -134,14 +134,14 @@ public class RefreshTokenStrategy(
         var user = await _userManager.FindByIdAsync(session.Device.UserId, cancellationToken);
         if (user is null)
         {
-            return Results.NotFound(new Error()
+            return Results.NotFound(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidGrant,
                 Description = "Invalid refresh token."
             });
         }
         
-        var response = new TokenResponse()
+        var response = new TokenResponse
         {
             ExpiresIn = (int)_options.AccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenTypes.Bearer,
@@ -150,7 +150,7 @@ public class RefreshTokenStrategy(
         if (client.AccessTokenType == AccessTokenType.Jwt)
         {
             var claimsFactory = _claimFactoryProvider.GetClaimFactory<AccessTokenClaimsContext, UserEntity>();
-            var claims = await claimsFactory.GetClaimsAsync(user, new AccessTokenClaimsContext()
+            var claims = await claimsFactory.GetClaimsAsync(user, new AccessTokenClaimsContext
             {
                 Aud = client.Audience,
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Name),
@@ -164,10 +164,10 @@ public class RefreshTokenStrategy(
         }
         else
         {
-            var tokenContext = new OpaqueTokenContext() { Length = _options.RefreshTokenLength };
+            var tokenContext = new OpaqueTokenContext { Length = _options.RefreshTokenLength };
             var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
             var rawToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
-            var newRefreshToken = new OpaqueTokenEntity()
+            var newRefreshToken = new OpaqueTokenEntity
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = client.Id,
@@ -186,9 +186,9 @@ public class RefreshTokenStrategy(
         if (client.RefreshTokenRotationEnabled)
         {
             var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
-            var tokenContext = new OpaqueTokenContext() { Length = _options.RefreshTokenLength };
+            var tokenContext = new OpaqueTokenContext { Length = _options.RefreshTokenLength };
             var rawToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
-            var newRefreshToken = new OpaqueTokenEntity()
+            var newRefreshToken = new OpaqueTokenEntity
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = client.Id,
@@ -215,7 +215,7 @@ public class RefreshTokenStrategy(
         if (requestedScopes.Contains(Scopes.OpenId))
         {
             var claimsFactory = _claimFactoryProvider.GetClaimFactory<IdTokenClaimsContext, UserEntity>();
-            var claims = await claimsFactory.GetClaimsAsync(user, new IdTokenClaimsContext()
+            var claims = await claimsFactory.GetClaimsAsync(user, new IdTokenClaimsContext
             {
                 Aud = client.Id.ToString(),
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Name),

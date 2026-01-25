@@ -45,7 +45,7 @@ public class PhoneManager(AuthDbContext context) : IPhoneManager
         if (await ExistsAsync(phoneNumber, cancellationToken))
             return Results.BadRequest("Phone number is already taken");
 
-        var userPhoneNumber = new UserPhoneNumberEntity()
+        var userPhoneNumber = new UserPhoneNumberEntity
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
@@ -135,7 +135,7 @@ public class PhoneManager(AuthDbContext context) : IPhoneManager
         if (await ExistsAsync(phoneNumber, cancellationToken))
             return Results.BadRequest("Phone number is already taken");
 
-        var userPhoneNumber = new UserPhoneNumberEntity()
+        var userPhoneNumber = new UserPhoneNumberEntity
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,

@@ -40,7 +40,7 @@ public sealed class OAuthSignInStrategy(
     {
         if (payload is not OAuthSignInPayload oauthPayload)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidPayloadType,
                 Description = "Invalid payload"
@@ -56,7 +56,7 @@ public sealed class OAuthSignInStrategy(
         if (device is null)
         {
             var clientInfo = _httpContext.GetClientInfo();
-            device = new UserDeviceEntity()
+            device = new UserDeviceEntity
             {
                 Id = Guid.CreateVersion7(),
                 UserId = user.Id,
@@ -76,7 +76,7 @@ public sealed class OAuthSignInStrategy(
 
         if (device.IsBlocked)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.BlockedDevice,
                 Description = "Device is blocked"
@@ -101,7 +101,7 @@ public sealed class OAuthSignInStrategy(
         var linkedAccount = await _linkedAccountManager.GetAsync(user, oauthPayload.LinkedAccount, cancellationToken);
         if (linkedAccount is null)
         {
-            linkedAccount = new UserLinkedAccountEntity()
+            linkedAccount = new UserLinkedAccountEntity
             {
                 Id = Guid.CreateVersion7(),
                 UserId = user.Id,

@@ -15,7 +15,7 @@ public class LoadFilesCommandHandler(IStorageManager storageManager) : IRequestH
     {
         var metadata = request.Request.Metadata;
         var files = await _storageManager.LoadAsync(metadata);
-        var response = new LoadFilesResponse() { Files = files };
+        var response = new LoadFilesResponse { Files = files };
         return Results.Ok(response);
     }
 }

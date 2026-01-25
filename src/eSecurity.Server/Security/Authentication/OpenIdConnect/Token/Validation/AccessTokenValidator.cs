@@ -24,7 +24,7 @@ public class AccessTokenValidator(
         if (certificate is null) return TokenValidationResult.Fail();
 
         var publicKey = certificate.Certificate.GetRSAPublicKey()!;
-        var validationParameters = new TokenValidationParameters()
+        var validationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidIssuer = _tokenOptions.Issuer,

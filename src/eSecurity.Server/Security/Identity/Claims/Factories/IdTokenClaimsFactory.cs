@@ -102,7 +102,7 @@ public sealed class IdTokenClaimsFactory(
 
         if (context.Scopes.Contains(Scopes.Address) && personalData?.Address is not null)
         {
-            var claim = new AddressClaim()
+            var claim = new AddressClaim
             {
                 Country = personalData.Address.Country,
                 Locality = personalData.Address.Locality,

@@ -114,9 +114,9 @@
 
     private async Task OnSignInAsync()
     {
-        var request = new SignInRequest()
+        var request = new SignInRequest
         {
-            Payload = new TwoFactorSignInPayload()
+            Payload = new TwoFactorSignInPayload
             {
                 Sid = SessionId
             }

@@ -25,7 +25,7 @@ public class SessionManager(
 
     public async ValueTask<Result> CreateAsync(UserDeviceEntity device, CancellationToken cancellationToken = default)
     {
-        var session = new SessionEntity()
+        var session = new SessionEntity
         {
             Id = Guid.CreateVersion7(),
             DeviceId = device.Id,

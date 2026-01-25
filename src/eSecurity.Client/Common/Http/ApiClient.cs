@@ -41,7 +41,7 @@ public class ApiClient(
                 return ApiResponse.Success(content);
             }
 
-            var serializationOptions = new JsonSerializerOptions()
+            var serializationOptions = new JsonSerializerOptions
             {
                 WriteIndented = true,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
@@ -52,7 +52,7 @@ public class ApiClient(
         }
         catch (Exception ex)
         {
-            return ApiResponse.Fail(new Error()
+            return ApiResponse.Fail(new Error
             {
                 Code = ErrorTypes.Common.InternalServerError,
                 Description = ex.Message
@@ -116,7 +116,7 @@ public class ApiClient(
         request.Headers.WithCookies(_httpContext.GetCookies());
         request.Headers.WithUserAgent(_httpContext.GetUserAgent());
 
-        var content = FormUrl.Encode(new TokenRequest()
+        var content = FormUrl.Encode(new TokenRequest
         {
             ClientId = _clientOptions.ClientId,
             ClientSecret = _clientOptions.ClientSecret,
@@ -133,7 +133,7 @@ public class ApiClient(
         var tokenResponse = JsonSerializer.Deserialize<TokenResponse>(tokenResponseJson);
         if (tokenResponse is null) return responseMessage;
 
-        var metadata = new AuthenticationMetadata()
+        var metadata = new AuthenticationMetadata
         {
             Tokens =
             [

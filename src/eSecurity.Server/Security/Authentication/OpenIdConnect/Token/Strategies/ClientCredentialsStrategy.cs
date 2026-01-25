@@ -41,7 +41,7 @@ public sealed class ClientCredentialsStrategy(
         
         if (string.IsNullOrEmpty(clientCredentialsContext.ClientSecret))
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "client_secret is required"
@@ -50,7 +50,7 @@ public sealed class ClientCredentialsStrategy(
         
         if (string.IsNullOrEmpty(clientCredentialsContext.Scope))
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "scope is required"
@@ -60,7 +60,7 @@ public sealed class ClientCredentialsStrategy(
         var client = await _clientManager.FindByIdAsync(clientCredentialsContext.ClientId, cancellationToken);
         if (client is null)
         {
-            return Results.Unauthorized(new Error()
+            return Results.Unauthorized(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidClient,
                 Description = "Client was not found."
@@ -69,7 +69,7 @@ public sealed class ClientCredentialsStrategy(
 
         if (!client.HasGrantType(clientCredentialsContext.GrantType))
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.OAuth.UnsupportedGrantType,
                 Description = $"'{clientCredentialsContext.GrantType}' grant is not supported by client."
@@ -89,7 +89,7 @@ public sealed class ClientCredentialsStrategy(
             });
         }
 
-        var response = new TokenResponse()
+        var response = new TokenResponse
         {
             ExpiresIn = (int)_options.AccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenTypes.Bearer
@@ -98,7 +98,7 @@ public sealed class ClientCredentialsStrategy(
         if (client.AccessTokenType == AccessTokenType.Jwt)
         {
             var claimsFactory = _claimFactoryProvider.GetClaimFactory<AccessTokenClaimsContext, ClientEntity>();
-            var claimsContext = new AccessTokenClaimsContext()
+            var claimsContext = new AccessTokenClaimsContext
             {
                 Aud = client.Audience,
                 Scopes = allowedScopes
@@ -118,11 +118,11 @@ public sealed class ClientCredentialsStrategy(
         }
         else
         {
-            var tokenContext = new OpaqueTokenContext() { Length = _options.RefreshTokenLength };
+            var tokenContext = new OpaqueTokenContext { Length = _options.RefreshTokenLength };
             var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
             var rawToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
             var hasher = _hasherProvider.GetHasher(HashAlgorithm.Sha512);
-            var newRefreshToken = new OpaqueTokenEntity()
+            var newRefreshToken = new OpaqueTokenEntity
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = client.Id,

@@ -11,7 +11,7 @@ public class TokenContextFactory : ITokenContextFactory
     {
         return request.GrantType switch
         {
-            GrantTypes.AuthorizationCode => new AuthorizationCodeContext()
+            GrantTypes.AuthorizationCode => new AuthorizationCodeContext
             {
                 ClientId = request.ClientId,
                 GrantType = request.GrantType,
@@ -19,14 +19,14 @@ public class TokenContextFactory : ITokenContextFactory
                 RedirectUri = request.RedirectUri,
                 Code = request.Code
             },
-            GrantTypes.RefreshToken => new RefreshTokenContext()
+            GrantTypes.RefreshToken => new RefreshTokenContext
             {
                 ClientId = request.ClientId,
                 GrantType = request.GrantType,
                 RefreshToken = request.RefreshToken,
                 Scope = request.Scope
             },
-            GrantTypes.ClientCredentials => new ClientCredentialsContext()
+            GrantTypes.ClientCredentials => new ClientCredentialsContext
             {
                 ClientId = request.ClientId,
                 ClientSecret = request.ClientSecret,

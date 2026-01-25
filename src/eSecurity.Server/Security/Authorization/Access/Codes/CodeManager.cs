@@ -34,7 +34,7 @@ public sealed class CodeManager(
         var code = _codeFactory.Create();
         var codeHash = _hasher.Hash(code);
 
-        await _context.Codes.AddAsync(new CodeEntity()
+        await _context.Codes.AddAsync(new CodeEntity
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,

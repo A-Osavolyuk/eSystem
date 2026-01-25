@@ -21,7 +21,7 @@ public class BffController(ISender sender) : ControllerBase
     [EndpointSummary("Login")]
     public IActionResult Login()
     {
-        return Challenge(new AuthenticationProperties()
+        return Challenge(new AuthenticationProperties
         {
             IsPersistent = true,
             RedirectUri = "https://localhost:6511"

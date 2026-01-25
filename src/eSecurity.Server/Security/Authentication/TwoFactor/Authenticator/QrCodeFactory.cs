@@ -10,7 +10,7 @@ public class QrCodeFactory : IQrCodeFactory
         var otpUri = new OtpUri(OtpType.Totp, secret, email, issuer);
         var value = otpUri.ToString();
         
-        return new QrCode()
+        return new QrCode
         {
             Value = value,
             Secret = secret,

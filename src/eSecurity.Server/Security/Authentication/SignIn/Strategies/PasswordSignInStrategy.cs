@@ -48,7 +48,7 @@ public sealed class PasswordSignInStrategy(
         UserEntity? user = null;
 
         if (payload is not PasswordSignInPayload passwordPayload)
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidPayloadType,
                 Description = "Invalid payload type"
@@ -74,7 +74,7 @@ public sealed class PasswordSignInStrategy(
         if (device is null)
         {
             var clientInfo = _httpContext.GetClientInfo()!;
-            device = new UserDeviceEntity()
+            device = new UserDeviceEntity
             {
                 Id = Guid.CreateVersion7(),
                 UserId = user.Id,
@@ -96,7 +96,7 @@ public sealed class PasswordSignInStrategy(
         if (email is null) return Results.NotFound("Email not found");
 
         if (_options.RequireConfirmedEmail && !email.IsVerified)
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.UnverifiedEmail,
                 Description = "Email is not verified.",
@@ -107,7 +107,7 @@ public sealed class PasswordSignInStrategy(
         if (lockoutState is null) return Results.NotFound("State not found");
 
         if (lockoutState.Enabled)
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.AccountLockedOut,
                 Description = "Account is locked out",
@@ -125,7 +125,7 @@ public sealed class PasswordSignInStrategy(
             if (!updateResult.Succeeded) return updateResult;
 
             if (user.FailedLoginAttempts < _options.MaxFailedLoginAttempts)
-                return Results.BadRequest(new Error()
+                return Results.BadRequest(new Error
                 {
                     Code = ErrorTypes.Common.FailedLoginAttempt,
                     Description = "The password is not valid.",
@@ -144,7 +144,7 @@ public sealed class PasswordSignInStrategy(
 
             if (!lockoutResult.Succeeded) return lockoutResult;
 
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.TooManyFailedLoginAttempts,
                 Description = "Account is locked out due to too many failed login attempts",
@@ -162,7 +162,7 @@ public sealed class PasswordSignInStrategy(
 
         if (device.IsBlocked)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.BlockedDevice,
                 Description = "Cannot sign in, device is blocked."
@@ -178,7 +178,7 @@ public sealed class PasswordSignInStrategy(
         if (await _twoFactorManager.IsEnabledAsync(user, cancellationToken)) 
             requiredSteps.Add(SignInStep.TwoFactor);
         
-        var session = new SignInSessionEntity()
+        var session = new SignInSessionEntity
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
@@ -196,6 +196,6 @@ public sealed class PasswordSignInStrategy(
         if (requiredSteps.Count == 0)
             await _sessionManager.CreateAsync(device, cancellationToken);
         
-        return Results.Ok(new SignInResponse() { SessionId = session.Id });
+        return Results.Ok(new SignInResponse { SessionId = session.Id });
     }
 }

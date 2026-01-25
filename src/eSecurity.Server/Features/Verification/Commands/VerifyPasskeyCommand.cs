@@ -30,7 +30,7 @@ public class VerifyPasskeyCommandHandler(
         var passkey = await _passkeyManager.FindByCredentialIdAsync(credentialId, cancellationToken);
         if (passkey is null)
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidCredentials,
                 Description = "Invalid credential"
@@ -43,7 +43,7 @@ public class VerifyPasskeyCommandHandler(
         var savedChallenge = _httpContext.Session.GetString(ChallengeSessionKeys.Assertion);
         if (string.IsNullOrEmpty(savedChallenge))
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidChallenge,
                 Description = "Invalid challenge"

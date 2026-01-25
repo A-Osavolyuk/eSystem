@@ -8,12 +8,12 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
 
     public async ValueTask<ApiResponse> SignInAsync(SignInRequest request)
         => await _apiClient.SendAsync(
-            new ApiRequest()
+            new ApiRequest
             {
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "/api/v1/Account/sign-in"
-            }, new ApiOptions()
+            }, new ApiOptions
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None,
@@ -23,12 +23,12 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
 
     public async ValueTask<ApiResponse> SignUpAsync(SignUpRequest request)
         => await _apiClient.SendAsync(
-            new ApiRequest()
+            new ApiRequest
             {
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "/api/v1/Account/sign-up"
-            }, new ApiOptions()
+            }, new ApiOptions
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None,
@@ -38,11 +38,11 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
 
     public async ValueTask<ApiResponse> LoadSignInSessionAsync(Guid sid)
         => await _apiClient.SendAsync(
-            new ApiRequest()
+            new ApiRequest
             {
                 Method = HttpMethod.Post,
                 Url = $"api/v1/Account/sign-in/session/{sid}"
-            }, new ApiOptions()
+            }, new ApiOptions
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
@@ -50,12 +50,12 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
 
     public async ValueTask<ApiResponse> CheckAccountAsync(CheckAccountRequest request)
         => await _apiClient.SendAsync(
-            new ApiRequest()
+            new ApiRequest
             {
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "/api/v1/Account/check"
-            }, new ApiOptions()
+            }, new ApiOptions
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
@@ -63,12 +63,12 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
 
     public async ValueTask<ApiResponse> RecoverAccountAsync(RecoverAccountRequest request)
         => await _apiClient.SendAsync(
-            new ApiRequest()
+            new ApiRequest
             {
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "/api/v1/Account/recover"
-            }, new ApiOptions()
+            }, new ApiOptions
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
@@ -76,12 +76,12 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
 
     public async ValueTask<ApiResponse> UnlockAccountAsync(UnlockAccountRequest request)
         => await _apiClient.SendAsync(
-            new ApiRequest()
+            new ApiRequest
             {
                 Method = HttpMethod.Post,
                 Data = request,
                 Url = "/api/v1/Account/unlock"
-            }, new ApiOptions()
+            }, new ApiOptions
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None

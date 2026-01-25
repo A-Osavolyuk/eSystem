@@ -170,7 +170,7 @@
 
     private async Task OnGenerateQrCodeAsync()
     {
-        var request = new RegenerateQrCodeRequest() { UserId = UserState.UserId };
+        var request = new RegenerateQrCodeRequest { UserId = UserState.UserId };
         var result = await TwoFactorService.RegenerateQrCodeAsync(request);
         if (result.Succeeded && result.TryGetValue<QrCode>(out var qrCode))
         {
@@ -181,7 +181,7 @@
 
     private async Task ShowSetupKeyAsync()
     {
-        var options = new DialogOptions()
+        var options = new DialogOptions
         {
             BackdropClick = true,
             CloseButton = true,
@@ -189,7 +189,7 @@
             MaxWidth = MaxWidth.ExtraExtraLarge
         };
 
-        var parameters = new DialogParameters<AuthenticatorSecretDialog>()
+        var parameters = new DialogParameters<AuthenticatorSecretDialog>
         {
             { dialog => dialog.Secret, _qrCode.Secret }
         };
@@ -200,7 +200,7 @@
     private async Task OnVerifyCodeAsync()
     {
         _showError = false;
-        var request = new VerifyAuthenticatorRequest()
+        var request = new VerifyAuthenticatorRequest
         {
             UserId = UserState.UserId,
             Code = _model.Code,
@@ -215,7 +215,7 @@
 
     private async Task OnSaveAsync()
     {
-        var request = new ReconfigureAuthenticatorRequest()
+        var request = new ReconfigureAuthenticatorRequest
         {
             UserId = UserState.UserId,
             Secret = _qrCode.Secret

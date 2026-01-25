@@ -23,7 +23,7 @@ public sealed class ChangePasswordCommandHandler(
 
         if (!await _passwordManager.HasAsync(user, cancellationToken))
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidPassword,
                 Description = "User does not have a password."
@@ -32,7 +32,7 @@ public sealed class ChangePasswordCommandHandler(
 
         if (!await _passwordManager.CheckAsync(user, request.Request.CurrentPassword, cancellationToken))
         {
-            return Results.BadRequest(new Error()
+            return Results.BadRequest(new Error
             {
                 Code = "Invalid password",
                 Description = "Invalid password."

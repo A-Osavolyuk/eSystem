@@ -23,7 +23,7 @@ public class GetUserPrimaryEmailQueryHandler(
         var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
         if (email is null) return Results.BadRequest("User does not have a primary email.");
 
-        var response = new UserEmailDto()
+        var response = new UserEmailDto
         {
             Id = email.Id,
             Type = email.Type,

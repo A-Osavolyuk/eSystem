@@ -31,7 +31,7 @@ public class TokenProvider(
     public async Task SetAsync(AuthenticationMetadata metadata,
         CancellationToken cancellationToken = default)
     {
-        var fetchOptions = new FetchOptions()
+        var fetchOptions = new FetchOptions
         {
             Body = metadata,
             Method = HttpMethod.Post,
