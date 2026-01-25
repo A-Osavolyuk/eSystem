@@ -5,7 +5,7 @@ namespace eSystem.Core.Security.Authentication.OpenIdConnect.Token;
 public class TokenResponse
 {
     [JsonPropertyName("access_token")]
-    public required string AccessToken { get; set; }
+    public string AccessToken { get; set; } = string.Empty;
     
     [JsonPropertyName("token_type")]
     public required string TokenType { get; set; }

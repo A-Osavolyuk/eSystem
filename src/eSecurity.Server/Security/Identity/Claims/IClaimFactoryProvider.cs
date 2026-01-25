@@ -2,5 +2,7 @@
 
 public interface IClaimFactoryProvider
 {
-    public IClaimFactory<TContext> GetClaimFactory<TContext>() where TContext : ClaimsContext;
+    public ITokenClaimsFactory<TContext, TSource> GetClaimFactory<TContext, TSource>() 
+        where TContext : TokenClaimsContext 
+        where TSource : class;
 }

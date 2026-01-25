@@ -10,16 +10,16 @@ using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Security.Identity.Claims.Factories;
 
-public sealed class IdClaimsContext : ClaimsContext
+public sealed class IdTokenClaimsContext : TokenClaimsContext
 {
     public DateTimeOffset? AuthTime { get; set; }
 }
 
-public sealed class IdClaimsFactory(
+public sealed class IdTokenClaimsFactory(
     IOptions<TokenOptions> options,
     IEmailManager emailManager,
     IPhoneManager phoneManager,
-    IPersonalDataManager personalDataManager) : IClaimFactory<IdClaimsContext>
+    IPersonalDataManager personalDataManager) : ITokenClaimsFactory<IdTokenClaimsContext, UserEntity>
 {
     private readonly IEmailManager _emailManager = emailManager;
     private readonly IPhoneManager _phoneManager = phoneManager;
@@ -27,7 +27,7 @@ public sealed class IdClaimsFactory(
     private readonly TokenOptions _options = options.Value;
 
     public async ValueTask<List<Claim>> GetClaimsAsync(UserEntity user,
-        IdClaimsContext context, CancellationToken cancellationToken)
+        IdTokenClaimsContext context, CancellationToken cancellationToken)
     {
         var exp = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime).ToUnixTimeSeconds().ToString();
         var iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();

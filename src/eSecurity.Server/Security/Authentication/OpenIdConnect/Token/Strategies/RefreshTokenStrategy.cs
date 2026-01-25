@@ -124,8 +124,8 @@ public class RefreshTokenStrategy(
                 Description = "Invalid refresh token."
             });
 
-        var accessClaimFactory = _claimFactoryProvider.GetClaimFactory<AccessClaimsContext>();
-        var accessTokenClaims = await accessClaimFactory.GetClaimsAsync(user, new AccessClaimsContext()
+        var accessClaimFactory = _claimFactoryProvider.GetClaimFactory<AccessTokenClaimsContext, UserEntity>();
+        var accessTokenClaims = await accessClaimFactory.GetClaimsAsync(user, new AccessTokenClaimsContext()
         {
             Aud = client.Audience,
             Scopes = client.AllowedScopes.Select(x => x.Scope.Name),
@@ -174,8 +174,8 @@ public class RefreshTokenStrategy(
 
         if (requestedScopes.Contains(Scopes.OpenId))
         {
-            var idClaimFactory = _claimFactoryProvider.GetClaimFactory<IdClaimsContext>();
-            var idClaims = await idClaimFactory.GetClaimsAsync(user, new IdClaimsContext()
+            var idClaimFactory = _claimFactoryProvider.GetClaimFactory<IdTokenClaimsContext, UserEntity>();
+            var idClaims = await idClaimFactory.GetClaimsAsync(user, new IdTokenClaimsContext()
             {
                 Aud = client.Id.ToString(),
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Name),

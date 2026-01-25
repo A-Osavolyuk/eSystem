@@ -1,4 +1,5 @@
-﻿using eSecurity.Server.Security.Identity.Claims;
+﻿using eSecurity.Server.Data.Entities;
+using eSecurity.Server.Security.Identity.Claims;
 using eSecurity.Server.Security.Identity.Claims.Factories;
 using eSecurity.Server.Security.Identity.Claims.Subject;
 using eSecurity.Server.Security.Identity.Email;
@@ -26,8 +27,9 @@ public static class IdentityExtensions
             builder.Services.AddScoped<IPairwiseSubjectFactory, PairwiseSubjectFactory>();
             
             builder.Services.AddScoped<IClaimFactoryProvider, ClaimFactoryProvider>();
-            builder.Services.AddScoped<IClaimFactory<AccessClaimsContext>, AccessClaimFactory>();
-            builder.Services.AddScoped<IClaimFactory<IdClaimsContext>, IdClaimsFactory>();
+            builder.Services.AddScoped<ITokenClaimsFactory<AccessTokenClaimsContext, UserEntity>, AccessTokenClaimsFactory>();
+            builder.Services.AddScoped<ITokenClaimsFactory<AccessTokenClaimsContext, ClientEntity>, AccessTokenClaimsFactory>();
+            builder.Services.AddScoped<ITokenClaimsFactory<IdTokenClaimsContext, UserEntity>, IdTokenClaimsFactory>();
         
             builder.ConfigureIdentity(cfg =>
             {

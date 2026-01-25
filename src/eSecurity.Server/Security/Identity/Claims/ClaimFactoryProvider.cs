@@ -4,6 +4,9 @@ public class ClaimFactoryProvider(IServiceProvider serviceProvider) : IClaimFact
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
 
-    public IClaimFactory<TContext> GetClaimFactory<TContext>() where TContext : ClaimsContext
-        => _serviceProvider.GetRequiredService<IClaimFactory<TContext>>();
+    public ITokenClaimsFactory<TContext, TSource> GetClaimFactory<TContext, TSource>()
+        where TContext : TokenClaimsContext where TSource : class
+    {
+        return _serviceProvider.GetRequiredService<ITokenClaimsFactory<TContext, TSource>>();
+    }
 }
