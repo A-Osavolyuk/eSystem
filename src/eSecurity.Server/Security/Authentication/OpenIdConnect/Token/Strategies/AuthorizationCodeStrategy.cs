@@ -28,6 +28,7 @@ public sealed class AuthorizationCodeContext : TokenContext
 public class AuthorizationCodeStrategy(
     IUserManager userManager,
     IPkceHandler pkceHandler,
+    IPkceManager pkceManager,
     ITokenManager tokenManager,
     IDeviceManager deviceManager,
     IClientManager clientManager,
@@ -46,6 +47,7 @@ public class AuthorizationCodeStrategy(
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly IPkceHandler _pkceHandler = pkceHandler;
+    private readonly IPkceManager _pkceManager = pkceManager;
     private readonly IHasherProvider _hasherProvider = hasherProvider;
     private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
     private readonly TokenOptions _options = options.Value;
@@ -95,6 +97,27 @@ public class AuthorizationCodeStrategy(
                 Description = "Invalid authorization code."
             });
         }
+        
+        var device = await _deviceManager.FindByIdAsync(authorizationCode.DeviceId, cancellationToken);
+        if (device is null)
+        {
+            return Results.BadRequest(new Error
+            {
+                Code = ErrorTypes.OAuth.InvalidGrant,
+                Description = "Invalid authorization code."
+            });
+        }
+        
+        var session = await _sessionManager.FindAsync(device, cancellationToken);
+        var user = await _userManager.FindByIdAsync(device.UserId, cancellationToken);
+        if (session is null || session.ExpireDate < DateTimeOffset.UtcNow || user is null)
+        {
+            return Results.BadRequest(new Error
+            {
+                Code = ErrorTypes.OAuth.InvalidGrant,
+                Description = "Invalid authorization code."
+            });
+        }
 
         if (client is { ClientType: ClientType.Public, RequirePkce: true })
         {
@@ -116,32 +139,23 @@ public class AuthorizationCodeStrategy(
             );
 
             if (!isValidPkce)
+            {
                 return Results.BadRequest(new Error
                 {
                     Code = ErrorTypes.OAuth.InvalidGrant,
                     Description = "Invalid authorization code."
                 });
-        }
+            }
 
-        var device = await _deviceManager.FindByIdAsync(authorizationCode.DeviceId, cancellationToken);
-        if (device is null)
-        {
-            return Results.BadRequest(new Error
+            var pkceState = new ClientPkceStateEntity()
             {
-                Code = ErrorTypes.OAuth.InvalidGrant,
-                Description = "Invalid authorization code."
-            });
-        }
-        
-        var session = await _sessionManager.FindAsync(device, cancellationToken);
-        var user = await _userManager.FindByIdAsync(device.UserId, cancellationToken);
-        if (session is null || session.ExpireDate < DateTimeOffset.UtcNow || user is null)
-        {
-            return Results.BadRequest(new Error
-            {
-                Code = ErrorTypes.OAuth.InvalidGrant,
-                Description = "Invalid authorization code."
-            });
+                ClientId = client.Id,
+                SessionId = session.Id,
+                VerificationDate = DateTimeOffset.UtcNow
+            };
+            
+            var pkceResult =  await _pkceManager.CreateAsync(pkceState, cancellationToken);
+            if (!pkceResult.Succeeded) return pkceResult;
         }
 
         var codeResult = await _authorizationCodeManager.UseAsync(authorizationCode, cancellationToken);

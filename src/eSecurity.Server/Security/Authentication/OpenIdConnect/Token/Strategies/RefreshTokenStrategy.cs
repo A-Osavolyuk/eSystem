@@ -1,6 +1,7 @@
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Pkce;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Cryptography.Tokens;
@@ -9,6 +10,7 @@ using eSecurity.Server.Security.Identity.Claims.Factories;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Token;
 
@@ -29,6 +31,7 @@ public class RefreshTokenStrategy(
     IHasherProvider hasherProvider,
     ISessionManager sessionManager,
     IClaimFactoryProvider claimFactoryProvider,
+    IPkceManager pkceManager,
     IOptions<TokenOptions> options) : ITokenStrategy
 {
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
@@ -38,6 +41,7 @@ public class RefreshTokenStrategy(
     private readonly IHasherProvider _hasherProvider = hasherProvider;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
+    private readonly IPkceManager _pkceManager = pkceManager;
     private readonly TokenOptions _options = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(TokenContext context,
@@ -85,6 +89,19 @@ public class RefreshTokenStrategy(
                 Code = ErrorTypes.OAuth.InvalidGrant,
                 Description = "Invalid refresh token."
             });
+        }
+
+        if (client is { ClientType: ClientType.Public, RequirePkce: true })
+        {
+            var state = await _pkceManager.IsVerified(client.Id, session.Id, cancellationToken);
+            if (!state)
+            {
+                return Results.BadRequest(new Error
+                {
+                    Code = ErrorTypes.OAuth.InvalidGrant,
+                    Description = "PKCE verification is required for this client."
+                });
+            }
         }
 
         if (refreshToken.Revoked)

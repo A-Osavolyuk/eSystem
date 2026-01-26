@@ -22,6 +22,7 @@ public static class OdicExtensions
             services.AddScoped<IClientManager, ClientManager>();
             services.AddScoped<IAuthorizationCodeManager, AuthorizationCodeManager>();
             services.AddScoped<IPkceHandler, PkceHandler>();
+            services.AddScoped<IPkceManager, PkceManager>();
 
             services.AddScoped<ITokenValidationProvider, TokenValidationProvider>();
             services.AddScoped<IJwtTokenValidationProvider, JwtTokenValidationProvider>();
