@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Authentication;
 
 namespace eSecurity.Server.Security.Authentication.Handlers;
 
-public class JwtAuthenticationSchemeOptions : AuthenticationSchemeOptions {}
+public sealed class JwtAuthenticationSchemeOptions : AuthenticationSchemeOptions {}
 
-public class JwtAuthenticationHandler(
+public sealed class JwtAuthenticationHandler(
     IOptionsMonitor<JwtAuthenticationSchemeOptions> options, 
     ILoggerFactory logger, 
     UrlEncoder encoder,
