@@ -1,3 +1,4 @@
+using eSecurity.Server.Common.Middlewares;
 using eSecurity.Server.Data;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Data;
@@ -41,6 +42,7 @@ public static class WebApplicationExtensions
             app.UseStaticFiles();
             app.UseRouting();
             app.UseSession();
+            app.UseMiddleware<RequestBufferingMiddleware>();
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();

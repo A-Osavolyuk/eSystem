@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using eSecurity.Server.Common.Errors;
 using eSecurity.Server.Common.Messaging;
+using eSecurity.Server.Common.Middlewares;
 using eSecurity.Server.Common.Storage;
 using eSecurity.Server.Security;
 using eSecurity.Server.Conventions;
@@ -29,7 +30,8 @@ public static class HostApplicationBuilderExtensions
             builder.AddDocumentation();
             builder.AddStorage();
             builder.AddExceptionHandling<GlobalExceptionHandler>();
-            
+
+            builder.Services.AddTransient<RequestBufferingMiddleware>();
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddDistributedMemoryCache();
             builder.Services
