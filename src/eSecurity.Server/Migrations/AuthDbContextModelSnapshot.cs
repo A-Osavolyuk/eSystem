@@ -197,6 +197,24 @@ namespace eSecurity.Server.Migrations
                     b.ToTable("ClientGrantTypes", "public");
                 });
 
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientPkceStateEntity", b =>
+                {
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SessionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("VerificationDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("ClientId", "SessionId");
+
+                    b.HasIndex("SessionId");
+
+                    b.ToTable("ClientPkceStates", "public");
+                });
+
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientUriEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1302,6 +1320,25 @@ namespace eSecurity.Server.Migrations
                         .IsRequired();
 
                     b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientPkceStateEntity", b =>
+                {
+                    b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("eSecurity.Server.Data.Entities.SessionEntity", "Session")
+                        .WithMany()
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Session");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientUriEntity", b =>

@@ -894,6 +894,34 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ClientPkceStates",
+                schema: "public",
+                columns: table => new
+                {
+                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
+                    SessionId = table.Column<Guid>(type: "uuid", nullable: false),
+                    VerificationDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientPkceStates", x => new { x.ClientId, x.SessionId });
+                    table.ForeignKey(
+                        name: "FK_ClientPkceStates_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalSchema: "public",
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClientPkceStates_Sessions_SessionId",
+                        column: x => x.SessionId,
+                        principalSchema: "public",
+                        principalTable: "Sessions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OpaqueTokens",
                 schema: "public",
                 columns: table => new
@@ -980,6 +1008,12 @@ namespace eSecurity.Server.Migrations
                 schema: "public",
                 table: "ClientGrantTypes",
                 column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientPkceStates_SessionId",
+                schema: "public",
+                table: "ClientPkceStates",
+                column: "SessionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ClientUris_ClientId",
@@ -1184,6 +1218,10 @@ namespace eSecurity.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "ClientGrantTypes",
+                schema: "public");
+
+            migrationBuilder.DropTable(
+                name: "ClientPkceStates",
                 schema: "public");
 
             migrationBuilder.DropTable(
