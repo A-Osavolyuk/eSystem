@@ -1,6 +1,7 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Features.Connect.Commands;
 using eSecurity.Server.Features.Connect.Queries;
+using eSecurity.Server.Security.Authorization.Constants;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Http.Results;
@@ -90,7 +91,7 @@ public class ConnectController(ISender sender) : ControllerBase
     [EndpointDescription("Token")]
     [ProducesResponseType(200)]
     [HttpPost("token")]
-    [Authorize(AuthenticationSchemes = BasicAuthenticationDefaults.AuthenticationScheme)]
+    [Authorize(Policy = AuthorizationPolicies.TokenAuthorization)]
     [Consumes(ContentTypes.Application.XwwwFormUrlEncoded)]
     public async ValueTask<IActionResult> TokenAsync([FromForm] TokenRequest request)
     {
@@ -102,7 +103,7 @@ public class ConnectController(ISender sender) : ControllerBase
     [EndpointDescription("Revocation")]
     [ProducesResponseType(200)]
     [HttpPost("revocation")]
-    [Authorize(AuthenticationSchemes = BasicAuthenticationDefaults.AuthenticationScheme)]
+    [Authorize(Policy = AuthorizationPolicies.BasicAuthorization)]
     [Consumes(ContentTypes.Application.XwwwFormUrlEncoded)]
     public async ValueTask<IActionResult> RevokeAsync([FromForm] RevocationRequest request)
     {
@@ -114,7 +115,7 @@ public class ConnectController(ISender sender) : ControllerBase
     [EndpointDescription("Introspection")]
     [ProducesResponseType(200)]
     [HttpPost("introspection")]
-    [Authorize(AuthenticationSchemes = BasicAuthenticationDefaults.AuthenticationScheme)]
+    [Authorize(Policy = AuthorizationPolicies.BasicAuthorization)]
     [Consumes(ContentTypes.Application.XwwwFormUrlEncoded)]
     public async ValueTask<IActionResult> IntrospectionAsync([FromForm] IntrospectionRequest request)
     {

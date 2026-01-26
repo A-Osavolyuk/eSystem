@@ -1,5 +1,4 @@
 ﻿using eSecurity.Server.Security.Authentication.Handlers;
-using eSecurity.Server.Security.Authentication.Handlers.Basic;
 using eSecurity.Server.Security.Authentication.Lockout;
 using eSecurity.Server.Security.Authentication.OpenIdConnect;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
@@ -19,10 +18,6 @@ public static class AuthenticationExtensions
 {
     public static void AddAuthentication(this IHostApplicationBuilder builder)
     {
-        builder.Services.AddScoped<IBasicAuthenticationStrategy, HeaderBasicAuthenticationStrategy>();
-        builder.Services.AddScoped<IBasicAuthenticationStrategy, FormDataBasicAuthenticationStrategy>();
-        builder.Services.AddScoped<IBasicAuthenticationStrategyResolver, BasicAuthenticationStrategyResolver>();
-        
         var configuration = builder.Configuration;
 
         builder.Services.AddPasswordManagement();
@@ -131,8 +126,10 @@ public static class AuthenticationExtensions
                 options.SignInScheme = ExternalAuthenticationDefaults.AuthenticationScheme;
             })
             .AddScheme<JwtAuthenticationSchemeOptions, JwtAuthenticationHandler>(
-                JwtBearerDefaults.AuthenticationScheme, _ => { })
-            .AddScheme<BasicAuthenticationSchemeOptions, BasicAuthenticationHandler>(
-                BasicAuthenticationDefaults.AuthenticationScheme, _ => { });
+                BasicAuthenticationDefaults.AuthenticationScheme, _ => { })
+            .AddScheme<ClientSecretBasicAuthenticationSchemeOptions, ClientSecretBasicAuthenticationHandler>(
+                ClientSecretBasicAuthenticationDefaults.AuthenticationScheme, _ => { })
+            .AddScheme<ClientSecretPostAuthenticationSchemeOptions, ClientSecretPostAuthenticationHandler>(
+                ClientSecretPostAuthenticationDefaults.AuthenticationScheme, _ => { });
     }
 }
