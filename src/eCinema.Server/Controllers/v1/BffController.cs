@@ -13,10 +13,8 @@ namespace eCinema.Server.Controllers.v1;
 [AllowAnonymous]
 [Route("[controller]")]
 [EnableCors(CorsPolicies.SpaOnly)]
-public class BffController(ISender sender) : ControllerBase
+public class BffController() : ControllerBase
 {
-    private readonly ISender _sender = sender;
-
     [HttpGet("login")]
     [EndpointSummary("Login")]
     public IActionResult Login()
