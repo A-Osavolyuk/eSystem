@@ -1,3 +1,6 @@
+using eSecurity.Client.Security.Authentication.OpenIdConnect.Authorization;
+using eSecurity.Client.Security.Authentication.OpenIdConnect.Prompts;
+using eSecurity.Client.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Client.Security.Authentication.OpenIdConnect.Token;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
@@ -11,6 +14,14 @@ public static class OdicExtensions
         public void AddOidc()
         {
             services.AddScoped<ITokenValidator, TokenValidator>();
+            services.AddScoped<ISessionAccessor, SessionAccessor>();
+            services.AddScoped<IOpenIdConnectAuthorizationHandler, OpenIdConnectAuthorizationHandler>();
+
+            services.AddScoped<IPromptStrategy, LoginPromptStrategy>();
+            services.AddScoped<IPromptStrategy, ConsentPromptStrategy>();
+            services.AddScoped<IPromptStrategy, SelectAccountPromptStrategy>();
+            services.AddScoped<IPromptStrategy, NonePromptStrategy>();
+
             services.AddClient(cfg =>
             {
                 cfg.ClientAudience = "eSecurity";
@@ -26,6 +37,13 @@ public static class OdicExtensions
                     Scopes.Phone,
                     Scopes.Profile,
                     Scopes.Address
+                ];
+                cfg.SupportedPrompts =
+                [
+                    PromptTypes.Login,
+                    PromptTypes.Consent,
+                    PromptTypes.SelectAccount,
+                    PromptTypes.None
                 ];
             });
         }

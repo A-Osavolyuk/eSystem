@@ -1,15 +1,13 @@
 @page "/connect/authorize"
-@using eSecurity.Client.Common.JS.Fetch
-@using eSecurity.Client.Security.Authentication.OpenIdConnect
-@using eSecurity.Client.Security.Cookies
-@using eSecurity.Core.Common.Responses
+
+@using eSecurity.Client.Security.Authentication.OpenIdConnect.Authorization
+@using eSystem.Core.Security.Authentication.OpenIdConnect.Client
 @using eSystem.Core.Security.Authentication.OpenIdConnect.Constants
 
 @inherits PageBase
 
-@inject SessionState SessionState
-@inject IFetchClient FetchClient
-@inject IConnectService ConnectService
+@inject IOpenIdConnectAuthorizationHandler AuthorizationHandler
+@inject IOptions<ClientOptions> Options
 
 <Title Text="Authorization to eSystem Account"></Title>
 
@@ -49,144 +47,55 @@
     {
         if (firstRender)
         {
+            var context = new AuthorizationContext()
+            {
+                ClientId = ClientId,
+                RedirectUri = RedirectUri,
+                Scope = Scope,
+                Nonce = Nonce,
+                ResponseType = ResponseType,
+                State = State,
+                CodeChallenge = CodeChallenge,
+                CodeChallengeMethod = CodeChallengeMethod,
+                ReturnUrl = ReturnUrl
+            };
+
             if (string.IsNullOrEmpty(Prompt))
             {
-                await OnAuthorizeAsync();
-                return;
+                context.Prompts = [];
             }
-
-            var prompts = Prompt!.Split(' ');
-            if (prompts.Contains(Prompts.None) && prompts.Length > 1)
+            else
             {
-                NavigationManager.NavigateTo(QueryBuilder.Create()
-                    .WithUri(RedirectUri)
-                    .WithQueryParam("error", ErrorTypes.OAuth.InvalidRequest)
-                    .WithQueryParam("error_description", "Prompt 'none' cannot be combined with other prompt values.")
-                    .Build());
+                var prompts = Prompt!.Split(' ').ToList();
+                if (prompts.Contains(PromptTypes.None) && prompts.Count > 1)
+                {
+                    const string message = "Prompt 'none' cannot be combined with other prompt values.";
+                    NavigationManager.NavigateTo(QueryBuilder.Create()
+                        .WithUri(RedirectUri)
+                        .WithQueryParam("error", ErrorTypes.OAuth.InvalidRequest)
+                        .WithQueryParam("error_description", message)
+                        .Build());
 
-                return;
-            }
-            
-            switch (prompts.First())
-            {
-                case Prompts.None: await OnAuthorizeAsync(); break;
-                case Prompts.Login: OnProcessConsent(Links.Common.SignIn, prompts); break;
-                case Prompts.Consent: OnProcessConsent(Links.Connect.Consents, prompts); break;
-                case Prompts.SelectAccount: OnProcessConsent(Links.Connect.SelectAccount, prompts); break;
-                default:
+                    return;
+                }
+
+                var currentPrompt = prompts.First();
+                if (!Options.Value.SupportedPrompts.Contains(currentPrompt))
                 {
                     NavigationManager.NavigateTo(QueryBuilder.Create()
                         .WithUri(RedirectUri)
                         .WithQueryParam("error", ErrorTypes.OAuth.InvalidRequest)
                         .WithQueryParam("error_description", $"Prompt '{prompts.First()}' is not supported.")
                         .Build());
-                    break;
+
+                    return;
                 }
+
+                context.Prompts = prompts;
             }
+
+            await AuthorizationHandler.HandleAsync(context);
         }
     }
-
-    private async Task OnAuthorizeAsync()
-    {
-        var decodedRedirectUri = HttpUtility.UrlDecode(RedirectUri);
-        var decodedScope = HttpUtility.UrlDecode(Scope);
-        
-        if (!UserState.IsAuthenticated)
-        {
-            NavigationManager.NavigateTo(QueryBuilder.Create()
-                .WithUri(decodedRedirectUri)
-                .WithQueryParam("error", ErrorTypes.OAuth.LoginRequired)
-                .WithQueryParam("error_description", "User must be authenticated.")
-                .Build());
-        }
-        
-        var request = new AuthorizeRequest
-        {
-            UserId = UserState.UserId,
-            ResponseType = ResponseType,
-            ClientId = ClientId,
-            RedirectUri = decodedRedirectUri,
-            Scopes = decodedScope.Split(' ').ToList(),
-            Nonce = Nonce,
-            State = State,
-            CodeChallenge = CodeChallenge,
-            CodeChallengeMethod = CodeChallengeMethod
-        };
-
-        var result = await ConnectService.AuthorizeAsync(request);
-        if (result.Succeeded && result.TryGetValue<AuthorizeResponse>(out var response))
-        {
-            var session = new SessionCookie
-            {
-                Id = response!.SessionId,
-                UserId = request.UserId,
-                DeviceId = response.DeviceId,
-                IssuedAt = DateTimeOffset.UtcNow,
-                ExpiresAt = DateTimeOffset.UtcNow.AddDays(30)
-            };
-
-            var fetchOptions = new FetchOptions
-            {
-                Url = $"{NavigationManager.BaseUri}api/authentication/authorize",
-                Method = HttpMethod.Post,
-                Body = session
-            };
-
-            await FetchClient.FetchAsync(fetchOptions);
-            SessionState.Session = session;
-
-            var builder = QueryBuilder.Create()
-                .WithUri(decodedRedirectUri)
-                .WithQueryParam("code", response.Code)
-                .WithQueryParam("state", response.State);
-
-            if (!string.IsNullOrEmpty(ReturnUrl)) 
-                builder.WithQueryParam("return_url", ReturnUrl);
-
-            NavigationManager.NavigateTo(builder.Build());
-        }
-        else
-        {
-            var error = result.GetError();
-            NavigationManager.NavigateTo(QueryBuilder.Create()
-                .WithUri(RedirectUri)
-                .WithQueryParam("error", error.Code)
-                .WithQueryParam("error_description", error.Description)
-                .Build());
-        }
-    }
-
-    private void OnProcessConsent(string uri, string[] prompts)
-    {
-        var decodedRedirectUri = HttpUtility.UrlDecode(RedirectUri);
-        var decodedScope = HttpUtility.UrlDecode(Scope);
-        
-        var returnUrlBuilder = QueryBuilder.Create()
-            .WithUri(Links.Connect.Authorize)
-            .WithQueryParam("response_type", ResponseType)
-            .WithQueryParam("client_id", ClientId)
-            .WithQueryParam("redirect_uri", decodedRedirectUri)
-            .WithQueryParam("scope", decodedScope)
-            .WithQueryParam("state", State)
-            .WithQueryParam("nonce", Nonce);
-
-        if (!string.IsNullOrEmpty(CodeChallenge))
-            returnUrlBuilder.WithQueryParam("code_challenge", CodeChallenge);
-
-        if (!string.IsNullOrEmpty(CodeChallengeMethod))
-            returnUrlBuilder.WithQueryParam("code_challenge_method", CodeChallengeMethod);
-
-        if (prompts.Length > 1)
-        {
-            var prompt = string.Join(" ", prompts.Except([prompts.First()]));
-            returnUrlBuilder.WithQueryParam("prompt", prompt);
-        }
-
-        NavigationManager.NavigateTo(QueryBuilder.Create()
-            .WithUri(uri)
-            .WithQueryParam("return_url", returnUrlBuilder.Build())
-            .Build());
-    }
-
 }
     
