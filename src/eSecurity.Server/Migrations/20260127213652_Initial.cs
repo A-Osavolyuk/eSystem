@@ -894,7 +894,7 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ClientPkceStateEntity",
+                name: "ClientPkceStates",
                 schema: "public",
                 columns: table => new
                 {
@@ -906,16 +906,16 @@ namespace eSecurity.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ClientPkceStateEntity", x => new { x.ClientId, x.SessionId });
+                    table.PrimaryKey("PK_ClientPkceStates", x => new { x.ClientId, x.SessionId });
                     table.ForeignKey(
-                        name: "FK_ClientPkceStateEntity_Clients_ClientId",
+                        name: "FK_ClientPkceStates_Clients_ClientId",
                         column: x => x.ClientId,
                         principalSchema: "public",
                         principalTable: "Clients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ClientPkceStateEntity_Sessions_SessionId",
+                        name: "FK_ClientPkceStates_Sessions_SessionId",
                         column: x => x.SessionId,
                         principalSchema: "public",
                         principalTable: "Sessions",
@@ -924,7 +924,7 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ClientSessionEntity",
+                name: "ClientSessions",
                 schema: "public",
                 columns: table => new
                 {
@@ -935,16 +935,16 @@ namespace eSecurity.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ClientSessionEntity", x => new { x.ClientId, x.SessionId });
+                    table.PrimaryKey("PK_ClientSessions", x => new { x.ClientId, x.SessionId });
                     table.ForeignKey(
-                        name: "FK_ClientSessionEntity_Clients_ClientId",
+                        name: "FK_ClientSessions_Clients_ClientId",
                         column: x => x.ClientId,
                         principalSchema: "public",
                         principalTable: "Clients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ClientSessionEntity_Sessions_SessionId",
+                        name: "FK_ClientSessions_Sessions_SessionId",
                         column: x => x.SessionId,
                         principalSchema: "public",
                         principalTable: "Sessions",
@@ -1041,15 +1041,15 @@ namespace eSecurity.Server.Migrations
                 column: "ClientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientPkceStateEntity_SessionId",
+                name: "IX_ClientPkceStates_SessionId",
                 schema: "public",
-                table: "ClientPkceStateEntity",
+                table: "ClientPkceStates",
                 column: "SessionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientSessionEntity_SessionId",
+                name: "IX_ClientSessions_SessionId",
                 schema: "public",
-                table: "ClientSessionEntity",
+                table: "ClientSessions",
                 column: "SessionId");
 
             migrationBuilder.CreateIndex(
@@ -1258,11 +1258,11 @@ namespace eSecurity.Server.Migrations
                 schema: "public");
 
             migrationBuilder.DropTable(
-                name: "ClientPkceStateEntity",
+                name: "ClientPkceStates",
                 schema: "public");
 
             migrationBuilder.DropTable(
-                name: "ClientSessionEntity",
+                name: "ClientSessions",
                 schema: "public");
 
             migrationBuilder.DropTable(

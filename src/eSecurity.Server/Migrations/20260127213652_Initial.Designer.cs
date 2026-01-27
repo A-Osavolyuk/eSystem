@@ -12,7 +12,7 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20260127212553_Initial")]
+    [Migration("20260127213652_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -221,7 +221,7 @@ namespace eSecurity.Server.Migrations
 
                     b.HasIndex("SessionId");
 
-                    b.ToTable("ClientPkceStateEntity", "public");
+                    b.ToTable("ClientPkceStates", "public");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientSessionEntity", b =>
@@ -242,7 +242,7 @@ namespace eSecurity.Server.Migrations
 
                     b.HasIndex("SessionId");
 
-                    b.ToTable("ClientSessionEntity", "public");
+                    b.ToTable("ClientSessions", "public");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientUriEntity", b =>
