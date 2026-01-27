@@ -126,7 +126,7 @@ public static class AuthenticationExtensions
                 options.SignInScheme = ExternalAuthenticationDefaults.AuthenticationScheme;
             })
             .AddScheme<JwtAuthenticationSchemeOptions, JwtAuthenticationHandler>(
-                BasicAuthenticationDefaults.AuthenticationScheme, _ => { })
+                JwtBearerDefaults.AuthenticationScheme, _ => { })
             .AddScheme<ClientSecretBasicAuthenticationSchemeOptions, ClientSecretBasicAuthenticationHandler>(
                 ClientSecretBasicAuthenticationDefaults.AuthenticationScheme, _ => { })
             .AddScheme<ClientSecretPostAuthenticationSchemeOptions, ClientSecretPostAuthenticationHandler>(

@@ -16,10 +16,14 @@ public class AccessTokenValidator(
     private readonly TokenOptions _tokenOptions = options.Value;
     private readonly JwtSecurityTokenHandler _handler = new JwtSecurityTokenHandler();
 
-    public async Task<TokenValidationResult> ValidateAsync(JwtSecurityToken token, 
+    public async Task<TokenValidationResult> ValidateAsync(string token, 
         CancellationToken cancellationToken = default)
     {
-        var kid = Guid.Parse(token.Header.Kid);
+        var securityToken = _handler.ReadJwtToken(token);
+        if (securityToken is null)
+            return TokenValidationResult.Fail();
+        
+        var kid = Guid.Parse(securityToken.Header.Kid);
         var certificate = await _certificateProvider.FindByIdAsync(kid, cancellationToken);
         if (certificate is null) return TokenValidationResult.Fail();
 
@@ -33,15 +37,15 @@ public class AccessTokenValidator(
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new RsaSecurityKey(publicKey),
             ValidateLifetime = true,
-            ClockSkew = TimeSpan.FromMinutes(5)
+            ClockSkew = TimeSpan.FromMinutes(5),
         };
 
         try
         {
-            var validationResult = await _handler.ValidateTokenAsync(token, validationParameters);
-            return !validationResult.IsValid 
+            var claimPrincipal = _handler.ValidateToken(token, validationParameters, out _);
+            return claimPrincipal is null 
                 ? TokenValidationResult.Fail() 
-                : TokenValidationResult.Success(new ClaimsPrincipal(validationResult.ClaimsIdentity));
+                : TokenValidationResult.Success(new ClaimsPrincipal(claimPrincipal));
         }
         catch (Exception)
         {

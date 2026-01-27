@@ -17,6 +17,6 @@ public class JwtTokenValidator(IJwtTokenValidationProvider validationProvider) :
             return TokenValidationResult.Fail();
         
         var validator = _validationProvider.CreateValidator(securityToken.Header.Typ);
-        return await validator.ValidateAsync(securityToken, cancellationToken);
+        return await validator.ValidateAsync(token, cancellationToken);
     }
 }

@@ -4,6 +4,5 @@ namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Validatio
 
 public interface IJwtTokenValidator
 {
-    public Task<TokenValidationResult> ValidateAsync(JwtSecurityToken token, 
-        CancellationToken cancellationToken = default);
+    public Task<TokenValidationResult> ValidateAsync(string token, CancellationToken cancellationToken = default);
 }
