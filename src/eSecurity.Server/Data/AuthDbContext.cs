@@ -41,7 +41,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<PairwiseSubjectEntity> PairwiseSubjects { get; set; }
     public DbSet<SignInSessionEntity> SignInSessions { get; set; }
     public DbSet<ClientPkceStateEntity> ClientPkceStates { get; set; }
-    public DbSet<ClientPkceStateEntity> ClientSessions { get; set; }
+    public DbSet<ClientSessionEntity> ClientSessions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
