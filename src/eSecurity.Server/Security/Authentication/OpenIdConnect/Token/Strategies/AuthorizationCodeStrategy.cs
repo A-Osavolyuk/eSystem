@@ -161,6 +161,9 @@ public class AuthorizationCodeStrategy(
         var codeResult = await _authorizationCodeManager.UseAsync(authorizationCode, cancellationToken);
         if (!codeResult.Succeeded) return codeResult;
         
+        var clientResult = await _clientManager.RelateAsync(client, session, cancellationToken);
+        if (!clientResult.Succeeded) return clientResult;
+        
         var response = new TokenResponse
         {
             ExpiresIn = (int)_options.AccessTokenLifetime.TotalSeconds,
