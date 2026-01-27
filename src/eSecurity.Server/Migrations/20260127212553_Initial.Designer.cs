@@ -12,7 +12,7 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20260126192620_Initial")]
+    [Migration("20260127212553_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -208,6 +208,12 @@ namespace eSecurity.Server.Migrations
                     b.Property<Guid>("SessionId")
                         .HasColumnType("uuid");
 
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTimeOffset>("VerificationDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -215,7 +221,28 @@ namespace eSecurity.Server.Migrations
 
                     b.HasIndex("SessionId");
 
-                    b.ToTable("ClientPkceStates", "public");
+                    b.ToTable("ClientPkceStateEntity", "public");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientSessionEntity", b =>
+                {
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SessionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("ClientId", "SessionId");
+
+                    b.HasIndex("SessionId");
+
+                    b.ToTable("ClientSessionEntity", "public");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientUriEntity", b =>
@@ -1326,6 +1353,25 @@ namespace eSecurity.Server.Migrations
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientPkceStateEntity", b =>
+                {
+                    b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("eSecurity.Server.Data.Entities.SessionEntity", "Session")
+                        .WithMany()
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Session");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientSessionEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
                         .WithMany()

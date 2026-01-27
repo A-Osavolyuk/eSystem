@@ -894,26 +894,57 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ClientPkceStates",
+                name: "ClientPkceStateEntity",
                 schema: "public",
                 columns: table => new
                 {
                     ClientId = table.Column<Guid>(type: "uuid", nullable: false),
                     SessionId = table.Column<Guid>(type: "uuid", nullable: false),
-                    VerificationDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    VerificationDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ClientPkceStates", x => new { x.ClientId, x.SessionId });
+                    table.PrimaryKey("PK_ClientPkceStateEntity", x => new { x.ClientId, x.SessionId });
                     table.ForeignKey(
-                        name: "FK_ClientPkceStates_Clients_ClientId",
+                        name: "FK_ClientPkceStateEntity_Clients_ClientId",
                         column: x => x.ClientId,
                         principalSchema: "public",
                         principalTable: "Clients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ClientPkceStates_Sessions_SessionId",
+                        name: "FK_ClientPkceStateEntity_Sessions_SessionId",
+                        column: x => x.SessionId,
+                        principalSchema: "public",
+                        principalTable: "Sessions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClientSessionEntity",
+                schema: "public",
+                columns: table => new
+                {
+                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
+                    SessionId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientSessionEntity", x => new { x.ClientId, x.SessionId });
+                    table.ForeignKey(
+                        name: "FK_ClientSessionEntity_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalSchema: "public",
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClientSessionEntity_Sessions_SessionId",
                         column: x => x.SessionId,
                         principalSchema: "public",
                         principalTable: "Sessions",
@@ -1010,9 +1041,15 @@ namespace eSecurity.Server.Migrations
                 column: "ClientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientPkceStates_SessionId",
+                name: "IX_ClientPkceStateEntity_SessionId",
                 schema: "public",
-                table: "ClientPkceStates",
+                table: "ClientPkceStateEntity",
+                column: "SessionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientSessionEntity_SessionId",
+                schema: "public",
+                table: "ClientSessionEntity",
                 column: "SessionId");
 
             migrationBuilder.CreateIndex(
@@ -1221,7 +1258,11 @@ namespace eSecurity.Server.Migrations
                 schema: "public");
 
             migrationBuilder.DropTable(
-                name: "ClientPkceStates",
+                name: "ClientPkceStateEntity",
+                schema: "public");
+
+            migrationBuilder.DropTable(
+                name: "ClientSessionEntity",
                 schema: "public");
 
             migrationBuilder.DropTable(
