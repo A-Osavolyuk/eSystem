@@ -27,7 +27,7 @@ public sealed class AuthenticationManager(
         var queryParams = QueryParser.GetQueryParameters(decodedUri);
 
         var builder = QueryBuilder.Create().WithUri(Links.Connect.Authorize)
-            .WithQueryParam("prompt", Prompts.Consent);
+            .WithQueryParam("prompt", PromptTypes.Consent);
 
         builder.WithQueryParam("response_type", queryParams.GetValueOrDefault("response_type", ResponseTypes.Code))
             .WithQueryParam("client_id", queryParams.GetValueOrDefault("client_id", _clientOptions.ClientId))
@@ -45,7 +45,7 @@ public sealed class AuthenticationManager(
             }
         }
         else 
-            builder.WithQueryParam("prompt", Prompts.Consent);
+            builder.WithQueryParam("prompt", PromptTypes.Consent);
 
         _navigationManager.NavigateTo(builder.Build());
     }

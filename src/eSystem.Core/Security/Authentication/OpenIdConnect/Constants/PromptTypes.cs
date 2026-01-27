@@ -1,6 +1,6 @@
 namespace eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 
-public static class Prompts
+public static class PromptTypes
 {
     public const string None = "none";
     public const string Login = "login";
