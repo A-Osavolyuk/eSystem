@@ -1,4 +1,5 @@
-﻿using eSecurity.Core.Security.Identity;
+﻿using System.Security.Claims;
+using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Validation;
 using eSecurity.Server.Security.Identity.Email;
@@ -83,7 +84,9 @@ public class GetUserInfoQueryHandler(
             });
         }
 
-        var subjectClaim = claimsPrincipal.Claims.First(x => x.Type == AppClaimTypes.Sub);
+        var subjectClaim = claimsPrincipal.Claims.First(
+            x => x.Type is AppClaimTypes.Sub or ClaimTypes.NameIdentifier);
+        
         var user = await _userManager.FindByIdAsync(Guid.Parse(subjectClaim.Value), cancellationToken);
         if (user is null)
         {
