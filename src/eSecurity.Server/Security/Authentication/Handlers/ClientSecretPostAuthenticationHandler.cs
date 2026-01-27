@@ -6,6 +6,7 @@ using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Security.Authentication.Schemes;
+using eSystem.Core.Security.Identity.Claims;
 using Microsoft.AspNetCore.Authentication;
 
 namespace eSecurity.Server.Security.Authentication.Handlers;
@@ -56,8 +57,8 @@ public class ClientSecretPostAuthenticationHandler(
 
         var claims = new List<Claim>
         {
-            new("client_id", client.Id.ToString()),
-            new("client_type", client.ClientType.ToString())
+            new(AppClaimTypes.ClientId, client.Id.ToString()),
+            new(AppClaimTypes.ClientSecret, client.ClientType.ToString())
         };
 
         var identity = new ClaimsIdentity(claims, ClientSecretPostAuthenticationDefaults.AuthenticationScheme);
