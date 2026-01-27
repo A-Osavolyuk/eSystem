@@ -37,10 +37,10 @@ export class AuthService {
           });
           return of(void 0)
         }),
-        map(() => void 0 ));
+        map(() => void 0));
   }
 
-  private mapUserInfo(userInfo: UserInfo) : User {
+  private mapUserInfo(userInfo: UserInfo): User {
     return {
       username: userInfo.preferred_username ?? '',
       email: userInfo.email ?? '',
@@ -65,5 +65,20 @@ export class AuthService {
 
   public logout = (): void => {
     document.location.href = `${environment.backendUri}/bff/logout`;
+  }
+
+  public frontchannelLogout = (): Observable<void> => {
+    return this.httpClient.get<void>(`${environment.backendUri}/connect/frontchannel-logout`)
+      .pipe(
+        tap(() => {
+          this.authenticationState.set({
+            isAuthenticated: false,
+            user: null
+          });
+        }),
+        catchError((error) => {
+          console.log(error.error);
+          return of(void 0)
+        }));
   }
 }

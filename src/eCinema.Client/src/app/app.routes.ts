@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+import {Routes} from '@angular/router';
 
 export const routes: Routes = [
   {
@@ -21,6 +21,11 @@ export const routes: Routes = [
         path: 'connect/logged-out',
         loadComponent: () => import('./pages/connect/logged-out-page/logged-out-page')
           .then(c => c.LoggedOutPage),
+      },
+      {
+        path: 'connect/frontchannel-logout',
+        loadComponent: () => import('./pages/connect/frontchannel-logout/frontchannel-logout-page')
+          .then(c => c.FrontchannelLogoutPage),
       }
     ]
   }
