@@ -65,11 +65,13 @@ public class LogoutCommandHandler(
 
         var session = await _sessionManager.FindByIdAsync(Guid.Parse(sid.Value), cancellationToken);
         if (session is null)
+        {
             return Results.InternalServerError(new Error
             {
                 Code = ErrorTypes.OAuth.ServerError,
                 Description = "Invalid session."
             });
+        }
 
         ClientEntity? client;
         if (string.IsNullOrEmpty(request.Request.ClientId))
@@ -83,35 +85,35 @@ public class LogoutCommandHandler(
         }
 
         if (client is null)
+        {
             return Results.Unauthorized(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidClient,
                 Description = "Invalid client."
             });
+        }
         
         var postLogoutRedirectUri = client.Uris.FirstOrDefault(x => x.Type == UriType.PostLogoutRedirect);
         if (postLogoutRedirectUri is null)
+        {
             return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "post_logout_redirect_uri is invalid."
             });
+        }
 
-        var result = await _sessionManager.RemoveAsync(session, cancellationToken);
-        if (!result.Succeeded) return result;
-
-        var postLogoutRedirectUris = client.Uris
-            .Where(x => x.Type == UriType.FrontChannelLogout)
-            .Select(x => x.Uri)
-            .ToList();
+        var frontChannelLogoutUris = await _clientManager.GetFrontChannelLogoutUrisAsync(
+            session, cancellationToken);
         
         var response = new LogoutResponse
         {
             State = request.Request.State,
             PostLogoutRedirectUri = postLogoutRedirectUri.Uri,
-            FrontChannelLogoutUris = postLogoutRedirectUris
+            FrontChannelLogoutUris = frontChannelLogoutUris
         };
         
-        return Results.Ok(response);
+        var result = await _sessionManager.RemoveAsync(session, cancellationToken);
+        return result.Succeeded ? Results.Ok(response) : result;
     }
 }
