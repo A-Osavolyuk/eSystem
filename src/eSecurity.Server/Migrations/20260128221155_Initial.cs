@@ -231,6 +231,43 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AuthorizationCodes",
+                schema: "public",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Code = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    Nonce = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    RedirectUri = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    CodeChallenge = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    CodeChallengeMethod = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: true),
+                    Used = table.Column<bool>(type: "boolean", nullable: false),
+                    ExpireDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AuthorizationCodes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AuthorizationCodes_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalSchema: "public",
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AuthorizationCodes_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "public",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Codes",
                 schema: "public",
                 columns: table => new
@@ -394,6 +431,30 @@ namespace eSecurity.Server.Migrations
                     table.PrimaryKey("PK_PersonalData", x => x.Id);
                     table.ForeignKey(
                         name: "FK_PersonalData_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "public",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Sessions",
+                schema: "public",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ExpireDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sessions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Sessions_Users_UserId",
                         column: x => x.UserId,
                         principalSchema: "public",
                         principalTable: "Users",
@@ -745,38 +806,66 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AuthorizationCodes",
+                name: "ClientSessions",
                 schema: "public",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     ClientId = table.Column<Guid>(type: "uuid", nullable: false),
-                    DeviceId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Code = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
-                    Nonce = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    RedirectUri = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    CodeChallenge = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
-                    CodeChallengeMethod = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: true),
-                    Used = table.Column<bool>(type: "boolean", nullable: false),
-                    ExpireDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    SessionId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AuthorizationCodes", x => x.Id);
+                    table.PrimaryKey("PK_ClientSessions", x => new { x.ClientId, x.SessionId });
                     table.ForeignKey(
-                        name: "FK_AuthorizationCodes_Clients_ClientId",
+                        name: "FK_ClientSessions_Clients_ClientId",
                         column: x => x.ClientId,
                         principalSchema: "public",
                         principalTable: "Clients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AuthorizationCodes_UserDevices_DeviceId",
-                        column: x => x.DeviceId,
+                        name: "FK_ClientSessions_Sessions_SessionId",
+                        column: x => x.SessionId,
                         principalSchema: "public",
-                        principalTable: "UserDevices",
+                        principalTable: "Sessions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OpaqueTokens",
+                schema: "public",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
+                    SessionId = table.Column<Guid>(type: "uuid", nullable: true),
+                    TokenType = table.Column<string>(type: "text", nullable: false),
+                    TokenHash = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    Subject = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Revoked = table.Column<bool>(type: "boolean", nullable: false),
+                    RevokedDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    ExpiredDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OpaqueTokens", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OpaqueTokens_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalSchema: "public",
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OpaqueTokens_Sessions_SessionId",
+                        column: x => x.SessionId,
+                        principalSchema: "public",
+                        principalTable: "Sessions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -804,30 +893,6 @@ namespace eSecurity.Server.Migrations
                     table.PrimaryKey("PK_Passkeys", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Passkeys_UserDevices_DeviceId",
-                        column: x => x.DeviceId,
-                        principalSchema: "public",
-                        principalTable: "UserDevices",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Sessions",
-                schema: "public",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    DeviceId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ExpireDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Sessions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Sessions_UserDevices_DeviceId",
                         column: x => x.DeviceId,
                         principalSchema: "public",
                         principalTable: "UserDevices",
@@ -894,70 +959,6 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ClientSessions",
-                schema: "public",
-                columns: table => new
-                {
-                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
-                    SessionId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ClientSessions", x => new { x.ClientId, x.SessionId });
-                    table.ForeignKey(
-                        name: "FK_ClientSessions_Clients_ClientId",
-                        column: x => x.ClientId,
-                        principalSchema: "public",
-                        principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ClientSessions_Sessions_SessionId",
-                        column: x => x.SessionId,
-                        principalSchema: "public",
-                        principalTable: "Sessions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "OpaqueTokens",
-                schema: "public",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
-                    SessionId = table.Column<Guid>(type: "uuid", nullable: true),
-                    TokenType = table.Column<string>(type: "text", nullable: false),
-                    TokenHash = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
-                    Revoked = table.Column<bool>(type: "boolean", nullable: false),
-                    RevokedDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    ExpiredDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OpaqueTokens", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_OpaqueTokens_Clients_ClientId",
-                        column: x => x.ClientId,
-                        principalSchema: "public",
-                        principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_OpaqueTokens_Sessions_SessionId",
-                        column: x => x.SessionId,
-                        principalSchema: "public",
-                        principalTable: "Sessions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "OpaqueTokensScopes",
                 schema: "public",
                 columns: table => new
@@ -993,10 +994,10 @@ namespace eSecurity.Server.Migrations
                 column: "ClientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AuthorizationCodes_DeviceId",
+                name: "IX_AuthorizationCodes_UserId",
                 schema: "public",
                 table: "AuthorizationCodes",
-                column: "DeviceId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ClientAllowedScopes_ScopeId",
@@ -1123,10 +1124,10 @@ namespace eSecurity.Server.Migrations
                 column: "PermissionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Sessions_DeviceId",
+                name: "IX_Sessions_UserId",
                 schema: "public",
                 table: "Sessions",
-                column: "DeviceId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SignInSessions_UserId",
@@ -1322,6 +1323,10 @@ namespace eSecurity.Server.Migrations
                 schema: "public");
 
             migrationBuilder.DropTable(
+                name: "UserDevices",
+                schema: "public");
+
+            migrationBuilder.DropTable(
                 name: "Permissions",
                 schema: "public");
 
@@ -1342,15 +1347,11 @@ namespace eSecurity.Server.Migrations
                 schema: "public");
 
             migrationBuilder.DropTable(
-                name: "UserDevices",
+                name: "Users",
                 schema: "public");
 
             migrationBuilder.DropTable(
                 name: "ResourceOwners",
-                schema: "public");
-
-            migrationBuilder.DropTable(
-                name: "Users",
                 schema: "public");
         }
     }

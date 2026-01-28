@@ -12,7 +12,7 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20260128211110_Initial")]
+    [Migration("20260128221155_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -51,9 +51,6 @@ namespace eSecurity.Server.Migrations
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("DeviceId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTimeOffset>("ExpireDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -73,11 +70,14 @@ namespace eSecurity.Server.Migrations
                     b.Property<bool>("Used")
                         .HasColumnType("boolean");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId");
 
-                    b.HasIndex("DeviceId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("AuthorizationCodes", "public");
                 });
@@ -365,6 +365,11 @@ namespace eSecurity.Server.Migrations
 
                     b.Property<Guid?>("SessionId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("TokenHash")
                         .IsRequired()
@@ -733,9 +738,6 @@ namespace eSecurity.Server.Migrations
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("DeviceId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTimeOffset?>("ExpireDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -745,9 +747,12 @@ namespace eSecurity.Server.Migrations
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("DeviceId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Sessions", "public");
                 });
@@ -1287,15 +1292,15 @@ namespace eSecurity.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eSecurity.Server.Data.Entities.UserDeviceEntity", "Device")
+                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
                         .WithMany()
-                        .HasForeignKey("DeviceId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Client");
 
-                    b.Navigation("Device");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientAllowedScopeEntity", b =>
@@ -1584,13 +1589,13 @@ namespace eSecurity.Server.Migrations
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.SessionEntity", b =>
                 {
-                    b.HasOne("eSecurity.Server.Data.Entities.UserDeviceEntity", "Device")
+                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
                         .WithMany()
-                        .HasForeignKey("DeviceId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Device");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.SignInSessionEntity", b =>
