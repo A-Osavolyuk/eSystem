@@ -9,7 +9,6 @@ using eSystem.Core.Security.Authentication.OpenIdConnect.Introspection;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Revocation;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Token;
 using eSystem.Core.Security.Authentication.OpenIdConnect.User;
-using eSystem.Core.Security.Authentication.Schemes;
 
 namespace eSecurity.Server.Controllers.v1;
 

@@ -29,7 +29,6 @@ public class AuthorizationCodeStrategy(
     IUserManager userManager,
     IPkceHandler pkceHandler,
     ITokenManager tokenManager,
-    IDeviceManager deviceManager,
     IClientManager clientManager,
     IHasherProvider hasherProvider,
     ISessionManager sessionManager,
@@ -44,7 +43,6 @@ public class AuthorizationCodeStrategy(
     private readonly IAuthorizationCodeManager _authorizationCodeManager = authorizationCodeManager;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly ITokenManager _tokenManager = tokenManager;
-    private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly IPkceHandler _pkceHandler = pkceHandler;
     private readonly IHasherProvider _hasherProvider = hasherProvider;
     private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
@@ -95,17 +93,7 @@ public class AuthorizationCodeStrategy(
             });
         }
 
-        var device = await _deviceManager.FindByIdAsync(authorizationCode.DeviceId, cancellationToken);
-        if (device is null)
-        {
-            return Results.BadRequest(new Error
-            {
-                Code = ErrorTypes.OAuth.InvalidGrant,
-                Description = "Invalid authorization code."
-            });
-        }
-
-        var user = await _userManager.FindByIdAsync(device.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(authorizationCode.UserId, cancellationToken);
         if (user is null)
         {
             return Results.BadRequest(new Error

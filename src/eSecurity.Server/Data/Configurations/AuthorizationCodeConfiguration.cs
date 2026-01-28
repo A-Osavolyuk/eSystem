@@ -14,9 +14,9 @@ public sealed class AuthorizationCodeConfiguration : IEntityTypeConfiguration<Au
         builder.Property(x => x.Code).HasMaxLength(20);
         builder.Property(x => x.Nonce).HasMaxLength(200);
 
-        builder.HasOne(x => x.Device)
+        builder.HasOne(x => x.User)
             .WithMany()
-            .HasForeignKey(x => x.DeviceId)
+            .HasForeignKey(x => x.UserId)
             .OnDelete(DeleteBehavior.Cascade);;
 
         builder.HasOne(x => x.Client)

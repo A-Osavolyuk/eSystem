@@ -1,6 +1,5 @@
 ﻿using System.Web;
 using eSecurity.Client.Common.JS.Fetch;
-using eSecurity.Client.Common.State;
 using eSecurity.Client.Common.State.States;
 using eSecurity.Client.Security.Authentication.OpenIdConnect.Authorization;
 using eSecurity.Client.Security.Cookies;
@@ -61,7 +60,6 @@ public sealed class NonePromptStrategy(
             {
                 Id = response!.SessionId,
                 UserId = request.UserId,
-                DeviceId = response.DeviceId,
                 IssuedAt = DateTimeOffset.UtcNow,
                 ExpiresAt = DateTimeOffset.UtcNow.AddDays(30)
             };

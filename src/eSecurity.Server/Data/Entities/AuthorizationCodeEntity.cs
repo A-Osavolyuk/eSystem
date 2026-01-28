@@ -6,7 +6,7 @@ public class AuthorizationCodeEntity : Entity
 {
     public Guid Id { get; set; }
     public Guid ClientId { get; set; }
-    public Guid DeviceId { get; set; }
+    public Guid UserId { get; set; }
     
     public required string Code { get; set; }
     public required string Nonce { get; set; }
@@ -19,5 +19,5 @@ public class AuthorizationCodeEntity : Entity
     public DateTimeOffset ExpireDate { get; set; }
 
     public ClientEntity Client { get; set; } = null!;
-    public UserDeviceEntity Device { get; set; } = null!;
+    public UserEntity User { get; set; } = null!;
 }

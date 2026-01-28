@@ -1,6 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-
-namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Validation;
+﻿namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Validation;
 
 public interface IJwtTokenValidator
 {

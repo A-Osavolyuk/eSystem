@@ -8,7 +8,6 @@ using eSecurity.Server.Security.Authorization.Consents;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Constants;
-using eSystem.Core.Http.Extensions;
 using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
@@ -19,21 +18,17 @@ public record AuthorizeCommand(AuthorizeRequest Request) : IRequest<Result>;
 
 public class AuthorizeCommandHandler(
     IUserManager userManager,
-    IHttpContextAccessor httpContextAccessor,
     ISessionManager sessionManager,
     IAuthorizationCodeManager authorizationCodeManager,
     IClientManager clientManager,
     IConsentManager consentManager,
-    IDeviceManager deviceManager,
     IOptions<OpenIdConfiguration> options) : IRequestHandler<AuthorizeCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
-    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IAuthorizationCodeManager _authorizationCodeManager = authorizationCodeManager;
     private readonly IClientManager _clientManager = clientManager;
     private readonly IConsentManager _consentManager = consentManager;
-    private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly OpenIdConfiguration _configuration = options.Value;
 
     public async Task<Result> Handle(AuthorizeCommand request, CancellationToken cancellationToken)
@@ -143,19 +138,6 @@ public class AuthorizeCommandHandler(
             });
         }
 
-        var userAgent = _httpContextAccessor.HttpContext?.GetUserAgent()!;
-        var ipAddress = _httpContextAccessor.HttpContext?.GetIpV4()!;
-
-        var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
-        if (device is null)
-        {
-            return Results.InternalServerError(new Error
-            {
-                Code = ErrorTypes.OAuth.ServerError,
-                Description = "Invalid authorization session."
-            });
-        }
-
         var session = await _sessionManager.FindAsync(user, cancellationToken);
         if (session is null)
         {
@@ -171,7 +153,7 @@ public class AuthorizeCommandHandler(
         {
             Id = Guid.CreateVersion7(),
             ClientId = client.Id,
-            DeviceId = device.Id,
+            UserId = user.Id,
             Code = code,
             Nonce = request.Request.Nonce,
             CodeChallenge = request.Request.CodeChallenge,
@@ -187,7 +169,6 @@ public class AuthorizeCommandHandler(
         {
             UserId = user.Id,
             SessionId = session.Id,
-            DeviceId = device.Id,
             State = request.Request.State,
             Code = code
         };
