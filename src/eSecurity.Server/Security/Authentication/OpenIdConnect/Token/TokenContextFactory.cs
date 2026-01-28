@@ -23,8 +23,7 @@ public class TokenContextFactory : ITokenContextFactory
             {
                 ClientId = request.ClientId,
                 GrantType = request.GrantType,
-                RefreshToken = request.RefreshToken,
-                Scope = request.Scope
+                RefreshToken = request.RefreshToken
             },
             GrantTypes.ClientCredentials => new ClientCredentialsContext
             {

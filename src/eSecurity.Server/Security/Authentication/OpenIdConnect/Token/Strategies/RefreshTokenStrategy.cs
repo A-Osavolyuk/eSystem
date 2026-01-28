@@ -20,7 +20,6 @@ public sealed class RefreshTokenContext : TokenContext
 {
     public string? RefreshToken { get; set; }
     public string? RedirectUri { get; set; }
-    public string? Scope { get; set; }
 }
 
 public class RefreshTokenStrategy(
@@ -126,10 +125,7 @@ public class RefreshTokenStrategy(
             });
         }
 
-        var requestedScopes = string.IsNullOrEmpty(refreshPayload.Scope)
-            ? client.AllowedScopes.Select(x => x.Scope.Name).ToList()
-            : refreshPayload.Scope!.Split(' ').ToList();
-
+        var requestedScopes = client.AllowedScopes.Select(x => x.Scope.Name).ToList();
         if (!client.HasScopes(requestedScopes))
         {
             return Results.BadRequest(new Error
