@@ -30,6 +30,7 @@ public static class IdentityExtensions
             builder.Services.AddScoped<ITokenClaimsFactory<AccessTokenClaimsContext, UserEntity>, AccessTokenClaimsFactory>();
             builder.Services.AddScoped<ITokenClaimsFactory<AccessTokenClaimsContext, ClientEntity>, AccessTokenClaimsFactory>();
             builder.Services.AddScoped<ITokenClaimsFactory<IdTokenClaimsContext, UserEntity>, IdTokenClaimsFactory>();
+            builder.Services.AddScoped<ITokenClaimsFactory<LogoutTokenClaimsContext, UserEntity>, LogoutTokenClaimsFactory>();
         
             builder.ConfigureIdentity(cfg =>
             {
