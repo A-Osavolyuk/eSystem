@@ -23,10 +23,11 @@ export class AuthenticationService {
       .pipe(
         tap(user => {
           this.state.signIn(user);
+          this.channel.postMessage(AuthenticationEvents.LOGIN, user);
         }),
         catchError((error) => {
           console.log(error.error);
-          this.state.signOut();
+          this.channel.postMessage(AuthenticationEvents.LOGOUT);
           return of(void 0)
         }),
         map(() => void 0));

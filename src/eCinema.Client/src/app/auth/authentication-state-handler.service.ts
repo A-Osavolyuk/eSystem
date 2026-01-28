@@ -2,6 +2,7 @@ import {inject, Injectable} from '@angular/core';
 import {AuthenticationEvents} from './authentication-events';
 import {AuthenticationChannel} from './authentication-channel.service';
 import {AuthenticationStateProvider} from './authentication-state-provider.service';
+import {UserInfo} from '../core/interfaces/userinfo.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -12,9 +13,12 @@ export class AuthenticationStateHandler {
 
   public listenEvents = () => {
     this.channel.getChannel().onmessage = (message) => {
-      if (message.data === AuthenticationEvents.LOGOUT) {
+      if (message.data.type === AuthenticationEvents.LOGOUT) {
         console.log("Received logout event from another tab, signing out...");
         this.auth.signOut();
+      } else if (message.data.type === AuthenticationEvents.LOGIN) {
+        console.log("Received login event from another tab, signing in...");
+        this.auth.signIn(message.data.payload);
       }
     }
   }

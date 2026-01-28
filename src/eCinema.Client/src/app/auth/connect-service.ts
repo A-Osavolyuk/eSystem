@@ -19,7 +19,6 @@ export class ConnectService {
       .pipe(
         tap(() => {
           this.channel.postMessage(AuthenticationEvents.LOGOUT);
-          this.state.signOut();
         }),
         catchError((error) => {
           console.log(error.error);
