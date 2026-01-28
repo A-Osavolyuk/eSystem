@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
+import {Injectable, OnDestroy} from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AuthenticationChannel {
+export class AuthenticationChannel implements OnDestroy {
   private channel = new BroadcastChannel('authentication');
 
   public postMessage(message: string): void;
@@ -18,4 +18,8 @@ export class AuthenticationChannel {
   }
 
   public getChannel = (): BroadcastChannel => this.channel;
+
+  ngOnDestroy(): void {
+    this.channel.close();
+  }
 }

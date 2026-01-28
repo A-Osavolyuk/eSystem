@@ -1,4 +1,4 @@
-import {inject, Injectable} from '@angular/core';
+import {inject, Injectable, OnDestroy} from '@angular/core';
 import {AuthenticationEvents} from './authentication-events';
 import {AuthenticationChannel} from './authentication-channel.service';
 import {AuthenticationStateProvider} from './authentication-state-provider.service';
@@ -18,7 +18,7 @@ export class AuthenticationStateHandler {
         this.auth.signOut();
       } else if (message.data.type === AuthenticationEvents.LOGIN) {
         console.log("Received login event from another tab, signing in...");
-        this.auth.signIn(message.data.payload);
+        this.auth.signIn(message.data.payload as UserInfo);
       }
     }
   }
