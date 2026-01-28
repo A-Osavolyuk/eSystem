@@ -178,6 +178,7 @@ public class AuthorizationCodeStrategy(
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = client.Id,
+                Subject = user.Id.ToString(),
                 TokenHash = hasher.Hash(rawToken),
                 TokenType = OpaqueTokenType.AccessToken,
                 ExpiredDate = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime)
@@ -202,6 +203,7 @@ public class AuthorizationCodeStrategy(
                 {
                     Id = Guid.CreateVersion7(),
                     ClientId = client.Id,
+                    Subject = user.Id.ToString(),
                     TokenHash = hasher.Hash(rawToken),
                     TokenType = OpaqueTokenType.RefreshToken,
                     ExpiredDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime)
@@ -241,6 +243,7 @@ public class AuthorizationCodeStrategy(
                 Id = Guid.CreateVersion7(),
                 ClientId = client.Id,
                 SessionId = session.Id,
+                Subject = user.Id.ToString(),
                 TokenHash = hasher.Hash(rawToken),
                 TokenType = OpaqueTokenType.RefreshToken,
                 ExpiredDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime)

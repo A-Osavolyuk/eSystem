@@ -19,7 +19,6 @@ namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Strategie
 public sealed class RefreshTokenContext : TokenContext
 {
     public string? RefreshToken { get; set; }
-    public string? RedirectUri { get; set; }
 }
 
 public class RefreshTokenStrategy(
@@ -65,7 +64,7 @@ public class RefreshTokenStrategy(
                 Description = $"'{refreshPayload.GrantType}' is not supported by client."
             });
         }
-        
+
         var hasher = _hasherProvider.GetHasher(HashAlgorithm.Sha512);
         var incomingHash = hasher.Hash(refreshPayload.RefreshToken!);
         var refreshToken = await _tokenManager.FindByHashAsync(incomingHash, cancellationToken);
@@ -77,29 +76,6 @@ public class RefreshTokenStrategy(
                 Description = "Invalid refresh token."
             });
         }
-        
-        var session = await _sessionManager.FindByIdAsync(refreshToken.SessionId.Value, cancellationToken);
-        if (session is null)
-        {
-            return Results.NotFound(new Error
-            {
-                Code = ErrorTypes.OAuth.InvalidGrant,
-                Description = "Invalid refresh token."
-            });
-        }
-
-        if (refreshToken.Revoked)
-        {
-            var sessionResult = await _sessionManager.RemoveAsync(session, cancellationToken);
-            if (!sessionResult.Succeeded)
-            {
-                return Results.InternalServerError(new Error
-                {
-                    Code = ErrorTypes.OAuth.ServerError,
-                    Description = "Server error"
-                });
-            }
-        }
 
         if (client.Id != refreshToken.ClientId)
         {
@@ -110,26 +86,39 @@ public class RefreshTokenStrategy(
             });
         }
 
-        var requestedScopes = client.AllowedScopes.Select(x => x.Scope.Name).ToList();
-        if (!client.HasScopes(requestedScopes))
+        if (client.HasScope(Scopes.OpenId))
         {
-            return Results.BadRequest(new Error
+            if (!client.HasScope(Scopes.OfflineAccess))
             {
-                Code = ErrorTypes.OAuth.InvalidScope,
-                Description = "Requested scopes exceed originally granted scopes."
-            });
+                return Results.BadRequest(new Error
+                {
+                    Code = ErrorTypes.OAuth.InvalidScope,
+                    Description = "offline_access scope was not originally granted."
+                });
+            }
+
+            if (!client.AllowOfflineAccess)
+            {
+                return Results.BadRequest(new Error
+                {
+                    Code = ErrorTypes.OAuth.InvalidGrant,
+                    Description = "Refresh token grant is not allowed for this client."
+                });
+            }
+        }
+        else
+        {
+            if (!client.AllowOfflineAccess)
+            {
+                return Results.BadRequest(new Error
+                {
+                    Code = ErrorTypes.OAuth.InvalidGrant,
+                    Description = "Refresh token grant is not allowed for this client."
+                });
+            }
         }
 
-        if (requestedScopes.Contains(Scopes.OfflineAccess) && !client.AllowOfflineAccess)
-        {
-            return Results.BadRequest(new Error
-            {
-                Code = ErrorTypes.OAuth.InvalidScope,
-                Description = "offline_access scope was not originally granted."
-            });
-        }
-        
-        var user = await _userManager.FindByIdAsync(session.Device.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(Guid.Parse(refreshToken.Subject), cancellationToken);
         if (user is null)
         {
             return Results.NotFound(new Error
@@ -138,7 +127,7 @@ public class RefreshTokenStrategy(
                 Description = "Invalid refresh token."
             });
         }
-        
+
         var response = new TokenResponse
         {
             ExpiresIn = (int)_options.AccessTokenLifetime.TotalSeconds,
@@ -168,6 +157,7 @@ public class RefreshTokenStrategy(
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = client.Id,
+                Subject = user.Id.ToString(),
                 TokenHash = hasher.Hash(rawToken),
                 TokenType = OpaqueTokenType.AccessToken,
                 ExpiredDate = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime)
@@ -176,24 +166,68 @@ public class RefreshTokenStrategy(
             var scopes = client.AllowedScopes.Select(x => x.Scope);
             var createResult = await _tokenManager.CreateAsync(newRefreshToken, scopes, cancellationToken);
             if (!createResult.Succeeded) return createResult;
-            
+
             response.AccessToken = rawToken;
+        }
+
+        if (!client.HasScope(Scopes.OpenId))
+        {
+            if (client.RefreshTokenRotationEnabled)
+            {
+                var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
+                var tokenContext = new OpaqueTokenContext { Length = _options.RefreshTokenLength };
+                var rawToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
+                var newRefreshToken = new OpaqueTokenEntity
+                {
+                    Id = Guid.CreateVersion7(),
+                    ClientId = client.Id,
+                    Subject = user.Id.ToString(),
+                    TokenHash = hasher.Hash(rawToken),
+                    TokenType = OpaqueTokenType.RefreshToken,
+                    ExpiredDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime)
+                };
+
+                response.RefreshToken = rawToken;
+                
+                var scopes = client.AllowedScopes.Select(x => x.Scope);
+                var createResult = await _tokenManager.CreateAsync(newRefreshToken, scopes, cancellationToken);
+                if (!createResult.Succeeded) return createResult;
+
+                var revokeResult = await _tokenManager.RevokeAsync(refreshToken, cancellationToken);
+                return revokeResult.Succeeded ? Results.Ok(response) : revokeResult;
+            }
+
+            response.RefreshToken = refreshPayload.RefreshToken;
+            return Results.Ok(response);
+        }
+        
+        var session = await _sessionManager.FindByIdAsync(refreshToken.SessionId.Value, cancellationToken);
+        if (session is null)
+        {
+            return Results.NotFound(new Error
+            {
+                Code = ErrorTypes.OAuth.InvalidGrant,
+                Description = "Invalid refresh token."
+            });
         }
 
         if (client.RefreshTokenRotationEnabled)
         {
-            var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
-            var tokenContext = new OpaqueTokenContext { Length = _options.RefreshTokenLength };
-            var rawToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
+            var refreshTokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
+            var refreshTokenContext = new OpaqueTokenContext { Length = _options.RefreshTokenLength };
+            var rawToken = await refreshTokenFactory.CreateTokenAsync(refreshTokenContext, cancellationToken);
             var newRefreshToken = new OpaqueTokenEntity
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = client.Id,
                 SessionId = session.Id,
+                Subject = user.Id.ToString(),
                 TokenHash = hasher.Hash(rawToken),
                 TokenType = OpaqueTokenType.RefreshToken,
                 ExpiredDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime)
             };
+                
+            response.RefreshToken = rawToken;
 
             var scopes = client.AllowedScopes.Select(x => x.Scope);
             var createResult = await _tokenManager.CreateAsync(newRefreshToken, scopes, cancellationToken);
@@ -201,30 +235,25 @@ public class RefreshTokenStrategy(
 
             var revokeResult = await _tokenManager.RevokeAsync(refreshToken, cancellationToken);
             if (!revokeResult.Succeeded) return revokeResult;
-            
-            response.RefreshToken = rawToken;
         }
         else
         {
             response.RefreshToken = refreshPayload.RefreshToken;
         }
-
-        if (requestedScopes.Contains(Scopes.OpenId))
-        {
-            var claimsFactory = _claimFactoryProvider.GetClaimFactory<IdTokenClaimsContext, UserEntity>();
-            var claims = await claimsFactory.GetClaimsAsync(user, new IdTokenClaimsContext
-            {
-                Aud = client.Id.ToString(),
-                Scopes = client.AllowedScopes.Select(x => x.Scope.Name),
-                Sid = session.Id.ToString(),
-                AuthTime = DateTimeOffset.UtcNow
-            }, cancellationToken);
-
-            var tokenContext = new JwtTokenContext { Claims = claims, Type = JwtTokenTypes.IdToken };
-            var tokenFactory = _tokenFactoryProvider.GetFactory<JwtTokenContext, string>();
             
-            response.IdToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
-        }
+        var idClaimsFactory = _claimFactoryProvider.GetClaimFactory<IdTokenClaimsContext, UserEntity>();
+        var idClaims = await idClaimsFactory.GetClaimsAsync(user, new IdTokenClaimsContext
+        {
+            Aud = client.Id.ToString(),
+            Scopes = client.AllowedScopes.Select(x => x.Scope.Name),
+            Sid = session.Id.ToString(),
+            AuthTime = DateTimeOffset.UtcNow
+        }, cancellationToken);
+
+        var idTokenContext = new JwtTokenContext { Claims = idClaims, Type = JwtTokenTypes.IdToken };
+        var idTokenFactory = _tokenFactoryProvider.GetFactory<JwtTokenContext, string>();
+
+        response.IdToken = await idTokenFactory.CreateTokenAsync(idTokenContext, cancellationToken);
 
         return Results.Ok(response);
     }

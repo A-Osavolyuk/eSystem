@@ -126,6 +126,7 @@ public sealed class ClientCredentialsStrategy(
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = client.Id,
+                Subject = client.Id.ToString(),
                 TokenHash = hasher.Hash(rawToken),
                 TokenType = OpaqueTokenType.AccessToken,
                 ExpiredDate = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime)
