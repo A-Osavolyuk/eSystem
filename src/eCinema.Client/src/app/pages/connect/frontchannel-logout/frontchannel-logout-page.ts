@@ -1,5 +1,6 @@
 import {Component, inject, OnInit} from '@angular/core';
-import {AuthService} from '../../../auth/auth.service';
+import {AuthenticationService} from '../../../auth/authentication.service';
+import {ConnectService} from '../../../auth/connect-service';
 
 @Component({
   selector: 'e-frontchannel-logout',
@@ -8,10 +9,10 @@ import {AuthService} from '../../../auth/auth.service';
   styleUrl: './frontchannel-logout-page.scss',
 })
 export class FrontchannelLogoutPage implements OnInit {
-  private auth = inject(AuthService);
+  private connectService = inject(ConnectService);
 
   ngOnInit(): void {
-    this.auth.frontchannelLogout().subscribe(
+    this.connectService.frontchannelLogout().subscribe(
       () => console.log('front-channel logout successful'),
     )
   }

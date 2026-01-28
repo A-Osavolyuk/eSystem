@@ -1,6 +1,8 @@
 import {Component, inject} from '@angular/core';
-import {AuthService} from '../../../../auth/auth.service';
+import {AuthenticationService} from '../../../../auth/authentication.service';
 import {Button} from '../../../common/button/button';
+import {environment} from '../../../../../environments/environment';
+import {AuthenticationStateProvider} from '../../../../auth/authentication-state-provider.service';
 
 @Component({
   selector: 'e-authentication-outlet',
@@ -11,5 +13,6 @@ import {Button} from '../../../common/button/button';
   styleUrl: './authentication-outlet.scss',
 })
 export class AuthenticationOutlet {
-  protected auth = inject(AuthService)
+  protected stateProvider = inject(AuthenticationStateProvider)
+  protected auth = inject(AuthenticationService);
 }

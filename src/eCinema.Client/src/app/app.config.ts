@@ -4,12 +4,19 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import {provideHttpClient, withInterceptors} from '@angular/common/http';
 import {credentialsInterceptor} from './interceptors/credentials-interceptor';
-import {AuthService} from './auth/auth.service';
+import {AuthenticationService} from './auth/authentication.service';
 import {firstValueFrom} from 'rxjs';
+import {AuthenticationStateHandler} from './auth/authentication-state-handler.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideAppInitializer(() => firstValueFrom(inject(AuthService).getMe())),
+    provideAppInitializer(() => {
+      const authenticationStateHandler = inject(AuthenticationStateHandler);
+      const authenticationService = inject(AuthenticationService);
+
+      authenticationStateHandler.listenEvents();
+      return firstValueFrom(authenticationService.getMe());
+    }),
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(

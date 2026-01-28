@@ -1,4 +1,4 @@
-@if(!auth.state().isAuthenticated){
+@if(!stateProvider.state().isAuthenticated){
   <div class="buttons">
     <e-button label="Sign-in" (onClick)="auth.login()"/>
     <e-button label="Sign-up" (onClick)="auth.register()"/>
