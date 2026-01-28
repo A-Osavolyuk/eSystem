@@ -11,6 +11,7 @@ public class OpaqueTokenEntity : Entity
 
     public required OpaqueTokenType TokenType { get; set; }
     public required string TokenHash { get; set; }
+    public required string Subject { get; set; }
     public bool Revoked { get; set; }
     public bool IsValid => !Revoked && DateTimeOffset.UtcNow < ExpiredDate;
     
