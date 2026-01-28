@@ -84,7 +84,6 @@ public class AuthorizationCodeStrategy(
 
         if (authorizationCode is null || authorizationCode.Used ||
             authorizationCode.ExpireDate < DateTimeOffset.UtcNow ||
-            string.IsNullOrEmpty(redirectUri) ||
             !authorizationCode.RedirectUri.Equals(redirectUri) ||
             client.Id != authorizationCode.ClientId ||
             !client.HasUri(redirectUri, UriType.Redirect))
@@ -95,7 +94,7 @@ public class AuthorizationCodeStrategy(
                 Description = "Invalid authorization code."
             });
         }
-        
+
         var device = await _deviceManager.FindByIdAsync(authorizationCode.DeviceId, cancellationToken);
         if (device is null)
         {
@@ -105,10 +104,9 @@ public class AuthorizationCodeStrategy(
                 Description = "Invalid authorization code."
             });
         }
-        
-        var session = await _sessionManager.FindAsync(device, cancellationToken);
+
         var user = await _userManager.FindByIdAsync(device.UserId, cancellationToken);
-        if (session is null || session.ExpireDate < DateTimeOffset.UtcNow || user is null)
+        if (user is null)
         {
             return Results.BadRequest(new Error
             {
@@ -148,10 +146,7 @@ public class AuthorizationCodeStrategy(
 
         var codeResult = await _authorizationCodeManager.UseAsync(authorizationCode, cancellationToken);
         if (!codeResult.Succeeded) return codeResult;
-        
-        var clientResult = await _clientManager.RelateAsync(client, session, cancellationToken);
-        if (!clientResult.Succeeded) return clientResult;
-        
+
         var response = new TokenResponse
         {
             ExpiresIn = (int)_options.AccessTokenLifetime.TotalSeconds,
@@ -170,7 +165,7 @@ public class AuthorizationCodeStrategy(
 
             var tokenContext = new JwtTokenContext { Claims = claims, Type = JwtTokenTypes.AccessToken };
             var tokenFactory = _tokenFactoryProvider.GetFactory<JwtTokenContext, string>();
-            
+
             response.AccessToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
         }
         else
@@ -191,23 +186,62 @@ public class AuthorizationCodeStrategy(
             var scopes = client.AllowedScopes.Select(x => x.Scope);
             var createResult = await _tokenManager.CreateAsync(newRefreshToken, scopes, cancellationToken);
             if (!createResult.Succeeded) return createResult;
-            
+
             response.AccessToken = rawToken;
         }
 
+        if (!client.HasScope(Scopes.OpenId))
+        {
+            if (client.AllowOfflineAccess)
+            {
+                var tokenContext = new OpaqueTokenContext { Length = _options.RefreshTokenLength };
+                var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
+                var rawToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
+                var hasher = _hasherProvider.GetHasher(HashAlgorithm.Sha512);
+                var refreshToken = new OpaqueTokenEntity
+                {
+                    Id = Guid.CreateVersion7(),
+                    ClientId = client.Id,
+                    TokenHash = hasher.Hash(rawToken),
+                    TokenType = OpaqueTokenType.RefreshToken,
+                    ExpiredDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime)
+                };
+
+                var scopes = client.AllowedScopes.Select(x => x.Scope);
+                var tokenResult = await _tokenManager.CreateAsync(refreshToken, scopes, cancellationToken);
+                if (!tokenResult.Succeeded) return tokenResult;
+                
+                response.RefreshToken = rawToken;
+            }
+
+            return Results.Ok(response);
+        }
+
+        var session = await _sessionManager.FindAsync(device, cancellationToken);
+        if (session is null || session.ExpireDate < DateTimeOffset.UtcNow)
+        {
+            return Results.BadRequest(new Error
+            {
+                Code = ErrorTypes.OAuth.InvalidGrant,
+                Description = "Invalid authorization code."
+            });
+        }
+
+        var clientResult = await _clientManager.RelateAsync(client, session, cancellationToken);
+        if (!clientResult.Succeeded) return clientResult;
+
         if (client.AllowOfflineAccess && client.HasScope(Scopes.OfflineAccess))
         {
-            var tokenContext = new OpaqueTokenContext { Length = _options.RefreshTokenLength };
-            var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
-            var rawToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
+            var refreshTokenContext = new OpaqueTokenContext { Length = _options.RefreshTokenLength };
+            var refreshTokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
+            var rawToken = await refreshTokenFactory.CreateTokenAsync(refreshTokenContext, cancellationToken);
             var hasher = _hasherProvider.GetHasher(HashAlgorithm.Sha512);
-            var hash = hasher.Hash(rawToken);
             var refreshToken = new OpaqueTokenEntity
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = client.Id,
                 SessionId = session.Id,
-                TokenHash = hash,
+                TokenHash = hasher.Hash(rawToken),
                 TokenType = OpaqueTokenType.RefreshToken,
                 ExpiredDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime)
             };
@@ -215,27 +249,24 @@ public class AuthorizationCodeStrategy(
             var scopes = client.AllowedScopes.Select(x => x.Scope);
             var tokenResult = await _tokenManager.CreateAsync(refreshToken, scopes, cancellationToken);
             if (!tokenResult.Succeeded) return tokenResult;
+            
             response.RefreshToken = rawToken;
         }
 
-        if (client.HasScope(Scopes.OpenId))
+        var idClaimsFactory = _claimFactoryProvider.GetClaimFactory<IdTokenClaimsContext, UserEntity>();
+        var idClaims = await idClaimsFactory.GetClaimsAsync(user, new IdTokenClaimsContext
         {
-            var claimsFactory = _claimFactoryProvider.GetClaimFactory<IdTokenClaimsContext, UserEntity>();
-            var claims = await claimsFactory.GetClaimsAsync(user, new IdTokenClaimsContext
-            {
-                Aud = client.Id.ToString(),
-                Nonce = authorizationCode.Nonce,
-                Scopes = client.AllowedScopes.Select(x => x.Scope.Name),
-                Sid = session.Id.ToString(),
-                AuthTime = DateTimeOffset.UtcNow,
-            }, cancellationToken);
+            Aud = client.Id.ToString(),
+            Nonce = authorizationCode.Nonce,
+            Scopes = client.AllowedScopes.Select(x => x.Scope.Name),
+            Sid = session.Id.ToString(),
+            AuthTime = DateTimeOffset.UtcNow,
+        }, cancellationToken);
 
-            var tokenContext = new JwtTokenContext { Claims = claims, Type = JwtTokenTypes.IdToken };
-            var tokenFactory = _tokenFactoryProvider.GetFactory<JwtTokenContext, string>();
-            
-            response.IdToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
-        }
+        var idTokenContext = new JwtTokenContext { Claims = idClaims, Type = JwtTokenTypes.IdToken };
+        var idTokenFactory = _tokenFactoryProvider.GetFactory<JwtTokenContext, string>();
 
+        response.IdToken = await idTokenFactory.CreateTokenAsync(idTokenContext, cancellationToken);
         return Results.Ok(response);
     }
 }
