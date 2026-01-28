@@ -28,7 +28,6 @@ public sealed class AuthorizationCodeContext : TokenContext
 public class AuthorizationCodeStrategy(
     IUserManager userManager,
     IPkceHandler pkceHandler,
-    IPkceManager pkceManager,
     ITokenManager tokenManager,
     IDeviceManager deviceManager,
     IClientManager clientManager,
@@ -47,7 +46,6 @@ public class AuthorizationCodeStrategy(
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly IPkceHandler _pkceHandler = pkceHandler;
-    private readonly IPkceManager _pkceManager = pkceManager;
     private readonly IHasherProvider _hasherProvider = hasherProvider;
     private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
     private readonly TokenOptions _options = options.Value;
@@ -146,16 +144,6 @@ public class AuthorizationCodeStrategy(
                     Description = "Invalid authorization code."
                 });
             }
-
-            var pkceState = new ClientPkceStateEntity()
-            {
-                ClientId = client.Id,
-                SessionId = session.Id,
-                VerificationDate = DateTimeOffset.UtcNow
-            };
-            
-            var pkceResult =  await _pkceManager.CreateAsync(pkceState, cancellationToken);
-            if (!pkceResult.Succeeded) return pkceResult;
         }
 
         var codeResult = await _authorizationCodeManager.UseAsync(authorizationCode, cancellationToken);
