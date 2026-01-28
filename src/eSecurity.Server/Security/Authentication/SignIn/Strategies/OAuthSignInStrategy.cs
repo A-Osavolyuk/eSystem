@@ -140,7 +140,7 @@ public sealed class OAuthSignInStrategy(
         var updateResult = await _signInSessionManager.UpdateAsync(session, cancellationToken);
         if (!updateResult.Succeeded) return updateResult;
 
-        await _sessionManager.CreateAsync(device, cancellationToken);
+        await _sessionManager.CreateAsync(user, cancellationToken);
         return Results.Found(QueryBuilder.Create().WithUri(oauthPayload.ReturnUri)
             .WithQueryParam("sid", session.Id.ToString())
             .WithQueryParam("state", oauthPayload.State)

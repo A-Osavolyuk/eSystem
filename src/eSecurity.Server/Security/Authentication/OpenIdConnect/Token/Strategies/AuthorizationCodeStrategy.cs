@@ -219,7 +219,7 @@ public class AuthorizationCodeStrategy(
             return Results.Ok(response);
         }
 
-        var session = await _sessionManager.FindAsync(device, cancellationToken);
+        var session = await _sessionManager.FindAsync(user, cancellationToken);
         if (session is null || session.ExpireDate < DateTimeOffset.UtcNow)
         {
             return Results.BadRequest(new Error

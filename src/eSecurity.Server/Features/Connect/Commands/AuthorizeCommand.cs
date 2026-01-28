@@ -156,7 +156,7 @@ public class AuthorizeCommandHandler(
             });
         }
 
-        var session = await _sessionManager.FindAsync(device, cancellationToken);
+        var session = await _sessionManager.FindAsync(user, cancellationToken);
         if (session is null)
         {
             return Results.InternalServerError(new Error

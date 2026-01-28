@@ -74,7 +74,7 @@ public class IntrospectionCommandHandler(
             var session = await _sessionManager.FindByIdAsync(token.SessionId.Value, cancellationToken);
             if (session is null) return Results.Ok(IntrospectionResponse.Fail());
             
-            var user = await _userManager.FindByIdAsync(session.Device.UserId, cancellationToken);
+            var user = await _userManager.FindByIdAsync(session.UserId, cancellationToken);
             if (user is null) return Results.Ok(IntrospectionResponse.Fail());
 
             response.Subject = user.Id.ToString();

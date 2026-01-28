@@ -14,21 +14,20 @@ public class SessionManager(
     public async ValueTask<SessionEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _context.Sessions
-            .Include(x => x.Device)
             .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
     }
 
-    public async ValueTask<SessionEntity?> FindAsync(UserDeviceEntity device, CancellationToken cancellationToken = default)
+    public async ValueTask<SessionEntity?> FindAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
-        return await _context.Sessions.FirstOrDefaultAsync(x => x.DeviceId == device.Id, cancellationToken);
+        return await _context.Sessions.FirstOrDefaultAsync(x => x.UserId == user.Id, cancellationToken);
     }
 
-    public async ValueTask<Result> CreateAsync(UserDeviceEntity device, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> CreateAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
         var session = new SessionEntity
         {
             Id = Guid.CreateVersion7(),
-            DeviceId = device.Id,
+            UserId = user.Id,
             IsActive = true,
             ExpireDate = DateTimeOffset.UtcNow.Add(_options.Timestamp)
         };

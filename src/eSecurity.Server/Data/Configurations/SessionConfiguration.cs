@@ -9,9 +9,9 @@ public sealed class SessionConfiguration : IEntityTypeConfiguration<SessionEntit
     {
         builder.HasKey(x => x.Id);
 
-        builder.HasOne(x => x.Device)
+        builder.HasOne(x => x.User)
             .WithMany()
-            .HasForeignKey(x => x.DeviceId)
+            .HasForeignKey(x => x.UserId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

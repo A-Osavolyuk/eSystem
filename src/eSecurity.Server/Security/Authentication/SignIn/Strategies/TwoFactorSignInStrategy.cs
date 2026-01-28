@@ -119,7 +119,7 @@ public class TwoFactorSignInStrategy(
         var sessionResult = await _signInSessionManager.UpdateAsync(session, cancellationToken);
         if (!sessionResult.Succeeded) return sessionResult;
         
-        await _sessionManager.CreateAsync(device, cancellationToken);
+        await _sessionManager.CreateAsync(user, cancellationToken);
         return Results.Ok(new SignInResponse { SessionId = session.Id });
     }
 }

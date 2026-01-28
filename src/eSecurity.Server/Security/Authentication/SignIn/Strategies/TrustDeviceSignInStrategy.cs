@@ -76,7 +76,7 @@ public sealed class TrustDeviceSignInStrategy(
             session.CurrentStep = SignInStep.Complete;
             session.Status = SignInStatus.Completed;
             
-            await _sessionManager.CreateAsync(device, cancellationToken);
+            await _sessionManager.CreateAsync(user, cancellationToken);
         }
         else
         {
