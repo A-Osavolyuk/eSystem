@@ -42,9 +42,9 @@ public sealed class IdTokenClaimsFactory(
             new(AppClaimTypes.Aud, context.Aud),
             new(AppClaimTypes.Sub, user.Id.ToString()),
             new(AppClaimTypes.Sid, context.Sid),
-            new(AppClaimTypes.Exp, exp),
-            new(AppClaimTypes.Iat, iat),
-            new(AppClaimTypes.AuthenticationTime, authTime),
+            new(AppClaimTypes.Exp, exp, ClaimValueTypes.Integer64),
+            new(AppClaimTypes.Iat, iat, ClaimValueTypes.Integer64),
+            new(AppClaimTypes.AuthenticationTime, authTime, ClaimValueTypes.Integer64),
         };
 
         if (!string.IsNullOrEmpty(context.Nonce))
@@ -82,7 +82,7 @@ public sealed class IdTokenClaimsFactory(
             if (user.UpdateDate.HasValue)
             {
                 var updatedAt = user.UpdateDate.Value.ToUnixTimeSeconds().ToString();
-                claims.Add(new Claim(AppClaimTypes.UpdatedAt, updatedAt));
+                claims.Add(new Claim(AppClaimTypes.UpdatedAt, updatedAt, ClaimValueTypes.Integer64));
             }
 
             if (personalData is not null)
