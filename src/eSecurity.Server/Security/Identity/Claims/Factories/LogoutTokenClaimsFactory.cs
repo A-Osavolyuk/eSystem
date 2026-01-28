@@ -7,7 +7,7 @@ namespace eSecurity.Server.Security.Identity.Claims.Factories;
 
 public sealed class LogoutTokenClaimsContext : TokenClaimsContext
 {
-    
+    public string Sid { get; set; } = string.Empty;
 }
 
 public sealed class LogoutTokenClaimsFactory(

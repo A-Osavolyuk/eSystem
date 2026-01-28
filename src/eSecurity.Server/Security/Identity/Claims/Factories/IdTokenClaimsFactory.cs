@@ -12,6 +12,7 @@ namespace eSecurity.Server.Security.Identity.Claims.Factories;
 
 public sealed class IdTokenClaimsContext : TokenClaimsContext
 {
+    public string Sid { get; set; } = string.Empty;
     public DateTimeOffset? AuthTime { get; set; }
 }
 

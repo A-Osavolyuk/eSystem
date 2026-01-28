@@ -26,7 +26,6 @@ public sealed class AccessTokenClaimsFactory(IOptions<TokenOptions> options)
             new(AppClaimTypes.Aud, context.Aud),
             new(AppClaimTypes.Sub, user.Id.ToString()),
             new(AppClaimTypes.Scope, string.Join(" ", context.Scopes)),
-            new(AppClaimTypes.Sid, context.Sid),
             new(AppClaimTypes.Exp, exp, ClaimValueTypes.Integer64),
             new(AppClaimTypes.Iat, iat, ClaimValueTypes.Integer64),
         };
@@ -50,7 +49,6 @@ public sealed class AccessTokenClaimsFactory(IOptions<TokenOptions> options)
             new(AppClaimTypes.Aud, context.Aud),
             new(AppClaimTypes.Sub, source.Id.ToString()),
             new(AppClaimTypes.Scope, string.Join(" ", context.Scopes)),
-            new(AppClaimTypes.Sid, context.Sid),
             new(AppClaimTypes.Exp, exp, ClaimValueTypes.Integer64),
             new(AppClaimTypes.Iat, iat, ClaimValueTypes.Integer64),
         };

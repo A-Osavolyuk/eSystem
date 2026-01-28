@@ -171,7 +171,6 @@ public class RefreshTokenStrategy(
             {
                 Aud = client.Audience,
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Name),
-                Sid = session.Id.ToString()
             }, cancellationToken);
 
             var tokenContext = new JwtTokenContext { Claims = claims, Type = JwtTokenTypes.AccessToken };

@@ -177,7 +177,6 @@ public class AuthorizationCodeStrategy(
             {
                 Aud = client.Audience,
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Name),
-                Sid = session.Id.ToString(),
                 Nonce = authorizationCode.Nonce
             }, cancellationToken);
 
