@@ -1,4 +1,4 @@
-﻿@page "/login/identifier"
+﻿@page "/login"
 
 @layout AuthenticationLayout
 
@@ -6,11 +6,15 @@
 @using eSecurity.Client.Security
 @using eSecurity.Core.Common.Responses
 @using eSystem.Core.Utilities.State
+@using eSecurity.Client.Security.Authentication
 @using eSecurity.Client.Components.Pages.OAuth
 
 @inject ISecurityService SecurityService
 @inject ISnackbar Snackbar
 @inject NavigationManager NavigationManager
+@inject AuthenticationManager AuthenticationManager
+
+<Title Text="Log in to eSystem"></Title>
 
 <MudGrid Justify="Justify.Center">
     <MudItem xs="3" Style="margin-top: 50px">
@@ -49,7 +53,7 @@
                         </MudButton>
                         <MudTextM3 Size="Size.Medium" Typo="TypoM3.Body">
                             Don't have an account?
-                            <MudLink Typo="Typo.body2" Href="@Links.Common.SignUp">Sign up</MudLink>
+                            <MudLink Typo="Typo.body2" Href="@OnSignUp()">Sign up</MudLink>
                         </MudTextM3>
                     </MudStack>
                 </MudStack>
@@ -72,7 +76,7 @@
     [SupplyParameterFromQuery(Name = "state")]
     public string? State { get; set; } = string.Empty;
 
-    private LoginIdentifierModel _model = new();
+    private CheckLoginModel _model = new();
     private MudForm _form = new();
 
     private string? _error;
@@ -83,7 +87,7 @@
         await _form.Validate();
         if (_form.IsValid)
         {
-            var request = new CheckAccountRequest() { Login = _model.Login };
+            var request = new CheckAccountRequest { Login = _model.Login };
             var result = await SecurityService.CheckAccountAsync(request);
             if (result.Succeeded && result.TryGetValue<CheckAccountResponse>(out var response) && response is not null)
             {
@@ -98,15 +102,16 @@
                 _error = null;
                 _showError = false;
 
-                var stateBuilder = StateBuilder.Create()
-                    .WithData("login", _model.Login);
-
-                if (!string.IsNullOrEmpty(State))
-                    stateBuilder.WithData("state", State);
+                var state = StateBuilder.Create()
+                    .WithData("login", _model.Login)
+                    .WithData("state", string.IsNullOrEmpty(State) 
+                        ? AuthenticationManager.GetAuthorizationState() 
+                        : State)
+                    .Build();
                 
                 NavigationManager.NavigateTo(QueryBuilder.Create()
                     .WithUri(Links.Common.PasswordSignIn)
-                    .WithQueryParam("state", stateBuilder.Build())
+                    .WithQueryParam("state", state)
                     .Build());
             }
             else
@@ -117,4 +122,16 @@
         }
     }
 
+    private string OnSignUp()
+    {
+        var state = string.IsNullOrEmpty(State)
+            ? AuthenticationManager.GetAuthorizationState()
+            : State;
+        
+        var builder = QueryBuilder.Create()
+            .WithUri(Links.Common.SignUp)
+            .WithQueryParam("state", state);
+
+        return builder.Build();
+    }
 }

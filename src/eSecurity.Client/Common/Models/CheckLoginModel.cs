@@ -1,6 +1,6 @@
 ﻿namespace eSecurity.Client.Common.Models;
 
-public sealed class LoginIdentifierModel
+public sealed class CheckLoginModel
 {
     public string Login { get; set; } = string.Empty;
 }

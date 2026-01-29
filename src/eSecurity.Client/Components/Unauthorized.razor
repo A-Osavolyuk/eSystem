@@ -29,7 +29,7 @@
 
     private void ToLoginPage()
     {
-        var builder = QueryBuilder.Create().WithUri(Links.Common.LoginIdentifier);
+        var builder = QueryBuilder.Create().WithUri(Links.Common.Login);
 
         if (!string.IsNullOrEmpty(ReturnUrl))
             builder.WithQueryParam("return_url", ReturnUrl);

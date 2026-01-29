@@ -11,6 +11,7 @@ public static class Links
         public const string ForgotPassword = "/forgot-password";
         public const string AccountLocked = "/account-locked";
         public const string Profile = "/profile";
+        public const string Login = "/login";
         public const string PasswordSignIn = "/login/password";
         public const string LoginIdentifier = "/login/identifier";
     }
