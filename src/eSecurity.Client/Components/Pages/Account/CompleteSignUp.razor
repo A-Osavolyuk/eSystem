@@ -1,0 +1,176 @@
+﻿@page "/sign-up/complete"
+
+@using eSecurity.Client.Components.Layout
+@using eSystem.Core.Utilities.State
+@using Microsoft.AspNetCore.Identity.Data
+@using eSecurity.Core.Common.Responses
+@using eSecurity.Client.Security
+
+@inherits PageBase
+
+@layout AuthenticationLayout
+
+@inject ISecurityService SecurityService
+
+<Title Text="Sign up for eSecurity"/>
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="3" Style="margin-top: 50px">
+        <MudPaper Class="pa-10" Elevation="4">
+            <MudStack Spacing="3">
+                <MudStack Spacing="3" AlignItems="AlignItems.Center">
+                    <MudIcon Style="font-size: 5rem" Icon="@Icons.Material.Filled.Lock"/>
+                    <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline" Size="Size.Small">
+                        Complete Sign Up
+                    </MudTextM3>
+                </MudStack>
+                <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Align="Align.Center">
+                    Set your username and password for eSystem Account to continue to eAccount
+                </MudTextM3>
+                <MudForm Model="_model" @ref="_form">
+                    <MudTextFieldExtended
+                        Disabled="true"
+                        T="string"
+                        @bind-Value="_model.Email"
+                        For="() => _model.Email"
+                        Variant="Variant.Outlined"
+                        Label="Email"/>
+                    <MudTextFieldExtended
+                        T="string"
+                        @bind-Value="_model.Username"
+                        For="() => _model.Username"
+                        Variant="Variant.Outlined"
+                        Label="Username"
+                        Error="_showError"
+                        ErrorText="@_error"/>
+                    <MudPasswordField
+                        T="string"
+                        PasswordMode="true"
+                        @bind-Value="_model.Password"
+                        For="() => _model.Password"
+                        Variant="Variant.Outlined"
+                        Label="Password"/>
+                </MudForm>
+                <MudButton
+                    Color="Color.Primary"
+                    Size="Size.Large"
+                    Variant="Variant.Filled"
+                    Disabled="@(string.IsNullOrEmpty(_model.Email))"
+                    OnClick="@(async () => await OnContinueAsync())">
+                    Continue
+                </MudButton>
+                <MudTextM3 Size="Size.Medium" Typo="TypoM3.Body">
+                    Already have an account?
+                    <MudLink Typo="Typo.body2" Href="@OnLogin()">
+                        Log in
+                    </MudLink>
+                </MudTextM3>
+            </MudStack>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+
+    [SupplyParameterFromQuery(Name = "state")]
+    public string? State { get; set; }
+
+    private MudForm _form = new();
+    private SignUpModel _model = new();
+
+    private string? _authorizationState;
+    private string? _error;
+    private bool _showError;
+
+    protected override void OnInitialized()
+    {
+        if (string.IsNullOrEmpty(State))
+        {
+            NavigationManager.NavigateTo(QueryBuilder.Create()
+                .WithUri(Links.Common.SignUp)
+                .WithQueryParam("state", AuthenticationManager.GetAuthorizationState())
+                .Build());
+        }
+        else
+        {
+            var stateData = StateParser.Parse(State);
+            if (!stateData.TryGetValue("email", out var email))
+            {
+                NavigationManager.NavigateTo(QueryBuilder.Create()
+                    .WithUri(Links.Common.SignUp)
+                    .WithQueryParam("state", AuthenticationManager.GetAuthorizationState())
+                    .Build());
+
+                return;
+            }
+
+            _model.Email = email;
+
+            if (stateData.TryGetValue("state", out var state))
+                _authorizationState = state;
+        }
+    }
+
+    private async Task OnContinueAsync()
+    {
+        await _form.Validate();
+
+        if (_form.IsValid)
+        {
+            var request = new SignUpRequest
+            {
+                Email = _model.Email,
+                Username = _model.Username,
+                Password = _model.Password
+            };
+            
+            var result = await SecurityService.SignUpAsync(request);
+            if (result.Succeeded && result.TryGetValue<SignUpResponse>(out var response) && response is not null)
+            {
+                _error = null;
+                _showError = false;
+                    
+                var authorizationState = string.IsNullOrEmpty(_authorizationState)
+                    ? AuthenticationManager.GetAuthorizationState()
+                    : _authorizationState;
+
+                var state = StateBuilder.Create()
+                    .WithData("userId", response.UserId.ToString())
+                    .WithData("state", authorizationState)
+                    .Build();
+                
+                NavigationManager.NavigateTo(QueryBuilder.Create()
+                    .WithUri(Links.Common.CompleteRegistration)
+                    .WithQueryParam("state", state)
+                    .Build());
+            }
+            else
+            {
+                var error = result.GetError();
+                if (error.Code == ErrorTypes.Common.UsernameTaken)
+                {
+                    _error = "This username is already taken";
+                    _showError = true;
+                }
+                else
+                {
+                    Snackbar.Add(error.Description, Severity.Error);
+                }
+            }
+        }
+    }
+
+    private string OnLogin()
+    {
+        var state = string.IsNullOrEmpty(_authorizationState)
+            ? AuthenticationManager.GetAuthorizationState()
+            : _authorizationState;
+
+        var builder = QueryBuilder.Create()
+            .WithUri(Links.Common.Login)
+            .WithQueryParam("state", state);
+
+        return builder.Build();
+    }
+
+}

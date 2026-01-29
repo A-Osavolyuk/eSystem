@@ -13,7 +13,7 @@ public static class Links
         public const string Profile = "/profile";
         public const string Login = "/login";
         public const string PasswordSignIn = "/login/password";
-        public const string LoginIdentifier = "/login/identifier";
+        public const string CompleteSignUp = "/sign-up/complete";
     }
 
     public static class Settings
