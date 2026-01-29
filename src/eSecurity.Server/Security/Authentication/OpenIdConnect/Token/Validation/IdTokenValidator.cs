@@ -36,8 +36,7 @@ public class IdTokenValidator(
             ValidateAudience = true,
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new RsaSecurityKey(publicKey),
-            ValidateLifetime = true,
-            ClockSkew = TimeSpan.FromMinutes(5)
+            ValidateLifetime = false
         };
 
         var audClaim = securityToken.Claims.FirstOrDefault(x => x.Type == AppClaimTypes.Aud);
