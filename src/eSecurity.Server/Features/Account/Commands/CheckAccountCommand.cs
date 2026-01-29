@@ -24,7 +24,7 @@ public class CheckAccountCommandHandler(
     {
         CheckAccountResponse? response;
 
-        var user = await _userManager.FindByUsernameAsync(request.Request.Username, cancellationToken);
+        var user = await _userManager.FindByLoginAsync(request.Request.Login, cancellationToken);
         if (user is null)
         {
             response = new CheckAccountResponse { Exists = false };
