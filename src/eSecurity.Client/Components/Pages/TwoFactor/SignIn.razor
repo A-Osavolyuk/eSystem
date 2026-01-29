@@ -130,7 +130,7 @@
                 }
             }
 
-            AuthenticationManager.Authorize();
+            NavigationManager.NavigateTo(AuthenticationManager.GetAuthorizationUri());
         }
         else
         {

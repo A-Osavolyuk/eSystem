@@ -1,6 +1,8 @@
-﻿@inherits LayoutComponentBase
+﻿@using eSecurity.Client.Security.Authentication
+@inherits LayoutComponentBase
 
 @inject NavigationManager NavigationManager
+@inject AuthenticationManager AuthenticationManager
 
 <MudThemeProvider IsDarkMode/>
 <MudDialogProvider/>
@@ -23,13 +25,13 @@
                 <MudButton
                     StartIcon="@Icons.Material.Filled.Login"
                     Color="Color.Primary"
-                    Href="@Links.Common.LoginIdentifier">
+                    Href="@OnSignIn()">
                     Sign in
                 </MudButton>
                 <MudButton
                     StartIcon="@Icons.Material.Filled.AppRegistration"
                     Color="Color.Primary"
-                    Href="@Links.Common.SignUp"
+                    Href="@OnSignUp()"
                     Class="ml-3">
                     Sign up
                 </MudButton>
@@ -47,3 +49,22 @@
         </MudContainer>
     </MudMainContent>
 </MudLayout>
+
+@code {
+
+    private string OnSignIn()
+    {
+        return QueryBuilder.Create()
+            .WithUri(Links.Common.Login)
+            .WithQueryParam("state", AuthenticationManager.GetAuthorizationState())
+            .Build();
+    }
+
+    private string OnSignUp()
+    {
+        return QueryBuilder.Create()
+            .WithUri(Links.Common.SignUp)
+            .WithQueryParam("state", AuthenticationManager.GetAuthorizationState())
+            .Build();
+    }
+}

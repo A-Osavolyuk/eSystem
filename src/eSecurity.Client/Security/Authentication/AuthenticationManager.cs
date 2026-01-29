@@ -3,6 +3,7 @@ using eSecurity.Core.Common.Routing;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Utilities.Query;
+using eSystem.Core.Utilities.State;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Options;
@@ -19,10 +20,10 @@ public sealed class AuthenticationManager(
     private readonly AuthenticationStateProvider _authenticationStateProvider = authenticationStateProvider;
     private readonly IFetchClient _fetchClient = fetchClient;
     private readonly ClientOptions _clientOptions = clientOptions.Value;
-
-    public void Authorize()
+    
+    public string GetAuthorizationUri()
     {
-        _navigationManager.NavigateTo(QueryBuilder.Create().WithUri(Links.Connect.Authorize)
+        return QueryBuilder.Create().WithUri(Links.Connect.Authorize)
             .WithQueryParam("prompt", PromptTypes.Consent)
             .WithQueryParam("response_type", ResponseTypes.Code)
             .WithQueryParam("client_id", _clientOptions.ClientId)
@@ -30,7 +31,15 @@ public sealed class AuthenticationManager(
             .WithQueryParam("scope", string.Join(" ", _clientOptions.SupportedScopes))
             .WithQueryParam("state", Guid.NewGuid().ToString())
             .WithQueryParam("nonce", Guid.NewGuid().ToString())
-            .WithQueryParam("prompt", PromptTypes.Consent).Build());
+            .WithQueryParam("prompt", PromptTypes.Consent)
+            .Build();
+    }
+
+    public string GetAuthorizationState()
+    {
+        return StateBuilder.Create()
+            .WithData("return_url", GetAuthorizationUri())
+            .Build();
     }
 
     public async Task SignOutAsync()
