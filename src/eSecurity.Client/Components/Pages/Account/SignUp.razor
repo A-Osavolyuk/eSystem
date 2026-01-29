@@ -78,7 +78,7 @@
             <MudPaper Outlined Class="pa-3">
                 <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
                     Already have an account?
-                    <MudLink Typo="Typo.body2" Href="@Links.Common.SignIn">
+                    <MudLink Typo="Typo.body2" Href="@Links.Common.LoginIdentifier">
                         Sign in
                     </MudLink>
                 </MudTextM3>
@@ -120,7 +120,7 @@
                 var builder = QueryBuilder.Create()
                     .WithUri(Links.Common.CompleteRegistration)
                     .WithQueryParam("id", response!.UserId.ToString())
-                    .WithQueryParam("return_url", Links.Common.SignIn);
+                    .WithQueryParam("return_url", Links.Common.LoginIdentifier);
                 
                 NavigationManager.NavigateTo(builder.Build());
             }

@@ -1,0 +1,21 @@
+﻿@inherits LayoutComponentBase
+
+<MudThemeProvider IsDarkMode/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+<MudPopoverProvider/>
+<MudTypographyProvider />
+
+<MudLayout>
+    <MudMainContent>
+        <MudContainer
+            MaxWidth="MaxWidth.ExtraLarge"
+            Class="py-5 position-relative">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    
+}

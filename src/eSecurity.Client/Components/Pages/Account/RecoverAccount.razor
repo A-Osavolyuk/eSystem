@@ -142,7 +142,7 @@
         {
             var request = new CheckAccountRequest
             {
-                Username = _recoverAccountModel.Username
+                Login = _recoverAccountModel.Username
             };
 
             var result = await SecurityService.CheckAccountAsync(request);

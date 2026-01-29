@@ -16,7 +16,7 @@ public sealed class LoginPromptStrategy(ISessionAccessor sessionAccessor) : IPro
         var session = _sessionAccessor.Get();
         if (session is null)
         {
-            var redirectUri = PromptUtils.GetRedirectUri(Links.Common.SignIn, context);
+            var redirectUri = PromptUtils.GetRedirectUri(Links.Common.LoginIdentifier, context);
             return Task.FromResult(AuthorizationResult.Redirect(redirectUri));
         }
 

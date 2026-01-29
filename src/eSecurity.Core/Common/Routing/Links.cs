@@ -4,7 +4,6 @@ public static class Links
 {
     public static class Common
     {
-        public const string SignIn = "/sign-in";
         public const string SignUp = "/sign-up";
         public const string UnlockAccount = "/unlock-account";
         public const string RecoverAccount = "/recover-account";
@@ -12,6 +11,8 @@ public static class Links
         public const string ForgotPassword = "/forgot-password";
         public const string AccountLocked = "/account-locked";
         public const string Profile = "/profile";
+        public const string PasswordSignIn = "/login/password";
+        public const string LoginIdentifier = "/login/identifier";
     }
 
     public static class Settings
