@@ -12,7 +12,7 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20260128221155_Initial")]
+    [Migration("20260129134435_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -1640,7 +1640,7 @@ namespace eSecurity.Server.Migrations
             modelBuilder.Entity("eSecurity.Server.Data.Entities.UserEmailEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
-                        .WithMany()
+                        .WithMany("Emails")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1794,6 +1794,11 @@ namespace eSecurity.Server.Migrations
             modelBuilder.Entity("eSecurity.Server.Data.Entities.SessionEntity", b =>
                 {
                     b.Navigation("OpaqueTokens");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserEntity", b =>
+                {
+                    b.Navigation("Emails");
                 });
 #pragma warning restore 612, 618
         }
