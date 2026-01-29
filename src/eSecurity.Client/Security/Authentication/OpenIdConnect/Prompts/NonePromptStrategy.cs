@@ -28,16 +28,15 @@ public sealed class NonePromptStrategy(
     {
         var decodedRedirectUri = HttpUtility.UrlDecode(context.RedirectUri);
         var decodedScope = HttpUtility.UrlDecode(context.Scope);
+        var scopes = decodedScope.Split(" ").ToList();
         
         if (!_userState.IsAuthenticated)
         {
-            var redirectUri = QueryBuilder.Create()
+            return AuthorizationResult.Redirect(QueryBuilder.Create()
                 .WithUri(decodedRedirectUri)
                 .WithQueryParam("error", ErrorTypes.OAuth.LoginRequired)
                 .WithQueryParam("error_description", "User must be authenticated.")
-                .Build();
-            
-            return AuthorizationResult.Redirect(redirectUri);
+                .Build());
         }
         
         var request = new AuthorizeRequest
@@ -46,7 +45,7 @@ public sealed class NonePromptStrategy(
             ResponseType = context.ResponseType,
             ClientId = context.ClientId,
             RedirectUri = decodedRedirectUri,
-            Scopes = decodedScope.Split(' ').ToList(),
+            Scopes = scopes,
             Nonce = context.Nonce,
             State = context.State,
             CodeChallenge = context.CodeChallenge,
@@ -54,11 +53,21 @@ public sealed class NonePromptStrategy(
         };
 
         var result = await _connectService.AuthorizeAsync(request);
-        if (result.Succeeded && result.TryGetValue<AuthorizeResponse>(out var response))
+        if (!result.Succeeded || !result.TryGetValue<AuthorizeResponse>(out var response) || response is null)
+        {
+            var error = result.GetError();
+            return AuthorizationResult.Redirect(QueryBuilder.Create()
+                .WithUri(context.RedirectUri)
+                .WithQueryParam("error", error.Code)
+                .WithQueryParam("error_description", error.Description)
+                .Build());
+        }
+
+        if (scopes.Contains(Scopes.OpenId))
         {
             var session = new SessionCookie
             {
-                Id = response!.SessionId,
+                Id = response.SessionId,
                 UserId = request.UserId,
                 IssuedAt = DateTimeOffset.UtcNow,
                 ExpiresAt = DateTimeOffset.UtcNow.AddDays(30)
@@ -70,29 +79,18 @@ public sealed class NonePromptStrategy(
                 Method = HttpMethod.Post,
                 Body = session
             };
-
-            await _fetchClient.FetchAsync(fetchOptions);
-
-            var builder = QueryBuilder.Create()
-                .WithUri(decodedRedirectUri)
-                .WithQueryParam("code", response.Code)
-                .WithQueryParam("state", response.State);
-
-            if (!string.IsNullOrEmpty(context.ReturnUrl)) 
-                builder.WithQueryParam("return_url", context.ReturnUrl);
-
-            return AuthorizationResult.Redirect(builder.Build());
-        }
-        else
-        {
-            var error = result.GetError();
-            var redirectUri = QueryBuilder.Create()
-                .WithUri(context.RedirectUri)
-                .WithQueryParam("error", error.Code)
-                .WithQueryParam("error_description", error.Description)
-                .Build();
             
-            return AuthorizationResult.Redirect(redirectUri);
+            await _fetchClient.FetchAsync(fetchOptions);
         }
+        
+        var builder = QueryBuilder.Create()
+            .WithUri(decodedRedirectUri)
+            .WithQueryParam("code", response.Code)
+            .WithQueryParam("state", response.State);
+
+        if (!string.IsNullOrEmpty(context.ReturnUrl)) 
+            builder.WithQueryParam("return_url", context.ReturnUrl);
+
+        return AuthorizationResult.Redirect(builder.Build());
     }
 }
