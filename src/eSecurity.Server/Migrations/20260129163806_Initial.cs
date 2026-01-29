@@ -463,35 +463,6 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SignInSessions",
-                schema: "public",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
-                    RequiredSteps = table.Column<string>(type: "text", nullable: false),
-                    CompletedSteps = table.Column<string>(type: "text", nullable: false),
-                    CurrentStep = table.Column<string>(type: "text", nullable: false),
-                    Status = table.Column<string>(type: "text", nullable: false),
-                    Provider = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
-                    OAuthFlow = table.Column<string>(type: "text", nullable: true),
-                    StartDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    ExpireDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SignInSessions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_SignInSessions_Users_UserId",
-                        column: x => x.UserId,
-                        principalSchema: "public",
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "UserClients",
                 schema: "public",
                 columns: table => new
@@ -1130,12 +1101,6 @@ namespace eSecurity.Server.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SignInSessions_UserId",
-                schema: "public",
-                table: "SignInSessions",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_UserClients_ClientId",
                 schema: "public",
                 table: "UserClients",
@@ -1264,10 +1229,6 @@ namespace eSecurity.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "RolePermissions",
-                schema: "public");
-
-            migrationBuilder.DropTable(
-                name: "SignInSessions",
                 schema: "public");
 
             migrationBuilder.DropTable(

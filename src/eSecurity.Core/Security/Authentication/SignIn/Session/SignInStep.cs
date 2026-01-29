@@ -6,7 +6,6 @@ namespace eSecurity.Core.Security.Authentication.SignIn.Session;
 public enum SignInStep
 {
     Password,
-    DeviceTrust,
     TwoFactor,
     OAuth,
     Passkey,

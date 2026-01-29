@@ -6,6 +6,5 @@ namespace eSecurity.Core.Security.Authentication.SignIn;
 [JsonDerivedType(typeof(PasswordSignInPayload), typeDiscriminator: "password")]
 [JsonDerivedType(typeof(PasskeySignInPayload), typeDiscriminator: "passkey")]
 [JsonDerivedType(typeof(OAuthSignInPayload), typeDiscriminator: "oauth")]
-[JsonDerivedType(typeof(TrustDeviceSignInPayload), typeDiscriminator: "trustDevice")]
 [JsonDerivedType(typeof(TwoFactorSignInPayload), typeDiscriminator: "twoFactor")]
 public abstract class SignInPayload { }

@@ -1,11 +1,8 @@
 ﻿using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Security.Authentication.SignIn;
-using eSecurity.Core.Security.Authentication.SignIn.Session;
 using eSecurity.Core.Security.Credentials.PublicKey.Constants;
-using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Lockout;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
-using eSecurity.Server.Security.Authentication.SignIn.Session;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Credentials.PublicKey.Credentials;
@@ -22,15 +19,13 @@ public sealed class PasskeySignInStrategy(
     ISessionManager sessionManager,
     IDeviceManager deviceManager,
     ILockoutManager lockoutManager,
-    IHttpContextAccessor accessor,
-    ISignInSessionManager signInSessionManager) : ISignInStrategy
+    IHttpContextAccessor accessor) : ISignInStrategy
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
-    private readonly ISignInSessionManager _signInSessionManager = signInSessionManager;
     private readonly HttpContext _httpContext = accessor.HttpContext!;
 
     public async ValueTask<Result> ExecuteAsync(SignInPayload payload,
@@ -80,22 +75,7 @@ public sealed class PasskeySignInStrategy(
             });
         }
 
-        var session = new SignInSessionEntity
-        {
-            Id = Guid.CreateVersion7(),
-            UserId = user.Id,
-            CompletedSteps = [SignInStep.Passkey],
-            RequiredSteps = [SignInStep.Passkey],
-            CurrentStep = SignInStep.Complete,
-            Status = SignInStatus.Completed,
-            ExpireDate = DateTimeOffset.UtcNow.AddMinutes(15),
-            StartDate = DateTimeOffset.UtcNow,
-        };
-        
-        var sessionResult = await _signInSessionManager.CreateAsync(session, cancellationToken);
-        if (!sessionResult.Succeeded) return sessionResult;
-
         await _sessionManager.CreateAsync(user, cancellationToken);
-        return Results.Ok(new SignInResponse { SessionId = session.Id, });
+        return Results.Ok(new SignInResponse { UserId = user.Id, });
     }
 }

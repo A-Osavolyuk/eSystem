@@ -12,7 +12,7 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20260129134435_Initial")]
+    [Migration("20260129163806_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -755,57 +755,6 @@ namespace eSecurity.Server.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Sessions", "public");
-                });
-
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.SignInSessionEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("CompletedSteps")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CurrentStep")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTimeOffset>("ExpireDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("OAuthFlow")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Provider")
-                        .HasMaxLength(32)
-                        .HasColumnType("character varying(32)");
-
-                    b.Property<string>("RequiredSteps")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTimeOffset>("StartDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTimeOffset?>("UpdateDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("SignInSessions", "public");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.SigningCertificateEntity", b =>
@@ -1594,15 +1543,6 @@ namespace eSecurity.Server.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.SignInSessionEntity", b =>
-                {
-                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });

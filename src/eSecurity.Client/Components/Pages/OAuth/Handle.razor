@@ -1,20 +1,13 @@
 ﻿@page "/oauth/handle"
 
-@using eSecurity.Client.Security
-@using eSecurity.Core.Common.DTOs
-@using eSecurity.Core.Security.Authentication.SignIn.Session
 @using eSecurity.Core.Security.Authorization.OAuth
+@using eSystem.Core.Utilities.State
 
 @inherits PageBase
-
-@inject ISecurityService SecurityService
 
 <Title Text="Handling OAuth session..."/>
 
 @code {
-    [SupplyParameterFromQuery(Name = "sid")]
-    public Guid SessionId { get; set; }
-
     [SupplyParameterFromQuery(Name = "state")]
     public string State { get; set; } = string.Empty;
 
@@ -36,73 +29,63 @@
         }
         else
         {
-            var result = await SecurityService.LoadSignInSessionAsync(SessionId);
-            if (result.Succeeded && result.TryGetValue<SignInSessionDto>(out var session))
+            var stateData = StateParser.Parse(State);
+            var userId = stateData["userId"];
+            var flow = stateData["flow"];
+            var provider = stateData["provider"];
+            var stateBase64 = stateData["state"];
+            var stateBytes = WebEncoders.Base64UrlDecode(stateBase64);
+            var stateJson = Encoding.UTF8.GetString(stateBytes);
+            var state = JsonSerializer.Deserialize<OAuthState>(stateJson);
+
+            if (state is null)
             {
-                if (session?.UserId == null || string.IsNullOrEmpty(session.Provider) || !session.OAuthFlow.HasValue)
-                {
-                    NavigationManager.NavigateTo(QueryBuilder.Create()
-                        .WithUri(Links.OAuth.Error)
-                        .WithQueryParam("error", ErrorTypes.OAuth.InvalidRequestUri)
-                        .WithQueryParam("error_description", "Invalid session.")
-                        .Build());
-                    
-                    return;
-                }
-                
-                UserState.UserId = session.UserId.Value;
-                var encodedState = WebEncoders.Base64UrlDecode(State);
-                var stateJson = Encoding.UTF8.GetString(encodedState);
-                var state = JsonSerializer.Deserialize<OAuthState>(stateJson);
+                NavigationManager.NavigateTo(QueryBuilder.Create()
+                    .WithUri(Links.OAuth.Error)
+                    .WithQueryParam("error", ErrorTypes.Common.InvalidSession)
+                    .WithQueryParam("error_description", "Invalid session.")
+                    .Build());
 
-                if (state is null)
+                return;
+            }
+            
+            UserState.UserId = Guid.Parse(userId);
+            
+            if (flow == "sign-in")
+            {
+                var requireTwoFactor = Convert.ToBoolean(stateData["requireTwoFactor"]);
+                if (requireTwoFactor)
                 {
-                    NavigationManager.NavigateTo(QueryBuilder.Create()
-                        .WithUri(Links.OAuth.Error)
-                        .WithQueryParam("error", ErrorTypes.OAuth.InvalidRequestUri)
-                        .WithQueryParam("error_description", "The state parameter is invalid.")
-                        .Build());
+                    var stateBuilder = StateBuilder.Create()
+                        .WithData("userId", userId)
+                        .WithData("provider", provider)
+                        .WithData("state", StateBuilder.Create()
+                            .WithData("state", GetRedirectUri(state))
+                            .Build());
                         
-                    return;
-                }
-
-                if (session.OAuthFlow.Value == OAuthFlow.SignIn)
-                {
-                    if (session.NextStep == SignInStep.Complete)
-                    {
-                        NavigationManager.NavigateTo(GetRedirectUri(state));
-                    }
-                    else if (session.NextStep == SignInStep.TwoFactor)
-                    {
-                        NavigationManager.NavigateTo(QueryBuilder.Create()
-                            .WithUri(Links.Session.TwoFactor)
-                            .WithQueryParam("sid", SessionId.ToString())
-                            .WithQueryParam("redirect_uri", GetRedirectUri(state))
-                            .Build());
-                    }
-                    else
-                    {
-                        NavigationManager.NavigateTo(QueryBuilder.Create()
-                            .WithUri(Links.OAuth.Error)
-                            .WithQueryParam("error", ErrorTypes.Common.InvalidSession)
-                            .WithQueryParam("error_description", "Invalid session.")
-                            .Build());
-                    }
+                    NavigationManager.NavigateTo(QueryBuilder.Create()
+                        .WithUri(Links.Session.TwoFactor)
+                        .WithQueryParam("state", stateBuilder.Build())
+                        .Build());
                 }
                 else
                 {
-                    NavigationManager.NavigateTo(QueryBuilder.Create()
-                        .WithUri(Links.OAuth.SignUp)
-                        .WithQueryParam("sid", SessionId.ToString())
-                        .WithQueryParam("redirect_uri", GetRedirectUri(state))
-                        .Build());
+                    NavigationManager.NavigateTo(GetRedirectUri(state));
                 }
-                
             }
             else
             {
-                var error = result.GetError();
-                Snackbar.Add(error.Description, Severity.Error);
+                var stateBuilder = StateBuilder.Create()
+                    .WithData("userId", userId)
+                    .WithData("provider", provider)
+                    .WithData("state", StateBuilder.Create()
+                        .WithData("state", GetRedirectUri(state))
+                        .Build());
+                        
+                NavigationManager.NavigateTo(QueryBuilder.Create()
+                    .WithUri(Links.OAuth.SignUp)
+                    .WithQueryParam("state", stateBuilder.Build())
+                    .Build());
             }
         }
     }

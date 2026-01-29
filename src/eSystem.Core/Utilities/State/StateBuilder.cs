@@ -18,6 +18,12 @@ public class StateBuilder
         _data[key] = value;
         return this;
     }
+    
+    public StateBuilder WithData(string key, bool value)
+    {
+        _data[key] = value.ToString();
+        return this;
+    }
 
     public string Build()
     {

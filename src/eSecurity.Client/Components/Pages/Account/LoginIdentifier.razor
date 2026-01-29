@@ -5,6 +5,7 @@
 @using eSecurity.Client.Components.Layout
 @using eSecurity.Client.Security
 @using eSecurity.Core.Common.Responses
+@using eSystem.Core.Utilities.State
 @using eSecurity.Client.Components.Pages.OAuth
 
 @inject ISecurityService SecurityService
@@ -67,9 +68,10 @@
 </MudGrid>
 
 @code {
-    [SupplyParameterFromQuery(Name = "return_url")]
-    public string? ReturnUrl { get; set; } = string.Empty;
-    
+
+    [SupplyParameterFromQuery(Name = "state")]
+    public string? State { get; set; } = string.Empty;
+
     private LoginIdentifierModel _model = new();
     private MudForm _form = new();
 
@@ -92,18 +94,20 @@
 
                     return;
                 }
-                
+
                 _error = null;
                 _showError = false;
 
-                var builder = QueryBuilder.Create()
+                var stateBuilder = StateBuilder.Create()
+                    .WithData("login", _model.Login);
+
+                if (!string.IsNullOrEmpty(State))
+                    stateBuilder.WithData("state", State);
+                
+                NavigationManager.NavigateTo(QueryBuilder.Create()
                     .WithUri(Links.Common.PasswordSignIn)
-                    .WithQueryParam("login", _model.Login);
-                
-                if (!string.IsNullOrEmpty(ReturnUrl))
-                    builder.WithQueryParam("return_url", ReturnUrl);
-                
-                NavigationManager.NavigateTo(builder.Build());
+                    .WithQueryParam("state", stateBuilder.Build())
+                    .Build());
             }
             else
             {

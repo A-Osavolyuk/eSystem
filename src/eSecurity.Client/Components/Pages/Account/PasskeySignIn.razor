@@ -3,9 +3,9 @@
 @using eSecurity.Client.Security
 @using eSecurity.Client.Security.Authentication
 @using eSecurity.Client.Security.Credentials.PublicKey
-@using eSecurity.Core.Common.DTOs
 @using eSecurity.Core.Common.Responses
 @using eSecurity.Core.Security.Authentication.SignIn
+@using eSystem.Core.Utilities.State
 @using eSecurity.Core.Security.Credentials.PublicKey
 
 @inject NavigationManager NavigationManager
@@ -109,32 +109,23 @@ else
             };
 
             var result = await SecurityService.SignInAsync(request);
-            if (result.Succeeded && result.TryGetValue<SignInResponse>(out var value))
+            if (result.Succeeded && result.TryGetValue<SignInResponse>(out var response) && response is not null)
             {
-                var sessionResult = await SecurityService.LoadSignInSessionAsync(value!.SessionId);
-                if (sessionResult.Succeeded && sessionResult.TryGetValue<SignInSessionDto>(out var session))
-                {
-                    if (session?.UserId != null)
-                    {
-                        UserState.UserId = session.UserId.Value;
-                        AuthenticationManager.Authorize();
-                    }
-                    else
-                    {
-                        _showError = true;
-                        _isLoading = false;
+                UserState.UserId = response.UserId;
+                var queryParams = QueryParser.GetQueryParameters(NavigationManager.Uri);
+                var state = queryParams["state"];
 
-                        Snackbar.Add("Invalid session", Severity.Error);
+                if (!string.IsNullOrEmpty(state))
+                {
+                    var stateData = StateParser.Parse(state);
+                    if (stateData.TryGetValue("return_url", out var returnUrl))
+                    {
+                        NavigationManager.NavigateTo(returnUrl);
+                        return;
                     }
                 }
-                else
-                {
-                    _showError = true;
-                    _isLoading = false;
-
-                    var error = result.GetError();
-                    Snackbar.Add(error.Description, Severity.Error);
-                }
+                
+                AuthenticationManager.Authorize();
             }
             else
             {

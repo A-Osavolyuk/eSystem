@@ -5,6 +5,7 @@
 @using eSecurity.Core.Common.DTOs
 @using eSecurity.Core.Security.Authentication.SignIn
 @using eSecurity.Core.Security.Authentication.TwoFactor
+@using eSystem.Core.Utilities.State
 
 @inherits PageBase
 
@@ -42,7 +43,7 @@
                         <AuthenticatorMethod
                             Methods="_methods"
                             OnSignIn="@(async () => await OnSignInAsync())"
-                            OnChangeMethod="@((TwoFactorMethod method) => _preferredMethod = method )"/>
+                            OnChangeMethod="@((TwoFactorMethod method) => _preferredMethod = method)"/>
                         break;
                     }
                     case TwoFactorMethod.Passkey:
@@ -50,7 +51,7 @@
                         <PasskeyMethod
                             Methods="_methods"
                             OnSignIn="@(async () => await OnSignInAsync())"
-                            OnChangeMethod="@((TwoFactorMethod method) => _preferredMethod = method )"/>
+                            OnChangeMethod="@((TwoFactorMethod method) => _preferredMethod = method)"/>
                         break;
                     }
                     case TwoFactorMethod.RecoveryCode:
@@ -58,7 +59,7 @@
                         <RecoveryCodeMethod
                             Methods="_methods"
                             OnSignIn="@(async () => await OnSignInAsync())"
-                            OnChangeMethod="@((TwoFactorMethod method) => _preferredMethod = method )"/>
+                            OnChangeMethod="@((TwoFactorMethod method) => _preferredMethod = method)"/>
                         break;
                     }
                 }
@@ -69,46 +70,40 @@
 
 @code {
 
-    [SupplyParameterFromQuery(Name = "sid")]
-    public Guid SessionId { get; set; }
+    [SupplyParameterFromQuery(Name = "state")]
+    public string? State { get; set; }
 
     private List<UserTwoFactorMethod> _methods = [];
     private TwoFactorMethod _preferredMethod;
+    private string? _state;
+    private Guid _userId;
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await SecurityService.LoadSignInSessionAsync(SessionId);
-        if (result.Succeeded && result.TryGetValue<SignInSessionDto>(out var response))
+        if (!string.IsNullOrEmpty(State))
         {
-            if (response?.UserId is not null)
+            var stateData = StateParser.Parse(State);
+            if (stateData.TryGetValue("userId", out var userId))
             {
-                UserState.UserId = response.UserId.Value;
-                await LoadMethods();
+                _userId = Guid.Parse(userId);
+                UserState.UserId = _userId;
+                var result = await UserService.GetUserTwoFactorMethodsAsync(_userId);
+                if (result.Succeeded && result.TryGetValue<List<UserTwoFactorMethod>>(out var methods))
+                {
+                    _methods = methods!;
+                    _preferredMethod = _methods.Single(x => x.Preferred).Method;
+                }
+                else
+                {
+                    var error = result.GetError();
+                    Snackbar.Add(error.Description, Severity.Error);
+                }
             }
-            else
+
+            if (stateData.TryGetValue("state", out var state))
             {
-                Snackbar.Add("Invalid session");
+                _state = state;
             }
-        }
-        else
-        {
-            var error = result.GetError();
-            Snackbar.Add(error.Description, Severity.Error);
-        }
-    }
-    
-    private async Task LoadMethods()
-    {
-        var result = await UserService.GetUserTwoFactorMethodsAsync(UserState.UserId);
-        if (result.Succeeded && result.TryGetValue<List<UserTwoFactorMethod>>(out var methods))
-        {
-            _methods = methods!;
-            _preferredMethod = _methods.Single(x => x.Preferred).Method;
-        }
-        else
-        {
-            var error = result.GetError();
-            Snackbar.Add(error.Description, Severity.Error);
         }
     }
 
@@ -118,16 +113,30 @@
         {
             Payload = new TwoFactorSignInPayload
             {
-                Sid = SessionId
+                UserId = _userId
             }
         };
-        
+
         var result = await SecurityService.SignInAsync(request);
-        if (result.Succeeded) AuthenticationManager.Authorize();
+        if (result.Succeeded)
+        {
+            if (!string.IsNullOrEmpty(_state))
+            {
+                var stateData = StateParser.Parse(_state);
+                if (stateData.TryGetValue("return_url", out var returnUrl))
+                {
+                    NavigationManager.NavigateTo(returnUrl);
+                    return;
+                }
+            }
+
+            AuthenticationManager.Authorize();
+        }
         else
         {
             var error = result.GetError();
             Snackbar.Add(error.Description, Severity.Error);
         }
     }
+
 }

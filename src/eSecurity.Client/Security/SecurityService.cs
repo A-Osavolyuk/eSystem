@@ -35,18 +35,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 WithLocale = true,
                 WithTimezone = true
             });
-
-    public async ValueTask<ApiResponse> LoadSignInSessionAsync(Guid sid)
-        => await _apiClient.SendAsync(
-            new ApiRequest
-            {
-                Method = HttpMethod.Post,
-                Url = $"api/v1/Account/sign-in/session/{sid}"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.None
-            });
+    
 
     public async ValueTask<ApiResponse> CheckAccountAsync(CheckAccountRequest request)
         => await _apiClient.SendAsync(

@@ -1,13 +1,12 @@
 ﻿@page "/oauth/sign-up"
 
 @using eSecurity.Client.Security
-@using eSecurity.Core.Common.DTOs
+@using eSystem.Core.Utilities.State
 @using eSecurity.Client.Security.Identity
 
 @inherits PageBase
 
 @inject IUsernameService UsernameService
-@inject ISecurityService SecurityService
 @inject SetUsernameValidator Validator
 
 <Title Text="OAuth sign up"/>
@@ -61,42 +60,29 @@
 
 @code {
 
-    [SupplyParameterFromQuery(Name = "sid")]
-    public Guid SessionId { get; set; }
-
-    [SupplyParameterFromQuery(Name = "redirect_uri")]
-    public string RedirectUri { get; set; } = string.Empty;
+    [SupplyParameterFromQuery(Name = "state")]
+    public string? State { get; set; }
 
     private MudForm _form = new();
     private readonly SetUsernameModel _model = new();
 
     private string _provider = string.Empty;
+    private string? _state;
+    private Guid _userId;
+    
     private string? _error;
     private bool _showError;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        var result = await SecurityService.LoadSignInSessionAsync(SessionId);
-        if (result.Succeeded && result.TryGetValue<SignInSessionDto>(out var session))
+        if (!string.IsNullOrEmpty(State))
         {
-            if (session?.UserId == null || string.IsNullOrEmpty(session.Provider))
-            {
-                NavigationManager.NavigateTo(QueryBuilder.Create()
-                    .WithUri(Links.OAuth.Error)
-                    .WithQueryParam("error", ErrorTypes.Common.InvalidSession)
-                    .WithQueryParam("error_description", "Invalid session.")
-                    .Build());
-                
-                return;
-            }
+            var stateData = StateParser.Parse(State);
+            _userId = Guid.Parse(stateData["userId"]);
+            _provider = stateData["provider"];
+            _state = stateData["state"];
             
-            UserState.UserId = session.UserId.Value;
-            _provider = session.Provider;
-        }
-        else
-        {
-            var error = result.GetError();
-            Snackbar.Add(error.Description, Severity.Error);
+            UserState.UserId = _userId;
         }
     }
 
@@ -108,14 +94,26 @@
         {
             var request = new SetUsernameRequest
             {
-                UserId = UserState.UserId,
+                UserId = _userId,
                 Username = _model.Username
             };
 
             var result = await UsernameService.SetUsernameAsync(request);
             if (result.Succeeded)
             {
-                NavigationManager.NavigateTo(RedirectUri);
+                if (!string.IsNullOrEmpty(_state))
+                {
+                    var stateData = StateParser.Parse(_state);
+                    NavigationManager.NavigateTo(stateData["return_url"]);
+                }
+                else
+                {
+                    NavigationManager.NavigateTo(QueryBuilder.Create()
+                        .WithUri(Links.OAuth.Error)
+                        .WithQueryParam("error", ErrorTypes.Common.InvalidSession)
+                        .WithQueryParam("error_description", "Invalid session.")
+                        .Build());
+                }
             }
             else
             {

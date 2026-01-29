@@ -1,13 +1,11 @@
 ﻿using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Security.Authentication.Lockout;
 using eSecurity.Core.Security.Authentication.SignIn;
-using eSecurity.Core.Security.Authentication.SignIn.Session;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Lockout;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authentication.Password;
-using eSecurity.Server.Security.Authentication.SignIn.Session;
 using eSecurity.Server.Security.Authentication.TwoFactor;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Identity.Email;
@@ -28,7 +26,6 @@ public sealed class PasswordSignInStrategy(
     IHttpContextAccessor accessor,
     IEmailManager emailManager,
     ITwoFactorManager twoFactorManager,
-    ISignInSessionManager signInSessionManager,
     IOptions<SignInOptions> options) : ISignInStrategy
 {
     private readonly IUserManager _userManager = userManager;
@@ -38,7 +35,6 @@ public sealed class PasswordSignInStrategy(
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IEmailManager _emailManager = emailManager;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
-    private readonly ISignInSessionManager _signInSessionManager = signInSessionManager;
     private readonly HttpContext _httpContext = accessor.HttpContext!;
     private readonly SignInOptions _options = options.Value;
 
@@ -169,33 +165,18 @@ public sealed class PasswordSignInStrategy(
             });
 
         }
-        
-        var requiredSteps = new List<SignInStep>();
-        
-        if (!device.IsTrusted) 
-            requiredSteps.Add(SignInStep.DeviceTrust);
-        
-        if (await _twoFactorManager.IsEnabledAsync(user, cancellationToken)) 
-            requiredSteps.Add(SignInStep.TwoFactor);
-        
-        var session = new SignInSessionEntity
-        {
-            Id = Guid.CreateVersion7(),
-            UserId = user.Id,
-            RequiredSteps = requiredSteps,
-            CompletedSteps = [SignInStep.Password],
-            CurrentStep = requiredSteps.Count > 0 ? requiredSteps.First() : SignInStep.Complete,
-            Status = requiredSteps.Count > 0 ? SignInStatus.InProgress : SignInStatus.Completed,
-            StartDate = DateTimeOffset.UtcNow,
-            ExpireDate = DateTimeOffset.UtcNow.AddMinutes(15),
-        };
-        
-        var sessionResult = await _signInSessionManager.CreateAsync(session, cancellationToken);
-        if (!sessionResult.Succeeded) return sessionResult;
 
-        if (requiredSteps.Count == 0)
-            await _sessionManager.CreateAsync(user, cancellationToken);
-        
-        return Results.Ok(new SignInResponse { SessionId = session.Id });
+        if (await _twoFactorManager.IsEnabledAsync(user, cancellationToken))
+        {
+            return Results.Ok(new SignInResponse()
+            {
+                UserId = user.Id,
+                RequireTwoFactor = true
+            });
+        }
+
+        await _sessionManager.CreateAsync(user, cancellationToken);
+        return Results.Ok(new SignInResponse { UserId = user.Id });
+
     }
 }

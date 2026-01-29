@@ -1,4 +1,3 @@
-using System.Web;
 using eSecurity.Client.Common.JS.Fetch;
 using eSecurity.Core.Common.Routing;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
@@ -23,31 +22,15 @@ public sealed class AuthenticationManager(
 
     public void Authorize()
     {
-        var decodedUri = HttpUtility.UrlDecode(_navigationManager.Uri);
-        var queryParams = QueryParser.GetQueryParameters(decodedUri);
-
-        var builder = QueryBuilder.Create().WithUri(Links.Connect.Authorize)
-            .WithQueryParam("prompt", PromptTypes.Consent);
-
-        builder.WithQueryParam("response_type", queryParams.GetValueOrDefault("response_type", ResponseTypes.Code))
-            .WithQueryParam("client_id", queryParams.GetValueOrDefault("client_id", _clientOptions.ClientId))
-            .WithQueryParam("redirect_uri", queryParams.GetValueOrDefault("redirect_uri", _clientOptions.CallbackUri))
-            .WithQueryParam("scope", queryParams.GetValueOrDefault("scope", string.Join(" ", _clientOptions.SupportedScopes)))
-            .WithQueryParam("state", queryParams.GetValueOrDefault("state", Guid.NewGuid().ToString()))
-            .WithQueryParam("nonce", queryParams.GetValueOrDefault("nonce", Guid.NewGuid().ToString()));
-
-        if (queryParams.TryGetValue("prompt", out var prompt))
-        {
-            var prompts = prompt.Split(' ');
-            if (prompts.Length > 1)
-            {
-                builder.WithQueryParam("prompt", string.Join(" ", prompts.Skip(1)));
-            }
-        }
-        else 
-            builder.WithQueryParam("prompt", PromptTypes.Consent);
-
-        _navigationManager.NavigateTo(builder.Build());
+        _navigationManager.NavigateTo(QueryBuilder.Create().WithUri(Links.Connect.Authorize)
+            .WithQueryParam("prompt", PromptTypes.Consent)
+            .WithQueryParam("response_type", ResponseTypes.Code)
+            .WithQueryParam("client_id", _clientOptions.ClientId)
+            .WithQueryParam("redirect_uri", _clientOptions.CallbackUri)
+            .WithQueryParam("scope", string.Join(" ", _clientOptions.SupportedScopes))
+            .WithQueryParam("state", Guid.NewGuid().ToString())
+            .WithQueryParam("nonce", Guid.NewGuid().ToString())
+            .WithQueryParam("prompt", PromptTypes.Consent).Build());
     }
 
     public async Task SignOutAsync()

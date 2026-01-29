@@ -2,6 +2,7 @@
 @using eSecurity.Core.Security.Authorization.OAuth.Constants
 @using eSystem.Core.Security.Authentication.OpenIdConnect.Client
 @using eSystem.Core.Security.Authentication.OpenIdConnect.Constants
+@using eSystem.Core.Utilities.State
 
 @inject NavigationManager NavigationManager
 @inject IConfiguration Configuration
@@ -52,8 +53,8 @@
 
 @code {
 
-    [SupplyParameterFromQuery(Name = "return_url")]
-    public string? ReturnUrl { get; set; }
+    [SupplyParameterFromQuery(Name = "state")]
+    public string? State { get; set; }
 
     private string BuildUrl(string type)
     {
@@ -63,9 +64,11 @@
             .WithQueryParam("returnUri", $"{NavigationManager.BaseUri}oauth/handle");
 
         OAuthState? state;
-        if (!string.IsNullOrEmpty(ReturnUrl))
+        if (!string.IsNullOrEmpty(State))
         {
-            var queryParams = QueryParser.GetQueryParameters(ReturnUrl);
+            var stateData = StateParser.Parse(State);
+            var decodedReturnUrl = HttpUtility.UrlDecode(stateData["return_url"]);
+            var queryParams = QueryParser.GetQueryParameters(decodedReturnUrl);
             state = new OAuthState
             {
                 ResponseType = queryParams.GetValueOrDefault("response_type"),

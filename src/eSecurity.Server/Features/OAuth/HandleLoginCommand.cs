@@ -35,7 +35,6 @@ public sealed class HandleOAuthLoginCommandHandler(
         var properties = authenticateResult.Properties ?? throw new NullReferenceException("Properties is null");
         var items = properties.Items;
         var provider = principal.Identity!.AuthenticationType!;
-        var sessionId = items["sid"]!;
         var state = items["state"]!;
 
         var linkedAccountType = provider switch
@@ -75,8 +74,7 @@ public sealed class HandleOAuthLoginCommandHandler(
                 Type = linkedAccountType,
                 Email = email,
                 ReturnUri = request.ReturnUri,
-                State = state,
-                SessionId = Guid.Parse(sessionId),
+                State = state
             };
             
             var signUpResult = await signUpStrategy.ExecuteAsync(signUpPayload, cancellationToken);
@@ -96,8 +94,7 @@ public sealed class HandleOAuthLoginCommandHandler(
             Email = email,
             State = state,
             LinkedAccount = linkedAccountType,
-            ReturnUri = request.ReturnUri!,
-            SessionId = Guid.Parse(sessionId),
+            ReturnUri = request.ReturnUri
         };
         
         var strategy = _signInResolver.Resolve(SignInType.OAuth);

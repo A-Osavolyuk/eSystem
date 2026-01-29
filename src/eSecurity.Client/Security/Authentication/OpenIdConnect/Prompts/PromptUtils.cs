@@ -2,6 +2,7 @@
 using eSecurity.Client.Security.Authentication.OpenIdConnect.Authorization;
 using eSecurity.Core.Common.Routing;
 using eSystem.Core.Utilities.Query;
+using eSystem.Core.Utilities.State;
 
 namespace eSecurity.Client.Security.Authentication.OpenIdConnect.Prompts;
 
@@ -34,8 +35,12 @@ public static class PromptUtils
             returnUrlBuilder.WithQueryParam("prompt", prompt);
         }
 
+        var state = StateBuilder.Create()
+            .WithData("return_url", returnUrlBuilder.Build())
+            .Build();
+
         return QueryBuilder.Create().WithUri(uri)
-            .WithQueryParam("return_url", returnUrlBuilder.Build())
+            .WithQueryParam("state", state)
             .Build();
     }
 }

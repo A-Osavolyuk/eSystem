@@ -2,5 +2,5 @@
 
 public class TwoFactorSignInPayload : SignInPayload
 {
-    public Guid Sid { get; set; }
+    public Guid UserId { get; set; }
 }

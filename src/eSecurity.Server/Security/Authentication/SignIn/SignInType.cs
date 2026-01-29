@@ -5,6 +5,5 @@ public enum SignInType
     Password,
     Passkey,
     OAuth,
-    DeviceTrust,
     TwoFactor
 }

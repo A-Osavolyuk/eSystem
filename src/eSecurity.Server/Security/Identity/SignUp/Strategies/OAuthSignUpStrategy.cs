@@ -1,11 +1,9 @@
-using eSecurity.Core.Security.Authentication.SignIn.Session;
 using eSecurity.Core.Security.Authorization.OAuth;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Common.Messaging;
 using eSecurity.Server.Common.Messaging.Messages.Email;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
-using eSecurity.Server.Security.Authentication.SignIn.Session;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
 using eSecurity.Server.Security.Authorization.Permissions;
@@ -17,13 +15,12 @@ using eSystem.Core.Common.Messaging;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
 using eSystem.Core.Utilities.Query;
-using OAuthFlow = eSecurity.Core.Security.Authorization.OAuth.OAuthFlow;
+using eSystem.Core.Utilities.State;
 
 namespace eSecurity.Server.Security.Identity.SignUp.Strategies;
 
 public sealed class OAuthSignUpPayload : SignUpPayload
 {
-    public required Guid SessionId { get; set; }
     public required LinkedAccountType Type { get; set; }
     public required string Email { get; set; }
     public required string ReturnUri { get; set; }
@@ -35,7 +32,6 @@ public sealed class OAuthSignUpStrategy(
     IUserManager userManager,
     IMessageService messageService,
     IRoleManager roleManager,
-    ISignInSessionManager signInSessionManager,
     ILinkedAccountManager providerManager,
     IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor,
@@ -46,7 +42,6 @@ public sealed class OAuthSignUpStrategy(
     private readonly IUserManager _userManager = userManager;
     private readonly IMessageService _messageService = messageService;
     private readonly IRoleManager _roleManager = roleManager;
-    private readonly ISignInSessionManager _signInSessionManager = signInSessionManager;
     private readonly ILinkedAccountManager _providerManager = providerManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly IEmailManager _emailManager = emailManager;
@@ -62,16 +57,6 @@ public sealed class OAuthSignUpStrategy(
             {
                 Code = ErrorTypes.Common.InvalidPayloadType,
                 Description = "Invalid payload"
-            });
-        }
-
-        var session = await _signInSessionManager.FindByIdAsync(oauthPayload.SessionId, cancellationToken);
-        if (session is null)
-        {
-            return Results.BadRequest(new Error
-            {
-                Code = ErrorTypes.Common.NotFound,
-                Description = "Session not found"
             });
         }
 
@@ -165,26 +150,17 @@ public sealed class OAuthSignUpStrategy(
         var linkedAccountResult = await _providerManager.CreateAsync(userLinkedAccount, cancellationToken);
         if (!linkedAccountResult.Succeeded) return linkedAccountResult;
 
-        if (session.IsActive)
-        {
-            session.UserId = user.Id;
-            session.OAuthFlow = OAuthFlow.SignUp;
-            session.CompletedSteps = [SignInStep.OAuth];
-            session.Status = SignInStatus.Completed;
-            session.CurrentStep = SignInStep.Complete;
-        }
-        else
-        {
-            session.Status = SignInStatus.Expired;
-        }
-        
-        var sessionResult = await _signInSessionManager.UpdateAsync(session, cancellationToken);
-        if (!sessionResult.Succeeded) return sessionResult;
+        var state = StateBuilder.Create()
+            .WithData("userId", user.Id.ToString())
+            .WithData("provider", oauthPayload.Type.ToString())
+            .WithData("flow", "sign-up")
+            .WithData("state", oauthPayload.State)
+            .Build();
 
         await _sessionManager.CreateAsync(user, cancellationToken);
-        return Results.Found(QueryBuilder.Create().WithUri(oauthPayload.ReturnUri)
-            .WithQueryParam("sid", session.Id.ToString())
-            .WithQueryParam("state", oauthPayload.State)
+        return Results.Found(QueryBuilder.Create()
+            .WithUri(oauthPayload.ReturnUri)
+            .WithQueryParam("state", state)
             .Build());
     }
 }

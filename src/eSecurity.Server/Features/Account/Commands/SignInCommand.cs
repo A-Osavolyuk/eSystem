@@ -18,7 +18,6 @@ public class SignInCommandHandler(ISignInResolver signInResolver) : IRequestHand
             PasswordSignInPayload => SignInType.Password,
             PasskeySignInPayload => SignInType.Passkey,
             OAuthSignInPayload => SignInType.OAuth,
-            TrustDeviceSignInPayload => SignInType.DeviceTrust,
             TwoFactorSignInPayload => SignInType.TwoFactor,
             _ => throw new NotSupportedException("Unknown payload")
         };

@@ -1,7 +1,6 @@
 using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Common.Filters;
 using eSecurity.Server.Features.Account.Commands;
-using eSecurity.Server.Features.Account.Queries;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 
@@ -15,16 +14,6 @@ namespace eSecurity.Server.Controllers.v1;
 public class AccountController(ISender sender) : ControllerBase
 {
     private readonly ISender _sender = sender;
-    
-    [EndpointSummary("Load sign in session")]
-    [EndpointDescription("Load sign in session")]
-    [ProducesResponseType(200)]
-    [HttpPost("sign-in/session/{sid:guid}")]
-    public async ValueTask<IActionResult> LoadSignSessionAsync(Guid sid)
-    {
-        var result = await _sender.Send(new LoadSignInSessionCommand(sid));
-        return HttpContext.HandleResult(result);
-    }
     
     [EndpointSummary("Sign in")]
     [EndpointDescription("Sign in")]

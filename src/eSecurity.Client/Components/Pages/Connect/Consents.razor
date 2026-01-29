@@ -6,6 +6,7 @@
 @using eSecurity.Core.Common.Responses
 @using eSecurity.Core.Security.Authentication.OpenIdConnect.Client
 @using eSystem.Core.Security.Authentication.OpenIdConnect.Constants
+@using eSystem.Core.Utilities.State
 
 @inherits PageBase
 
@@ -151,19 +152,22 @@
 
 @code {
 
-    [SupplyParameterFromQuery(Name = "return_url")]
-    public string ReturnUrl { get; set; } = string.Empty;
+    [SupplyParameterFromQuery(Name = "state")]
+    public string State { get; set; } = string.Empty;
 
     private ClientInfo _clientInfo = new();
     private string _username = string.Empty;
     private List<string> _scopes = [];
     private string _clientId = string.Empty;
     private string _redirectUri = string.Empty;
+    private string _returnUrl = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        var decodedQuery = HttpUtility.UrlDecode(ReturnUrl);
-        var queryParams = QueryParser.GetQueryParameters(decodedQuery);
+        var stateData = StateParser.Parse(State);
+        _returnUrl = HttpUtility.UrlDecode(stateData["return_url"]);
+        
+        var queryParams = QueryParser.GetQueryParameters(_returnUrl);
         
         _clientId = queryParams["client_id"];
         _redirectUri = queryParams["redirect_uri"];
@@ -189,7 +193,7 @@
         {
             if (response is { Granted: true, RemainingScopes.Count: 0 })
             {
-                NavigationManager.NavigateTo(ReturnUrl);
+                NavigationManager.NavigateTo(_returnUrl);
             }
             else
             {
@@ -265,7 +269,7 @@
         };
 
         var result = await ConsentService.GrantAsync(request);
-        if (result.Succeeded) NavigationManager.NavigateTo(ReturnUrl);
+        if (result.Succeeded) NavigationManager.NavigateTo(_returnUrl);
         else
         {
             var error = result.GetError();
