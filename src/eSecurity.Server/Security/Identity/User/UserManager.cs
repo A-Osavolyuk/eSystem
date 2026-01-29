@@ -39,6 +39,16 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         return user;
     }
 
+    public async ValueTask<UserEntity?> FindByLoginAsync(string login, CancellationToken cancellationToken = default)
+    {
+        var normalizedValue = login.ToUpper();
+        return await _context.Users
+            .Where(user => user.NormalizedUsername == normalizedValue || user.Emails.Any(
+                x => x.NormalizedEmail == normalizedValue && 
+                     x.Type == EmailType.Primary))
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
     public async ValueTask<UserEntity?> FindByPhoneNumberAsync(string phoneNumber,
         CancellationToken cancellationToken = default)
     {

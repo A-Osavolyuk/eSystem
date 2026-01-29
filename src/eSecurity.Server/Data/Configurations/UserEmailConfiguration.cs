@@ -13,7 +13,7 @@ public sealed class UserEmailConfiguration : IEntityTypeConfiguration<UserEmailE
         builder.Property(x => x.Type).HasConversion<string>();
         
         builder.HasOne(u => u.User)
-            .WithMany()
+            .WithMany(x => x.Emails)
             .HasForeignKey(x => x.UserId)
             .OnDelete(DeleteBehavior.Cascade);
     }

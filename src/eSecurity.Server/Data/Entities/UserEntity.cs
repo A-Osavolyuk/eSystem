@@ -16,4 +16,6 @@ public class UserEntity : Entity
 
     public string ZoneInfo { get; set; } = string.Empty;
     public string Locale { get; set; } = string.Empty;
+
+    public ICollection<UserEmailEntity> Emails { get; set; } = null!;
 }
