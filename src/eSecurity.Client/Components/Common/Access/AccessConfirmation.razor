@@ -13,63 +13,47 @@ else
     if (_model is not null)
     {
         <MudGrid Justify="Justify.Center">
-            <MudItem xs="3">
-                <MudStack Justify="Justify.Center">
-                    <MudTextM3 Typo="TypoM3.Headline" Size="Size.Medium" Align="Align.Center">
-                        Confirm access
-                    </MudTextM3>
-                    <MudStack Spacing="1">
-                        <MudPaper Outlined="true" Class="px-5 py-4">
-                        <MudGrid>
-                            <MudItem xs="1">
-                                <MudAvatar Size="Size.Medium">
-                                    <MudImage
-                                        Src="/images/avatar.jpg"
-                                        Alt="Avatar"
-                                        FallbackSrc="/images/avatar.jpg"/>
-                                </MudAvatar>
-                            </MudItem>
-                            <MudItem xs="10">
-                                <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
-                                    <MudTextM3 Class="pt-2">
-                                        Signed-in as <strong>@UserState.Credentials?.Username</strong>
-                                    </MudTextM3>
-                                </MudStack>
-                            </MudItem>
-                        </MudGrid>
-                    </MudPaper>
-                    @switch (_model.PreferredMethod)
-                    {
-                        case VerificationMethod.Email:
+            <MudItem xs="3" Style="margin-top: 50px">
+                <MudPaper Elevation="4" Class="pa-10">
+                    <MudStack Spacing="3">
+                        <MudStack AlignItems="AlignItems.Center">
+                            <MudIcon Style="font-size: 5rem" Icon="@Icons.Material.Filled.Lock"/>
+                        </MudStack>
+                        <MudTextM3 Typo="TypoM3.Headline" Size="Size.Medium" Align="Align.Center">
+                            Confirm access
+                        </MudTextM3>
+                        @switch (_model.PreferredMethod)
                         {
-                            <EmailConfirmation
-                                Model="_model"
-                                Context="Context"
-                                OnMethodChanged="ChangeMethodAsync"
-                                OnAccessConfirmed="ConfirmAccessAsync"/>
-                            break;
+                            case VerificationMethod.Email:
+                            {
+                                <EmailConfirmation
+                                    Model="_model"
+                                    Context="Context"
+                                    OnMethodChanged="ChangeMethodAsync"
+                                    OnAccessConfirmed="ConfirmAccessAsync"/>
+                                break;
+                            }
+                            case VerificationMethod.Passkey:
+                            {
+                                <PasskeyConfirmation
+                                    Model="_model"
+                                    Context="Context"
+                                    OnMethodChanged="ChangeMethodAsync"
+                                    OnAccessConfirmed="ConfirmAccessAsync"/>
+                                break;
+                            }
+                            case VerificationMethod.AuthenticatorApp:
+                            {
+                                <AuthenticatorConfirmation
+                                    Model="_model"
+                                    Context="Context"
+                                    OnMethodChanged="ChangeMethodAsync"
+                                    OnAccessConfirmed="ConfirmAccessAsync"/>
+                                break;
+                            }
                         }
-                        case VerificationMethod.Passkey:
-                        {
-                            <PasskeyConfirmation
-                                Model="_model"
-                                Context="Context"
-                                OnMethodChanged="ChangeMethodAsync"
-                                OnAccessConfirmed="ConfirmAccessAsync"/>
-                            break;
-                        }
-                        case VerificationMethod.AuthenticatorApp:
-                        {
-                            <AuthenticatorConfirmation
-                                Model="_model"
-                                Context="Context"
-                                OnMethodChanged="ChangeMethodAsync"
-                                OnAccessConfirmed="ConfirmAccessAsync"/>
-                            break;
-                        }
-                    }
                     </MudStack>
-                </MudStack>
+                </MudPaper>
             </MudItem>
         </MudGrid>
     }

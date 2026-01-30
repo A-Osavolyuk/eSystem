@@ -8,30 +8,14 @@
 @if (_model is not null)
 {
     <MudDialog Style="width: 600px">
-        <TitleContent>
-            Access confirmation
-        </TitleContent>
         <DialogContent>
-            <MudStack Justify="Justify.Center">
-                <MudPaper Outlined="true" Class="px-5 py-4">
-                    <MudGrid>
-                        <MudItem xs="1">
-                            <MudAvatar Size="Size.Medium">
-                                <MudImage
-                                    Src="/images/avatar.jpg"
-                                    Alt="Avatar"
-                                    FallbackSrc="/images/avatar.jpg"/>
-                            </MudAvatar>
-                        </MudItem>
-                        <MudItem xs="10">
-                            <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
-                                <MudTextM3 Class="pt-2">
-                                    Signed-in as <strong>@UserState.Credentials?.Username</strong>
-                                </MudTextM3>
-                            </MudStack>
-                        </MudItem>
-                    </MudGrid>
-                </MudPaper>
+            <MudStack Justify="Justify.Center" Class="pa-10">
+                <MudStack AlignItems="AlignItems.Center">
+                    <MudIcon Style="font-size: 5rem" Icon="@Icons.Material.Filled.Lock"/>
+                </MudStack>
+                <MudTextM3 Typo="TypoM3.Headline" Size="Size.Medium" Align="Align.Center">
+                    Confirm access
+                </MudTextM3>
                 @switch (_model.PreferredMethod)
                 {
                     case VerificationMethod.Email:
