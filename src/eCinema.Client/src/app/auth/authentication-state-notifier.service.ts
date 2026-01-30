@@ -1,75 +1,71 @@
-import {inject, Injectable, NgZone} from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {AuthenticationStateProvider} from './authentication-state-provider.service';
-import {WsMessage} from '../core/interfaces/ws-message';
-import {AuthenticationEvents} from './authentication-events';
-import {AuthenticationChannel} from './authentication-channel.service';
-import {SocketProvider} from './socket-provider.service';
+import {HubConnection, HubConnectionBuilder} from '@microsoft/signalr';
+import {environment} from '../../environments/environment';
+import {catchError, EMPTY, from} from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthenticationStateNotifier {
   private state = inject(AuthenticationStateProvider)
-  private socketProvider = inject(SocketProvider)
-  private zone = inject(NgZone)
-
-  private socket?: WebSocket;
-  private reconnectDelay = 1000;
+  private hubConnection?: HubConnection;
 
   public connect(): void {
-    if (this.isSocketConnected()) return;
+    if (this.hubConnection) {
+      return;
+    }
 
-    this.socket = this.socketProvider.getSocket();
+    this.hubConnection = new HubConnectionBuilder()
+      .withUrl(environment.backendSocketUri, {
+        withCredentials: true,
+      })
+      .withAutomaticReconnect()
+      .build();
 
-    this.socket.onopen = () => {
-      console.log('WS connected');
-      this.reconnectDelay = 1000;
-    };
+    this.hubConnection.onreconnecting(error => {
+      console.warn("SignalR reconnecting...", error);
+    });
 
-    this.socket.onmessage = (e) => {
-      this.zone.run(() => this.handleMessage(e));
-    };
+    this.hubConnection.onreconnected(connectionId => {
+      console.log("SignalR reconnected", connectionId);
+    });
 
-    this.socket.onclose = () => {
-      console.warn('WS closed');
-      this.socket = undefined;
-      this.reconnect();
-    };
+    this.hubConnection.onclose(error => {
+      console.error("SignalR closed", error);
+    });
 
-    this.socket.onerror = (e) => {
-      console.error('WS error', e);
-    };
+    this.hubConnection.on("Logout", (message: string) => {
+      console.log("Global logout received");
+      this.disconnect();
+      this.state.signOut();
+    });
+
+    from(this.hubConnection.start())
+      .pipe(
+        catchError(error => {
+          console.error(error)
+          return EMPTY
+        })
+      )
+      .subscribe(() => {
+        console.log("Connected to SignalR hub")
+      });
   }
 
   public disconnect(): void {
-    if (!this.isSocketConnected() || !this.socket) return;
-
-    try {
-      this.socket.close();
-    } catch (err) {
-      console.error('WS disconnect error', err);
-    } finally {
-      this.socket = undefined;
+    if (this.hubConnection) {
+      from(this.hubConnection.stop())
+        .pipe(
+          catchError(error => {
+            console.error(error)
+            return EMPTY
+          })
+        )
+        .subscribe(() => {
+          console.log("Close connection with SignalR hub")
+          this.hubConnection = undefined;
+        })
     }
-  }
-
-  private handleMessage(e: MessageEvent) : void {
-    const message = JSON.parse(e.data) as WsMessage;
-
-    if (message.event === AuthenticationEvents.LOGOUT) {
-      this.state.signOut();
-    }
-  }
-
-  private reconnect() : void {
-    this.disconnect();
-    setTimeout(() => this.connect(), this.reconnectDelay);
-    this.reconnectDelay = Math.min(this.reconnectDelay * 2, 30000);
-  }
-
-  private isSocketConnected() : boolean {
-    return !!this.socket &&
-      (this.socket.readyState === WebSocket.OPEN ||
-      this.socket.readyState === WebSocket.CONNECTING);
   }
 }

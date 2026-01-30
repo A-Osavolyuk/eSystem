@@ -1,10 +1,8 @@
 import {inject, Injectable, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {catchError, map, Observable, of, tap} from 'rxjs';
-import {AuthenticationState} from '../core/interfaces/authentication-state.interface';
 import {environment} from '../../environments/environment';
 import {UserInfo} from '../core/interfaces/userinfo.interface';
-import {User} from '../core/interfaces/user.interface';
 import {AuthenticationStateProvider} from './authentication-state-provider.service';
 import {AuthenticationChannel} from './authentication-channel.service';
 import {AuthenticationEvents} from './authentication-events';

@@ -24,6 +24,7 @@ export class AuthenticationStateProvider {
     this.authenticationState.set({
       isAuthenticated: true,
       user: {
+        id: userInfo.sub,
         username: userInfo.preferred_username ?? '',
         email: userInfo.email ?? '',
         phone: userInfo.phone,

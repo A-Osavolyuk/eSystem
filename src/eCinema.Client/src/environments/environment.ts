@@ -1,5 +1,5 @@
 export const environment = {
-  backendSocketUri: "ws://localhost:6204/ws",
+  backendSocketUri: "https://localhost:6204/hubs/authentication",
   backendUri: "https://localhost:6204",
   registerUri: "https://localhost:6501/sign-up",
 };
