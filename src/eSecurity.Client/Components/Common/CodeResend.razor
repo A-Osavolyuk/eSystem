@@ -1,27 +1,28 @@
 ﻿@using eSecurity.Client.Security.Authorization.Access.Verification
+
 @inject ISnackbar Snackbar
 @inject IVerificationService VerificationService
 
 @if (Context is not null)
 {
-    <MudPaper Outlined Class="pa-3">
-        @if (Context.Sender == SenderType.Email)
-        {
-            <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
-                Didn't received an email?
-                <strong @onclick="async () => await ResendCodeAsync()"
-                        class="cursor-pointer">Resend</strong>
-            </MudTextM3>
-        }
-        else if (Context.Sender == SenderType.Sms)
-        {
-            <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
-                 Didn't received a SMS?
-                <strong @onclick="async () => await ResendCodeAsync()"
-                        class="cursor-pointer">Resend</strong>
-            </MudTextM3>
-        }
-    </MudPaper>
+    if (Context.Sender == SenderType.Email)
+    {
+        <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
+            Didn't received an email?
+            <MudLink Typo="Typo.body2" OnClick="@(async () => await ResendCodeAsync())">
+                Resend
+            </MudLink>
+        </MudTextM3>
+    }
+    else if (Context.Sender == SenderType.Sms)
+    {
+        <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
+            Didn't received a SMS?
+            <MudLink Typo="Typo.body2" OnClick="@(async () => await ResendCodeAsync())">
+                Resend
+            </MudLink>
+        </MudTextM3>
+    }
 }
 
 @code {

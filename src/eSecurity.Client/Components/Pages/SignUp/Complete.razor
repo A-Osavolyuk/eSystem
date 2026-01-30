@@ -1,6 +1,5 @@
 ﻿@page "/sign-up/complete"
 
-@using eSecurity.Client.Components.Layout
 @using eSystem.Core.Utilities.State
 @using eSecurity.Core.Common.Responses
 @using eSecurity.Client.Security
@@ -135,11 +134,12 @@
 
                 var state = StateBuilder.Create()
                     .WithData("userId", response.UserId.ToString())
+                    .WithData("email", _model.Email)
                     .WithData("state", authorizationState)
                     .Build();
                 
                 NavigationManager.NavigateTo(QueryBuilder.Create()
-                    .WithUri(Links.Common.CompleteRegistration)
+                    .WithUri(Links.Common.VerifySignUp)
                     .WithQueryParam("state", state)
                     .Build());
             }

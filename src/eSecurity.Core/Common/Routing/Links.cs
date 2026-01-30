@@ -4,17 +4,18 @@ public static class Links
 {
     public static class Common
     {
-        public const string SignUp = "/sign-up";
         public const string UnlockAccount = "/unlock-account";
         public const string RecoverAccount = "/recover-account";
-        public const string CompleteRegistration = "/complete-registration";
         public const string ForgotPassword = "/forgot-password";
         public const string AccountLocked = "/account-locked";
         public const string Profile = "/profile";
         public const string Login = "/login";
         public const string PasswordSignIn = "/login/password";
+        public const string SignUp = "/sign-up";
         public const string CompleteSignUp = "/sign-up/complete";
+        public const string VerifySignUp = "/sign-up/verification";
     }
+    
 
     public static class Settings
     {

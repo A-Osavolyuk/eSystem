@@ -1,0 +1,166 @@
+﻿@page "/sign-up/verification"
+
+@using eSecurity.Client.Security.Authorization.Access.Verification
+@using eSecurity.Client.Security.Identity
+@using eSystem.Core.Utilities.State
+
+@inherits PageBase
+
+@layout AuthenticationLayout
+
+@inject VerifyEmailValidator Validator
+@inject IVerificationService VerificationService
+@inject IEmailService EmailService
+
+<Title Text="Registration completion"></Title>
+
+@if (_email is not null)
+{
+    <MudGrid Justify="Justify.Center">
+        <MudItem xs="3" Style="margin-top: 50px">
+            <MudPaper Elevation="4" Class="pa-10">
+                <MudStack Spacing="3">
+                    <MudStack AlignItems="AlignItems.Center">
+                        <MudIcon Style="font-size: 5rem" Icon="@Icons.Material.Filled.Check"/>
+                    </MudStack>
+                    <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline" Size="Size.Small">
+                        Email verification
+                    </MudTextM3>
+                    <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
+                        We have sent an email with code to email: <strong>@_email</strong>
+                    </MudTextM3>
+                    <MudForm
+                        @ref="_form"
+                        Model="_model"
+                        Validation="Validator.ValidateValue">
+                        <MudTextFieldExtended
+                            @bind-Value="_model.Code"
+                            Variant="Variant.Outlined"
+                            Placeholder="XXXXXX"
+                            Mask="_mask"
+                            Clearable="true"
+                            Immediate="true"/>
+                    </MudForm>
+                    <MudLoadingButton
+                        Size="Size.Large"
+                        ButtonType="ButtonType.Button"
+                        Variant="Variant.Filled"
+                        Color="Color.Primary"
+                        Disabled="@(_model.Code.Length <= 5)"
+                        OnClick="@(async () => await OnVerifyEmailAsync())">
+                        Verify
+                    </MudLoadingButton>
+                    <CodeResend Context="_context"/>
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+}
+
+@code {
+
+    [SupplyParameterFromQuery(Name = "state")]
+    private string? State { get; set; }
+
+    private readonly VerifyEmailModel _model = new();
+
+    private MudForm _form = new();
+    private readonly PatternMask _mask = new("000000");
+
+    private MessageContext? _context;
+
+    private Guid _userId;
+    private string? _email;
+    private string? _state;
+
+    protected override void OnInitialized()
+    {
+        if (!string.IsNullOrEmpty(State))
+        {
+            var stateData = StateParser.Parse(State);
+            if (stateData.TryGetValue("userId", out var userId))
+                _userId = Guid.Parse(userId);
+
+            if (stateData.TryGetValue("email", out var email))
+                _email = email;
+
+            if (stateData.TryGetValue("state", out var state))
+                _state = state;
+
+            _context = new MessageContext
+            {
+                UserId = _userId,
+                Sender = SenderType.Email,
+                Purpose = PurposeType.Email,
+                Action = ActionType.Verify,
+                Payload = new()
+                {
+                    { "To", _email! }
+                }
+            };
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var request = _context!.ToSendCodeRequest();
+            var result = await VerificationService.SendCodeAsync(request);
+
+            if (!result.Succeeded)
+            {
+                var error = result.GetError();
+                Snackbar.Add(error.Description, Severity.Error);
+            }
+
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnVerifyEmailAsync()
+    {
+        await _form.Validate();
+
+        if (_form.IsValid)
+        {
+            var request = _context!.ToVerifyCodeRequest(_model.Code);
+            var result = await VerificationService.VerifyCodeAsync(request);
+
+            if (result.Succeeded) await VerifyAsync();
+            else Snackbar.Add(result.GetError().Description, Severity.Error);
+        }
+    }
+
+    private async Task VerifyAsync()
+    {
+        var request = new VerifyEmailRequest
+        {
+            UserId = _userId,
+            Email = _email!
+        };
+
+        var result = await EmailService.VerifyEmailAsync(request);
+        if (result.Succeeded)
+        {
+            if (!string.IsNullOrEmpty(_state))
+            {
+                var stateData = StateParser.Parse(_state);
+                if (stateData.TryGetValue("return_url", out var returnUrl))
+                {
+                    NavigationManager.NavigateTo(returnUrl);
+                    return;
+                }
+            }
+
+            NavigationManager.NavigateTo(AuthenticationManager.GetAuthorizationState());
+        }
+        else
+        {
+            var error = result.GetError();
+            Snackbar.Add(error.Description, Severity.Error);
+        }
+    }
+
+}
+
