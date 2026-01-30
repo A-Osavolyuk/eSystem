@@ -17,7 +17,7 @@
 <AccessConfirmation Context="_context">
     <AccessConfirmed>
         <MudGrid Justify="Justify.Center">
-            <MudItem xs="6" Style="margin-top: 50px">
+            <MudItem xs="6">
                 <MudStepperExtended
                     @ref="_stepper"
                     Color="Color.Primary"
@@ -34,14 +34,12 @@
                             <ChildContent>
                                 <MudGrid Justify="Justify.Center">
                                     <MudItem xs="6">
-                                        <MudPaper Outlined Class="pa-5">
+                                        <MudPaper Elevation="4" Class="pa-10">
                                             <MudStack Spacing="3">
                                                 <MudStack Row="true" Justify="Justify.Center">
-                                                    <MudIcon
-                                                        Icon="@Icons.Material.Filled.Key"
-                                                        Size="Size.Large"/>
+                                                    <MudIcon Style="font-size: 5rem" Icon="@Icons.Material.Filled.Key"/>
                                                 </MudStack>
-                                                <MudTextM3 Typo="TypoM3.Title" Size="Size.Large" Align="Align.Center">
+                                                <MudTextM3 Typo="TypoM3.Headline" Size="Size.Small" Align="Align.Center">
                                                     Add a passkey
                                                 </MudTextM3>
                                                 <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
@@ -64,7 +62,6 @@
                                                         Validation="Validator.ValidateValue">
                                                         <MudTextFieldExtended
                                                             @bind-Value="_model.DisplayName"
-                                                            Margin="Margin.Dense"
                                                             Variant="Variant.Outlined"
                                                             Immediate="true"
                                                             Clearable="true"/>
@@ -85,14 +82,14 @@
                                                     Color="Color.Primary"
                                                     Variant="Variant.Filled"
                                                     ButtonType="ButtonType.Button"
-                                                    Size="Size.Small"
+                                                    Size="Size.Large"
                                                     OnClick="@(async () => await OnAddPasskeyAsync())">
                                                     @(_showError ? "Retry add passkey" : "Add passkey")
                                                 </MudButton>
                                                 <MudButton
                                                     Color="Color.Info"
                                                     Variant="Variant.Text"
-                                                    Size="Size.Small"
+                                                    Size="Size.Large"
                                                     ButtonType="ButtonType.Button"
                                                     Href="@ReturnUrl">
                                                     Cancel
@@ -108,17 +105,17 @@
                                 <MudGrid Justify="Justify.Center">
                                     <MudItem xs="6">
                                         <MudStack Spacing="1" Justify="Justify.Center">
-                                            <MudPaper Outlined Class="pa-5">
+                                            <MudPaper Elevation="4" Class="pa-10">
                                                 <MudStack Spacing="3">
                                                     <MudStack Row="true" Justify="Justify.Center">
                                                         <MudIcon
                                                             Icon="@Icons.Material.Outlined.CheckCircle"
-                                                            Size="Size.Large"
+                                                            Style="font-size: 5rem"
                                                             Color="Color.Success"/>
                                                     </MudStack>
                                                     <MudTextM3 
-                                                        Typo="TypoM3.Title" 
-                                                        Size="Size.Large" 
+                                                        Typo="TypoM3.Headline" 
+                                                        Size="Size.Small" 
                                                         Align="Align.Center">
                                                         Successfully added a passkey
                                                     </MudTextM3>
@@ -135,7 +132,7 @@
                                                         Color="Color.Success"
                                                         Variant="Variant.Filled"
                                                         ButtonType="ButtonType.Button"
-                                                        Size="Size.Small"
+                                                        Size="Size.Large"
                                                         Href="@ReturnUrl">
                                                         Done
                                                     </MudButton>

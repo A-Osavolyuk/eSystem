@@ -23,7 +23,7 @@
                 <MudDivider/>
                 @if (_model.Emails.All(x => x.Type != EmailType.Recovery))
                 {
-                    <MudAlert Severity="Severity.Warning" Variant="Variant.Outlined">
+                    <MudAlert Elevation="4" Severity="Severity.Warning">
                         <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
                             Your don't have a recovery email.
                             Add a recovery email to be able to recover an access to the account

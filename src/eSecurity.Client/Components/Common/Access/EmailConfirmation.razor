@@ -52,13 +52,13 @@
             </MudLoadingButton>
         }
     </MudStack>
-    <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center" Justify="Justify.Center">
-        <MudDivider Style="max-width: 45%"/>
-        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">OR</MudTextM3>
-        <MudDivider Style="max-width: 45%"/>
-    </MudStack>
     @if (Model.PasskeyEnabled || Model.AuthenticatorEnabled)
     {
+        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center" Justify="Justify.Center">
+            <MudDivider Style="max-width: 45%"/>
+            <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">OR</MudTextM3>
+            <MudDivider Style="max-width: 45%"/>
+        </MudStack>
         <MudStack Spacing="3">
             @if (Model.AuthenticatorEnabled)
             {
