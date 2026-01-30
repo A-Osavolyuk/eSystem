@@ -16,30 +16,27 @@
     <MudGrid Justify="Justify.Center">
         <MudItem xs="3" Style="margin-top: 50px">
             <MudStack Spacing="1">
-                <MudPaper Outlined="true" Class="pa-3">
-                    <MudTextM3 Typo="TypoM3.Headline" Size="Size.Small" Align="Align.Center">
-                        Set an username
-                    </MudTextM3>
-                </MudPaper>
-                <MudPaper Outlined Class="pa-5">
+                <MudPaper Elevation="4" Class="pa-10">
                     <MudStack Spacing="3">
-                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
-                            You have been successfully signed-up via @_provider.
+                        <MudStack AlignItems="AlignItems.Center">
+                            <MudIcon Style="font-size: 5rem" Icon="@Icons.Material.Filled.Lock"/>
+                        </MudStack>
+                        <MudTextM3 Typo="TypoM3.Headline" Size="Size.Small" Align="Align.Center">
+                            Sign Up with @_provider
                         </MudTextM3>
-                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
-                            Now you can set username, otherwise your email address will be used as username.
+                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Align="Align.Center">
+                            Now you can set your username, otherwise your email address will be used as username.
                         </MudTextM3>
                         <MudStack Spacing="1">
                             <MudForm @ref="_form" Model="_model" Validation="Validator.ValidateValue">
                                 <MudTextFieldExtended
                                     Label="Username"
                                     @bind-Value="_model.Username"
-                                    For="@(() => _model.Username)"
-                                    Margin="Margin.Dense"
+                                    For="() => _model.Username"
                                     Variant="Variant.Outlined"
                                     Immediate="true"
                                     Clearable="true"
-                                    Error="@_showError"
+                                    Error="_showError"
                                     ErrorText="@_error"/>
                             </MudForm>
                         </MudStack>
@@ -47,9 +44,9 @@
                             Color="Color.Primary"
                             Variant="Variant.Filled"
                             ButtonType="ButtonType.Button"
-                            Size="Size.Medium"
+                            Size="Size.Large"
                             OnClick="@(async () => await OnSetAsync())">
-                            Set username
+                            Continue
                         </MudButton>
                     </MudStack>
                 </MudPaper>
