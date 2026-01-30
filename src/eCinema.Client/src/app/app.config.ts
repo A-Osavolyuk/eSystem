@@ -7,6 +7,7 @@ import {credentialsInterceptor} from './interceptors/credentials-interceptor';
 import {AuthenticationService} from './auth/authentication.service';
 import {firstValueFrom} from 'rxjs';
 import {AuthenticationStateHandler} from './auth/authentication-state-handler.service';
+import {AuthenticationStateNotifier} from './auth/authentication-state-notifier.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [

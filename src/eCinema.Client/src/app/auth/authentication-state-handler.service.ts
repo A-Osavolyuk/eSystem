@@ -1,8 +1,9 @@
-import {inject, Injectable, OnDestroy} from '@angular/core';
+import {effect, inject, Injectable, OnDestroy} from '@angular/core';
 import {AuthenticationEvents} from './authentication-events';
 import {AuthenticationChannel} from './authentication-channel.service';
 import {AuthenticationStateProvider} from './authentication-state-provider.service';
 import {UserInfo} from '../core/interfaces/userinfo.interface';
+import {AuthenticationStateNotifier} from './authentication-state-notifier.service';
 
 @Injectable({
   providedIn: 'root',
@@ -10,6 +11,17 @@ import {UserInfo} from '../core/interfaces/userinfo.interface';
 export class AuthenticationStateHandler {
   private channel = inject(AuthenticationChannel);
   private auth = inject(AuthenticationStateProvider);
+  private notifier = inject(AuthenticationStateNotifier);
+
+  constructor() {
+    effect(() => {
+      if (this.auth.state().isAuthenticated) {
+        this.notifier.connect();
+      } else {
+        this.notifier.disconnect();
+      }
+    });
+  }
 
   public listenEvents = () => {
     this.channel.getChannel().onmessage = (message) => {
