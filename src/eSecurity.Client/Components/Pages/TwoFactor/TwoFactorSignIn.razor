@@ -20,10 +20,10 @@
 {
     <MudGrid Justify="Justify.Center">
         <MudItem xs="3" Style="margin-top: 50px">
-            <MudStack Spacing="1">
-                <MudPaper Class="pa-3" Outlined="true">
+            <MudPaper Class="pa-10" Elevation="4">
+                <MudStack Spacing="3">
                     <MudStack Spacing="3" Justify="Justify.Center" AlignItems="AlignItems.Center">
-                        <MudIcon Size="Size.Large" Icon="@Icons.Material.Outlined.LockPerson"/>
+                        <MudIcon Style="font-size: 5rem" Icon="@Icons.Material.Outlined.LockPerson"/>
                         @if (_preferredMethod != TwoFactorMethod.RecoveryCode)
                         {
                             <MudTextM3 Typo="TypoM3.Headline" Size="Size.Small">
@@ -37,35 +37,35 @@
                             </MudTextM3>
                         }
                     </MudStack>
-                </MudPaper>
-                @switch (_preferredMethod)
-                {
-                    case TwoFactorMethod.AuthenticatorApp:
+                    @switch (_preferredMethod)
                     {
-                        <AuthenticatorMethod
-                            Methods="_methods"
-                            OnSignIn="@(async () => await OnSignInAsync())"
-                            OnChangeMethod="@((TwoFactorMethod method) => _preferredMethod = method)"/>
-                        break;
+                        case TwoFactorMethod.AuthenticatorApp:
+                        {
+                            <AuthenticatorMethod
+                                Methods="_methods"
+                                OnSignIn="@(async () => await OnSignInAsync())"
+                                OnChangeMethod="@((TwoFactorMethod method) => _preferredMethod = method)"/>
+                            break;
+                        }
+                        case TwoFactorMethod.Passkey:
+                        {
+                            <PasskeyMethod
+                                Methods="_methods"
+                                OnSignIn="@(async () => await OnSignInAsync())"
+                                OnChangeMethod="@((TwoFactorMethod method) => _preferredMethod = method)"/>
+                            break;
+                        }
+                        case TwoFactorMethod.RecoveryCode:
+                        {
+                            <RecoveryCodeMethod
+                                Methods="_methods"
+                                OnSignIn="@(async () => await OnSignInAsync())"
+                                OnChangeMethod="@((TwoFactorMethod method) => _preferredMethod = method)"/>
+                            break;
+                        }
                     }
-                    case TwoFactorMethod.Passkey:
-                    {
-                        <PasskeyMethod
-                            Methods="_methods"
-                            OnSignIn="@(async () => await OnSignInAsync())"
-                            OnChangeMethod="@((TwoFactorMethod method) => _preferredMethod = method)"/>
-                        break;
-                    }
-                    case TwoFactorMethod.RecoveryCode:
-                    {
-                        <RecoveryCodeMethod
-                            Methods="_methods"
-                            OnSignIn="@(async () => await OnSignInAsync())"
-                            OnChangeMethod="@((TwoFactorMethod method) => _preferredMethod = method)"/>
-                        break;
-                    }
-                }
-            </MudStack>
+                </MudStack>
+            </MudPaper>
         </MudItem>
     </MudGrid>
 }

@@ -7,7 +7,7 @@
 @inject ISnackbar Snackbar
 @inject IVerificationService VerificationService
 
-<MudPaper Outlined="true" Class="pa-5">
+<MudStack Spacing="3">
     <MudStack Spacing="3">
         <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Align="Align.Center">
             Enter the code from your two-factor authentication app or browser extension below.
@@ -17,7 +17,6 @@
                 Mask="_mask"
                 Placeholder="XXXXXX"
                 Variant="Variant.Outlined"
-                Margin="Margin.Dense"
                 Immediate="true"
                 Clearable="true"
                 @bind-Value="_model.Code"
@@ -26,7 +25,7 @@
         <MudStack Spacing="2">
             <MudButton
                 Disabled="_model.Code.Length < 6"
-                Size="Size.Medium"
+                Size="Size.Large"
                 Color="Color.Primary"
                 Variant="Variant.Filled"
                 ButtonType="ButtonType.Button"
@@ -35,21 +34,19 @@
             </MudButton>
         </MudStack>
     </MudStack>
-</MudPaper>
-<MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center" Justify="Justify.Center">
-    <MudDivider Style="max-width: 45%"/>
-    <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">OR</MudTextM3>
-    <MudDivider Style="max-width: 45%"/>
-</MudStack>
-<MudPaper Outlined="true" Class="pa-5">
+    <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center" Justify="Justify.Center">
+        <MudDivider Style="max-width: 45%"/>
+        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">OR</MudTextM3>
+        <MudDivider Style="max-width: 45%"/>
+    </MudStack>
     <MudStack Spacing="2">
         @if (Methods.Any(x => x.Method == TwoFactorMethod.Passkey))
         {
             <MudButton
-                Color="Color.Info"
+                Color="Color.Primary"
                 Variant="Variant.Filled"
                 ButtonType="ButtonType.Button"
-                Size="Size.Medium"
+                Size="Size.Large"
                 OnClick="@(async () => await OnChangeMethod.InvokeAsync(TwoFactorMethod.Passkey))">
                 Passkey
             </MudButton>
@@ -57,10 +54,10 @@
         @if (Methods.Any(x => x.Method == TwoFactorMethod.Sms))
         {
             <MudButton
-                Color="Color.Default"
+                Color="Color.Primary"
                 Variant="Variant.Outlined"
                 ButtonType="ButtonType.Button"
-                Size="Size.Medium"
+                Size="Size.Large"
                 OnClick="@(async () => await OnChangeMethod.InvokeAsync(TwoFactorMethod.Sms))">
                 SMS
             </MudButton>
@@ -69,22 +66,19 @@
             Color="Color.Error"
             Variant="Variant.Filled"
             ButtonType="ButtonType.Button"
-            Size="Size.Medium"
+            Size="Size.Large"
             OnClick="@(async () => await OnChangeMethod.InvokeAsync(TwoFactorMethod.RecoveryCode))">
             Recovery codes
         </MudButton>
     </MudStack>
-</MudPaper>
+</MudStack>
 
 @code {
-    [Parameter] 
-    public EventCallback<TwoFactorMethod> OnChangeMethod { get; set; }
+    [Parameter] public EventCallback<TwoFactorMethod> OnChangeMethod { get; set; }
 
-    [Parameter] 
-    public EventCallback OnSignIn { get; set; }
+    [Parameter] public EventCallback OnSignIn { get; set; }
 
-    [Parameter] 
-    public List<UserTwoFactorMethod> Methods { get; set; } = [];
+    [Parameter] public List<UserTwoFactorMethod> Methods { get; set; } = [];
 
     private CodeModel _model = new();
     private MudForm _form = new();
@@ -113,4 +107,5 @@
             }
         }
     }
+
 }
