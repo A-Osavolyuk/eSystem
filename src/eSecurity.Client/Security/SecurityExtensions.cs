@@ -40,7 +40,7 @@ public static class SecurityExtensions
                 options.ExpireTimeSpan = TimeSpan.FromDays(30);
                 options.SlidingExpiration = true;
 
-                options.LoginPath = "/sign-in";
+                options.LoginPath = "/login";
                 options.LogoutPath = "/connect/logout";
                 options.AccessDeniedPath = "/access-denied";
                 options.ReturnUrlParameter = "return_url";
