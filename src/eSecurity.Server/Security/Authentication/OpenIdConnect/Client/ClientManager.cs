@@ -8,7 +8,7 @@ public class ClientManager(AuthDbContext context) : IClientManager
 {
     private readonly AuthDbContext _context = context;
 
-    public async ValueTask<List<string>> GetFrontChannelLogoutUrisAsync(SessionEntity session, 
+    public async ValueTask<List<string>> GetFrontChannelLogoutUrisAsync(SessionEntity session,
         CancellationToken cancellationToken = default)
     {
         return await _context.ClientSessions
@@ -19,7 +19,7 @@ public class ClientManager(AuthDbContext context) : IClientManager
             .ToListAsync(cancellationToken);
     }
 
-    public async ValueTask<ClientEntity?> FindByIdAsync(string clientId, 
+    public async ValueTask<ClientEntity?> FindByIdAsync(string clientId,
         CancellationToken cancellationToken = default)
     {
         return await _context.Clients
@@ -31,7 +31,7 @@ public class ClientManager(AuthDbContext context) : IClientManager
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async ValueTask<ClientEntity?> FindByIdAsync(Guid id, 
+    public async ValueTask<ClientEntity?> FindByIdAsync(Guid id,
         CancellationToken cancellationToken = default)
     {
         return await _context.Clients
@@ -43,7 +43,7 @@ public class ClientManager(AuthDbContext context) : IClientManager
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async ValueTask<ClientEntity?> FindByAudienceAsync(string audience, 
+    public async ValueTask<ClientEntity?> FindByAudienceAsync(string audience,
         CancellationToken cancellationToken = default)
     {
         return await _context.Clients
@@ -60,17 +60,22 @@ public class ClientManager(AuthDbContext context) : IClientManager
         return await _context.Clients.Select(x => x.Audience).ToListAsync(cancellationToken);
     }
 
-    public async ValueTask<Result> RelateAsync(ClientEntity client, SessionEntity session, 
+    public async ValueTask<Result> RelateAsync(ClientEntity client, SessionEntity session,
         CancellationToken cancellationToken = default)
     {
-        var entity = new ClientSessionEntity()
+        if (!await _context.ClientSessions.AnyAsync(x => x.SessionId == session.Id && 
+                                                         x.ClientId == client.Id, cancellationToken))
         {
-            ClientId = client.Id,
-            SessionId = session.Id
-        };
+            var entity = new ClientSessionEntity()
+            {
+                ClientId = client.Id,
+                SessionId = session.Id
+            };
+
+            await _context.ClientSessions.AddAsync(entity, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
+        }
         
-        await _context.ClientSessions.AddAsync(entity, cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
         return Results.Ok();
     }
 }
