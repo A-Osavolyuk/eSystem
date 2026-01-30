@@ -113,9 +113,7 @@ else
             {
                 UserState.UserId = response.UserId;
                 var queryParams = QueryParser.GetQueryParameters(NavigationManager.Uri);
-                var state = queryParams["state"];
-
-                if (!string.IsNullOrEmpty(state))
+                if (queryParams.TryGetValue("state", out var  state) && !string.IsNullOrEmpty(state))
                 {
                     var stateData = StateParser.Parse(state);
                     if (stateData.TryGetValue("return_url", out var returnUrl))
