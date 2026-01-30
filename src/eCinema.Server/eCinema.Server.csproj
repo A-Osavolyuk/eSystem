@@ -8,6 +8,7 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.2" />
+        <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.9" />
         <PackageReference Include="Scalar.AspNetCore" Version="2.12.4" />
         <PackageReference Include="Yarp.ReverseProxy" Version="2.3.0" />
     </ItemGroup>

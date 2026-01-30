@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Text.Json.Serialization;
 using eCinema.Server.Common.Errors;
+using eCinema.Server.Hubs;
 using eCinema.Server.Security.Cors;
 using eSystem.Core.Common.Configuration;
 using eSystem.Core.Common.Documentation;
@@ -12,6 +13,7 @@ using eSystem.Core.Security.Identity.Claims;
 using eSystem.ServiceDefaults;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
 using Yarp.ReverseProxy.Configuration;
 using Yarp.ReverseProxy.Transforms;
@@ -24,8 +26,10 @@ public static class HostApplicationBuilderExtensions
     {
         public void AddServices()
         {
+            builder.Services.AddSignalR();
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<TokenHandler>();
+            builder.Services.AddSingleton<IUserIdProvider, SubUserIdProvider>();
             
             builder.AddServiceDefaults();
             builder.AddDocumentation();

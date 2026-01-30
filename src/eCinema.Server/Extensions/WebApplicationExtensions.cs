@@ -1,4 +1,5 @@
-﻿using eCinema.Server.Security.Cors;
+﻿using eCinema.Server.Hubs;
+using eCinema.Server.Security.Cors;
 using eSystem.ServiceDefaults;
 using Scalar.AspNetCore;
 
@@ -20,6 +21,7 @@ public static class WebApplicationExtensions
             app.MapOpenApi();
             app.MapScalarApiReference();
             app.MapDefaultEndpoints();
+            app.MapHub<AuthenticationHub>("/hubs/authentication");
         }
     }
 }
