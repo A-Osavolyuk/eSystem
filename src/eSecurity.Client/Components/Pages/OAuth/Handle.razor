@@ -62,7 +62,7 @@
                         .WithData("userId", userId)
                         .WithData("provider", provider)
                         .WithData("state", StateBuilder.Create()
-                            .WithData("state", GetRedirectUri(state))
+                            .WithData("return_url", GetRedirectUri(state))
                             .Build());
                         
                     NavigationManager.NavigateTo(QueryBuilder.Create()
@@ -81,7 +81,7 @@
                     .WithData("userId", userId)
                     .WithData("provider", provider)
                     .WithData("state", StateBuilder.Create()
-                        .WithData("state", GetRedirectUri(state))
+                        .WithData("return_url", GetRedirectUri(state))
                         .Build());
                         
                 NavigationManager.NavigateTo(QueryBuilder.Create()
