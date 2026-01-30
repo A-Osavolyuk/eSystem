@@ -1,4 +1,5 @@
 @page "/connect/consents"
+
 @using eSecurity.Client.Security.Authentication.OpenIdConnect
 @using eSecurity.Client.Security.Authorization.Consent
 @using eSecurity.Client.Security.Identity
@@ -9,6 +10,8 @@
 @using eSystem.Core.Utilities.State
 
 @inherits PageBase
+
+@layout AuthenticationLayout
 
 @inject IConnectService ConnectService
 @inject IConsentService ConsentService
