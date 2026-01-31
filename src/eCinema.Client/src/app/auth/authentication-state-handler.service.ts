@@ -2,7 +2,6 @@ import {effect, inject, Injectable, OnDestroy} from '@angular/core';
 import {AuthenticationEvents} from './authentication-events';
 import {AuthenticationChannel} from './authentication-channel.service';
 import {AuthenticationStateProvider} from './authentication-state-provider.service';
-import {UserInfo} from '../core/interfaces/userinfo.interface';
 import {AuthenticationStateNotifier} from './authentication-state-notifier.service';
 import {AuthenticationService} from './authentication.service';
 import {catchError, EMPTY, tap} from 'rxjs';

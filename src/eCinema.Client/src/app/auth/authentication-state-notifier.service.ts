@@ -3,12 +3,14 @@ import {AuthenticationStateProvider} from './authentication-state-provider.servi
 import {HubConnection, HubConnectionBuilder} from '@microsoft/signalr';
 import {environment} from '../../environments/environment';
 import {catchError, EMPTY, from} from 'rxjs';
+import {ConnectService} from './connect-service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthenticationStateNotifier {
   private state = inject(AuthenticationStateProvider)
+  private connectService = inject(ConnectService);
   private hubConnection?: HubConnection;
 
   public connect(): void {
@@ -37,8 +39,11 @@ export class AuthenticationStateNotifier {
 
     this.hubConnection.on("Logout", () => {
       console.log("Global logout received");
-      this.disconnect();
-      this.state.signOut();
+      this.connectService.frontchannelLogout()
+        .subscribe(() => {
+          this.state.signOut();
+          this.disconnect();
+        });
     });
 
     from(this.hubConnection.start())
