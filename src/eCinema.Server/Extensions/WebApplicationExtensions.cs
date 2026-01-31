@@ -1,5 +1,7 @@
-﻿using eCinema.Server.Hubs;
+﻿using eCinema.Server.Data;
+using eCinema.Server.Hubs;
 using eCinema.Server.Security.Cors;
+using eSystem.Core.Data;
 using eSystem.ServiceDefaults;
 using Scalar.AspNetCore;
 
@@ -9,7 +11,7 @@ public static class WebApplicationExtensions
 {
     extension(WebApplication app)
     {
-        public void MapServices()
+        public async Task MapServicesAsync()
         {
             app.UseExceptionHandler();
             app.UseRouting();
@@ -22,6 +24,8 @@ public static class WebApplicationExtensions
             app.MapScalarApiReference();
             app.MapDefaultEndpoints();
             app.MapHub<AuthenticationHub>("/hubs/authentication");
+            
+            await app.ConfigureDatabaseAsync<AppDbContext>();
         }
     }
 }

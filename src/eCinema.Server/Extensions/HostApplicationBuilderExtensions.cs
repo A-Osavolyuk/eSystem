@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Text.Json.Serialization;
 using eCinema.Server.Common.Errors;
+using eCinema.Server.Data;
 using eCinema.Server.Hubs;
 using eCinema.Server.Security.Cors;
 using eSystem.Core.Common.Configuration;
@@ -31,6 +32,7 @@ public static class HostApplicationBuilderExtensions
             builder.Services.AddScoped<TokenHandler>();
             builder.Services.AddSingleton<IUserIdProvider, SubUserIdProvider>();
             
+            builder.AddDatabase();
             builder.AddServiceDefaults();
             builder.AddDocumentation();
             builder.AddExceptionHandling<GlobalExceptionHandler>();
