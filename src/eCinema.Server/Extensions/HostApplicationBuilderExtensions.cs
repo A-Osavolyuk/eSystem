@@ -4,6 +4,7 @@ using eCinema.Server.Common.Errors;
 using eCinema.Server.Data;
 using eCinema.Server.Hubs;
 using eCinema.Server.Security.Cors;
+using eCinema.Server.Security.Identity;
 using eSystem.Core.Common.Configuration;
 using eSystem.Core.Common.Documentation;
 using eSystem.Core.Common.Error;
@@ -30,7 +31,7 @@ public static class HostApplicationBuilderExtensions
             builder.Services.AddSignalR();
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<TokenHandler>();
-            builder.Services.AddSingleton<IUserIdProvider, SubUserIdProvider>();
+            builder.Services.AddSingleton<IUserIdProvider, SubjectUserIdProvider>();
             
             builder.AddDatabase();
             builder.AddServiceDefaults();
