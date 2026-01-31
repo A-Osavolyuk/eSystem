@@ -61,21 +61,7 @@ namespace eCinema.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("ClientId")
-                        .IsRequired()
-                        .HasMaxLength(36)
-                        .HasColumnType("character varying(36)");
-
                     b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTimeOffset>("ExpiresUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsRevoked")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTimeOffset?>("LastAccessUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("SessionKey")
@@ -114,30 +100,19 @@ namespace eCinema.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Acr")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
-
-                    b.Property<bool>("AllowRefresh")
+                    b.Property<bool?>("AllowRefresh")
                         .HasColumnType("boolean");
-
-                    b.Property<string>("Amr")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
-
-                    b.Property<long?>("AuthTime")
-                        .HasColumnType("bigint");
 
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTimeOffset>("ExpiresUtc")
+                    b.Property<DateTimeOffset?>("ExpiresUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsPersistent")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTimeOffset>("IssuedUtc")
+                    b.Property<DateTimeOffset?>("IssuedUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("RedirectUri")

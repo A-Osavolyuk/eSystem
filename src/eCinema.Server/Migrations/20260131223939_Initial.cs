@@ -23,10 +23,6 @@ namespace eCinema.Server.Migrations
                     SessionKey = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Sid = table.Column<string>(type: "character varying(36)", maxLength: 36, nullable: false),
                     UserId = table.Column<string>(type: "character varying(36)", maxLength: 36, nullable: false),
-                    ClientId = table.Column<string>(type: "character varying(36)", maxLength: 36, nullable: false),
-                    ExpiresUtc = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    LastAccessUtc = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    IsRevoked = table.Column<bool>(type: "boolean", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
@@ -66,13 +62,10 @@ namespace eCinema.Server.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     SessionId = table.Column<Guid>(type: "uuid", nullable: false),
-                    IssuedUtc = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    ExpiresUtc = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    IssuedUtc = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    ExpiresUtc = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     IsPersistent = table.Column<bool>(type: "boolean", nullable: false),
-                    AllowRefresh = table.Column<bool>(type: "boolean", nullable: false),
-                    AuthTime = table.Column<long>(type: "bigint", nullable: true),
-                    Acr = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    Amr = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    AllowRefresh = table.Column<bool>(type: "boolean", nullable: true),
                     RedirectUri = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
