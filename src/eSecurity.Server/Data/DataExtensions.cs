@@ -7,13 +7,13 @@ public static class DataExtensions
 {
     extension(IHostApplicationBuilder builder)
     {
-        public void AddMsSqlDb()
+        public void AddDatabase()
         {
             builder.Services.AddSingleton<AuditInterceptor>();
             builder.Services.AddDbContext<AuthDbContext>((sp, options) =>
             {
                 var cfg = sp.GetRequiredService<IConfiguration>();
-                options.UseNpgsql(cfg.GetConnectionString("auth-db"));
+                options.UseNpgsql(cfg.GetConnectionString("e-security-db"));
                 options.AddInterceptors(sp.GetRequiredService<AuditInterceptor>());
                 options.UseAsyncSeeding(async (ctx, _, ct) =>
                 {

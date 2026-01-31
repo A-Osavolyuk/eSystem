@@ -26,7 +26,7 @@ public static class HostApplicationBuilderExtensions
             builder.AddServiceDefaults();
             builder.AddSecurity();
             builder.AddRedisCache();
-            builder.AddMsSqlDb();
+            builder.AddDatabase();
             builder.AddDocumentation();
             builder.AddStorage();
             builder.AddExceptionHandling<GlobalExceptionHandler>();

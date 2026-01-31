@@ -16,8 +16,10 @@ var redisCache = builder.AddRedis()
 
 var postgres = builder.AddPostgres()
     .WithLifetime(ContainerLifetime.Persistent)
-    .WithDataVolume()
-    .AddDatabase("auth-db", "AuthDB");
+    .WithDataVolume();
+
+var eSecurityDb = postgres.AddDatabase("e-security-db", "e-security-db");
+var eCinemaDb = postgres.AddDatabase("e-cinema-db", "e-cinema-db");
 
 var rabbitMq = builder.AddRabbitMq()
     .WithLifetime(ContainerLifetime.Persistent)
@@ -43,7 +45,7 @@ var eMessageServer = builder.AddProject<Projects.eSystem_MessageBus>("message-bu
     .WaitFor(telegramService);
 
 var eSecurityServer = builder.AddProject<Projects.eSecurity_Server>("e-security-server")
-    .WithReference(postgres).WaitFor(postgres)
+    .WithReference(eSecurityDb).WaitFor(eSecurityDb)
     .WithReference(redisCache).WaitFor(redisCache)
     .WithReference(rabbitMq).WaitFor(rabbitMq)
     .WaitFor(eMessageServer).WithRelationship(eMessageServer.Resource, "Messaging");
@@ -65,6 +67,7 @@ builder.AddProject<Projects.eSecurity_Client>("e-security-client")
 
 var eCinemaServer = builder.AddProject<Projects.eCinema_Server>("e-cinema-server")
     .WaitFor(eSecurityServer)
+    .WithReference(eCinemaDb).WaitFor(eCinemaDb)
     .WithReference(redisCache).WaitFor(redisCache)
     .WithReference(proxy).WaitFor(proxy);
 
