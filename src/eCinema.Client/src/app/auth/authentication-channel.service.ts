@@ -7,16 +7,9 @@ import {AuthenticationEvent} from './authentication-events';
 export class AuthenticationChannel implements OnDestroy {
   private channel = new BroadcastChannel('authentication');
 
-  public postMessage(message: AuthenticationEvent): void;
-  public postMessage<TPayload>(message: AuthenticationEvent, payload: TPayload): void;
-
-  public postMessage<TPayload>(message: AuthenticationEvent, payload?: TPayload): void {
-    if (payload === undefined) {
-      this.channel.postMessage({ type: message });
-    } else {
-      this.channel.postMessage({ type: message, payload });
-    }
-  }
+  public postMessage = (message: AuthenticationEvent): void => {
+    this.channel.postMessage({ type: message });
+  };
 
   public getChannel = (): BroadcastChannel => this.channel;
 

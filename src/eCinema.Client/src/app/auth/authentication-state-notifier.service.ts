@@ -35,7 +35,7 @@ export class AuthenticationStateNotifier {
       console.error("SignalR closed", error);
     });
 
-    this.hubConnection.on("Logout", (message: string) => {
+    this.hubConnection.on("Logout", () => {
       console.log("Global logout received");
       this.disconnect();
       this.state.signOut();

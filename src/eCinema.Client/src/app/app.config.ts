@@ -16,7 +16,7 @@ export const appConfig: ApplicationConfig = {
       const authenticationService = inject(AuthenticationService);
 
       authenticationStateHandler.listenEvents();
-      return firstValueFrom(authenticationService.getMe());
+      return firstValueFrom(authenticationService.authenticate());
     }),
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
