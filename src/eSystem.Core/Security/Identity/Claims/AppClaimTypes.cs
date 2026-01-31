@@ -8,7 +8,7 @@ public static class AppClaimTypes
     public const string Sub = "sub";
     public const string Exp = "exp";
     public const string Iat = "iat";
-    public const string AuthenticationTime = "auth_time";
+    public const string AuthTime = "auth_time";
     
     public const string Nbf = "nbf";
     public const string Sid = "sid";

@@ -45,7 +45,7 @@ public sealed class IdTokenClaimsFactory(
             new(AppClaimTypes.Sid, context.Sid),
             new(AppClaimTypes.Exp, exp, ClaimValueTypes.Integer64),
             new(AppClaimTypes.Iat, iat, ClaimValueTypes.Integer64),
-            new(AppClaimTypes.AuthenticationTime, authTime, ClaimValueTypes.Integer64),
+            new(AppClaimTypes.AuthTime, authTime, ClaimValueTypes.Integer64),
         };
 
         if (!string.IsNullOrEmpty(context.Nonce))
