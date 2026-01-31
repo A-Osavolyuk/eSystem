@@ -17,7 +17,6 @@ public class SessionConfiguration : IEntityTypeConfiguration<SessionEntity>
         builder.Property(x => x.SessionKey).HasMaxLength(100);
         builder.Property(x => x.UserId).HasMaxLength(36);
         builder.Property(x => x.Sid).HasMaxLength(36);
-        builder.Property(x => x.ClientId).HasMaxLength(36);
         
         builder.HasOne(x => x.Properties)
             .WithOne(x => x.Session)

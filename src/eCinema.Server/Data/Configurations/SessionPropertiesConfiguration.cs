@@ -10,8 +10,6 @@ public class SessionPropertiesConfiguration : IEntityTypeConfiguration<SessionPr
     {
         builder.HasKey(e => e.Id);
         
-        builder.Property(x => x.Acr).HasMaxLength(1000);
-        builder.Property(x => x.Amr).HasMaxLength(1000);
         builder.Property(x => x.RedirectUri).HasMaxLength(1000);
     }
 }
