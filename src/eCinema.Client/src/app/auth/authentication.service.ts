@@ -29,7 +29,7 @@ export class AuthenticationService {
         catchError((error) => {
           console.log(error.error);
           this.channel.postMessage(AuthenticationEvents.LOGOUT);
-          return EMPTY
+          return of(void 0)
         }),
         map(() => void 0))
   }
