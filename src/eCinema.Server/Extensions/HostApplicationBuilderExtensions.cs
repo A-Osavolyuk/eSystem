@@ -2,21 +2,13 @@
 using System.Text.Json.Serialization;
 using eCinema.Server.Common.Errors;
 using eCinema.Server.Data;
-using eCinema.Server.Hubs;
+using eCinema.Server.Security.Authentication;
 using eCinema.Server.Security.Cors;
-using eCinema.Server.Security.Identity;
-using eSystem.Core.Common.Configuration;
 using eSystem.Core.Common.Documentation;
 using eSystem.Core.Common.Error;
 using eSystem.Core.Common.Gateway;
 using eSystem.Core.Http.Constants;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
-using eSystem.Core.Security.Identity.Claims;
 using eSystem.ServiceDefaults;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.IdentityModel.Tokens;
 using Yarp.ReverseProxy.Configuration;
 using Yarp.ReverseProxy.Transforms;
 
@@ -29,9 +21,8 @@ public static class HostApplicationBuilderExtensions
         public void AddServices()
         {
             builder.Services.AddSignalR();
+            builder.Services.AddDataProtection();
             builder.Services.AddHttpContextAccessor();
-            builder.Services.AddScoped<TokenHandler>();
-            builder.Services.AddSingleton<IUserIdProvider, SubjectUserIdProvider>();
             
             builder.AddDatabase();
             builder.AddServiceDefaults();
@@ -108,73 +99,6 @@ public static class HostApplicationBuilderExtensions
                             }
                         }
                     });
-                });
-        }
-
-        private void AddAuthentication()
-        {
-            builder.Services.Configure<OAuthOptions>(builder.Configuration.GetSection("OAuth"));
-            builder.Services.AddAuthentication(options =>
-                {
-                    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-                })
-                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-                {
-                    options.Cookie.Name = "eCinema.Authentication.State";
-                    options.Cookie.HttpOnly = true;
-                    options.Cookie.SameSite = SameSiteMode.Lax;
-                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-
-                    options.ExpireTimeSpan = TimeSpan.FromDays(30);
-                    options.SlidingExpiration = true;
-                })
-                .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
-                {
-                    var gatewayUrl = builder.Configuration.GetValue<string>("PROXY_HTTPS");
-                    var oauthOptions = builder.Configuration.Get<OAuthOptions>("OAuth");
-
-                    options.Authority = $"{gatewayUrl}{oauthOptions.Authority}";
-
-                    options.ClientId = oauthOptions.ClientId;
-                    options.ClientSecret = oauthOptions.ClientSecret;
-                    options.ResponseType = ResponseTypes.Code;
-                    options.UsePkce = true;
-
-                    options.MapInboundClaims = false;
-                    options.GetClaimsFromUserInfoEndpoint = true;
-                    options.SaveTokens = oauthOptions.SaveTokens;
-                    options.CallbackPath = oauthOptions.CallbackPath;
-                    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    
-                    options.SignedOutCallbackPath = oauthOptions.SignedOutCallbackPath;
-                    options.SignedOutRedirectUri = oauthOptions.SignedOutRedirectUri;
-
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        NameClaimType = AppClaimTypes.PreferredUsername,
-                        RoleClaimType = AppClaimTypes.Role
-                    };
-
-                    options.Prompt = "login consent";
-
-                    options.Scope.Clear();
-                    options.Scope.Add(Scopes.OpenId);
-                    options.Scope.Add(Scopes.OfflineAccess);
-                    options.Scope.Add(Scopes.Email);
-                    options.Scope.Add(Scopes.Phone);
-                    options.Scope.Add(Scopes.Profile);
-                    options.Scope.Add(Scopes.Address);
-
-                    options.Events = new OpenIdConnectEvents
-                    {
-                        OnRemoteFailure = ctx =>
-                        {
-                            ctx.Response.Redirect(oauthOptions.ErrorPath + ctx.Failure?.Message);
-                            ctx.HandleResponse();
-                            return Task.CompletedTask;
-                        }
-                    };
                 });
         }
     }
