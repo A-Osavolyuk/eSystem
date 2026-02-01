@@ -2,7 +2,6 @@
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Strategies;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
-using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Token;
 

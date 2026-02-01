@@ -1,8 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Cryptography;
 using eSecurity.Core.Common.DTOs;
 using eSystem.Core.Http.Results;
-using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
 using eSystem.Core.Security.Cryptography.Encryption;

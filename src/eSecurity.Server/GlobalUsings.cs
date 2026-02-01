@@ -1,6 +1,5 @@
 ﻿global using System.Text;
 global using eSystem.ServiceDefaults;
-global using FluentValidation;
 global using MediatR;
 global using Microsoft.AspNetCore.Authentication.JwtBearer;
 global using Microsoft.AspNetCore.Authorization;
