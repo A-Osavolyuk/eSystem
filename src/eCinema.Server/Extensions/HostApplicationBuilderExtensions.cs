@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using eCinema.Server.Common.Errors;
 using eCinema.Server.Data;
 using eCinema.Server.Security.Authentication;
+using eCinema.Server.Security.Authentication.OpenIdConnect.Token;
 using eCinema.Server.Security.Cors;
 using eSystem.Core.Common.Documentation;
 using eSystem.Core.Common.Error;
@@ -90,7 +91,7 @@ public static class HostApplicationBuilderExtensions
                         var httpContent = request.HttpContext;
                         if (httpContent.User.Identity?.IsAuthenticated == true)
                         {
-                            var tokenHandler = httpContent.RequestServices.GetRequiredService<TokenHandler>();
+                            var tokenHandler = httpContent.RequestServices.GetRequiredService<ITokenHandler>();
                             var accessToken = await tokenHandler.GetTokenAsync();
                             if (!string.IsNullOrEmpty(accessToken))
                             {

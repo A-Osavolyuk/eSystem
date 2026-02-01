@@ -1,8 +1,7 @@
-﻿using eSystem.Core.Common.Gateway;
+﻿using eCinema.Server.Security.Authentication.OpenIdConnect.Discovery;
+using eSystem.Core.Common.Gateway;
 using eSystem.Core.Http.Extensions;
-using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Token;
 using eSystem.Core.Security.Cryptography.Encoding;
 using Microsoft.AspNetCore.Authentication;
@@ -11,18 +10,20 @@ using Microsoft.Extensions.Options;
 
 namespace eCinema.Server.Security.Authentication.OpenIdConnect.Token;
 
-public class TokenHandler(
+public class TokenHandler (
     IHttpContextAccessor httpContextAccessor,
     IHttpClientFactory httpClientFactory,
+    IOpenIdDiscoveryProvider discoveryProvider,
     IOptions<OAuthOptions> options,
-    GatewayOptions gatewayOptions)
+    GatewayOptions gatewayOptions) : ITokenHandler 
 {
+    private readonly IOpenIdDiscoveryProvider _discoveryProvider = discoveryProvider;
     private readonly GatewayOptions _gatewayOptions = gatewayOptions;
-    private readonly OAuthOptions _oAuthOptions = options.Value;
+    private readonly OAuthOptions _oauthOptions = options.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly HttpClient _httpClient = httpClientFactory.CreateClient("gateway");
 
-    public async Task<string?> GetTokenAsync()
+    public async ValueTask<string?> GetTokenAsync(CancellationToken cancellationToken = default)
     {
         var authResult = await _httpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         var accessToken = await _httpContext.GetTokenAsync("access_token");
@@ -39,24 +40,24 @@ public class TokenHandler(
         if (string.IsNullOrEmpty(refreshToken))
             throw new Exception("No refresh token available to refresh access token.");
 
-        var discoveryUri = $"{_gatewayOptions.Url}{_oAuthOptions.Authority}/.well-known/openid-configuration";
-        var discovery = await _httpClient.GetFromJsonAsync<OpenIdConfiguration>(discoveryUri);
+        var discovery = await _discoveryProvider.GetOpenIdDiscoveryAsync(cancellationToken);
+        if (discovery is null) return null;
 
-        var requestMessage = new HttpRequestMessage(HttpMethod.Post, discovery!.TokenEndpoint);
+        var requestMessage = new HttpRequestMessage(HttpMethod.Post, discovery.TokenEndpoint);
         var content = FormUrl.Encode(new TokenRequest
         {
             GrantType = GrantTypes.RefreshToken,
-            ClientId = _oAuthOptions.ClientId,
+            ClientId = _oauthOptions.ClientId,
             RefreshToken = refreshToken,
         });
         
         requestMessage.Content = new FormUrlEncodedContent(content);
-        requestMessage.Headers.WithBasicAuthentication(_oAuthOptions.ClientId, _oAuthOptions.ClientSecret);
+        requestMessage.Headers.WithBasicAuthentication(_oauthOptions.ClientId, _oauthOptions.ClientSecret);
 
-        var response = await _httpClient.SendAsync(requestMessage);
+        var response = await _httpClient.SendAsync(requestMessage, cancellationToken);
         response.EnsureSuccessStatusCode();
 
-        var tokenResponse = await response.Content.ReadFromJsonAsync<TokenResponse>();
+        var tokenResponse = await response.Content.ReadFromJsonAsync<TokenResponse>(cancellationToken);
         
         authResult.Properties?.UpdateTokenValue("access_token", tokenResponse?.AccessToken);
         authResult.Properties?.UpdateTokenValue("refresh_token", tokenResponse?.RefreshToken);

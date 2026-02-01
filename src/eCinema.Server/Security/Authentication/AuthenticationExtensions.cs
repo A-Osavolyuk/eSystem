@@ -1,7 +1,11 @@
-﻿using eCinema.Server.Security.Authentication.Ticket;
+﻿using eCinema.Server.Security.Authentication.OpenIdConnect.Discovery;
+using eCinema.Server.Security.Authentication.OpenIdConnect.Token;
+using eCinema.Server.Security.Authentication.OpenIdConnect.Token.Validation;
+using eCinema.Server.Security.Authentication.Ticket;
 using eCinema.Server.Security.Identity;
 using eSystem.Core.Common.Configuration;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Token.Validation;
 using eSystem.Core.Security.Identity.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -18,6 +22,8 @@ public static class AuthenticationExtensions
         public void AddAuthentication()
         {
             builder.Services.AddScoped<TokenHandler>();
+            builder.Services.AddScoped<ITokenHandler, TokenHandler>();
+            builder.Services.AddScoped<IOpenIdDiscoveryProvider, OpenIdDiscoveryProvider>();
             builder.Services.AddSingleton<IUserIdProvider, SubjectUserIdProvider>();
             
             builder.Services.Configure<OAuthOptions>(builder.Configuration.GetSection("OAuth"));
