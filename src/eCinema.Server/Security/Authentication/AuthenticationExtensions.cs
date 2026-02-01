@@ -1,4 +1,5 @@
 ﻿using eCinema.Server.Security.Authentication.OpenIdConnect.Discovery;
+using eCinema.Server.Security.Authentication.OpenIdConnect.Session;
 using eCinema.Server.Security.Authentication.OpenIdConnect.Token;
 using eCinema.Server.Security.Authentication.OpenIdConnect.Token.Validation;
 using eCinema.Server.Security.Authentication.Ticket;
@@ -22,6 +23,7 @@ public static class AuthenticationExtensions
         public void AddAuthentication()
         {
             builder.Services.AddScoped<ITokenHandler, TokenHandler>();
+            builder.Services.AddScoped<ISessionManager, SessionManager>();
             builder.Services.AddScoped<ITokenValidator, LogoutTokenValidator>();
             builder.Services.AddScoped<IOpenIdDiscoveryProvider, OpenIdDiscoveryProvider>();
             builder.Services.AddSingleton<IUserIdProvider, SubjectUserIdProvider>();

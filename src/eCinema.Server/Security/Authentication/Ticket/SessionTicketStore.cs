@@ -1,12 +1,11 @@
 ﻿using System.Security.Claims;
-using eCinema.Server.Data;
 using eCinema.Server.Data.Entities;
+using eCinema.Server.Security.Authentication.OpenIdConnect.Session;
 using eCinema.Server.Security.Cryptography.Protection.Constants;
 using eSystem.Core.Security.Identity.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.EntityFrameworkCore;
 
 namespace eCinema.Server.Security.Authentication.Ticket;
 
@@ -20,7 +19,7 @@ public class SessionTicketStore(
     public async Task<string> StoreAsync(AuthenticationTicket ticket)
     {
         await using var scope = _scopeFactory.CreateAsyncScope();
-        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var manager = scope.ServiceProvider.GetRequiredService<ISessionManager>();
         
         var session = new SessionEntity()
         {
@@ -57,50 +56,35 @@ public class SessionTicketStore(
             EncryptedValue = _protector.Protect(item.Value!)
         }).ToList();
         
-        await context.Sessions.AddAsync(session);
-        await context.SaveChangesAsync();
-
+        await manager.CreateAsync(session);
         return session.SessionKey;
     }
 
     public async Task RenewAsync(string key, AuthenticationTicket ticket)
     {
         await using var scope = _scopeFactory.CreateAsyncScope();
-        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var manager = scope.ServiceProvider.GetRequiredService<ISessionManager>();
         
-        var session = await context.Sessions
-            .Where(x => x.SessionKey == key)
-            .Include(s => s.Properties)
-            .FirstOrDefaultAsync();
-        
+        var session = await manager.FindByKeyAsync(key);
         if (session is not null)
         {
             session.Properties.ExpiresUtc = ticket.Properties.ExpiresUtc;
-            
-            context.Sessions.Update(session);
-            await context.SaveChangesAsync();
+            await manager.UpdateAsync(session);
         }
     }
 
     public async Task<AuthenticationTicket?> RetrieveAsync(string key)
     {
         await using var scope = _scopeFactory.CreateAsyncScope();
-        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var manager = scope.ServiceProvider.GetRequiredService<ISessionManager>();
         
-        var session = await context.Sessions
-            .Where(t => t.SessionKey == key)
-            .Include(s => s.Claims)
-            .Include(s => s.Properties)
-            .Include(s => s.Tokens)
-            .FirstOrDefaultAsync();
-
+        var session = await manager.FindByKeyAsync(key);
         if (session is null) 
             return null;
 
         if (session.Properties.ExpiresUtc.HasValue && session.Properties.ExpiresUtc.Value < DateTimeOffset.UtcNow)
         {
-            context.Sessions.Remove(session);
-            await context.SaveChangesAsync();
+            await manager.DeleteAsync(session);
             return null;
         }
 
@@ -133,13 +117,11 @@ public class SessionTicketStore(
     public async Task RemoveAsync(string key)
     {
         await using var scope = _scopeFactory.CreateAsyncScope();
-        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        
-        var session = await context.Sessions.FirstOrDefaultAsync(x => x.SessionKey == key);
+        var manager = scope.ServiceProvider.GetRequiredService<ISessionManager>();
+        var session = await manager.FindByKeyAsync(key);
         if (session is not null)
         {
-            context.Sessions.Remove(session);
-            await context.SaveChangesAsync();
+            await manager.DeleteAsync(session);
         }
     }
 }
