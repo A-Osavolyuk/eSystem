@@ -8,14 +8,16 @@ public class ClientManager(AuthDbContext context) : IClientManager
 {
     private readonly AuthDbContext _context = context;
 
-    public async ValueTask<List<string>> GetFrontChannelLogoutUrisAsync(SessionEntity session,
+    public async ValueTask<List<ClientEntity>> GetGroupAsync(SessionEntity session,
         CancellationToken cancellationToken = default)
     {
         return await _context.ClientSessions
             .Where(x => x.SessionId == session.Id)
-            .SelectMany(x => x.Client.Uris)
-            .Where(x => x.Type == UriType.FrontChannelLogout)
-            .Select(x => x.Uri)
+            .Select(x => x.Client)
+            .Include(x => x.Uris)
+            .Include(x => x.AllowedScopes)
+            .Include(x => x.GrantTypes)
+            .Include(x => x.PairwiseSubjects)
             .ToListAsync(cancellationToken);
     }
 
