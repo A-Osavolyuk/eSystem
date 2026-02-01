@@ -39,7 +39,9 @@ public class GenericJwtTokenValidator(
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new RsaSecurityKey(publicKey),
             ValidateLifetime = true,
-            ClockSkew = TimeSpan.FromMinutes(5)
+            ClockSkew = TimeSpan.FromMinutes(5),
+            RequireSignedTokens = true,
+            ValidAlgorithms = [SecurityAlgorithms.RsaSha256],
         };
 
         try

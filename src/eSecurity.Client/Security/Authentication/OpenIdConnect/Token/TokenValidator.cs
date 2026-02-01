@@ -5,6 +5,7 @@ using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
+using eSystem.Core.Security.Cryptography.Encryption;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using JsonWebKeySet = Microsoft.IdentityModel.Tokens.JsonWebKeySet;
@@ -39,7 +40,7 @@ public class TokenValidator(
         if (!openIdResult.TryGetValue<OpenIdConfiguration>(out var openIdConfiguration))
             return Results.InternalServerError("Invalid response");
             
-        var signingKey = new RsaSecurityKey(CreateRsaFromJwk(publicKey));
+        var signingKey = new RsaSecurityKey(RsaConverter.FromJsonWebkey(publicKey));
         var parameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -50,6 +51,8 @@ public class TokenValidator(
             ClockSkew = TimeSpan.FromMinutes(5),
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = signingKey,
+            RequireSignedTokens = true,
+            ValidAlgorithms = [SecurityAlgorithms.RsaSha256],
         };
         
         var principal = handler.ValidateToken(token, parameters, out _);
@@ -61,19 +64,5 @@ public class TokenValidator(
             Value = x.Value
         }).ToList();
         return Results.Ok(claims);
-    }
-    
-    private RSA CreateRsaFromJwk(JsonWebKey jwk)
-    {
-        var rsa = RSA.Create();
-
-        var parameters = new RSAParameters
-        {
-            Modulus = Base64UrlEncoder.DecodeBytes(jwk.N),
-            Exponent = Base64UrlEncoder.DecodeBytes(jwk.E)
-        };
-
-        rsa.ImportParameters(parameters);
-        return rsa;
     }
 }
