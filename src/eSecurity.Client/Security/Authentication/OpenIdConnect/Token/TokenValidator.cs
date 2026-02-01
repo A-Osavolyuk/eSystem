@@ -4,6 +4,7 @@ using eSecurity.Core.Common.DTOs;
 using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using JsonWebKeySet = Microsoft.IdentityModel.Tokens.JsonWebKeySet;

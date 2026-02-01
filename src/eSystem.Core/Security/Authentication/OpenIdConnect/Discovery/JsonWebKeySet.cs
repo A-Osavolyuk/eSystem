@@ -1,6 +1,6 @@
 using Microsoft.IdentityModel.Tokens;
 
-namespace eSystem.Core.Security.Authentication.OpenIdConnect;
+namespace eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
 
 public class JsonWebKeySet
 {

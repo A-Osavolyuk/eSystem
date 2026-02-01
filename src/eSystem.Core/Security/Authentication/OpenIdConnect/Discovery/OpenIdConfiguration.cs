@@ -1,8 +1,8 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
-namespace eSystem.Core.Security.Authorization.OAuth;
+namespace eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
 
-public sealed class AuthorizationServerConfiguration
+public sealed class OpenIdConfiguration
 {
     [JsonPropertyName("issuer")]
     public string Issuer { get; set; } = string.Empty;
@@ -13,8 +13,14 @@ public sealed class AuthorizationServerConfiguration
     [JsonPropertyName("token_endpoint")]
     public string TokenEndpoint { get; set; } = string.Empty;
     
+    [JsonPropertyName("userinfo_endpoint")]
+    public string UserinfoEndpoint { get; set; } = string.Empty;
+    
     [JsonPropertyName("jwks_uri")]
     public string JwksUri { get; set; } = string.Empty;
+    
+    [JsonPropertyName("end_session_endpoint")]
+    public string EndSessionEndpoint { get; set; } = string.Empty;
     
     [JsonPropertyName("introspection_endpoint")]
     public string IntrospectionEndpoint { get; set; } = string.Empty;
@@ -39,6 +45,9 @@ public sealed class AuthorizationServerConfiguration
     [JsonPropertyName("subject_types_supported")]
     public string[] SubjectTypesSupported { get; set; } = [];
     
+    [JsonPropertyName("id_token_signing_alg_values_supported")]
+    public string[] IdTokenSigningAlgValuesSupported { get; set; } = [];
+    
     [JsonPropertyName("token_endpoint_auth_methods_supported")]
     public string[] TokenEndpointAuthMethodsSupported { get; set; } = [];
     
@@ -51,4 +60,18 @@ public sealed class AuthorizationServerConfiguration
     
     [JsonPropertyName("code_challenge_methods_supported")]
     public string[] CodeChallengeMethodsSupported { get; set; } = [];
+    
+    
+    [JsonPropertyName("backchannel_logout_supported")]
+    public bool BackChannelLogoutSupported { get; set; }
+    
+    [JsonPropertyName("backchannel_logout_session_supported")]
+    public bool BackChannelLogoutSessionSupported { get; set; }
+    
+    
+    [JsonPropertyName("frontchannel_logout_supported")]
+    public bool FrontChannelLogoutSupported { get; set; }
+    
+    [JsonPropertyName("frontchannel_logout_session_supported")]
+    public bool FrontChannelLogoutSessionSupported { get; set; }
 }
