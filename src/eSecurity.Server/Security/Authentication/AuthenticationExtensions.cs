@@ -73,8 +73,8 @@ public static class AuthenticationExtensions
                 Scopes.Address
             ];
 
-            cfg.BackChannelLogoutSupported = false;
-            cfg.BackChannelLogoutSessionSupported = false;
+            cfg.BackChannelLogoutSupported = true;
+            cfg.BackChannelLogoutSessionSupported = true;
 
             cfg.FrontChannelLogoutSupported = true;
             cfg.FrontChannelLogoutSessionSupported = true;
