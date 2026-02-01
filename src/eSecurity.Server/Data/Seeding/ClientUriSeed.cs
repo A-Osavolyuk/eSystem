@@ -54,6 +54,13 @@ public class ClientUriSeed : Seed<ClientUriEntity>
                 ClientId = Guid.Parse("307268b0-005c-4ee4-a0e8-a93bd0010382"),
                 Type = UriType.FrontChannelLogout,
                 Uri = "https://localhost:6511/connect/frontchannel-logout",
+            },
+            new()
+            {
+                Id = Guid.CreateVersion7(),
+                ClientId = Guid.Parse("307268b0-005c-4ee4-a0e8-a93bd0010382"),
+                Type = UriType.BackChannelLogout,
+                Uri = "https://localhost:6204/connect/backchannel-logout",
             }
         ];
     }
