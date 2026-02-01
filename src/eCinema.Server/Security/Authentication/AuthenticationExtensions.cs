@@ -21,8 +21,8 @@ public static class AuthenticationExtensions
     {
         public void AddAuthentication()
         {
-            builder.Services.AddScoped<TokenHandler>();
             builder.Services.AddScoped<ITokenHandler, TokenHandler>();
+            builder.Services.AddScoped<ITokenValidator, LogoutTokenValidator>();
             builder.Services.AddScoped<IOpenIdDiscoveryProvider, OpenIdDiscoveryProvider>();
             builder.Services.AddSingleton<IUserIdProvider, SubjectUserIdProvider>();
             
