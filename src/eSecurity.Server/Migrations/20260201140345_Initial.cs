@@ -49,6 +49,8 @@ namespace eSecurity.Server.Migrations
                     AllowOfflineAccess = table.Column<bool>(type: "boolean", nullable: false),
                     RefreshTokenRotationEnabled = table.Column<bool>(type: "boolean", nullable: false),
                     RefreshTokenLifetime = table.Column<long>(type: "bigint", nullable: false),
+                    AllowFrontChannelLogout = table.Column<bool>(type: "boolean", nullable: false),
+                    AllowBackChannelLogout = table.Column<bool>(type: "boolean", nullable: false),
                     SubjectType = table.Column<string>(type: "text", nullable: false),
                     SectorIdentifierUri = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     LogoUri = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),

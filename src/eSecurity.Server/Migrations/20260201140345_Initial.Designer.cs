@@ -12,7 +12,7 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20260129163806_Initial")]
+    [Migration("20260201140345_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -112,6 +112,12 @@ namespace eSecurity.Server.Migrations
                     b.Property<string>("AccessTokenType")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<bool>("AllowBackChannelLogout")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("AllowFrontChannelLogout")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("AllowOfflineAccess")
                         .HasColumnType("boolean");

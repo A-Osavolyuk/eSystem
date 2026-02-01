@@ -110,6 +110,12 @@ namespace eSecurity.Server.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("AllowBackChannelLogout")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("AllowFrontChannelLogout")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("AllowOfflineAccess")
                         .HasColumnType("boolean");
 
