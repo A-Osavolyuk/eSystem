@@ -11,7 +11,7 @@ public class LogoutRequest
     public required string PostLogoutRedirectUri { get; set; }
     
     [JsonPropertyName("state")]
-    public required string State { get; set; }
+    public required string? State { get; set; }
     
     [JsonPropertyName("client_id")]
     public string? ClientId { get; set; }

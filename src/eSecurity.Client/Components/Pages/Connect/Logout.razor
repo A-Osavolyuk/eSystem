@@ -2,6 +2,7 @@
 @using eSecurity.Client.Security.Authentication.OpenIdConnect
 @using eSecurity.Core.Common.Responses
 @using eSystem.Core.Security.Authentication.OpenIdConnect.Client
+@using eSystem.Core.Utilities.State
 
 @inherits PageBase
 
@@ -66,9 +67,6 @@
     [SupplyParameterFromQuery(Name = "ui_locales")]
     public string? UiLocales { get; set; }
 
-    [SupplyParameterFromQuery(Name = "local")]
-    public bool? IsLocal { get; set; }
-
     private async Task LogoutAsync()
     {
         var request = new LogoutRequest
@@ -80,19 +78,22 @@
         };
 
         var result = await ConnectService.LogoutAsync(request);
-        if (result.Succeeded && result.TryGetValue<LogoutResponse>(out var response))
+        if (result.Succeeded && result.TryGetValue<LogoutResponse>(out var response) && response is not null)
         {
             await AuthenticationManager.LogoutAsync();
-            NavigationContext.Value = response!.FrontChannelLogoutUris;
 
-            var builder = QueryBuilder.Create().WithUri(Links.Connect.LoggedOut);
-            if (!IsLocal.HasValue)
-            {
-                builder
-                    .WithQueryParam("post_logout_redirect_uri", response.PostLogoutRedirectUri)
-                    .WithQueryParam("state", response.State);
-            }
+            var json = JsonSerializer.Serialize(response.FrontChannelLogoutUris);
+            var stateBuilder = StateBuilder.Create()
+                .WithData("uris", json);
 
+            if (!string.IsNullOrEmpty(response.State))
+                stateBuilder.WithData("state", response.State);
+            
+            var builder = QueryBuilder.Create()
+                .WithUri(Links.Connect.LoggedOut)
+                .WithQueryParam("post_logout_redirect_uri", response.PostLogoutRedirectUri)
+                .WithQueryParam("state", stateBuilder.Build());
+            
             NavigationManager.NavigateTo(builder.Build());
         }
     }

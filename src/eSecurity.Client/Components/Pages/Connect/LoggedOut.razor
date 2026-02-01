@@ -1,5 +1,6 @@
 @page "/connect/logged-out"
 
+@using eSystem.Core.Utilities.State
 @inherits PageBase
 
 @layout AuthenticationLayout
@@ -64,25 +65,40 @@
 }
 
 @code {
+
     [SupplyParameterFromQuery(Name = "post_logout_redirect_uri")]
-    public string? PostLogoutRedirectUri { get; set; }
-    
+    public string PostLogoutRedirectUri { get; set; } = string.Empty;
+
     [SupplyParameterFromQuery(Name = "state")]
     public string? State { get; set; }
-    
+
     private List<string> _uris = [];
+    private string? _authorizationState;
 
     protected override async Task OnInitializedAsync()
     {
-        _uris = NavigationContext.GetValue<List<string>>() ?? [];
+        if (!string.IsNullOrEmpty(State))
+        {
+            var stateData = StateParser.Parse(State);
+            if (stateData.TryGetValue("uris", out var uris))
+                _uris = JsonSerializer.Deserialize<List<string>>(uris) ?? [];
+
+            if (stateData.TryGetValue("state", out var state))
+                _authorizationState = state;
+        }
+
         await AuthenticationManager.RefreshAsync();
     }
 
     private string GetRedirectUri()
     {
-        return QueryBuilder.Create()
-            .WithUri(PostLogoutRedirectUri!)
-            .WithQueryParam("state", State!)
-            .Build();
+        var builder = QueryBuilder.Create()
+            .WithUri(PostLogoutRedirectUri);
+
+        if (!string.IsNullOrEmpty(_authorizationState))
+            builder.WithQueryParam("state", _authorizationState);
+
+        return builder.Build();
     }
+
 }
