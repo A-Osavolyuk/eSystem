@@ -1,6 +1,8 @@
 ﻿using System.Security.Claims;
 using eSecurity.Server.Security.Cryptography.Hashing;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Token.Validation;
 using eSystem.Core.Security.Identity.Claims;
+using TokenValidationResult = eSystem.Core.Security.Authentication.OpenIdConnect.Token.Validation.TokenValidationResult;
 
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Validation;
 

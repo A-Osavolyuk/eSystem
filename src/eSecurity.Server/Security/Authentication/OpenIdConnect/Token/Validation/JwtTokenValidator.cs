@@ -1,4 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Token.Validation;
+using TokenValidationResult = eSystem.Core.Security.Authentication.OpenIdConnect.Token.Validation.TokenValidationResult;
 
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Validation;
 

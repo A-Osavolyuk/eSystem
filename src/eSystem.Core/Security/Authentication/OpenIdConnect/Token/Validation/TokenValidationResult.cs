@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Validation;
+namespace eSystem.Core.Security.Authentication.OpenIdConnect.Token.Validation;
 
 public class TokenValidationResult
 {
