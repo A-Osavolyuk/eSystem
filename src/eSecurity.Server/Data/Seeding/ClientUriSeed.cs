@@ -23,7 +23,7 @@ public class ClientUriSeed : Seed<ClientUriEntity>
                 Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("392e390f-33bd-4f30-af70-ccbe04bbb2c4"),
                 Type = UriType.PostLogoutRedirect,
-                Uri = "https://localhost:6501/connect/logged-out",
+                Uri = "https://localhost:6501/login",
             },
             new()
             {
