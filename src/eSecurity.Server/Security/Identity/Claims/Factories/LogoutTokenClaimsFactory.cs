@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
 using eSecurity.Server.Data.Entities;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Security.Identity.Claims.Factories;
@@ -20,7 +21,7 @@ public sealed class LogoutTokenClaimsFactory(
     {
         var events = new Dictionary<string, object>
         {
-            { "http://schemas.openid.net/event/backchannel-logout", new object() }
+            { LogoutEvents.BackChannelLogout, new object() }
         };
         
         var eventsJson = JsonSerializer.Serialize(events);
