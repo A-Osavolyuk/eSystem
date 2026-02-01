@@ -104,7 +104,7 @@ public class LogoutCommandHandler(
             });
         }
 
-        var group = await _clientManager.GetGroupAsync(session, cancellationToken);
+        var group = await _clientManager.GetClientsAsync(session, cancellationToken);
         var frontChannelLogoutUris = group
             .Where(c => c.AllowFrontChannelLogout)
             .SelectMany(c => c.Uris)

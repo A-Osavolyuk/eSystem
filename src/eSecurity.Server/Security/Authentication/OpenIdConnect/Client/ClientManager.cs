@@ -8,7 +8,7 @@ public class ClientManager(AuthDbContext context) : IClientManager
 {
     private readonly AuthDbContext _context = context;
 
-    public async ValueTask<List<ClientEntity>> GetGroupAsync(SessionEntity session,
+    public async ValueTask<List<ClientEntity>> GetClientsAsync(SessionEntity session,
         CancellationToken cancellationToken = default)
     {
         return await _context.ClientSessions

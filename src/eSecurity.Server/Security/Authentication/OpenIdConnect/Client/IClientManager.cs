@@ -5,7 +5,7 @@ namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 
 public interface IClientManager
 {
-    public ValueTask<List<ClientEntity>> GetGroupAsync(SessionEntity session, 
+    public ValueTask<List<ClientEntity>> GetClientsAsync(SessionEntity session, 
         CancellationToken cancellationToken = default);
     
     public ValueTask<ClientEntity?> FindByIdAsync(string clientId, CancellationToken cancellationToken = default);
