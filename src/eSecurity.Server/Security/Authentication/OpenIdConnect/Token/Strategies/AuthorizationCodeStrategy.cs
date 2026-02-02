@@ -250,6 +250,7 @@ public class AuthorizationCodeStrategy(
             Nonce = authorizationCode.Nonce,
             Scopes = client.AllowedScopes.Select(x => x.Scope.Name),
             Sid = session.Id.ToString(),
+            AuthenticationMethods = session.AuthenticationMethods,
             AuthTime = DateTimeOffset.UtcNow,
         }, cancellationToken);
 

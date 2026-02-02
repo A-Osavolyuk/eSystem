@@ -58,4 +58,10 @@ public class UserInfoResponse
     
     [JsonPropertyName(AppClaimTypes.Address)]
     public AddressClaim? Address { get; set; }
+
+    [JsonPropertyName(AppClaimTypes.Amr)] 
+    public string[]? Amr { get; set; }
+    
+    [JsonPropertyName(AppClaimTypes.Acr)] 
+    public string? Acr { get; set; }
 }

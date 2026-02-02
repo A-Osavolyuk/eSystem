@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Validation;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Phone;
@@ -21,6 +22,7 @@ public class GetUserInfoQueryHandler(
     IUserManager userManager,
     IEmailManager emailManager,
     IPhoneManager phoneManager,
+    ISessionManager sessionManager,
     IPersonalDataManager personalDataManager,
     IHttpContextAccessor httpContextAccessor,
     ITokenValidationProvider validationProvider) : IRequestHandler<GetUserInfoQuery, Result>
@@ -28,6 +30,7 @@ public class GetUserInfoQueryHandler(
     private readonly IUserManager _userManager = userManager;
     private readonly IEmailManager _emailManager = emailManager;
     private readonly IPhoneManager _phoneManager = phoneManager;
+    private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IPersonalDataManager _personalDataManager = personalDataManager;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly ITokenValidator _validator = validationProvider.CreateValidator(TokenTypes.Jwt);
@@ -74,10 +77,10 @@ public class GetUserInfoQueryHandler(
         if (scopeClaim is null || !scopeClaim.Value.Contains(Scopes.OpenId))
         {
             const string description = "The access token does not contain the required 'openid' scope";
-            
+
             _httpContext.Response.Headers.Append(HeaderTypes.WwwAuthenticate,
                 $"Bearer error=\"{ErrorTypes.OAuth.InvalidRequest}\", error_description=\"{description}\"");
-            
+
             return Results.Forbidden(new Error
             {
                 Code = ErrorTypes.OAuth.InsufficientScope,
@@ -85,9 +88,7 @@ public class GetUserInfoQueryHandler(
             });
         }
 
-        var subjectClaim = claimsPrincipal.Claims.First(
-            x => x.Type is AppClaimTypes.Sub or ClaimTypes.NameIdentifier);
-        
+        var subjectClaim = claimsPrincipal.Claims.First(x => x.Type is AppClaimTypes.Sub or ClaimTypes.NameIdentifier);
         var user = await _userManager.FindByIdAsync(Guid.Parse(subjectClaim.Value), cancellationToken);
         if (user is null)
         {
@@ -103,7 +104,22 @@ public class GetUserInfoQueryHandler(
             });
         }
 
-        var response = new UserInfoResponse { Subject = subjectClaim.Value };
+        var session = await _sessionManager.FindAsync(user, cancellationToken);
+        if (session is null)
+        {
+            const string description = "The access token is invalid or the session does not exist";
+
+            _httpContext.Response.Headers.Append(HeaderTypes.WwwAuthenticate,
+                $"Bearer error=\"{ErrorTypes.OAuth.InvalidToken}\", error_description=\"{description}\"");
+
+            return Results.Unauthorized(new Error
+            {
+                Code = ErrorTypes.OAuth.InvalidToken,
+                Description = description
+            });
+        }
+
+        var response = new UserInfoResponse { Subject = subjectClaim.Value, Amr = session.AuthenticationMethods };
         var scopes = scopeClaim.Value.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         if (scopes.Contains(Scopes.Email))
         {

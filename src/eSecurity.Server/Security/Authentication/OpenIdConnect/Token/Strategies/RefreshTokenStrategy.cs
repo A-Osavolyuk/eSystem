@@ -245,7 +245,8 @@ public class RefreshTokenStrategy(
             Aud = client.Id.ToString(),
             Scopes = client.AllowedScopes.Select(x => x.Scope.Name),
             Sid = session.Id.ToString(),
-            AuthTime = DateTimeOffset.UtcNow
+            AuthTime = DateTimeOffset.UtcNow,
+            AuthenticationMethods = session.AuthenticationMethods,
         }, cancellationToken);
 
         var idTokenContext = new JwtTokenContext { Claims = idClaims, Type = JwtTokenTypes.IdToken };

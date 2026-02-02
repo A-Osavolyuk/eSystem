@@ -12,7 +12,8 @@ namespace eSecurity.Server.Security.Identity.Claims.Factories;
 
 public sealed class IdTokenClaimsContext : TokenClaimsContext
 {
-    public string Sid { get; set; } = string.Empty;
+    public required string Sid { get; set; } = string.Empty;
+    public string[] AuthenticationMethods { get; set; } = [];
     public DateTimeOffset? AuthTime { get; set; }
 }
 
@@ -47,6 +48,12 @@ public sealed class IdTokenClaimsFactory(
             new(AppClaimTypes.Iat, iat, ClaimValueTypes.Integer64),
             new(AppClaimTypes.AuthTime, authTime, ClaimValueTypes.Integer64),
         };
+
+        if (context.AuthenticationMethods.Length > 0)
+        {
+            var amrValue = JsonSerializer.Serialize(context.AuthenticationMethods);
+            claims.Add(new (AppClaimTypes.Amr, amrValue));
+        }
 
         if (!string.IsNullOrEmpty(context.Nonce))
         {
