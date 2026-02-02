@@ -5,10 +5,12 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Code;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authorization.Consents;
+using eSecurity.Server.Security.Authorization.Protocol;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
 
 namespace eSecurity.Server.Features.Connect.Commands;
@@ -147,12 +149,17 @@ public class AuthorizeCommandHandler(
             });
         }
 
+        var protocol = request.Request.Scopes.Contains(Scopes.OpenId)
+            ? AuthorizationProtocol.OpenIdConnect
+            : AuthorizationProtocol.OAuth;
+        
         var code = _authorizationCodeManager.Generate();
         var authorizationCode = new AuthorizationCodeEntity
         {
             Id = Guid.CreateVersion7(),
             ClientId = client.Id,
             UserId = user.Id,
+            Protocol = protocol,
             Code = code,
             Nonce = request.Request.Nonce,
             CodeChallenge = request.Request.CodeChallenge,

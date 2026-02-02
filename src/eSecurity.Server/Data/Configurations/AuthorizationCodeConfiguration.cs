@@ -11,6 +11,7 @@ public sealed class AuthorizationCodeConfiguration : IEntityTypeConfiguration<Au
         builder.Property(x => x.RedirectUri).HasMaxLength(200);
         builder.Property(x => x.CodeChallenge).HasMaxLength(200);
         builder.Property(x => x.CodeChallengeMethod).HasMaxLength(16);
+        builder.Property(x => x.Protocol).HasConversion<string>();
         builder.Property(x => x.Code).HasMaxLength(20);
         builder.Property(x => x.Nonce).HasMaxLength(200);
 

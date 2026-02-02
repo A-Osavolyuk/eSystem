@@ -1,4 +1,5 @@
-﻿using eSystem.Core.Data.Entities;
+﻿using eSecurity.Server.Security.Authorization.Protocol;
+using eSystem.Core.Data.Entities;
 
 namespace eSecurity.Server.Data.Entities;
 
@@ -7,6 +8,8 @@ public class AuthorizationCodeEntity : Entity
     public Guid Id { get; set; }
     public Guid ClientId { get; set; }
     public Guid UserId { get; set; }
+
+    public required AuthorizationProtocol Protocol { get; set; }
     
     public required string Code { get; set; }
     public required string Nonce { get; set; }
