@@ -3,10 +3,12 @@ using eSecurity.Core.Common.Responses;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Logout.Backchannel;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Validation;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Token.Validation;
 using eSystem.Core.Security.Identity.Claims;
 
@@ -17,10 +19,14 @@ public record LogoutCommand(LogoutRequest Request) : IRequest<Result>;
 public class LogoutCommandHandler(
     IClientManager clientManager,
     ISessionManager sessionManager,
-    ITokenValidationProvider validationProvider) : IRequestHandler<LogoutCommand, Result>
+    ITokenValidationProvider validationProvider,
+    IOptions<OpenIdConfiguration> configuration,
+    IBackchannelLogoutHandler backchannelLogoutHandler) : IRequestHandler<LogoutCommand, Result>
 {
     private readonly IClientManager _clientManager = clientManager;
     private readonly ISessionManager _sessionManager = sessionManager;
+    private readonly OpenIdConfiguration _configuration = configuration.Value;
+    private readonly IBackchannelLogoutHandler _backchannelLogoutHandler = backchannelLogoutHandler;
     private readonly ITokenValidator _validator = validationProvider.CreateValidator(TokenTypes.Jwt);
 
     public async Task<Result> Handle(LogoutCommand request, CancellationToken cancellationToken)
@@ -102,6 +108,12 @@ public class LogoutCommandHandler(
                 Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "post_logout_redirect_uri is invalid."
             });
+        }
+
+        if (_configuration.BackchannelLogoutSupported)
+        {
+            var backchannelResult = await _backchannelLogoutHandler.ExecuteAsync(session, cancellationToken);
+            if (!backchannelResult.Succeeded) return backchannelResult;
         }
 
         var group = await _clientManager.GetClientsAsync(session, cancellationToken);

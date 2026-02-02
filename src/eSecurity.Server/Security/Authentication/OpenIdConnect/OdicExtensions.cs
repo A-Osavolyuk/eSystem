@@ -1,6 +1,7 @@
 ﻿using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Code;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Logout.Backchannel;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Pkce;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Token;
@@ -20,9 +21,10 @@ public static class OdicExtensions
         public void AddOpenIdConnect(Action<OpenIdConfiguration> configure)
         {
             services.Configure(configure);
+            services.AddScoped<IPkceHandler, PkceHandler>();
             services.AddScoped<IClientManager, ClientManager>();
             services.AddScoped<IAuthorizationCodeManager, AuthorizationCodeManager>();
-            services.AddScoped<IPkceHandler, PkceHandler>();
+            services.AddScoped<IBackchannelLogoutHandler, BackchannelLogoutHandler>();
 
             services.AddScoped<ITokenValidationProvider, TokenValidationProvider>();
             services.AddScoped<IJwtTokenValidationProvider, JwtTokenValidationProvider>();

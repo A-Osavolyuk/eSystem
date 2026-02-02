@@ -26,12 +26,17 @@ public class ConnectController(
 
     [HttpGet("frontchannel-logout")]
     [EndpointSummary("Front-Channel Logout Endpoint")]
-    public IActionResult FrontChannelLogout()
+    public async Task<IActionResult> FrontChannelLogout()
     {
-        return SignOut(
-            new AuthenticationProperties(),
-            CookieAuthenticationDefaults.AuthenticationScheme
-        );
+        try
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return Ok();
+        }
+        catch (Exception)
+        {
+            return Ok();
+        }
     }
 
     [HttpPost("backchannel-logout")]
