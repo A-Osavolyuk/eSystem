@@ -6,8 +6,7 @@ public class UserDeviceEntity : Entity
 {
     public Guid Id { get; set; }
     public Guid UserId { get; set; }
-
-    public bool IsTrusted { get; set; }
+    
     public bool IsBlocked { get; set; }
     
     public required string UserAgent { get; set; }

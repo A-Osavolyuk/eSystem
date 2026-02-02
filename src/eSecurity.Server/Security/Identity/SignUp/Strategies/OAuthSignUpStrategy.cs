@@ -113,7 +113,6 @@ public sealed class OAuthSignUpStrategy(
             Browser = clientInfo.UA.ToString(),
             Os = clientInfo.OS.ToString(),
             Device = clientInfo.Device.ToString(),
-            IsTrusted = true,
             IsBlocked = false,
             FirstSeen = DateTimeOffset.UtcNow
         };

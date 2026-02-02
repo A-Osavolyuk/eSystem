@@ -3,8 +3,7 @@
 public class UserDeviceDto
 {
     public Guid Id { get; set; }
-
-    public bool IsTrusted { get; set; }
+    
     public bool IsBlocked { get; set; }
     
     public string? UserAgent { get; set; } =  string.Empty;

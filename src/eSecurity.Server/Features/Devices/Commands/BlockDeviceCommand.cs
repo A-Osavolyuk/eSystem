@@ -25,7 +25,7 @@ public class BlockDeviceCommandHandler(
         if (user is null) return Results.NotFound("User not found.");
 
         var device = await _deviceManager.FindByIdAsync(request.Request.DeviceId, cancellationToken);
-        if (device is null || device.IsBlocked || !device.IsTrusted)
+        if (device is null || device.IsBlocked)
         {
             return Results.BadRequest(new Error
             {

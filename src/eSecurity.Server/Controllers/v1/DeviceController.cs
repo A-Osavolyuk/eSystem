@@ -34,15 +34,4 @@ public class DeviceController(ISender sender) : ControllerBase
         var result = await _sender.Send(new UnblockDeviceCommand(request));
         return HttpContext.HandleResult(result);
     }
-    
-    [EndpointSummary("Verify device")]
-    [EndpointDescription("Verify device")]
-    [ProducesResponseType(200)]
-    [HttpPost("verify")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> VerifyAsync([FromBody] VerifyDeviceRequest request)
-    {
-        var result = await _sender.Send(new VerifyDeviceCommand(request));
-        return HttpContext.HandleResult(result);
-    }
 }

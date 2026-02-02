@@ -23,7 +23,6 @@ public class GetUserDevicesQueryHandler(
         var response = devices.Select(device => new UserDeviceDto
         {
             Id = device.Id,
-            IsTrusted = device.IsTrusted,
             IsBlocked = device.IsBlocked,
             Browser = device.Browser,
             Os = device.Os,

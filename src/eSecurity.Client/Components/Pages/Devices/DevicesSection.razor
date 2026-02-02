@@ -38,29 +38,6 @@
                             Blocked
                         </MudChip>
                     }
-                    else
-                    {
-                        if (device.IsTrusted)
-                        {
-                            <MudChip
-                                T="string"
-                                Size="Size.Small"
-                                Variant="Variant.Outlined"
-                                Color="Color.Success">
-                                Trusted
-                            </MudChip>
-                        }
-                        else
-                        {
-                            <MudChip
-                                T="string"
-                                Size="Size.Small"
-                                Variant="Variant.Outlined"
-                                Color="Color.Warning">
-                                Untrusted
-                            </MudChip>
-                        }
-                    }
                     <MudSpacer />
                     @if (device.IsBlocked)
                     {
@@ -83,18 +60,6 @@
                                 ButtonType="ButtonType.Button"
                                 OnClick="@(async () => await OnBlock.InvokeAsync(device.Id))"/>
                         </MudTooltip>
-                        
-                        if (!device.IsTrusted)
-                        {
-                            <MudTooltip Text="Trust device">
-                                <MudIconButton
-                                    Color="Color.Success"
-                                    Icon="@Icons.Material.Filled.Check"
-                                    Variant="Variant.Outlined"
-                                    ButtonType="ButtonType.Button"
-                                    OnClick="@(async () => await OnVerify.InvokeAsync(device.Id))"/>
-                            </MudTooltip>
-                        }
                     }
                     <MudText
                         Class="opacity-50 position-absolute"

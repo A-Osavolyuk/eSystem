@@ -47,7 +47,7 @@ public class CreatePasskeyCommandHandler(
         var userAgent = _httpContext.GetUserAgent();
         var ipAddress = _httpContext.GetIpV4();
         var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
-        if (device is null || device.IsBlocked || !device.IsTrusted)
+        if (device is null || device.IsBlocked)
         {
             return Results.BadRequest(new Error
             {

@@ -31,7 +31,6 @@ public class GetUserDeviceQueryHandler(
             BlockedDate = device.BlockedDate,
             IpAddress = device.IpAddress,
             IsBlocked = device.IsBlocked,
-            IsTrusted = device.IsTrusted,
             LastSeen = device.LastSeen,
             Location = device.Location,
             Os = device.Os,

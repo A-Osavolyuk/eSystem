@@ -34,7 +34,7 @@ public class UnlockAccountCommandHandler(
         var userAgent = _httpContextAccessor.HttpContext?.GetUserAgent()!;
         var ipAddress = _httpContextAccessor.HttpContext?.GetIpV4()!;
         var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
-        if (device is null || device.IsBlocked || !device.IsTrusted)
+        if (device is null || device.IsBlocked)
         {
             return Results.BadRequest(new Error
             {

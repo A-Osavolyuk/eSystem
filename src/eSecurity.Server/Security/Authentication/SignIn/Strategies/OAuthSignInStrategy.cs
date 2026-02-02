@@ -61,7 +61,6 @@ public sealed class OAuthSignInStrategy(
                 Browser = clientInfo.UA.ToString(),
                 Os = clientInfo.OS.ToString(),
                 Device = clientInfo.Device.ToString(),
-                IsTrusted = false,
                 IsBlocked = false,
                 FirstSeen = DateTimeOffset.UtcNow
             };
@@ -77,12 +76,6 @@ public sealed class OAuthSignInStrategy(
                 Code = ErrorTypes.Common.BlockedDevice,
                 Description = "Device is blocked"
             });
-        }
-
-        if (!device.IsTrusted)
-        {
-            var deviceResult = await _deviceManager.TrustAsync(device, cancellationToken);
-            if (!deviceResult.Succeeded) return deviceResult;
         }
 
         var lockoutState = await _lockoutManager.GetAsync(user, cancellationToken);

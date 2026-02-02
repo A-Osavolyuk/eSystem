@@ -79,7 +79,6 @@ public sealed class PasswordSignInStrategy(
                 Browser = clientInfo.UA.ToString(),
                 Os = clientInfo.OS.ToString(),
                 Device = clientInfo.Device.ToString(),
-                IsTrusted = false,
                 IsBlocked = false,
                 FirstSeen = DateTimeOffset.UtcNow,
             };
