@@ -1,12 +1,14 @@
 ﻿using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Code;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
-using eSecurity.Server.Security.Authentication.OpenIdConnect.Logout.Backchannel;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Logout;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Logout.Strategies;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Pkce;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Token;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Strategies;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Validation;
+using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Token.Validation;
@@ -24,7 +26,10 @@ public static class OdicExtensions
             services.AddScoped<IPkceHandler, PkceHandler>();
             services.AddScoped<IClientManager, ClientManager>();
             services.AddScoped<IAuthorizationCodeManager, AuthorizationCodeManager>();
-            services.AddScoped<IBackchannelLogoutHandler, BackchannelLogoutHandler>();
+            services.AddKeyedScoped<ILogoutStrategy<Result>, BackchannelLogoutStrategy>(LogoutFlow.Backchannel);
+            services.AddKeyedScoped<ILogoutStrategy<List<string>>, FrontchannelLogoutStrategy>(LogoutFlow.Frontchannel);
+            services.AddScoped<ILogoutStrategyResolver, LogoutStrategyResolver>();
+            services.AddScoped<ILogoutHandler, LogoutHandler>();
 
             services.AddScoped<ITokenValidationProvider, TokenValidationProvider>();
             services.AddScoped<IJwtTokenValidationProvider, JwtTokenValidationProvider>();

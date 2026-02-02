@@ -9,14 +9,14 @@ using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Logout;
 using eSystem.Core.Security.Cryptography.Encoding;
 
-namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Logout.Backchannel;
+namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Logout.Strategies;
 
-public class BackchannelLogoutHandler(
+public class BackchannelLogoutStrategy(
     IHttpClientFactory httpClientFactory,
     IClientManager clientManager,
     IUserManager userManager,
     IClaimFactoryProvider claimFactoryProvider,
-    ITokenFactoryProvider tokenFactoryProvider) : IBackchannelLogoutHandler
+    ITokenFactoryProvider tokenFactoryProvider) : ILogoutStrategy<Result>
 {
     private readonly IClientManager _clientManager = clientManager;
     private readonly IUserManager _userManager = userManager;

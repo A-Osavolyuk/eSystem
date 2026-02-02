@@ -1,14 +1,9 @@
 ﻿using eSecurity.Core.Common.Requests;
-using eSecurity.Core.Common.Responses;
-using eSecurity.Server.Data.Entities;
-using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
-using eSecurity.Server.Security.Authentication.OpenIdConnect.Logout.Backchannel;
-using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Logout;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Validation;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Token.Validation;
 using eSystem.Core.Security.Identity.Claims;
 
@@ -17,16 +12,10 @@ namespace eSecurity.Server.Features.Connect.Commands;
 public record LogoutCommand(LogoutRequest Request) : IRequest<Result>;
 
 public class LogoutCommandHandler(
-    IClientManager clientManager,
-    ISessionManager sessionManager,
     ITokenValidationProvider validationProvider,
-    IOptions<OpenIdConfiguration> configuration,
-    IBackchannelLogoutHandler backchannelLogoutHandler) : IRequestHandler<LogoutCommand, Result>
+    ILogoutHandler logoutHandler) : IRequestHandler<LogoutCommand, Result>
 {
-    private readonly IClientManager _clientManager = clientManager;
-    private readonly ISessionManager _sessionManager = sessionManager;
-    private readonly OpenIdConfiguration _configuration = configuration.Value;
-    private readonly IBackchannelLogoutHandler _backchannelLogoutHandler = backchannelLogoutHandler;
+    private readonly ILogoutHandler _logoutHandler = logoutHandler;
     private readonly ITokenValidator _validator = validationProvider.CreateValidator(TokenTypes.Jwt);
 
     public async Task<Result> Handle(LogoutCommand request, CancellationToken cancellationToken)
@@ -60,8 +49,8 @@ public class LogoutCommandHandler(
         }
         
         var principal = validationResult.ClaimsPrincipal;
-        var sid = principal.Claims.FirstOrDefault(x => x.Type == AppClaimTypes.Sid);
-        if (sid is null)
+        var sidClaim = principal.Claims.FirstOrDefault(x => x.Type == AppClaimTypes.Sid);
+        if (sidClaim is null)
         {
             return Results.BadRequest(new Error
             {
@@ -70,62 +59,16 @@ public class LogoutCommandHandler(
             });
         }
 
-        var session = await _sessionManager.FindByIdAsync(Guid.Parse(sid.Value), cancellationToken);
-        if (session is null)
+        var context = new LogoutContext()
         {
-            return Results.InternalServerError(new Error
-            {
-                Code = ErrorTypes.OAuth.ServerError,
-                Description = "Invalid session."
-            });
-        }
-
-        var identifier = string.IsNullOrWhiteSpace(request.Request.ClientId)
-            ? principal.Claims.First(x => x.Type == AppClaimTypes.Aud).Value
-            : request.Request.ClientId;
-
-        var client = await _clientManager.FindByIdAsync(identifier, cancellationToken);
-        if (client is null)
-        {
-            return Results.Unauthorized(new Error
-            {
-                Code = ErrorTypes.OAuth.InvalidClient,
-                Description = "Invalid client."
-            });
-        }
-        
-        var postLogoutRedirectUri = client.Uris.FirstOrDefault(x => x.Type == UriType.PostLogoutRedirect);
-        if (postLogoutRedirectUri is null)
-        {
-            return Results.BadRequest(new Error
-            {
-                Code = ErrorTypes.OAuth.InvalidRequest,
-                Description = "post_logout_redirect_uri is invalid."
-            });
-        }
-
-        if (_configuration.BackchannelLogoutSupported)
-        {
-            var backchannelResult = await _backchannelLogoutHandler.ExecuteAsync(session, cancellationToken);
-            if (!backchannelResult.Succeeded) return backchannelResult;
-        }
-
-        var group = await _clientManager.GetClientsAsync(session, cancellationToken);
-        var frontChannelLogoutUris = group
-            .Where(c => c.AllowFrontChannelLogout)
-            .SelectMany(c => c.Uris)
-            .Where(uri => uri.Type == UriType.FrontChannelLogout)
-            .Select(uri => uri.Uri)
-            .ToList();
-        
-        var response = new LogoutResponse
-        {
+            Sid = sidClaim.Value,
             State = request.Request.State,
-            PostLogoutRedirectUri = postLogoutRedirectUri.Uri,
-            FrontChannelLogoutUris = frontChannelLogoutUris
+            PostLogoutRedirectUri = request.Request.PostLogoutRedirectUri,
+            Audience = string.IsNullOrWhiteSpace(request.Request.ClientId)
+                ? principal.Claims.First(x => x.Type == AppClaimTypes.Aud).Value
+                : request.Request.ClientId,
         };
         
-        var result = await _sessionManager.RemoveAsync(session, cancellationToken);
-        return result.Succeeded ? Results.Ok(response) : result;
+        return await _logoutHandler.HandleAsync(context, cancellationToken);
     }
 }
