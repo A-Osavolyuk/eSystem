@@ -12,7 +12,7 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20260201140345_Initial")]
+    [Migration("20260202173137_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -849,9 +849,6 @@ namespace eSecurity.Server.Migrations
                         .HasColumnType("character varying(15)");
 
                     b.Property<bool>("IsBlocked")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsTrusted")
                         .HasColumnType("boolean");
 
                     b.Property<DateTimeOffset?>("LastSeen")

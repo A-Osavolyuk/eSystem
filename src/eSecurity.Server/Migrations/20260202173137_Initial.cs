@@ -500,7 +500,6 @@ namespace eSecurity.Server.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    IsTrusted = table.Column<bool>(type: "boolean", nullable: false),
                     IsBlocked = table.Column<bool>(type: "boolean", nullable: false),
                     UserAgent = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
                     IpAddress = table.Column<string>(type: "character varying(15)", maxLength: 15, nullable: false),

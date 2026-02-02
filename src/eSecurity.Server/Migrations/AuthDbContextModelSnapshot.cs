@@ -848,9 +848,6 @@ namespace eSecurity.Server.Migrations
                     b.Property<bool>("IsBlocked")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsTrusted")
-                        .HasColumnType("boolean");
-
                     b.Property<DateTimeOffset?>("LastSeen")
                         .HasColumnType("timestamp with time zone");
 
