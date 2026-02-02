@@ -73,11 +73,11 @@ public static class AuthenticationExtensions
                 Scopes.Address
             ];
 
-            cfg.BackChannelLogoutSupported = true;
-            cfg.BackChannelLogoutSessionSupported = true;
+            cfg.BackchannelLogoutSupported = true;
+            cfg.BackchannelLogoutSessionSupported = true;
 
-            cfg.FrontChannelLogoutSupported = true;
-            cfg.FrontChannelLogoutSessionSupported = true;
+            cfg.FrontchannelLogoutSupported = true;
+            cfg.FrontchannelLogoutSessionSupported = true;
         });
 
         builder.Services.AddAuthentication(options =>
