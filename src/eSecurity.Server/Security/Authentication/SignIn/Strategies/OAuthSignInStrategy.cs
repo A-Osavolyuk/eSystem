@@ -94,20 +94,21 @@ public sealed class OAuthSignInStrategy(
             if (!lockoutResult.Succeeded) return lockoutResult;
         }
         
-        var linkedAccount = await _linkedAccountManager.GetAsync(user, oauthPayload.Type, cancellationToken);
+        var linkedAccount = await _linkedAccountManager.GetAsync(user, oauthPayload.Provider, cancellationToken);
         if (linkedAccount is null)
         {
             linkedAccount = new UserLinkedAccountEntity
             {
                 Id = Guid.CreateVersion7(),
                 UserId = user.Id,
-                Type = oauthPayload.Type
+                Type = oauthPayload.Provider
             };
             
             var connectResult = await _linkedAccountManager.CreateAsync(linkedAccount, cancellationToken);
             if (!connectResult.Succeeded) return connectResult;
         }
-        
+
+        var initMethod = _mapper.Map(oauthPayload.Provider);
         var twoFactorRequired = await _twoFactorManager.IsEnabledAsync(user, cancellationToken);
         if (!twoFactorRequired)
         {
@@ -115,7 +116,7 @@ public sealed class OAuthSignInStrategy(
             {
                 Id = Guid.CreateVersion7(),
                 UserId = user.Id,
-                AuthenticationMethods = [_mapper.Map(oauthPayload.Type)],
+                AuthenticationMethods = [_mapper.Map(oauthPayload.Provider)],
                 ExpireDate = DateTimeOffset.UtcNow.Add(_options.Timestamp)
             };
             
@@ -125,9 +126,10 @@ public sealed class OAuthSignInStrategy(
         var state = StateBuilder.Create()
             .WithData("userId", user.Id.ToString())
             .WithData("flow", "sign-in")
-            .WithData("provider", oauthPayload.Type.ToString())
+            .WithData("provider", oauthPayload.Provider.ToString())
             .WithData("requireTwoFactor", twoFactorRequired)
             .WithData("state", oauthPayload.State)
+            .WithData("amr", initMethod)
             .Build();
         
         return Results.Found(QueryBuilder.Create()

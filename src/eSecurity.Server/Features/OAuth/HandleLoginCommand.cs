@@ -93,7 +93,7 @@ public sealed class HandleOAuthLoginCommandHandler(
         {
             Email = email,
             State = state,
-            Type = linkedAccountType,
+            Provider = linkedAccountType,
             ReturnUri = request.ReturnUri
         };
         

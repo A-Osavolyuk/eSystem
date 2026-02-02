@@ -75,6 +75,9 @@
     [SupplyParameterFromQuery(Name = "state")]
     public string? State { get; set; }
 
+    [SupplyParameterFromQuery(Name = "amr")]
+    public string InitMethod { get; set; } = string.Empty;
+
     private List<UserTwoFactorMethod> _methods = [];
     private TwoFactorMethod _preferredMethod;
     private string? _state;
@@ -115,7 +118,8 @@
         {
             Payload = new TwoFactorSignInPayload
             {
-                UserId = _userId
+                UserId = _userId,
+                Amr = InitMethod
             }
         };
 

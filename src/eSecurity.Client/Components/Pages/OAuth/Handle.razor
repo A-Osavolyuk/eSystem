@@ -1,6 +1,7 @@
 ﻿@page "/oauth/handle"
 
 @using eSecurity.Core.Security.Authorization.OAuth
+@using eSystem.Core.Security.Authentication.OpenIdConnect.Constants
 @using eSystem.Core.Utilities.State
 
 @inherits PageBase
@@ -36,6 +37,7 @@
             var flow = stateData["flow"];
             var provider = stateData["provider"];
             var stateBase64 = stateData["state"];
+            var initMethod = stateData.GetValueOrDefault("init_method");
             var stateBytes = WebEncoders.Base64UrlDecode(stateBase64);
             var stateJson = Encoding.UTF8.GetString(stateBytes);
             var state = JsonSerializer.Deserialize<OAuthState>(stateJson);
@@ -68,6 +70,7 @@
                     NavigationManager.NavigateTo(QueryBuilder.Create()
                         .WithUri(Links.Session.TwoFactor)
                         .WithQueryParam("state", stateBuilder.Build())
+                        .WithQueryParam("amr", initMethod!)
                         .Build());
                 }
                 else

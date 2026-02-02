@@ -3,4 +3,5 @@
 public class TwoFactorSignInPayload : SignInPayload
 {
     public Guid UserId { get; set; }
+    public required string Amr { get; set; }
 }
