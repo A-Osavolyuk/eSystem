@@ -2,11 +2,11 @@
 
 public static class AuthenticationMethods
 {
-    public const string Password = "pwd";
+    public const string Pwd = "pwd";
     public const string Mfa = "mfa";
     public const string Otp = "otp";
-    public const string SoftwareKey = "swk";
-    public const string HardwareKey = "hwk";
+    public const string Swk = "swk";
+    public const string Hwk = "hwk";
     public const string Saml = "saml";
 
     public static class OAuth

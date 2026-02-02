@@ -1,5 +1,7 @@
 using eSecurity.Core.Security.Authorization.OAuth;
 using eSecurity.Core.Security.Identity;
+using eSecurity.Server.Common.Mapping;
+using eSecurity.Server.Common.Mapping.Mappers;
 using eSecurity.Server.Common.Messaging;
 using eSecurity.Server.Common.Messaging.Messages.Email;
 using eSecurity.Server.Data.Entities;
@@ -37,6 +39,7 @@ public sealed class OAuthSignUpStrategy(
     IHttpContextAccessor httpContextAccessor,
     IEmailManager emailManager,
     ISessionManager sessionManager,
+    IMappingProvider mappingProvider,
     IOptions<SessionOptions> sessionOptions) : ISignUpStrategy
 {
     private readonly IPermissionManager _permissionManager = permissionManager;
@@ -49,6 +52,8 @@ public sealed class OAuthSignUpStrategy(
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly SessionOptions _sessionOptions = sessionOptions.Value;
+    private readonly IMapper<LinkedAccountType, string> _mapper 
+        = mappingProvider.CreateMapper<LinkedAccountType, string>();
 
     public async ValueTask<Result> ExecuteAsync(SignUpPayload payload,
         CancellationToken cancellationToken = default)
@@ -162,6 +167,7 @@ public sealed class OAuthSignUpStrategy(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
+            AuthenticationMethods = [_mapper.Map(oauthPayload.Type)],
             ExpireDate = DateTimeOffset.UtcNow.Add(_sessionOptions.Timestamp)
         };
         

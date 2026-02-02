@@ -1,4 +1,6 @@
 ﻿using eSecurity.Core.Security.Authentication.SignIn;
+using eSecurity.Core.Security.Authorization.OAuth;
+using eSecurity.Server.Common.Mapping;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Lockout;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
@@ -22,6 +24,7 @@ public sealed class OAuthSignInStrategy(
     ILinkedAccountManager linkedAccountManager,
     ITwoFactorManager twoFactorManager,
     ISessionManager sessionManager,
+    IMappingProvider mappingProvider,
     IOptions<SessionOptions> options) : ISignInStrategy
 {
     private readonly IUserManager _userManager = userManager;
@@ -32,6 +35,8 @@ public sealed class OAuthSignInStrategy(
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly SessionOptions _options = options.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
+    private readonly IMapper<LinkedAccountType, string> _mapper 
+        = mappingProvider.CreateMapper<LinkedAccountType, string>();
 
     public async ValueTask<Result> ExecuteAsync(SignInPayload payload,
         CancellationToken cancellationToken = default)
@@ -89,14 +94,14 @@ public sealed class OAuthSignInStrategy(
             if (!lockoutResult.Succeeded) return lockoutResult;
         }
         
-        var linkedAccount = await _linkedAccountManager.GetAsync(user, oauthPayload.LinkedAccount, cancellationToken);
+        var linkedAccount = await _linkedAccountManager.GetAsync(user, oauthPayload.Type, cancellationToken);
         if (linkedAccount is null)
         {
             linkedAccount = new UserLinkedAccountEntity
             {
                 Id = Guid.CreateVersion7(),
                 UserId = user.Id,
-                Type = oauthPayload.LinkedAccount
+                Type = oauthPayload.Type
             };
             
             var connectResult = await _linkedAccountManager.CreateAsync(linkedAccount, cancellationToken);
@@ -107,7 +112,7 @@ public sealed class OAuthSignInStrategy(
         var state = StateBuilder.Create()
             .WithData("userId", user.Id.ToString())
             .WithData("flow", "sign-in")
-            .WithData("provider", oauthPayload.LinkedAccount.ToString())
+            .WithData("provider", oauthPayload.Type.ToString())
             .WithData("requireTwoFactor", twoFactorRequired)
             .WithData("state", oauthPayload.State)
             .Build();
@@ -116,6 +121,7 @@ public sealed class OAuthSignInStrategy(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
+            AuthenticationMethods = [_mapper.Map(oauthPayload.Type)],
             ExpireDate = DateTimeOffset.UtcNow.Add(_options.Timestamp)
         };
         

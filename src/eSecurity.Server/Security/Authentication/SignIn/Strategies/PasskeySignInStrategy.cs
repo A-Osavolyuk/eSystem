@@ -11,6 +11,7 @@ using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Http.Results;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 
 namespace eSecurity.Server.Security.Authentication.SignIn.Strategies;
 
@@ -82,6 +83,7 @@ public sealed class PasskeySignInStrategy(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
+            AuthenticationMethods = [AuthenticationMethods.Swk],
             ExpireDate = DateTimeOffset.UtcNow.Add(_options.Timestamp)
         };
         

@@ -12,6 +12,7 @@ using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Http.Results;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 
 namespace eSecurity.Server.Security.Authentication.SignIn.Strategies;
 
@@ -105,6 +106,7 @@ public class TwoFactorSignInStrategy(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
+            AuthenticationMethods = [AuthenticationMethods.Pwd, AuthenticationMethods.Mfa],
             ExpireDate = DateTimeOffset.UtcNow.Add(_sessionOptions.Timestamp)
         };
         

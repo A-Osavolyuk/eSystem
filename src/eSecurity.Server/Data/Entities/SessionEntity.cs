@@ -8,6 +8,7 @@ public class SessionEntity : Entity
     public Guid UserId { get; set; }
 
     public DateTimeOffset? ExpireDate { get; set; }
+    public required string[] AuthenticationMethods { get; set; }
 
     public UserEntity User { get; set; } = null!;
     public ICollection<OpaqueTokenEntity> OpaqueTokens { get; set; } = null!;
