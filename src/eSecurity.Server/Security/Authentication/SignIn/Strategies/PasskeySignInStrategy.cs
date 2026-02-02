@@ -1,6 +1,7 @@
 ﻿using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Security.Authentication.SignIn;
 using eSecurity.Core.Security.Credentials.PublicKey.Constants;
+using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Lockout;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authorization.Devices;
@@ -19,13 +20,15 @@ public sealed class PasskeySignInStrategy(
     ISessionManager sessionManager,
     IDeviceManager deviceManager,
     ILockoutManager lockoutManager,
-    IHttpContextAccessor accessor) : ISignInStrategy
+    IHttpContextAccessor accessor,
+    IOptions<SessionOptions> options) : ISignInStrategy
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
+    private readonly SessionOptions _options = options.Value;
     private readonly HttpContext _httpContext = accessor.HttpContext!;
 
     public async ValueTask<Result> ExecuteAsync(SignInPayload payload,
@@ -75,7 +78,14 @@ public sealed class PasskeySignInStrategy(
             });
         }
 
-        await _sessionManager.CreateAsync(user, cancellationToken);
+        var session = new SessionEntity
+        {
+            Id = Guid.CreateVersion7(),
+            UserId = user.Id,
+            ExpireDate = DateTimeOffset.UtcNow.Add(_options.Timestamp)
+        };
+        
+        await _sessionManager.CreateAsync(session, cancellationToken);
         return Results.Ok(new SignInResponse { UserId = user.Id, });
     }
 }

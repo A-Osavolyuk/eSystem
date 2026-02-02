@@ -2,6 +2,7 @@
 using eSecurity.Core.Security.Authentication.Lockout;
 using eSecurity.Core.Security.Authentication.SignIn;
 using eSecurity.Core.Security.Authorization.Access;
+using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Lockout;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authorization.Access.Verification;
@@ -21,7 +22,8 @@ public class TwoFactorSignInStrategy(
     ILockoutManager lockoutManager,
     IDeviceManager deviceManager,
     ISessionManager sessionManager,
-    IOptions<SignInOptions> options) : ISignInStrategy
+    IOptions<SignInOptions> signInOptions,
+    IOptions<SessionOptions> sessionOptions) : ISignInStrategy
 {
     private readonly IVerificationManager _verificationManager = verificationManager;
     private readonly IUserManager _userManager = userManager;
@@ -29,7 +31,8 @@ public class TwoFactorSignInStrategy(
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
-    private readonly SignInOptions _options = options.Value;
+    private readonly SignInOptions _signInOptions = signInOptions.Value;
+    private readonly SessionOptions _sessionOptions = sessionOptions.Value;
 
     public async ValueTask<Result> ExecuteAsync(SignInPayload payload, CancellationToken cancellationToken = default)
     {
@@ -63,14 +66,14 @@ public class TwoFactorSignInStrategy(
         if (!verificationResult.Succeeded)
         {
             user.FailedLoginAttempts += 1;
-            if (user.FailedLoginAttempts < _options.MaxFailedLoginAttempts)
+            if (user.FailedLoginAttempts < _signInOptions.MaxFailedLoginAttempts)
                 return Results.BadRequest(new Error
                 {
                     Code = ErrorTypes.Common.FailedLoginAttempt, 
                     Description = "Invalid recovery code.",
                     Details = new()
                     {
-                        { "maxFailedLoginAttempts", _options.MaxFailedLoginAttempts },
+                        { "maxFailedLoginAttempts", _signInOptions.MaxFailedLoginAttempts },
                         { "failedLoginAttempts", user.FailedLoginAttempts },
                     }
                 });
@@ -98,7 +101,14 @@ public class TwoFactorSignInStrategy(
             if (!userUpdateResult.Succeeded) return userUpdateResult;
         }
         
-        await _sessionManager.CreateAsync(user, cancellationToken);
+        var session = new SessionEntity
+        {
+            Id = Guid.CreateVersion7(),
+            UserId = user.Id,
+            ExpireDate = DateTimeOffset.UtcNow.Add(_sessionOptions.Timestamp)
+        };
+        
+        await _sessionManager.CreateAsync(session, cancellationToken);
         return Results.Ok(new SignInResponse { UserId = user.Id });
     }
 }

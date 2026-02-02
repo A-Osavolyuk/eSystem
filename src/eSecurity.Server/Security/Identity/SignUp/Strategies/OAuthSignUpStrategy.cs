@@ -36,7 +36,8 @@ public sealed class OAuthSignUpStrategy(
     IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor,
     IEmailManager emailManager,
-    ISessionManager sessionManager) : ISignUpStrategy
+    ISessionManager sessionManager,
+    IOptions<SessionOptions> sessionOptions) : ISignUpStrategy
 {
     private readonly IPermissionManager _permissionManager = permissionManager;
     private readonly IUserManager _userManager = userManager;
@@ -47,6 +48,7 @@ public sealed class OAuthSignUpStrategy(
     private readonly IEmailManager _emailManager = emailManager;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly ISessionManager _sessionManager = sessionManager;
+    private readonly SessionOptions _sessionOptions = sessionOptions.Value;
 
     public async ValueTask<Result> ExecuteAsync(SignUpPayload payload,
         CancellationToken cancellationToken = default)
@@ -156,7 +158,14 @@ public sealed class OAuthSignUpStrategy(
             .WithData("state", oauthPayload.State)
             .Build();
 
-        await _sessionManager.CreateAsync(user, cancellationToken);
+        var session = new SessionEntity
+        {
+            Id = Guid.CreateVersion7(),
+            UserId = user.Id,
+            ExpireDate = DateTimeOffset.UtcNow.Add(_sessionOptions.Timestamp)
+        };
+        
+        await _sessionManager.CreateAsync(session, cancellationToken);
         return Results.Found(QueryBuilder.Create()
             .WithUri(oauthPayload.ReturnUri)
             .WithQueryParam("state", state)

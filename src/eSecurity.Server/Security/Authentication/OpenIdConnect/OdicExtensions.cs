@@ -12,7 +12,6 @@ using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Token.Validation;
-using SessionOptions = eSecurity.Server.Security.Authentication.OpenIdConnect.Session.SessionOptions;
 
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect;
 

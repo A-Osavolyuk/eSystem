@@ -22,16 +22,8 @@ public class SessionManager(
         return await _context.Sessions.FirstOrDefaultAsync(x => x.UserId == user.Id, cancellationToken);
     }
 
-    public async ValueTask<Result> CreateAsync(UserEntity user, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> CreateAsync(SessionEntity session, CancellationToken cancellationToken = default)
     {
-        var session = new SessionEntity
-        {
-            Id = Guid.CreateVersion7(),
-            UserId = user.Id,
-            IsActive = true,
-            ExpireDate = DateTimeOffset.UtcNow.Add(_options.Timestamp)
-        };
-        
         await _context.Sessions.AddAsync(session, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 

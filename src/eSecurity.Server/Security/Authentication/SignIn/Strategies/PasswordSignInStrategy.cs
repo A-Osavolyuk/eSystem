@@ -26,7 +26,8 @@ public sealed class PasswordSignInStrategy(
     IHttpContextAccessor accessor,
     IEmailManager emailManager,
     ITwoFactorManager twoFactorManager,
-    IOptions<SignInOptions> options) : ISignInStrategy
+    IOptions<SignInOptions> signInOptions,
+    IOptions<SessionOptions> sessionOptions) : ISignInStrategy
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IPasswordManager _passwordManager = passwordManager;
@@ -35,8 +36,9 @@ public sealed class PasswordSignInStrategy(
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IEmailManager _emailManager = emailManager;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
+    private readonly SessionOptions _sessionOptions = sessionOptions.Value;
     private readonly HttpContext _httpContext = accessor.HttpContext!;
-    private readonly SignInOptions _options = options.Value;
+    private readonly SignInOptions _signInOptions = signInOptions.Value;
 
     public async ValueTask<Result> ExecuteAsync(SignInPayload payload,
         CancellationToken cancellationToken = default)
@@ -50,12 +52,12 @@ public sealed class PasswordSignInStrategy(
                 Description = "Invalid payload type"
             });
 
-        if (_options.AllowUserNameLogin)
+        if (_signInOptions.AllowUserNameLogin)
         {
             user = await _userManager.FindByUsernameAsync(passwordPayload.Login, cancellationToken);
         }
 
-        if (user is null && _options.AllowEmailLogin)
+        if (user is null && _signInOptions.AllowEmailLogin)
         {
             user = await _userManager.FindByEmailAsync(passwordPayload.Login, cancellationToken);
         }
@@ -90,7 +92,7 @@ public sealed class PasswordSignInStrategy(
         var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
         if (email is null) return Results.NotFound("Email not found");
 
-        if (_options.RequireConfirmedEmail && !email.IsVerified)
+        if (_signInOptions.RequireConfirmedEmail && !email.IsVerified)
             return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.UnverifiedEmail,
@@ -119,14 +121,14 @@ public sealed class PasswordSignInStrategy(
             var updateResult = await _userManager.UpdateAsync(user, cancellationToken);
             if (!updateResult.Succeeded) return updateResult;
 
-            if (user.FailedLoginAttempts < _options.MaxFailedLoginAttempts)
+            if (user.FailedLoginAttempts < _signInOptions.MaxFailedLoginAttempts)
                 return Results.BadRequest(new Error
                 {
                     Code = ErrorTypes.Common.FailedLoginAttempt,
                     Description = "The password is not valid.",
                     Details = new()
                     {
-                        { "maxFailedLoginAttempts", _options.MaxFailedLoginAttempts },
+                        { "maxFailedLoginAttempts", _signInOptions.MaxFailedLoginAttempts },
                         { "failedLoginAttempts", user.FailedLoginAttempts },
                     }
                 });
@@ -174,7 +176,14 @@ public sealed class PasswordSignInStrategy(
             });
         }
 
-        await _sessionManager.CreateAsync(user, cancellationToken);
+        var session = new SessionEntity
+        {
+            Id = Guid.CreateVersion7(),
+            UserId = user.Id,
+            ExpireDate = DateTimeOffset.UtcNow.Add(_sessionOptions.Timestamp)
+        };
+        
+        await _sessionManager.CreateAsync(session, cancellationToken);
         return Results.Ok(new SignInResponse { UserId = user.Id });
 
     }

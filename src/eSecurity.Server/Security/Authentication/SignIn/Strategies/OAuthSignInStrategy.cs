@@ -21,7 +21,8 @@ public sealed class OAuthSignInStrategy(
     IHttpContextAccessor httpContextAccessor,
     ILinkedAccountManager linkedAccountManager,
     ITwoFactorManager twoFactorManager,
-    ISessionManager sessionManager) : ISignInStrategy
+    ISessionManager sessionManager,
+    IOptions<SessionOptions> options) : ISignInStrategy
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
@@ -29,6 +30,7 @@ public sealed class OAuthSignInStrategy(
     private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly ISessionManager _sessionManager = sessionManager;
+    private readonly SessionOptions _options = options.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async ValueTask<Result> ExecuteAsync(SignInPayload payload,
@@ -110,7 +112,14 @@ public sealed class OAuthSignInStrategy(
             .WithData("state", oauthPayload.State)
             .Build();
 
-        await _sessionManager.CreateAsync(user, cancellationToken);
+        var session = new SessionEntity
+        {
+            Id = Guid.CreateVersion7(),
+            UserId = user.Id,
+            ExpireDate = DateTimeOffset.UtcNow.Add(_options.Timestamp)
+        };
+        
+        await _sessionManager.CreateAsync(session, cancellationToken);
         return Results.Found(QueryBuilder.Create()
             .WithUri(oauthPayload.ReturnUri)
             .WithQueryParam("state", state)
