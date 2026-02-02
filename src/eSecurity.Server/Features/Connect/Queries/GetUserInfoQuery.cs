@@ -2,7 +2,8 @@
 using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
-using eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Validation;
+using eSecurity.Server.Security.Authorization.Constants;
+using eSecurity.Server.Security.Authorization.Token.Validation;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Phone;
 using eSecurity.Server.Security.Identity.Privacy;

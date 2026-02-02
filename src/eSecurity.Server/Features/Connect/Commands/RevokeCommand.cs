@@ -1,4 +1,4 @@
-using eSecurity.Server.Security.Authentication.OpenIdConnect.Token;
+using eSecurity.Server.Security.Authorization.Token;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;

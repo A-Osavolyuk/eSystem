@@ -1,19 +1,10 @@
 ﻿using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
-using eSecurity.Server.Security.Authentication.OpenIdConnect.Code;
-using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Logout;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Logout.Strategies;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Pkce;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
-using eSecurity.Server.Security.Authentication.OpenIdConnect.Token;
-using eSecurity.Server.Security.Authentication.OpenIdConnect.Token.AuthorizationCode;
-using eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Strategies;
-using eSecurity.Server.Security.Authentication.OpenIdConnect.Token.Validation;
-using eSecurity.Server.Security.Authorization.Protocol;
 using eSystem.Core.Http.Results;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Token.Validation;
 
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect;
 
@@ -30,26 +21,6 @@ public static class OdicExtensions
             services.AddKeyedScoped<ILogoutStrategy<List<string>>, FrontchannelLogoutStrategy>(LogoutFlow.Frontchannel);
             services.AddScoped<ILogoutStrategyResolver, LogoutStrategyResolver>();
             services.AddScoped<ILogoutHandler, LogoutHandler>();
-            
-            services.AddScoped<ITokenValidationProvider, TokenValidationProvider>();
-            services.AddScoped<IJwtTokenValidationProvider, JwtTokenValidationProvider>();
-            services.AddKeyedScoped<ITokenValidator, OpaqueTokenValidator>(TokenTypes.Opaque);
-            services.AddKeyedScoped<ITokenValidator, JwtTokenValidator>(TokenTypes.Jwt);
-            services.AddKeyedScoped<IJwtTokenValidator, IdTokenValidator>(JwtTokenTypes.IdToken);
-            services.AddKeyedScoped<IJwtTokenValidator, AccessTokenValidator>(JwtTokenTypes.AccessToken);
-            services.AddKeyedScoped<IJwtTokenValidator, GenericJwtTokenValidator>(JwtTokenTypes.Generic);
-            
-            services.AddScoped<IAuthorizationCodeManager, AuthorizationCodeManager>();
-            services.AddScoped<IAuthorizationCodeFlowResolver, AuthorizationCodeFlowResolver>();
-            services.AddKeyedScoped<IAuthorizationCodeFlow, OidcAuthorizationCodeFlow>(AuthorizationProtocol.OpenIdConnect);
-            services.AddKeyedScoped<IAuthorizationCodeFlow, OAuthAuthorizationCodeFlow>(AuthorizationProtocol.OAuth);
-            
-            services.AddScoped<ITokenManager, TokenManager>();
-            services.AddScoped<ITokenStrategyResolver, TokenStrategyResolver>();
-            services.AddKeyedScoped<ITokenStrategy, AuthorizationCodeStrategy>(GrantTypes.AuthorizationCode);
-            services.AddKeyedScoped<ITokenStrategy, RefreshTokenStrategy>(GrantTypes.RefreshToken);
-            services.AddKeyedScoped<ITokenStrategy, ClientCredentialsStrategy>(GrantTypes.ClientCredentials);
-            services.AddScoped<ITokenContextFactory, TokenContextFactory>();
             
             services.AddSession(cfg => { cfg.Timestamp = TimeSpan.FromDays(30); });
         }
