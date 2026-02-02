@@ -80,17 +80,11 @@ public class LogoutCommandHandler(
             });
         }
 
-        ClientEntity? client;
-        if (string.IsNullOrEmpty(request.Request.ClientId))
-        {
-            var audience = principal.Claims.First(x => x.Type == AppClaimTypes.Aud);
-            client = await _clientManager.FindByAudienceAsync(audience.Value, cancellationToken);
-        }
-        else
-        {
-            client = await _clientManager.FindByIdAsync(request.Request.ClientId, cancellationToken);
-        }
+        var identifier = string.IsNullOrWhiteSpace(request.Request.ClientId)
+            ? principal.Claims.First(x => x.Type == AppClaimTypes.Aud).Value
+            : request.Request.ClientId;
 
+        var client = await _clientManager.FindByIdAsync(identifier, cancellationToken);
         if (client is null)
         {
             return Results.Unauthorized(new Error
