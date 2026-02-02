@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using eSecurity.Server.Common.Errors;
+using eSecurity.Server.Common.Mapping;
 using eSecurity.Server.Common.Messaging;
 using eSecurity.Server.Common.Middlewares;
 using eSecurity.Server.Common.Storage;
@@ -20,6 +21,7 @@ public static class HostApplicationBuilderExtensions
     {
         public void AddServices()
         {
+            builder.AddMapping();
             builder.AddVersioning();
             builder.AddMessaging();
             builder.AddValidation<IAssemblyMarker>();
