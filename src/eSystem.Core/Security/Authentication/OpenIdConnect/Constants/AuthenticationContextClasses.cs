@@ -1,12 +1,12 @@
 ﻿namespace eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 
-public class AuthenticationContextClassReferences
+public class AuthenticationContextClasses
 {
     public static class Saml2
     {
         public const string PasswordProtectedTransport = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport";
         public const string TimeSyncToken = "urn:oasis:names:tc:SAML:2.0:ac:classes:TimeSyncToken";
-        public const string Smartcard = "urn:oasis:names:tc:SAML:2.0:ac:classes:Smartcard";
+        public const string SmartCard = "urn:oasis:names:tc:SAML:2.0:ac:classes:Smartcard";
         public const string MobileTwoFactorContract = "urn:oasis:names:tc:SAML:2.0:ac:classes:MobileTwoFactorContract";
     }
 
