@@ -109,6 +109,19 @@ public sealed class OAuthSignInStrategy(
         }
         
         var twoFactorRequired = await _twoFactorManager.IsEnabledAsync(user, cancellationToken);
+        if (!twoFactorRequired)
+        {
+            var session = new SessionEntity
+            {
+                Id = Guid.CreateVersion7(),
+                UserId = user.Id,
+                AuthenticationMethods = [_mapper.Map(oauthPayload.Type)],
+                ExpireDate = DateTimeOffset.UtcNow.Add(_options.Timestamp)
+            };
+            
+            await _sessionManager.CreateAsync(session, cancellationToken);
+        }
+        
         var state = StateBuilder.Create()
             .WithData("userId", user.Id.ToString())
             .WithData("flow", "sign-in")
@@ -116,16 +129,7 @@ public sealed class OAuthSignInStrategy(
             .WithData("requireTwoFactor", twoFactorRequired)
             .WithData("state", oauthPayload.State)
             .Build();
-
-        var session = new SessionEntity
-        {
-            Id = Guid.CreateVersion7(),
-            UserId = user.Id,
-            AuthenticationMethods = [_mapper.Map(oauthPayload.Type)],
-            ExpireDate = DateTimeOffset.UtcNow.Add(_options.Timestamp)
-        };
         
-        await _sessionManager.CreateAsync(session, cancellationToken);
         return Results.Found(QueryBuilder.Create()
             .WithUri(oauthPayload.ReturnUri)
             .WithQueryParam("state", state)
