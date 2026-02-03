@@ -31,12 +31,12 @@ public static class OdicExtensions
                 cfg.PostLogoutRedirectUri = "https://localhost:6501/connect/logged-out";
                 cfg.SupportedScopes =
                 [
-                    Scopes.OpenId,
-                    Scopes.OfflineAccess,
-                    Scopes.Email,
-                    Scopes.Phone,
-                    Scopes.Profile,
-                    Scopes.Address
+                    ScopesType.OpenId,
+                    ScopesType.OfflineAccess,
+                    ScopesType.Email,
+                    ScopesType.Phone,
+                    ScopesType.Profile,
+                    ScopesType.Address
                 ];
                 cfg.SupportedPrompts =
                 [

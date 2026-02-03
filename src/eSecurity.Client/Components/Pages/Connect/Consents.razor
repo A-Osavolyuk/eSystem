@@ -63,14 +63,14 @@
                         </MudTextM3>
                         <ul>
                             <MudStack Spacing="3" Justify="Justify.Center">
-                                @foreach (var scope in _scopes.Except([Scopes.OfflineAccess, Scopes.OpenId]))
+                                @foreach (var scope in _scopes.Except([ScopesType.OfflineAccess, ScopesType.OpenId]))
                                 {
                                     <li>
                                         <MudGrid>
                                             <MudItem xs="11">
                                                 @switch (scope)
                                                 {
-                                                    case Scopes.Email:
+                                                    case ScopesType.Email:
                                                     {
                                                         <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
                                                             Use your email address to send email notifications, news,
@@ -78,21 +78,21 @@
                                                         </MudTextM3>
                                                         break;
                                                     }
-                                                    case Scopes.Phone:
+                                                    case ScopesType.Phone:
                                                     {
                                                         <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
                                                             Use your phone number to send SMS notifications
                                                         </MudTextM3>
                                                         break;
                                                     }
-                                                    case Scopes.Address:
+                                                    case ScopesType.Address:
                                                     {
                                                         <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
                                                             Use your address for security purposes
                                                         </MudTextM3>
                                                         break;
                                                     }
-                                                    case Scopes.Profile:
+                                                    case ScopesType.Profile:
                                                     {
                                                         <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
                                                             Use your profile data to use it in UI

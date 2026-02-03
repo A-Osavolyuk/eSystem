@@ -60,7 +60,7 @@ public sealed class IdTokenClaimsFactory(
             claims.Add(new(AppClaimTypes.Nonce, context.Nonce));
         }
 
-        if (context.Scopes.Contains(Scopes.Email))
+        if (context.Scopes.Contains(ScopesType.Email))
         {
             var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
             if (email is not null)
@@ -70,7 +70,7 @@ public sealed class IdTokenClaimsFactory(
             }
         }
 
-        if (context.Scopes.Contains(Scopes.Phone))
+        if (context.Scopes.Contains(ScopesType.Phone))
         {
             var phone = await _phoneManager.FindByTypeAsync(user, PhoneNumberType.Primary, cancellationToken);
             if (phone is not null)
@@ -81,7 +81,7 @@ public sealed class IdTokenClaimsFactory(
         }
 
         var personalData = await _personalDataManager.GetAsync(user, cancellationToken);
-        if (context.Scopes.Contains(Scopes.Profile))
+        if (context.Scopes.Contains(ScopesType.Profile))
         {
             claims.Add(new Claim(AppClaimTypes.PreferredUsername, user.Username));
             claims.Add(new Claim(AppClaimTypes.ZoneInfo, user.ZoneInfo));
@@ -108,7 +108,7 @@ public sealed class IdTokenClaimsFactory(
             }
         }
 
-        if (context.Scopes.Contains(Scopes.Address) && personalData?.Address is not null)
+        if (context.Scopes.Contains(ScopesType.Address) && personalData?.Address is not null)
         {
             var claim = new AddressClaim
             {

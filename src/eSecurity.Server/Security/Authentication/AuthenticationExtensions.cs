@@ -66,12 +66,12 @@ public static class AuthenticationExtensions
             cfg.CodeChallengeMethodsSupported = [ChallengeMethods.S256];
             cfg.ScopesSupported =
             [
-                Scopes.OfflineAccess,
-                Scopes.OpenId,
-                Scopes.Email,
-                Scopes.Profile,
-                Scopes.Phone,
-                Scopes.Address
+                ScopesType.OfflineAccess,
+                ScopesType.OpenId,
+                ScopesType.Email,
+                ScopesType.Profile,
+                ScopesType.Phone,
+                ScopesType.Address
             ];
 
             cfg.BackchannelLogoutSupported = true;

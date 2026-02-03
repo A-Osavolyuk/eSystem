@@ -74,12 +74,12 @@ public static class AuthenticationExtensions
                     options.Prompt = "login consent";
 
                     options.Scope.Clear();
-                    options.Scope.Add(Scopes.OpenId);
-                    options.Scope.Add(Scopes.OfflineAccess);
-                    options.Scope.Add(Scopes.Email);
-                    options.Scope.Add(Scopes.Phone);
-                    options.Scope.Add(Scopes.Profile);
-                    options.Scope.Add(Scopes.Address);
+                    options.Scope.Add(ScopesType.OpenId);
+                    options.Scope.Add(ScopesType.OfflineAccess);
+                    options.Scope.Add(ScopesType.Email);
+                    options.Scope.Add(ScopesType.Phone);
+                    options.Scope.Add(ScopesType.Profile);
+                    options.Scope.Add(ScopesType.Address);
 
                     options.Events = new OpenIdConnectEvents
                     {

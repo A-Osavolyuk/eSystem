@@ -84,9 +84,9 @@ public class RefreshTokenStrategy(
             });
         }
 
-        if (client.HasScope(eSystem.Core.Security.Authentication.OpenIdConnect.Constants.Scopes.OpenId))
+        if (client.HasScope(ScopesType.OpenId))
         {
-            if (!client.HasScope(eSystem.Core.Security.Authentication.OpenIdConnect.Constants.Scopes.OfflineAccess))
+            if (!client.HasScope(ScopesType.OfflineAccess))
             {
                 return Results.BadRequest(new Error
                 {
@@ -168,7 +168,7 @@ public class RefreshTokenStrategy(
             response.AccessToken = rawToken;
         }
 
-        if (!client.HasScope(eSystem.Core.Security.Authentication.OpenIdConnect.Constants.Scopes.OpenId))
+        if (!client.HasScope(ScopesType.OpenId))
         {
             if (client.RefreshTokenRotationEnabled)
             {

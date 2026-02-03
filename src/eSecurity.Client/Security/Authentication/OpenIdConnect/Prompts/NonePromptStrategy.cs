@@ -63,7 +63,7 @@ public sealed class NonePromptStrategy(
                 .Build());
         }
 
-        if (scopes.Contains(Scopes.OpenId))
+        if (scopes.Contains(ScopesType.OpenId))
         {
             var session = new SessionCookie
             {

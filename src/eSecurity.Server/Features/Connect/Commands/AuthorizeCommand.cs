@@ -149,7 +149,7 @@ public class AuthorizeCommandHandler(
             });
         }
 
-        var protocol = request.Request.Scopes.Contains(Scopes.OpenId)
+        var protocol = request.Request.Scopes.Contains(ScopesType.OpenId)
             ? AuthorizationProtocol.OpenIdConnect
             : AuthorizationProtocol.OAuth;
         
