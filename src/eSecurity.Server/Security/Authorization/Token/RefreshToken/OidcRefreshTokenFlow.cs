@@ -135,7 +135,7 @@ public sealed class OidcRefreshTokenFlow(
             var claimsFactory = _claimFactoryProvider.GetClaimFactory<AccessTokenClaimsContext, UserEntity>();
             var claims = await claimsFactory.GetClaimsAsync(user, new AccessTokenClaimsContext
             {
-                Aud = client.Audience,
+                Aud = client.Audiences.Select(x => x.Audience),
                 Scopes = client.AllowedScopes.Select(x => x.Scope),
             }, cancellationToken);
 
@@ -199,7 +199,7 @@ public sealed class OidcRefreshTokenFlow(
         var idClaimsFactory = _claimFactoryProvider.GetClaimFactory<IdTokenClaimsContext, UserEntity>();
         var idClaims = await idClaimsFactory.GetClaimsAsync(user, new IdTokenClaimsContext
         {
-            Aud = client.Id.ToString(),
+            Aud = [client.Id.ToString()],
             Scopes = client.AllowedScopes.Select(x => x.Scope),
             Sid = session.Id.ToString(),
             AuthTime = DateTimeOffset.UtcNow,

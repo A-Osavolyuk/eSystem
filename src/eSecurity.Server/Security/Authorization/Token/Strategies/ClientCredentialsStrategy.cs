@@ -100,7 +100,7 @@ public sealed class ClientCredentialsStrategy(
             var claimsFactory = _claimFactoryProvider.GetClaimFactory<AccessTokenClaimsContext, ClientEntity>();
             var claimsContext = new AccessTokenClaimsContext
             {
-                Aud = client.Audience,
+                Aud = client.Audiences.Select(x => x.Audience),
                 Scopes = allowedScopes
             };
             

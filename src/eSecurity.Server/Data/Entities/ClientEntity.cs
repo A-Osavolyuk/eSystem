@@ -8,7 +8,6 @@ public class ClientEntity : Entity
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;
-    public string Audience { get; set; } = string.Empty;
     public ClientType ClientType { get; set; }
     public AccessTokenType AccessTokenType { get; set; }
 
@@ -34,6 +33,7 @@ public class ClientEntity : Entity
     public ICollection<ClientAllowedScopeEntity> AllowedScopes { get; set; } = null!;
     public ICollection<ClientResponseTypeEntity> ResponseTypes { get; set; } = null!;
     public ICollection<ClientGrantTypeEntity> GrantTypes { get; set; } = null!;
+    public ICollection<ClientAudienceEntity> Audiences { get; set; } = null!;
     public ICollection<ClientUriEntity> Uris { get; set; } = null!;
 
     public bool HasScopes(List<string> scopes)

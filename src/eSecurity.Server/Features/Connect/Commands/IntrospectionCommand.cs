@@ -1,4 +1,5 @@
-﻿using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
+﻿using System.Text.Json;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authorization.Token;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Identity.User;
@@ -63,7 +64,7 @@ public class IntrospectionCommandHandler(
             TokenType = tokenType,
             ClientId = token.Client.Id,
             Issuer = _options.Issuer,
-            Audience = token.Client.Audience,
+            Audience = JsonSerializer.Serialize(token.Client.Audiences),
             IssuedAt = token.CreateDate!.Value.ToUnixTimeSeconds(),
             Expiration = token.ExpiredDate.ToUnixTimeSeconds(),
             Scope = string.Join(" ", token.Scopes.Select(x => x.Scope))

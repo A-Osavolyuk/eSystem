@@ -120,7 +120,7 @@ public class OAuthAuthorizationCodeFlow(
             var claimsFactory = _claimFactoryProvider.GetClaimFactory<AccessTokenClaimsContext, UserEntity>();
             var claims = await claimsFactory.GetClaimsAsync(user, new AccessTokenClaimsContext
             {
-                Aud = client.Audience,
+                Aud = client.Audiences.Select(x => x.Audience),
                 Scopes = client.AllowedScopes.Select(x => x.Scope),
                 Nonce = code.Nonce
             }, cancellationToken);

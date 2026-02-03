@@ -2,7 +2,7 @@
 
 public abstract class TokenClaimsContext
 {
-    public required string Aud { get; set; }
+    public required IEnumerable<string> Aud { get; set; }
     public string? Nonce { get; set; }
 
     public DateTimeOffset? Nbf { get; set; }

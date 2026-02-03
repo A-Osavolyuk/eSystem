@@ -11,7 +11,6 @@ public sealed class ClientConfiguration : IEntityTypeConfiguration<ClientEntity>
         builder.Property(x => x.Secret).HasMaxLength(200);
         builder.Property(x => x.SectorIdentifierUri).HasMaxLength(200);
         builder.Property(x => x.Name).HasMaxLength(64);
-        builder.Property(x => x.Audience).HasMaxLength(64);
         builder.Property(x => x.LogoUri).HasMaxLength(100);
         builder.Property(x => x.ClientUri).HasMaxLength(100);
         builder.Property(x => x.ClientType).HasConversion<string>();

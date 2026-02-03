@@ -30,7 +30,7 @@ public sealed class LogoutTokenClaimsFactory(
         {
             new(AppClaimTypes.Jti, Guid.NewGuid().ToString()),
             new(AppClaimTypes.Iss, _tokenOptions.Issuer),
-            new(AppClaimTypes.Aud, context.Aud),
+            new(AppClaimTypes.Aud, JsonSerializer.Serialize(context.Aud)),
             new(AppClaimTypes.Sub, source.Id.ToString()),
             new(AppClaimTypes.Sid, context.Sid),
             new(AppClaimTypes.Iat, iat, ClaimValueTypes.Integer64),

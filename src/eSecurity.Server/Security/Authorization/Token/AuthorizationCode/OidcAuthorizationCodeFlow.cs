@@ -118,7 +118,7 @@ public class OidcAuthorizationCodeFlow(
             var claimsFactory = _claimFactoryProvider.GetClaimFactory<AccessTokenClaimsContext, UserEntity>();
             var claims = await claimsFactory.GetClaimsAsync(user, new AccessTokenClaimsContext
             {
-                Aud = client.Audience,
+                Aud = client.Audiences.Select(x => x.Audience),
                 Scopes = client.AllowedScopes.Select(x => x.Scope),
                 Nonce = code.Nonce
             }, cancellationToken);
@@ -191,7 +191,7 @@ public class OidcAuthorizationCodeFlow(
         var idClaimsFactory = _claimFactoryProvider.GetClaimFactory<IdTokenClaimsContext, UserEntity>();
         var idClaims = await idClaimsFactory.GetClaimsAsync(user, new IdTokenClaimsContext
         {
-            Aud = client.Id.ToString(),
+            Aud = [client.Id.ToString()],
             Nonce = code.Nonce,
             Scopes = client.AllowedScopes.Select(x => x.Scope),
             Sid = session.Id.ToString(),

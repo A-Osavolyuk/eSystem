@@ -30,6 +30,9 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<ClientAllowedScopeEntity> ClientAllowedScopes { get; set; }
     public DbSet<ClientGrantTypeEntity> ClientGrantTypes { get; set; }
     public DbSet<ClientUriEntity> ClientUris { get; set; }
+    public DbSet<ClientTokenAuthMethodEntity> ClientTokenAuthMethods { get; set; }
+    public DbSet<ClientResponseTypeEntity> ClientResponseTypes { get; set; }
+    public DbSet<ClientAudienceEntity> ClientAudiences { get; set; }
     public DbSet<GrantedScopeEntity> GrantedScopes { get; set; }
     public DbSet<SessionEntity> Sessions { get; set; }
     public DbSet<AuthorizationCodeEntity> AuthorizationCodes { get; set; }
@@ -39,8 +42,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<OpaqueTokenScopeEntity> OpaqueTokensScopes { get; set; }
     public DbSet<PairwiseSubjectEntity> PairwiseSubjects { get; set; }
     public DbSet<ClientSessionEntity> ClientSessions { get; set; }
-    public DbSet<ClientTokenAuthMethodEntity> ClientTokenAuthMethods { get; set; }
-    public DbSet<ClientResponseTypeEntity> ClientResponseTypes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

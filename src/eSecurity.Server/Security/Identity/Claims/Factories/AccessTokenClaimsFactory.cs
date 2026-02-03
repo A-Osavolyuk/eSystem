@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using System.Text.Json;
 using eSecurity.Server.Data.Entities;
 using eSystem.Core.Security.Identity.Claims;
 
@@ -18,12 +19,12 @@ public sealed class AccessTokenClaimsFactory(IOptions<TokenOptions> options)
     {
         var exp = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime).ToUnixTimeSeconds().ToString();
         var iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
-
+        
         var claims = new List<Claim>
         {
             new(AppClaimTypes.Jti, Guid.NewGuid().ToString()),
             new(AppClaimTypes.Iss, _options.Issuer),
-            new(AppClaimTypes.Aud, context.Aud),
+            new(AppClaimTypes.Aud, JsonSerializer.Serialize(context.Aud)),
             new(AppClaimTypes.Sub, user.Id.ToString()),
             new(AppClaimTypes.Scope, string.Join(" ", context.Scopes)),
             new(AppClaimTypes.Exp, exp, ClaimValueTypes.Integer64),
@@ -46,7 +47,7 @@ public sealed class AccessTokenClaimsFactory(IOptions<TokenOptions> options)
         {
             new(AppClaimTypes.Jti, Guid.NewGuid().ToString()),
             new(AppClaimTypes.Iss, _options.Issuer),
-            new(AppClaimTypes.Aud, context.Aud),
+            new(AppClaimTypes.Aud, JsonSerializer.Serialize(context.Aud)),
             new(AppClaimTypes.Sub, source.Id.ToString()),
             new(AppClaimTypes.Scope, string.Join(" ", context.Scopes)),
             new(AppClaimTypes.Exp, exp, ClaimValueTypes.Integer64),

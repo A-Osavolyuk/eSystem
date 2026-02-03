@@ -41,7 +41,7 @@ public sealed class IdTokenClaimsFactory(
         {
             new(AppClaimTypes.Jti, Guid.NewGuid().ToString()),
             new(AppClaimTypes.Iss, _options.Issuer),
-            new(AppClaimTypes.Aud, context.Aud),
+            new(AppClaimTypes.Aud, JsonSerializer.Serialize(context.Aud)),
             new(AppClaimTypes.Sub, user.Id.ToString()),
             new(AppClaimTypes.Sid, context.Sid),
             new(AppClaimTypes.Exp, exp, ClaimValueTypes.Integer64),

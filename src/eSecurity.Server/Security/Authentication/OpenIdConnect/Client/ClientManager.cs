@@ -17,6 +17,7 @@ public class ClientManager(AuthDbContext context) : IClientManager
             .Include(x => x.Client.AllowedScopes)
             .Include(x => x.Client.GrantTypes)
             .Include(x => x.Client.PairwiseSubjects)
+            .Include(x => x.Client.Audiences)
             .Select(x => x.Client)
             .ToListAsync(cancellationToken);
     }
@@ -30,6 +31,7 @@ public class ClientManager(AuthDbContext context) : IClientManager
             .Include(x => x.AllowedScopes)
             .ThenInclude(x => x.Scope)
             .Include(x => x.GrantTypes)
+            .Include(x => x.Audiences)
             .FirstOrDefaultAsync(cancellationToken);
     }
 
@@ -42,24 +44,16 @@ public class ClientManager(AuthDbContext context) : IClientManager
             .Include(x => x.AllowedScopes)
             .ThenInclude(x => x.Scope)
             .Include(x => x.GrantTypes)
+            .Include(x => x.Audiences)
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async ValueTask<ClientEntity?> FindByAudienceAsync(string audience,
+    public async ValueTask<List<string>> GetAudiencesAsync(
         CancellationToken cancellationToken = default)
     {
-        return await _context.Clients
-            .Where(c => c.Audience == audience || c.Id == Guid.Parse(audience))
-            .Include(x => x.Uris)
-            .Include(x => x.AllowedScopes)
-            .ThenInclude(x => x.Scope)
-            .Include(x => x.GrantTypes)
-            .FirstOrDefaultAsync(cancellationToken);
-    }
-
-    public async ValueTask<List<string>> GetAudiencesAsync(CancellationToken cancellationToken = default)
-    {
-        return await _context.Clients.Select(x => x.Audience).ToListAsync(cancellationToken);
+        return await _context.ClientAudiences
+            .Select(x => x.Audience)
+            .ToListAsync(cancellationToken);
     }
 
     public async ValueTask<Result> CreateAsync(ClientEntity entity, CancellationToken cancellationToken = default)

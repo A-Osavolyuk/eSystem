@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using System.Text.Json;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSystem.Core.Security.Authorization.OAuth.Token.Validation;
 using eSystem.Core.Security.Identity.Claims;
@@ -25,12 +26,13 @@ public class OpaqueTokenValidator(
         if (opaqueToken is null || !opaqueToken.IsValid)
             return TokenValidationResult.Fail();
 
+        var aud = JsonSerializer.Serialize(opaqueToken.Client.Audiences.Select(x => x.Audience));
         var scopes = opaqueToken.Scopes.Select(x => x.Scope);
         var claims = new List<Claim>
         {
             new(AppClaimTypes.Jti, opaqueToken.Id.ToString()),
             new(AppClaimTypes.Sid, opaqueToken.SessionId!.Value.ToString()),
-            new(AppClaimTypes.Aud, opaqueToken.Client.Audience),
+            new(AppClaimTypes.Aud, aud),
             new(AppClaimTypes.Iss, _tokenOptions.Issuer),
             new(AppClaimTypes.Sub, opaqueToken.Session!.UserId.ToString()),
             new(AppClaimTypes.Iat, opaqueToken.CreateDate!.Value.ToUnixTimeSeconds().ToString()),
