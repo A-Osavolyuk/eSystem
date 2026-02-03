@@ -23,7 +23,7 @@ public class TokenContextFactory : ITokenContextFactory
             {
                 ClientId = request.ClientId,
                 GrantType = request.GrantType,
-                RefreshToken = request.RefreshToken
+                RefreshToken = request.RefreshToken ?? throw new NullReferenceException("Refresh token cannot be null")
             },
             GrantTypes.ClientCredentials => new ClientCredentialsContext
             {

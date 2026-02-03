@@ -9,6 +9,7 @@ using eSecurity.Server.Security.Authorization.Roles;
 using eSecurity.Server.Security.Authorization.Scopes;
 using eSecurity.Server.Security.Authorization.Token;
 using eSecurity.Server.Security.Authorization.Token.AuthorizationCode;
+using eSecurity.Server.Security.Authorization.Token.RefreshToken;
 using eSecurity.Server.Security.Authorization.Token.Strategies;
 using eSecurity.Server.Security.Authorization.Token.Validation;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
@@ -42,6 +43,10 @@ public static class AuthorizationExtensions
         builder.Services.AddScoped<IAuthorizationCodeFlowResolver, AuthorizationCodeFlowResolver>();
         builder.Services.AddKeyedScoped<IAuthorizationCodeFlow, OidcAuthorizationCodeFlow>(AuthorizationProtocol.OpenIdConnect);
         builder.Services.AddKeyedScoped<IAuthorizationCodeFlow, OAuthAuthorizationCodeFlow>(AuthorizationProtocol.OAuth);
+        
+        builder.Services.AddScoped<IRefreshTokenFlowResolver, RefreshTokenFlowResolver>();
+        builder.Services.AddKeyedScoped<IRefreshTokenFlow, OidcRefreshTokenFlow>(AuthorizationProtocol.OpenIdConnect);
+        builder.Services.AddKeyedScoped<IRefreshTokenFlow, OAuthRefreshTokenFlow>(AuthorizationProtocol.OAuth);
             
         builder.Services.AddScoped<ITokenManager, TokenManager>();
         builder.Services.AddScoped<ITokenStrategyResolver, TokenStrategyResolver>();
