@@ -142,14 +142,4 @@ public class ConnectController(ISender sender) : ControllerBase
         var result = await _sender.Send(new LogoutCommand(request));
         return HttpContext.HandleResult(result);
     }
-    
-    [EndpointSummary("Registration")]
-    [EndpointDescription("Registration")]
-    [ProducesResponseType(200)]
-    [HttpPost("registration")]
-    public async ValueTask<IActionResult> CreateClientAsync([FromBody] RegistrationRequest request)
-    {
-        var result = await _sender.Send(new CreateClientCommand(request));
-        return HttpContext.HandleResult(result);
-    }
 }
