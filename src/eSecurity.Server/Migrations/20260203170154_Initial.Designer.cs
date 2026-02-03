@@ -12,7 +12,7 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20260203135633_Initial")]
+    [Migration("20260203170154_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -88,21 +88,26 @@ namespace eSecurity.Server.Migrations
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientAllowedScopeEntity", b =>
                 {
-                    b.Property<Guid>("ClientId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ScopeId")
+                    b.Property<Guid>("ClientId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Scope")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("ClientId", "ScopeId");
+                    b.HasKey("Id");
 
-                    b.HasIndex("ScopeId");
+                    b.HasIndex("ClientId");
 
                     b.ToTable("ClientAllowedScopes", "public");
                 });
@@ -208,6 +213,33 @@ namespace eSecurity.Server.Migrations
                     b.HasIndex("ClientId");
 
                     b.ToTable("ClientGrantTypes", "public");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientResponseTypeEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ResponseType")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.ToTable("ClientResponseTypes", "public");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientSessionEntity", b =>
@@ -360,7 +392,8 @@ namespace eSecurity.Server.Migrations
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.GrantedScopeEntity", b =>
                 {
-                    b.Property<Guid>("ScopeId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("ConsentId")
@@ -369,10 +402,14 @@ namespace eSecurity.Server.Migrations
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Scope")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("ScopeId", "ConsentId");
+                    b.HasKey("Id");
 
                     b.HasIndex("ConsentId");
 
@@ -431,21 +468,26 @@ namespace eSecurity.Server.Migrations
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.OpaqueTokenScopeEntity", b =>
                 {
-                    b.Property<Guid>("TokenId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ScopeId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Scope")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TokenId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("TokenId", "ScopeId");
+                    b.HasKey("Id");
 
-                    b.HasIndex("ScopeId");
+                    b.HasIndex("TokenId");
 
                     b.ToTable("OpaqueTokensScopes", "public");
                 });
@@ -737,33 +779,6 @@ namespace eSecurity.Server.Migrations
                     b.HasIndex("PermissionId");
 
                     b.ToTable("RolePermissions", "public");
-                });
-
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.ScopeEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<DateTimeOffset?>("UpdateDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Scopes", "public");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.SessionEntity", b =>
@@ -1295,21 +1310,24 @@ namespace eSecurity.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eSecurity.Server.Data.Entities.ScopeEntity", "Scope")
-                        .WithMany()
-                        .HasForeignKey("ScopeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Client");
-
-                    b.Navigation("Scope");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientGrantTypeEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
                         .WithMany("GrantTypes")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientResponseTypeEntity", b =>
+                {
+                    b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
+                        .WithMany("ResponseTypes")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1396,15 +1414,7 @@ namespace eSecurity.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("eSecurity.Server.Data.Entities.ScopeEntity", "Scope")
-                        .WithMany()
-                        .HasForeignKey("ScopeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Consent");
-
-                    b.Navigation("Scope");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.OpaqueTokenEntity", b =>
@@ -1427,19 +1437,11 @@ namespace eSecurity.Server.Migrations
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.OpaqueTokenScopeEntity", b =>
                 {
-                    b.HasOne("eSecurity.Server.Data.Entities.ScopeEntity", "Scope")
-                        .WithMany()
-                        .HasForeignKey("ScopeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("eSecurity.Server.Data.Entities.OpaqueTokenEntity", "Token")
                         .WithMany("Scopes")
                         .HasForeignKey("TokenId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Scope");
 
                     b.Navigation("Token");
                 });
@@ -1756,6 +1758,8 @@ namespace eSecurity.Server.Migrations
                     b.Navigation("GrantTypes");
 
                     b.Navigation("PairwiseSubjects");
+
+                    b.Navigation("ResponseTypes");
 
                     b.Navigation("TokenAuthMethods");
 
