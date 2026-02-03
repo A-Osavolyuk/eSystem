@@ -96,7 +96,7 @@ public sealed class OidcRefreshTokenFlow(
             });
         }
 
-        if (!client.HasScope(ScopesType.OfflineAccess))
+        if (!client.HasScope(ScopeTypes.OfflineAccess))
         {
             return Results.BadRequest(new Error
             {

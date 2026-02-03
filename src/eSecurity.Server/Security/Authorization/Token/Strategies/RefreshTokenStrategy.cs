@@ -56,7 +56,7 @@ public class RefreshTokenStrategy(
             });
         }
 
-        var protocol = refreshToken.Scopes.Any(x => x.Scope == ScopesType.OpenId)
+        var protocol = refreshToken.Scopes.Any(x => x.Scope == ScopeTypes.OpenId)
             ? AuthorizationProtocol.OpenIdConnect
             : AuthorizationProtocol.OAuth;
 

@@ -164,7 +164,7 @@ public class OidcAuthorizationCodeFlow(
         var clientResult = await _clientManager.RelateAsync(client, session, cancellationToken);
         if (!clientResult.Succeeded) return clientResult;
 
-        if (client.AllowOfflineAccess && client.HasScope(ScopesType.OfflineAccess))
+        if (client.AllowOfflineAccess && client.HasScope(ScopeTypes.OfflineAccess))
         {
             var refreshTokenContext = new OpaqueTokenContext { Length = _options.RefreshTokenLength };
             var refreshTokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();

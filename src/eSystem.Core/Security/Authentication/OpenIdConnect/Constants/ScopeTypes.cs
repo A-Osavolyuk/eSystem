@@ -1,6 +1,6 @@
 ﻿namespace eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 
-public static class ScopesType
+public static class ScopeTypes
 {
     public const string OpenId = "openid";
     public const string Profile = "profile";

@@ -74,7 +74,7 @@ public class GetUserInfoQueryHandler(
 
         var claimsPrincipal = validationResult.ClaimsPrincipal;
         var scopeClaim = claimsPrincipal.Claims.FirstOrDefault(x => x.Type == AppClaimTypes.Scope);
-        if (scopeClaim is null || !scopeClaim.Value.Contains(ScopesType.OpenId))
+        if (scopeClaim is null || !scopeClaim.Value.Contains(ScopeTypes.OpenId))
         {
             const string description = "The access token does not contain the required 'openid' scope";
 
@@ -121,7 +121,7 @@ public class GetUserInfoQueryHandler(
 
         var response = new UserInfoResponse { Subject = subjectClaim.Value, Amr = session.AuthenticationMethods };
         var scopes = scopeClaim.Value.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        if (scopes.Contains(ScopesType.Email))
+        if (scopes.Contains(ScopeTypes.Email))
         {
             var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
             if (email is not null)
@@ -131,7 +131,7 @@ public class GetUserInfoQueryHandler(
             }
         }
 
-        if (scopes.Contains(ScopesType.Phone))
+        if (scopes.Contains(ScopeTypes.Phone))
         {
             var phoneNumber = await _phoneManager.FindByTypeAsync(user, PhoneNumberType.Primary, cancellationToken);
             if (phoneNumber is not null)
@@ -142,7 +142,7 @@ public class GetUserInfoQueryHandler(
         }
 
         var personalData = await _personalDataManager.GetAsync(user, cancellationToken);
-        if (scopes.Contains(ScopesType.Profile))
+        if (scopes.Contains(ScopeTypes.Profile))
         {
             response.PreferredUsername = user.Username;
             response.UpdatedAt = user.UpdateDate?.ToUnixTimeSeconds();
@@ -160,7 +160,7 @@ public class GetUserInfoQueryHandler(
             }
         }
 
-        if (scopes.Contains(ScopesType.Address) && personalData?.Address is not null)
+        if (scopes.Contains(ScopeTypes.Address) && personalData?.Address is not null)
         {
             response.Address = new AddressClaim
             {
