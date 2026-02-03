@@ -40,6 +40,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<PairwiseSubjectEntity> PairwiseSubjects { get; set; }
     public DbSet<ClientSessionEntity> ClientSessions { get; set; }
     public DbSet<ClientTokenAuthMethodEntity> ClientTokenAuthMethods { get; set; }
+    public DbSet<ClientResponseTypeEntity> ClientResponseTypes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

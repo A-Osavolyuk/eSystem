@@ -32,6 +32,7 @@ public class ClientEntity : Entity
     public ICollection<ClientTokenAuthMethodEntity> TokenAuthMethods { get; set; } = null!;
     public ICollection<PairwiseSubjectEntity> PairwiseSubjects { get; set; } = null!;
     public ICollection<ClientAllowedScopeEntity> AllowedScopes { get; set; } = null!;
+    public ICollection<ClientResponseTypeEntity> ResponseTypes { get; set; } = null!;
     public ICollection<ClientGrantTypeEntity> GrantTypes { get; set; } = null!;
     public ICollection<ClientUriEntity> Uris { get; set; } = null!;
 
