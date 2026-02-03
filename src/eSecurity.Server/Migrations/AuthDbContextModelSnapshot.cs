@@ -109,6 +109,33 @@ namespace eSecurity.Server.Migrations
                     b.ToTable("ClientAllowedScopes", "public");
                 });
 
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientAudienceEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Audience")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.ToTable("ClientAudiences", "public");
+                });
+
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -127,11 +154,6 @@ namespace eSecurity.Server.Migrations
 
                     b.Property<bool>("AllowOfflineAccess")
                         .HasColumnType("boolean");
-
-                    b.Property<string>("Audience")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
 
                     b.Property<string>("ClientType")
                         .IsRequired()
@@ -1310,6 +1332,17 @@ namespace eSecurity.Server.Migrations
                     b.Navigation("Client");
                 });
 
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientAudienceEntity", b =>
+                {
+                    b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
+                        .WithMany("Audiences")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientGrantTypeEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
@@ -1751,6 +1784,8 @@ namespace eSecurity.Server.Migrations
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientEntity", b =>
                 {
                     b.Navigation("AllowedScopes");
+
+                    b.Navigation("Audiences");
 
                     b.Navigation("GrantTypes");
 

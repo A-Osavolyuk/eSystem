@@ -40,7 +40,6 @@ namespace eSecurity.Server.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    Audience = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
                     ClientType = table.Column<string>(type: "text", nullable: false),
                     AccessTokenType = table.Column<string>(type: "text", nullable: false),
                     RequireClientSecret = table.Column<bool>(type: "boolean", nullable: false),
@@ -133,6 +132,29 @@ namespace eSecurity.Server.Migrations
                     table.PrimaryKey("PK_ClientAllowedScopes", x => x.Id);
                     table.ForeignKey(
                         name: "FK_ClientAllowedScopes_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalSchema: "public",
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClientAudiences",
+                schema: "public",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Audience = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientAudiences", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClientAudiences_Clients_ClientId",
                         column: x => x.ClientId,
                         principalSchema: "public",
                         principalTable: "Clients",
@@ -991,6 +1013,12 @@ namespace eSecurity.Server.Migrations
                 column: "ClientId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ClientAudiences_ClientId",
+                schema: "public",
+                table: "ClientAudiences",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ClientGrantTypes_ClientId",
                 schema: "public",
                 table: "ClientGrantTypes",
@@ -1207,6 +1235,10 @@ namespace eSecurity.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "ClientAllowedScopes",
+                schema: "public");
+
+            migrationBuilder.DropTable(
+                name: "ClientAudiences",
                 schema: "public");
 
             migrationBuilder.DropTable(
