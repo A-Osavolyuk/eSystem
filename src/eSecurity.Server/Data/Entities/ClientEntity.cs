@@ -29,6 +29,7 @@ public class ClientEntity : Entity
     public string? LogoUri { get; set; }
     public string? ClientUri { get; set; }
 
+    public ICollection<ClientTokenAuthMethodEntity> TokenAuthMethods { get; set; } = null!;
     public ICollection<PairwiseSubjectEntity> PairwiseSubjects { get; set; } = null!;
     public ICollection<ClientAllowedScopeEntity> AllowedScopes { get; set; } = null!;
     public ICollection<ClientGrantTypeEntity> GrantTypes { get; set; } = null!;
