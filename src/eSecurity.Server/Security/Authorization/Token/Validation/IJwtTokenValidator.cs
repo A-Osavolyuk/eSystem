@@ -1,4 +1,4 @@
-﻿using TokenValidationResult = eSystem.Core.Security.Authentication.OpenIdConnect.Token.Validation.TokenValidationResult;
+﻿using TokenValidationResult = eSystem.Core.Security.Authorization.OAuth.Token.Validation.TokenValidationResult;
 
 namespace eSecurity.Server.Security.Authorization.Token.Validation;
 

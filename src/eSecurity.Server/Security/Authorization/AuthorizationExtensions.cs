@@ -12,9 +12,9 @@ using eSecurity.Server.Security.Authorization.Token.AuthorizationCode;
 using eSecurity.Server.Security.Authorization.Token.RefreshToken;
 using eSecurity.Server.Security.Authorization.Token.Strategies;
 using eSecurity.Server.Security.Authorization.Token.Validation;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Token.Validation;
 using eSystem.Core.Security.Authentication.Schemes;
+using eSystem.Core.Security.Authorization.OAuth.Constants;
+using eSystem.Core.Security.Authorization.OAuth.Token.Validation;
 
 namespace eSecurity.Server.Security.Authorization;
 

@@ -1,4 +1,4 @@
-﻿using eSystem.Core.Security.Authentication.OpenIdConnect.Token;
+﻿using eSystem.Core.Security.Authorization.OAuth.Token;
 using TokenContext = eSecurity.Server.Security.Authorization.Token.Strategies.TokenContext;
 
 namespace eSecurity.Server.Security.Authorization.Token;

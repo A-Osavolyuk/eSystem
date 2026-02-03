@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace eSystem.Core.Security.Authentication.OpenIdConnect.Introspection;
+namespace eSystem.Core.Security.Authorization.OAuth.Introspection;
 
 public class IntrospectionResponse
 {

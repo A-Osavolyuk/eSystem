@@ -5,8 +5,8 @@ using eSecurity.Server.Security.Identity.Claims;
 using eSecurity.Server.Security.Identity.Claims.Factories;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Results;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Logout;
+using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Cryptography.Encoding;
 
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Logout.Strategies;

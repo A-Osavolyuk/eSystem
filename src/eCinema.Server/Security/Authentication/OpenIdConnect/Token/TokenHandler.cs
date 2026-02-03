@@ -1,8 +1,8 @@
 ﻿using eCinema.Server.Security.Authentication.OpenIdConnect.Discovery;
 using eSystem.Core.Common.Gateway;
 using eSystem.Core.Http.Extensions;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Token;
+using eSystem.Core.Security.Authorization.OAuth.Constants;
+using eSystem.Core.Security.Authorization.OAuth.Token;
 using eSystem.Core.Security.Cryptography.Encoding;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;

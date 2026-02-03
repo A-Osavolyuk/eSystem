@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace eSystem.Core.Security.Authentication.OpenIdConnect.Token;
+namespace eSystem.Core.Security.Authorization.OAuth.Token;
 
 public class TokenResponse
 {

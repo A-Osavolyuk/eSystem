@@ -5,10 +5,10 @@ using eSecurity.Server.Security.Authorization.Constants;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Http.Results;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Introspection;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Revocation;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Token;
 using eSystem.Core.Security.Authentication.OpenIdConnect.User;
+using eSystem.Core.Security.Authorization.OAuth.Introspection;
+using eSystem.Core.Security.Authorization.OAuth.Revocation;
+using eSystem.Core.Security.Authorization.OAuth.Token;
 
 namespace eSecurity.Server.Controllers.v1;
 

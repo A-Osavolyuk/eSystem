@@ -1,4 +1,4 @@
-﻿using eSystem.Core.Security.Authentication.OpenIdConnect.Token.Validation;
+﻿using eSystem.Core.Security.Authorization.OAuth.Token.Validation;
 
 namespace eSecurity.Server.Security.Authorization.Token.Validation;
 

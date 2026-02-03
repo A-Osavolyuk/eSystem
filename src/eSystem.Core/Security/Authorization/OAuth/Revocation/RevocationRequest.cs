@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
-namespace eSystem.Core.Security.Authentication.OpenIdConnect.Introspection;
+namespace eSystem.Core.Security.Authorization.OAuth.Revocation;
 
-public class IntrospectionRequest
+public class RevocationRequest
 {
     [FromForm(Name = "token")]
     public required string Token { get; set; }

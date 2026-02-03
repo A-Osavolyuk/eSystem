@@ -18,6 +18,9 @@ public sealed class OpenIdConfiguration
     
     [JsonPropertyName("device_authorization_endpoint")]
     public string DeviceAuthorizationEndpoint { get; set; } = string.Empty;
+
+    [JsonPropertyName("registration_endpoint")]
+    public string? RegistrationEndpoint { get; set; }
     
 
     [JsonPropertyName("authorization_endpoint")]

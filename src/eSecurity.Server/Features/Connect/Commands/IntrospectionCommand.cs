@@ -4,8 +4,8 @@ using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Introspection;
+using eSystem.Core.Security.Authorization.OAuth.Constants;
+using eSystem.Core.Security.Authorization.OAuth.Introspection;
 
 namespace eSecurity.Server.Features.Connect.Commands;
 

@@ -2,8 +2,8 @@ using eSecurity.Server.Security.Authorization.Token;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Revocation;
+using eSystem.Core.Security.Authorization.OAuth.Constants;
+using eSystem.Core.Security.Authorization.OAuth.Revocation;
 
 namespace eSecurity.Server.Features.Connect.Commands;
 

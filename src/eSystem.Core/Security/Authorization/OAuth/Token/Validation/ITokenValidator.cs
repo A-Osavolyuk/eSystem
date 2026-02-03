@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.Security.Authentication.OpenIdConnect.Token.Validation;
+﻿namespace eSystem.Core.Security.Authorization.OAuth.Token.Validation;
 
 public interface ITokenValidator
 {

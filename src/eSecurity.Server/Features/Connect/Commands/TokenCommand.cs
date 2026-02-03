@@ -3,7 +3,7 @@ using eSecurity.Server.Security.Authorization.Token.Strategies;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Token;
+using eSystem.Core.Security.Authorization.OAuth.Token;
 
 namespace eSecurity.Server.Features.Connect.Commands;
 

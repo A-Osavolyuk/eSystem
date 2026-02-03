@@ -4,7 +4,7 @@ using eSecurity.Server.Security.Authorization.Constants;
 using eSecurity.Server.Security.Authorization.Token.Validation;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Token.Validation;
+using eSystem.Core.Security.Authorization.OAuth.Token.Validation;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.Connect.Commands;

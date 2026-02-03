@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
+﻿namespace eSystem.Core.Security.Authorization.OAuth.Constants;
 
 public static class GrantTypes
 {
