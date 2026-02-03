@@ -7,15 +7,11 @@ public sealed class ClientAllowedScopeConfiguration : IEntityTypeConfiguration<C
 {
     public void Configure(EntityTypeBuilder<ClientAllowedScopeEntity> builder)
     {
-        builder.HasKey(x => new { x.ClientId, x.ScopeId });
+        builder.HasKey(x => x.Id);
 
         builder.HasOne(x => x.Client)
             .WithMany(x => x.AllowedScopes)
             .HasForeignKey(x => x.ClientId)
             .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasOne(x => x.Scope)
-            .WithMany()
-            .HasForeignKey(x => x.ScopeId);
     }
 }

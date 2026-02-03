@@ -8,7 +8,7 @@ public static class Results
     public static Result Ok(object response) => Result.Success(HttpStatusCode.OK, response);
 
     public static Result Ok() => Result.Success(HttpStatusCode.OK);
-    public static Result Created() => Result.Success(HttpStatusCode.Created);
+    public static Result Created(object? response = null) => Result.Success(HttpStatusCode.Created, response);
     public static Result Found(string uri) => Result.Success(HttpStatusCode.Found, uri);
     public static Result SeeOther(string uri) => Result.Success(HttpStatusCode.SeeOther, uri);
 

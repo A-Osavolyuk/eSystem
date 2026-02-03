@@ -14,7 +14,7 @@ public class ConsentEntity : Entity
 
     public bool HasScopes(IEnumerable<string> scopes, out IEnumerable<string> remainingScopes)
     {
-        remainingScopes = GrantedScopes.Select(x => x.Scope.Name).Except(scopes);
+        remainingScopes = GrantedScopes.Select(x => x.Scope).Except(scopes);
         return !remainingScopes.Any();
     }
 }

@@ -31,13 +31,14 @@ public class ConsentManager(AuthDbContext context) : IConsentManager
         return Results.Ok();
     }
 
-    public async ValueTask<Result> GrantAsync(ConsentEntity consent, ScopeEntity scope,
+    public async ValueTask<Result> GrantAsync(ConsentEntity consent, string scope,
         CancellationToken cancellationToken = default)
     {
         var grantedScope = new GrantedScopeEntity
         {
+            Id = Guid.CreateVersion7(),
             ConsentId = consent.Id,
-            ScopeId = scope.Id
+            Scope = scope
         };
 
         await _context.GrantedScopes.AddAsync(grantedScope, cancellationToken);
@@ -46,11 +47,11 @@ public class ConsentManager(AuthDbContext context) : IConsentManager
         return Results.Ok();
     }
 
-    public async ValueTask<Result> RevokeAsync(ConsentEntity consent, ScopeEntity scope,
+    public async ValueTask<Result> RevokeAsync(ConsentEntity consent, string scope,
         CancellationToken cancellationToken = default)
     {
         var grantedScope = await _context.GrantedScopes.FirstOrDefaultAsync(
-            x => x.ConsentId == consent.Id && x.ScopeId == scope.Id, cancellationToken);
+            x => x.ConsentId == consent.Id && x.Scope == scope, cancellationToken);
 
         if (grantedScope is null) return Results.NotFound("Scope is not granted.");
 

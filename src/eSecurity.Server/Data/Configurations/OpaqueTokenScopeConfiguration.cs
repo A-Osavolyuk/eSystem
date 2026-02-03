@@ -7,16 +7,11 @@ public sealed class OpaqueTokenScopeConfiguration : IEntityTypeConfiguration<Opa
 {
     public void Configure(EntityTypeBuilder<OpaqueTokenScopeEntity> builder)
     {
-        builder.HasKey(x => new { x.TokenId, x.ScopeId });
+        builder.HasKey(x => x.Id);
             
         builder.HasOne(x => x.Token)
             .WithMany(x => x.Scopes)
             .HasForeignKey(x => x.TokenId)
-            .OnDelete(DeleteBehavior.Cascade);
-            
-        builder.HasOne(x => x.Scope)
-            .WithMany()
-            .HasForeignKey(x => x.ScopeId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

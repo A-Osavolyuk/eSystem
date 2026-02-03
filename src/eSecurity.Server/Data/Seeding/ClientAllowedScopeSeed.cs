@@ -1,5 +1,6 @@
 ﻿using eSecurity.Server.Data.Entities;
 using eSystem.Core.Data.Seeding;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 
 namespace eSecurity.Server.Data.Seeding;
 
@@ -12,92 +13,109 @@ public class ClientAllowedScopeSeed : Seed<ClientAllowedScopeEntity>
             // eSecurity.Client
             new ClientAllowedScopeEntity
             {
+                Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("392e390f-33bd-4f30-af70-ccbe04bbb2c4"),
-                ScopeId = Guid.Parse("2475899a-e18c-4563-a598-c579113dbda4"),
+                Scope = ScopesType.OpenId
             },
             new ClientAllowedScopeEntity
             {
+                Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("392e390f-33bd-4f30-af70-ccbe04bbb2c4"),
-                ScopeId = Guid.Parse("7c35e89d-9276-4b3a-9c9a-4b37e9ef137a"),
+                Scope = ScopesType.OfflineAccess
             },
             new ClientAllowedScopeEntity
             {
+                Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("392e390f-33bd-4f30-af70-ccbe04bbb2c4"),
-                ScopeId = Guid.Parse("26d364e7-be16-4d72-9304-28b141a6e118"),
+                Scope = ScopesType.Email
             },
             new ClientAllowedScopeEntity
             {
+                Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("392e390f-33bd-4f30-af70-ccbe04bbb2c4"),
-                ScopeId = Guid.Parse("4026c2dd-df54-4591-bacf-1b8f446528c5"),
+                Scope = ScopesType.Phone
             },
             new ClientAllowedScopeEntity
             {
+                Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("392e390f-33bd-4f30-af70-ccbe04bbb2c4"),
-                ScopeId = Guid.Parse("8d2269e7-ae28-4911-b5ef-6f47418fb65e"),
+                Scope = ScopesType.Address
             },
             new ClientAllowedScopeEntity
             {
+                Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("392e390f-33bd-4f30-af70-ccbe04bbb2c4"),
-                ScopeId = Guid.Parse("865d1609-76c6-4928-a2f0-d1ca77f1498b"),
+                Scope = ScopesType.Profile
             },
 
             // eCinema.Client
             new ClientAllowedScopeEntity
             {
+                Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("307268b0-005c-4ee4-a0e8-a93bd0010382"),
-                ScopeId = Guid.Parse("2475899a-e18c-4563-a598-c579113dbda4"),
+                Scope = ScopesType.OpenId,
             },
             new ClientAllowedScopeEntity
             {
+                Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("307268b0-005c-4ee4-a0e8-a93bd0010382"),
-                ScopeId = Guid.Parse("7c35e89d-9276-4b3a-9c9a-4b37e9ef137a"),
+                Scope = ScopesType.Address,
             },
             new ClientAllowedScopeEntity
             {
+                Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("307268b0-005c-4ee4-a0e8-a93bd0010382"),
-                ScopeId = Guid.Parse("26d364e7-be16-4d72-9304-28b141a6e118"),
+                Scope = ScopesType.OfflineAccess,
             },
             new ClientAllowedScopeEntity
             {
+                Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("307268b0-005c-4ee4-a0e8-a93bd0010382"),
-                ScopeId = Guid.Parse("4026c2dd-df54-4591-bacf-1b8f446528c5"),
+                Scope = ScopesType.Profile,
             },
             new ClientAllowedScopeEntity
             {
+                Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("307268b0-005c-4ee4-a0e8-a93bd0010382"),
-                ScopeId = Guid.Parse("8d2269e7-ae28-4911-b5ef-6f47418fb65e"),
+                Scope = ScopesType.Email,
             },
             new ClientAllowedScopeEntity
             {
+                Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("307268b0-005c-4ee4-a0e8-a93bd0010382"),
-                ScopeId = Guid.Parse("865d1609-76c6-4928-a2f0-d1ca77f1498b"),
+                Scope = ScopesType.Phone
             },
             
             // eMessage
             new ClientAllowedScopeEntity
             {
+                Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("fc1c1662-cd80-4fab-b924-a39168765558"),
-                ScopeId = Guid.Parse("2475899a-e18c-4563-a598-c579113dbda4"),
+                Scope = ScopesType.Profile,
             },
             new ClientAllowedScopeEntity
             {
+                Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("fc1c1662-cd80-4fab-b924-a39168765558"),
-                ScopeId = Guid.Parse("7c35e89d-9276-4b3a-9c9a-4b37e9ef137a"),
+                Scope = ScopesType.Email,
             },
             new ClientAllowedScopeEntity
             {
+                Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("fc1c1662-cd80-4fab-b924-a39168765558"),
-                ScopeId = Guid.Parse("26d364e7-be16-4d72-9304-28b141a6e118"),
+                Scope = ScopesType.Phone
             },
             new ClientAllowedScopeEntity
             {
+                Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("fc1c1662-cd80-4fab-b924-a39168765558"),
-                ScopeId = Guid.Parse("4026c2dd-df54-4591-bacf-1b8f446528c5"),
+                Scope = ScopesType.OfflineAccess,
             },
             new ClientAllowedScopeEntity
             {
+                Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("fc1c1662-cd80-4fab-b924-a39168765558"),
-                ScopeId = Guid.Parse("8d2269e7-ae28-4911-b5ef-6f47418fb65e"),
+                Scope = ScopesType.Address,
             }
         ];
     }

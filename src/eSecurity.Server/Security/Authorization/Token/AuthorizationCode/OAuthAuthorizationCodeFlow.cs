@@ -121,7 +121,7 @@ public class OAuthAuthorizationCodeFlow(
             var claims = await claimsFactory.GetClaimsAsync(user, new AccessTokenClaimsContext
             {
                 Aud = client.Audience,
-                Scopes = client.AllowedScopes.Select(x => x.Scope.Name),
+                Scopes = client.AllowedScopes.Select(x => x.Scope),
                 Nonce = code.Nonce
             }, cancellationToken);
 

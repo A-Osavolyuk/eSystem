@@ -6,11 +6,11 @@ namespace eSecurity.Server.Data.Entities;
 
 public class ClientEntity : Entity
 {
-    public required Guid Id { get; set; }
-    public required string Name { get; set; }
-    public required string Audience { get; set; }
-    public required ClientType ClientType { get; set; }
-    public required AccessTokenType AccessTokenType { get; set; }
+    public Guid Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Audience { get; set; } = string.Empty;
+    public ClientType ClientType { get; set; }
+    public AccessTokenType AccessTokenType { get; set; }
 
     public bool RequireClientSecret { get; set; }
     public bool RequirePkce { get; set; }
@@ -23,7 +23,7 @@ public class ClientEntity : Entity
     public bool AllowFrontChannelLogout { get; set; }
     public bool AllowBackChannelLogout { get; set; }
 
-    public required SubjectType SubjectType { get; set; }
+    public SubjectType SubjectType { get; set; }
     public string? SectorIdentifierUri { get; set; }
 
     public string? LogoUri { get; set; }
@@ -36,10 +36,10 @@ public class ClientEntity : Entity
     public ICollection<ClientUriEntity> Uris { get; set; } = null!;
 
     public bool HasScopes(List<string> scopes)
-        => scopes.All(scope => AllowedScopes.Any(x => x.Scope.Name == scope));
+        => scopes.All(scope => AllowedScopes.Any(x => x.Scope == scope));
 
     public bool HasScope(string scope)
-        => AllowedScopes.Any(x => x.Scope.Name == scope);
+        => AllowedScopes.Any(x => x.Scope == scope);
 
     public bool HasGrantType(string grantType)
         => GrantTypes.Any(x => x.Type == grantType);

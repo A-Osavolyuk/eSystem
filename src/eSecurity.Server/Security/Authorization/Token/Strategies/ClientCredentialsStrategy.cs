@@ -76,7 +76,7 @@ public sealed class ClientCredentialsStrategy(
             });
         }
 
-        var grantedScopes = client.AllowedScopes.Select(x => x.Scope.Name);
+        var grantedScopes = client.AllowedScopes.Select(x => x.Scope);
         var requestScopes = clientCredentialsContext.Scope!.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         var allowedScopes = grantedScopes.Intersect(requestScopes).ToList();
         
@@ -133,7 +133,7 @@ public sealed class ClientCredentialsStrategy(
             };
 
             var scopes = client.AllowedScopes
-                .Where(x => allowedScopes.Contains(x.Scope.Name))
+                .Where(x => allowedScopes.Contains(x.Scope))
                 .Select(x => x.Scope);
             
             var createResult = await _tokenManager.CreateAsync(newRefreshToken, scopes, cancellationToken);

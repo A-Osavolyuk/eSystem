@@ -136,7 +136,7 @@ public sealed class OidcRefreshTokenFlow(
             var claims = await claimsFactory.GetClaimsAsync(user, new AccessTokenClaimsContext
             {
                 Aud = client.Audience,
-                Scopes = client.AllowedScopes.Select(x => x.Scope.Name),
+                Scopes = client.AllowedScopes.Select(x => x.Scope),
             }, cancellationToken);
 
             var tokenContext = new JwtTokenContext { Claims = claims, Type = JwtTokenTypes.AccessToken };
@@ -200,7 +200,7 @@ public sealed class OidcRefreshTokenFlow(
         var idClaims = await idClaimsFactory.GetClaimsAsync(user, new IdTokenClaimsContext
         {
             Aud = client.Id.ToString(),
-            Scopes = client.AllowedScopes.Select(x => x.Scope.Name),
+            Scopes = client.AllowedScopes.Select(x => x.Scope),
             Sid = session.Id.ToString(),
             AuthTime = DateTimeOffset.UtcNow,
             AuthenticationMethods = session.AuthenticationMethods,

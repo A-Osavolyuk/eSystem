@@ -92,7 +92,7 @@ public sealed class OAuthRefreshTokenFlow(
             var claims = await claimsFactory.GetClaimsAsync(user, new AccessTokenClaimsContext
             {
                 Aud = client.Audience,
-                Scopes = client.AllowedScopes.Select(x => x.Scope.Name),
+                Scopes = client.AllowedScopes.Select(x => x.Scope),
             }, cancellationToken);
 
             var tokenContext = new JwtTokenContext { Claims = claims, Type = JwtTokenTypes.AccessToken };

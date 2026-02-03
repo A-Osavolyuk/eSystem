@@ -5,6 +5,7 @@ using eSecurity.Server.Security.Authorization.Constants;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Http.Results;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Registration;
 using eSystem.Core.Security.Authentication.OpenIdConnect.User;
 using eSystem.Core.Security.Authorization.OAuth.Introspection;
 using eSystem.Core.Security.Authorization.OAuth.Revocation;
@@ -139,6 +140,16 @@ public class ConnectController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> LogoutAsync([FromBody] LogoutRequest request)
     {
         var result = await _sender.Send(new LogoutCommand(request));
+        return HttpContext.HandleResult(result);
+    }
+    
+    [EndpointSummary("Registration")]
+    [EndpointDescription("Registration")]
+    [ProducesResponseType(200)]
+    [HttpPost("registration")]
+    public async ValueTask<IActionResult> CreateClientAsync([FromBody] RegistrationRequest request)
+    {
+        var result = await _sender.Send(new CreateClientCommand(request));
         return HttpContext.HandleResult(result);
     }
 }

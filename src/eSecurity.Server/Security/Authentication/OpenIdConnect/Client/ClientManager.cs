@@ -62,6 +62,14 @@ public class ClientManager(AuthDbContext context) : IClientManager
         return await _context.Clients.Select(x => x.Audience).ToListAsync(cancellationToken);
     }
 
+    public async ValueTask<Result> CreateAsync(ClientEntity entity, CancellationToken cancellationToken = default)
+    {
+        await _context.Clients.AddAsync(entity, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+        
+        return Results.Ok();
+    }
+
     public async ValueTask<Result> RelateAsync(ClientEntity client, SessionEntity session,
         CancellationToken cancellationToken = default)
     {

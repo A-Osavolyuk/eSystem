@@ -4,6 +4,12 @@ namespace eSystem.Core.Security.Authentication.OpenIdConnect.Registration;
 
 public sealed class RegistrationResponse
 {
+    [JsonPropertyName("registration_access_token")]
+    public required string RegistrationAccessToken { get; set; }
+    
+    [JsonPropertyName("registration_client_uri")]
+    public required string RegistrationClientUri { get; set; }
+    
     [JsonPropertyName("client_id")]
     public required string ClientId { get; set; }
     

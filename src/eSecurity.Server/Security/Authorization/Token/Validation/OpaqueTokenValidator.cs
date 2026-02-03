@@ -25,7 +25,7 @@ public class OpaqueTokenValidator(
         if (opaqueToken is null || !opaqueToken.IsValid)
             return TokenValidationResult.Fail();
 
-        var scopes = opaqueToken.Scopes.Select(x => x.Scope.Name);
+        var scopes = opaqueToken.Scopes.Select(x => x.Scope);
         var claims = new List<Claim>
         {
             new(AppClaimTypes.Jti, opaqueToken.Id.ToString()),

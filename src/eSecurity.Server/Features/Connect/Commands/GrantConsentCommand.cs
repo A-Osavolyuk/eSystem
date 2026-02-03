@@ -2,10 +2,10 @@ using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authorization.Consents;
-using eSecurity.Server.Security.Authorization.Scopes;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
 
 namespace eSecurity.Server.Features.Connect.Commands;
 
@@ -14,13 +14,13 @@ public record GrantConsentCommand(GrantConsentRequest Request) : IRequest<Result
 public class GrantConsentCommandHandler(
     IUserManager userManager,
     IClientManager clientManager,
-    IScopeManager scopeManager,
-    IConsentManager consentManager) : IRequestHandler<GrantConsentCommand, Result>
+    IConsentManager consentManager,
+    IOptions<OpenIdConfiguration> options) : IRequestHandler<GrantConsentCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IClientManager _clientManager = clientManager;
-    private readonly IScopeManager _scopeManager = scopeManager;
     private readonly IConsentManager _consentManager = consentManager;
+    private readonly OpenIdConfiguration _options = options.Value;
 
     public async Task<Result> Handle(GrantConsentCommand request, CancellationToken cancellationToken)
     {
@@ -54,8 +54,7 @@ public class GrantConsentCommandHandler(
 
             foreach (var requestedScope in request.Request.Scopes)
             {
-                var scope = await _scopeManager.FindByNameAsync(requestedScope, cancellationToken);
-                if (scope is null)
+                if (!_options.ScopesSupported.Contains(requestedScope))
                 {
                     return Results.BadRequest(new Error
                     {
@@ -64,7 +63,7 @@ public class GrantConsentCommandHandler(
                     });
                 }
 
-                var grantResult = await _consentManager.GrantAsync(consent, scope, cancellationToken);
+                var grantResult = await _consentManager.GrantAsync(consent, requestedScope, cancellationToken);
                 if (!grantResult.Succeeded) return grantResult;
             }
 
@@ -75,8 +74,7 @@ public class GrantConsentCommandHandler(
         {
             foreach (var requestedScope in remainingScopes)
             {
-                var scope = await _scopeManager.FindByNameAsync(requestedScope, cancellationToken);
-                if (scope is null)
+                if (!_options.ScopesSupported.Contains(requestedScope))
                 {
                     return Results.BadRequest(new Error
                     {
@@ -85,7 +83,7 @@ public class GrantConsentCommandHandler(
                     });
                 }
 
-                var grantResult = await _consentManager.GrantAsync(consent, scope, cancellationToken);
+                var grantResult = await _consentManager.GrantAsync(consent, requestedScope, cancellationToken);
                 if (!grantResult.Succeeded) return grantResult;
             }
         }

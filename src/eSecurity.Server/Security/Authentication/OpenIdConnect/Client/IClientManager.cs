@@ -13,6 +13,8 @@ public interface IClientManager
     public ValueTask<ClientEntity?> FindByAudienceAsync(string audience, CancellationToken cancellationToken = default);
     public ValueTask<List<string>> GetAudiencesAsync(CancellationToken cancellationToken = default);
     
+    public ValueTask<Result> CreateAsync(ClientEntity entity, CancellationToken cancellationToken = default);
+    
     public ValueTask<Result> RelateAsync(ClientEntity client, SessionEntity session,
         CancellationToken cancellationToken = default);
 }

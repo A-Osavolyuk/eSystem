@@ -66,7 +66,7 @@ public class IntrospectionCommandHandler(
             Audience = token.Client.Audience,
             IssuedAt = token.CreateDate!.Value.ToUnixTimeSeconds(),
             Expiration = token.ExpiredDate.ToUnixTimeSeconds(),
-            Scope = string.Join(" ", token.Scopes.Select(x => x.Scope.Name))
+            Scope = string.Join(" ", token.Scopes.Select(x => x.Scope))
         };
         
         if (token.SessionId.HasValue)

@@ -119,7 +119,7 @@ public class OidcAuthorizationCodeFlow(
             var claims = await claimsFactory.GetClaimsAsync(user, new AccessTokenClaimsContext
             {
                 Aud = client.Audience,
-                Scopes = client.AllowedScopes.Select(x => x.Scope.Name),
+                Scopes = client.AllowedScopes.Select(x => x.Scope),
                 Nonce = code.Nonce
             }, cancellationToken);
 
@@ -193,7 +193,7 @@ public class OidcAuthorizationCodeFlow(
         {
             Aud = client.Id.ToString(),
             Nonce = code.Nonce,
-            Scopes = client.AllowedScopes.Select(x => x.Scope.Name),
+            Scopes = client.AllowedScopes.Select(x => x.Scope),
             Sid = session.Id.ToString(),
             AuthenticationMethods = session.AuthenticationMethods,
             AuthTime = DateTimeOffset.UtcNow,
