@@ -8,4 +8,5 @@ public static class ScopeTypes
     public const string Phone = "phone";
     public const string Address = "address";
     public const string OfflineAccess = "offline_access";
+    public const string ClientRegistration = "client_registration";
 }
