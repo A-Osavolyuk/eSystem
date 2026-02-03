@@ -157,6 +157,29 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ClientTokenAuthMethods",
+                schema: "public",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Method = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientTokenAuthMethods", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClientTokenAuthMethods_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalSchema: "public",
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ClientUris",
                 schema: "public",
                 columns: table => new
@@ -240,6 +263,7 @@ namespace eSecurity.Server.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     ClientId = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Protocol = table.Column<string>(type: "text", nullable: false),
                     Code = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     Nonce = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     RedirectUri = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
@@ -990,6 +1014,12 @@ namespace eSecurity.Server.Migrations
                 column: "SessionId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ClientTokenAuthMethods_ClientId",
+                schema: "public",
+                table: "ClientTokenAuthMethods",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ClientUris_ClientId",
                 schema: "public",
                 table: "ClientUris",
@@ -1190,6 +1220,10 @@ namespace eSecurity.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "ClientSessions",
+                schema: "public");
+
+            migrationBuilder.DropTable(
+                name: "ClientTokenAuthMethods",
                 schema: "public");
 
             migrationBuilder.DropTable(

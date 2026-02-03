@@ -56,6 +56,10 @@ namespace eSecurity.Server.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
+                    b.Property<string>("Protocol")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("RedirectUri")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -222,6 +226,33 @@ namespace eSecurity.Server.Migrations
                     b.HasIndex("SessionId");
 
                     b.ToTable("ClientSessions", "public");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientTokenAuthMethodEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Method")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.ToTable("ClientTokenAuthMethods", "public");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientUriEntity", b =>
@@ -1302,6 +1333,17 @@ namespace eSecurity.Server.Migrations
                     b.Navigation("Session");
                 });
 
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientTokenAuthMethodEntity", b =>
+                {
+                    b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
+                        .WithMany("TokenAuthMethods")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientUriEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
@@ -1711,6 +1753,8 @@ namespace eSecurity.Server.Migrations
                     b.Navigation("GrantTypes");
 
                     b.Navigation("PairwiseSubjects");
+
+                    b.Navigation("TokenAuthMethods");
 
                     b.Navigation("Uris");
                 });
