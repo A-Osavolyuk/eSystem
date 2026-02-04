@@ -2,7 +2,7 @@
 
 namespace eSystem.Core.Security.Authorization.OAuth.Discovery;
 
-public sealed class AuthorizationServerConfiguration
+public sealed class AuthorizationServerDiscovery
 {
     [JsonPropertyName("issuer")]
     public string Issuer { get; set; } = string.Empty;

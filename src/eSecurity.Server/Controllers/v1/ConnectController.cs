@@ -30,6 +30,16 @@ public class ConnectController(ISender sender) : ControllerBase
         var result = await _sender.Send(new GetOpenidConfigurationQuery());
         return HttpContext.HandleResult(result);
     }
+    
+    [EndpointSummary("OAuth authorization server")]
+    [EndpointDescription("OAuth authorization server")]
+    [ProducesResponseType(200)]
+    [HttpGet(".well-known/oauth-authorization-server")]
+    public async ValueTask<IActionResult> OAuthAuthorizationServerAsync()
+    {
+        var result = await _sender.Send(new GetOAuthAuthorizationServerQuery());
+        return HttpContext.HandleResult(result);
+    }
 
     [EndpointSummary("Json Web Key")]
     [EndpointDescription("Json Web Key")]
