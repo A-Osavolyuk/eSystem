@@ -71,7 +71,7 @@ public sealed class DeviceAuthorizationCommandHandler(
             Id = Guid.CreateVersion7(),
             ClientId = client.Id,
             DeviceCodeHash = _hasher.Hash(deviceCode),
-            UserCode = formattedUserCode,
+            UserCode = userCode,
             AcrValues = request.Request.AcrValues,
             Scope = request.Request.Scope,
             Interval = _deviceAuthorizationOptions.Interval,
