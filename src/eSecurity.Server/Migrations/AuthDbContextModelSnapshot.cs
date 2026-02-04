@@ -439,16 +439,14 @@ namespace eSecurity.Server.Migrations
                     b.Property<int>("Interval")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsConsumed")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsDenied")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("Scope")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("timestamp with time zone");

@@ -12,7 +12,7 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20260204154854_Initial")]
+    [Migration("20260204180619_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -442,16 +442,14 @@ namespace eSecurity.Server.Migrations
                     b.Property<int>("Interval")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsConsumed")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsDenied")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("Scope")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("timestamp with time zone");
