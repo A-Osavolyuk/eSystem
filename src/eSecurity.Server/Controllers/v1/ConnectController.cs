@@ -7,6 +7,7 @@ using eSystem.Core.Http.Extensions;
 using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Registration;
 using eSystem.Core.Security.Authentication.OpenIdConnect.User;
+using eSystem.Core.Security.Authorization.OAuth.DeviceAuthorization;
 using eSystem.Core.Security.Authorization.OAuth.Introspection;
 using eSystem.Core.Security.Authorization.OAuth.Revocation;
 using eSystem.Core.Security.Authorization.OAuth.Token;
@@ -150,6 +151,17 @@ public class ConnectController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> LogoutAsync([FromBody] LogoutRequest request)
     {
         var result = await _sender.Send(new LogoutCommand(request));
+        return HttpContext.HandleResult(result);
+    }
+    
+    [EndpointSummary("Device authorization")]
+    [EndpointDescription("Device authorization")]
+    [ProducesResponseType(200)]
+    [Authorize(Policy = AuthorizationPolicies.BasicAuthorization)]
+    [HttpPost("device_authorization")]
+    public async ValueTask<IActionResult> DeviceAuthorizationAsync([FromBody] DeviceAuthorizationRequest request)
+    {
+        var result = await _sender.Send(new DeviceAuthorizationCommand(request));
         return HttpContext.HandleResult(result);
     }
 }

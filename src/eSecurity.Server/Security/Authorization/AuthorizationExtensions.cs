@@ -7,6 +7,7 @@ using eSecurity.Server.Security.Authorization.Protocol;
 using eSecurity.Server.Security.Authorization.Roles;
 using eSecurity.Server.Security.Authorization.Token;
 using eSecurity.Server.Security.Authorization.Token.AuthorizationCode;
+using eSecurity.Server.Security.Authorization.Token.DeviceCode;
 using eSecurity.Server.Security.Authorization.Token.RefreshToken;
 using eSecurity.Server.Security.Authorization.Token.Strategies;
 using eSecurity.Server.Security.Authorization.Token.Validation;
@@ -24,6 +25,14 @@ public static class AuthorizationExtensions
         builder.Services.AddAccessManagement();
         builder.Services.AddDeviceManagement();
         builder.Services.AddOAuthAuthorization();
+        builder.Services.AddDeviceAuthorization(options =>
+        {
+            options.DeviceCodeLenght = 32;
+            options.UserCodeLenght = 8;
+            options.Interval = 5;
+            options.Timestamp = TimeSpan.FromSeconds(3600);
+            options.VerificationUri = "https://localhost:6501/device/activate";
+        });
 
         builder.Services.AddScoped<IConsentManager, ConsentManager>();
         
