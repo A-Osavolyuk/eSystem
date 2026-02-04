@@ -63,21 +63,6 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ResourceOwners",
-                schema: "public",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ResourceOwners", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Roles",
                 schema: "public",
                 columns: table => new
@@ -244,29 +229,6 @@ namespace eSecurity.Server.Migrations
                         column: x => x.ClientId,
                         principalSchema: "public",
                         principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Resources",
-                schema: "public",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    OwnerId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Resources", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Resources_ResourceOwners_OwnerId",
-                        column: x => x.OwnerId,
-                        principalSchema: "public",
-                        principalTable: "ResourceOwners",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -796,29 +758,6 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Permissions",
-                schema: "public",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    ResourceId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Permissions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Permissions_Resources_ResourceId",
-                        column: x => x.ResourceId,
-                        principalSchema: "public",
-                        principalTable: "Resources",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "GrantedScopes",
                 schema: "public",
                 columns: table => new
@@ -939,64 +878,6 @@ namespace eSecurity.Server.Migrations
                         column: x => x.DeviceId,
                         principalSchema: "public",
                         principalTable: "UserDevices",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "RolePermissions",
-                schema: "public",
-                columns: table => new
-                {
-                    PermissionId = table.Column<Guid>(type: "uuid", nullable: false),
-                    RoleId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RolePermissions", x => new { x.RoleId, x.PermissionId });
-                    table.ForeignKey(
-                        name: "FK_RolePermissions_Permissions_PermissionId",
-                        column: x => x.PermissionId,
-                        principalSchema: "public",
-                        principalTable: "Permissions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_RolePermissions_Roles_RoleId",
-                        column: x => x.RoleId,
-                        principalSchema: "public",
-                        principalTable: "Roles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserPermissions",
-                schema: "public",
-                columns: table => new
-                {
-                    PermissionId = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserPermissions", x => new { x.UserId, x.PermissionId });
-                    table.ForeignKey(
-                        name: "FK_UserPermissions_Permissions_PermissionId",
-                        column: x => x.PermissionId,
-                        principalSchema: "public",
-                        principalTable: "Permissions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserPermissions_Users_UserId",
-                        column: x => x.UserId,
-                        principalSchema: "public",
-                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -1179,29 +1060,11 @@ namespace eSecurity.Server.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Permissions_ResourceId",
-                schema: "public",
-                table: "Permissions",
-                column: "ResourceId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_PersonalData_UserId",
                 schema: "public",
                 table: "PersonalData",
                 column: "UserId",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Resources_OwnerId",
-                schema: "public",
-                table: "Resources",
-                column: "OwnerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RolePermissions_PermissionId",
-                schema: "public",
-                table: "RolePermissions",
-                column: "PermissionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Sessions_UserId",
@@ -1232,12 +1095,6 @@ namespace eSecurity.Server.Migrations
                 schema: "public",
                 table: "UserLinkedAccounts",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserPermissions_PermissionId",
-                schema: "public",
-                table: "UserPermissions",
-                column: "PermissionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserPhoneNumbers_UserId",
@@ -1345,10 +1202,6 @@ namespace eSecurity.Server.Migrations
                 schema: "public");
 
             migrationBuilder.DropTable(
-                name: "RolePermissions",
-                schema: "public");
-
-            migrationBuilder.DropTable(
                 name: "UserClients",
                 schema: "public");
 
@@ -1358,10 +1211,6 @@ namespace eSecurity.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserLinkedAccounts",
-                schema: "public");
-
-            migrationBuilder.DropTable(
-                name: "UserPermissions",
                 schema: "public");
 
             migrationBuilder.DropTable(
@@ -1405,10 +1254,6 @@ namespace eSecurity.Server.Migrations
                 schema: "public");
 
             migrationBuilder.DropTable(
-                name: "Permissions",
-                schema: "public");
-
-            migrationBuilder.DropTable(
                 name: "Roles",
                 schema: "public");
 
@@ -1425,15 +1270,7 @@ namespace eSecurity.Server.Migrations
                 schema: "public");
 
             migrationBuilder.DropTable(
-                name: "Resources",
-                schema: "public");
-
-            migrationBuilder.DropTable(
                 name: "Users",
-                schema: "public");
-
-            migrationBuilder.DropTable(
-                name: "ResourceOwners",
                 schema: "public");
         }
     }

@@ -635,33 +635,6 @@ namespace eSecurity.Server.Migrations
                     b.ToTable("Passwords", "public");
                 });
 
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.PermissionEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
-
-                    b.Property<Guid>("ResourceId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset?>("UpdateDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ResourceId");
-
-                    b.ToTable("Permissions", "public");
-                });
-
             modelBuilder.Entity("eSecurity.Server.Data.Entities.PersonalDataEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -706,55 +679,6 @@ namespace eSecurity.Server.Migrations
                     b.ToTable("PersonalData", "public");
                 });
 
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.ResourceEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
-
-                    b.Property<Guid>("OwnerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset?>("UpdateDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OwnerId");
-
-                    b.ToTable("Resources", "public");
-                });
-
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.ResourceOwnerEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
-
-                    b.Property<DateTimeOffset?>("UpdateDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ResourceOwners", "public");
-                });
-
             modelBuilder.Entity("eSecurity.Server.Data.Entities.RoleEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -780,27 +704,6 @@ namespace eSecurity.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles", "public");
-                });
-
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.RolePermissionEntity", b =>
-                {
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("PermissionId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTimeOffset?>("UpdateDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("RoleId", "PermissionId");
-
-                    b.HasIndex("PermissionId");
-
-                    b.ToTable("RolePermissions", "public");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ScopeEntity", b =>
@@ -1134,27 +1037,6 @@ namespace eSecurity.Server.Migrations
                         .IsUnique();
 
                     b.ToTable("LockoutStates", "public");
-                });
-
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserPermissionsEntity", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("PermissionId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTimeOffset?>("UpdateDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("UserId", "PermissionId");
-
-                    b.HasIndex("PermissionId");
-
-                    b.ToTable("UserPermissions", "public");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.UserPhoneNumberEntity", b =>
@@ -1571,17 +1453,6 @@ namespace eSecurity.Server.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.PermissionEntity", b =>
-                {
-                    b.HasOne("eSecurity.Server.Data.Entities.ResourceEntity", "Resource")
-                        .WithMany()
-                        .HasForeignKey("ResourceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Resource");
-                });
-
             modelBuilder.Entity("eSecurity.Server.Data.Entities.PersonalDataEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
@@ -1636,36 +1507,6 @@ namespace eSecurity.Server.Migrations
                     b.Navigation("Address");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.ResourceEntity", b =>
-                {
-                    b.HasOne("eSecurity.Server.Data.Entities.ResourceOwnerEntity", "Owner")
-                        .WithMany()
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Owner");
-                });
-
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.RolePermissionEntity", b =>
-                {
-                    b.HasOne("eSecurity.Server.Data.Entities.PermissionEntity", "Permission")
-                        .WithMany()
-                        .HasForeignKey("PermissionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("eSecurity.Server.Data.Entities.RoleEntity", "Role")
-                        .WithMany("Permissions")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Permission");
-
-                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.SessionEntity", b =>
@@ -1738,25 +1579,6 @@ namespace eSecurity.Server.Migrations
                         .HasForeignKey("eSecurity.Server.Data.Entities.UserLockoutStateEntity", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.UserPermissionsEntity", b =>
-                {
-                    b.HasOne("eSecurity.Server.Data.Entities.PermissionEntity", "Permission")
-                        .WithMany()
-                        .HasForeignKey("PermissionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Permission");
 
                     b.Navigation("User");
                 });
@@ -1864,8 +1686,6 @@ namespace eSecurity.Server.Migrations
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.RoleEntity", b =>
                 {
-                    b.Navigation("Permissions");
-
                     b.Navigation("Roles");
                 });
 
