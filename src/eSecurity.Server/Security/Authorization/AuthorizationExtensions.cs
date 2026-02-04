@@ -3,7 +3,6 @@ using eSecurity.Server.Security.Authorization.Consents;
 using eSecurity.Server.Security.Authorization.Constants;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Authorization.OAuth;
-using eSecurity.Server.Security.Authorization.Permissions;
 using eSecurity.Server.Security.Authorization.Protocol;
 using eSecurity.Server.Security.Authorization.Roles;
 using eSecurity.Server.Security.Authorization.Token;
@@ -27,7 +26,6 @@ public static class AuthorizationExtensions
         builder.Services.AddOAuthAuthorization();
 
         builder.Services.AddScoped<IConsentManager, ConsentManager>();
-        builder.Services.AddScoped<IPermissionManager, PermissionManager>();
         
         builder.Services.AddScoped<ITokenValidationProvider, TokenValidationProvider>();
         builder.Services.AddScoped<IJwtTokenValidationProvider, JwtTokenValidationProvider>();

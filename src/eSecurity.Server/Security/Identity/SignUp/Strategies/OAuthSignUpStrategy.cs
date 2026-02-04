@@ -7,7 +7,6 @@ using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
-using eSecurity.Server.Security.Authorization.Permissions;
 using eSecurity.Server.Security.Authorization.Roles;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
@@ -29,7 +28,6 @@ public sealed class OAuthSignUpPayload : SignUpPayload
 }
 
 public sealed class OAuthSignUpStrategy(
-    IPermissionManager permissionManager,
     IUserManager userManager,
     IMessageService messageService,
     IRoleManager roleManager,
@@ -41,7 +39,6 @@ public sealed class OAuthSignUpStrategy(
     IMappingProvider mappingProvider,
     IOptions<SessionOptions> sessionOptions) : ISignUpStrategy
 {
-    private readonly IPermissionManager _permissionManager = permissionManager;
     private readonly IUserManager _userManager = userManager;
     private readonly IMessageService _messageService = messageService;
     private readonly IRoleManager _roleManager = roleManager;
@@ -93,18 +90,6 @@ public sealed class OAuthSignUpStrategy(
 
         var assignResult = await _roleManager.AssignAsync(user, role, cancellationToken);
         if (!assignResult.Succeeded) return assignResult;
-
-        if (role.Permissions.Count > 0)
-        {
-            var permissions = role.Permissions.Select(x => x.Permission).ToList();
-            foreach (var permission in permissions)
-            {
-                var result = await _permissionManager.GrantAsync(user, permission, cancellationToken);
-
-                if (result.Succeeded) continue;
-                return result;
-            }
-        }
 
         var userAgent = _httpContext.GetUserAgent();
         var ipAddress = _httpContext.GetIpV4();

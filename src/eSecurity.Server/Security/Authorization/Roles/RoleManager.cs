@@ -23,8 +23,6 @@ public sealed class RoleManager(AuthDbContext context) : IRoleManager
     {
         var role = await _context.Roles
             .Where(x => x.Name == name)
-            .Include(x => x.Permissions)
-            .ThenInclude(x => x.Permission)
             .FirstOrDefaultAsync(cancellationToken);
         
         return role;

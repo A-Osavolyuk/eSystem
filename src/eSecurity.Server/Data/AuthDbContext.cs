@@ -9,7 +9,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<UserEmailEntity> UserEmails { get; set; }
     public DbSet<UserPhoneNumberEntity> UserPhoneNumbers { get; set; }
     public DbSet<UserRoleEntity> UserRoles { get; set; }
-    public DbSet<UserPermissionsEntity> UserPermissions { get; set; }
     public DbSet<UserSecretEntity> UserSecret { get; set; }
     public DbSet<UserTwoFactorMethodEntity> UserTwoFactorMethods { get; set; }
     public DbSet<UserLinkedAccountEntity> UserLinkedAccounts { get; set; }
@@ -17,12 +16,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<PasskeyEntity> Passkeys { get; set; }
     public DbSet<RoleEntity> Roles { get; set; }
     public DbSet<PersonalDataEntity> PersonalData { get; set; }
-    public DbSet<PermissionEntity> Permissions { get; set; }
     public DbSet<CodeEntity> Codes { get; set; }
-    public DbSet<ResourceEntity> Resources { get; set; }
-    public DbSet<RolePermissionEntity> RolePermissions { get; set; }
     public DbSet<UserLockoutStateEntity> LockoutStates { get; set; }
-    public DbSet<ResourceOwnerEntity> ResourceOwners { get; set; }
     public DbSet<UserRecoveryCodeEntity> UserRecoveryCodes { get; set; }
     public DbSet<VerificationEntity> Verifications { get; set; }
     public DbSet<ClientEntity> Clients { get; set; }

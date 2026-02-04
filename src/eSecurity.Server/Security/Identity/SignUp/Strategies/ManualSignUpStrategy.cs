@@ -3,7 +3,6 @@ using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Password;
 using eSecurity.Server.Security.Authorization.Devices;
-using eSecurity.Server.Security.Authorization.Permissions;
 using eSecurity.Server.Security.Authorization.Roles;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Options;
@@ -26,7 +25,6 @@ public sealed class ManualSignUpStrategy(
     IUserManager userManager,
     IUsernameManager usernameManager,
     IPasswordManager passwordManager,
-    IPermissionManager permissionManager,
     IRoleManager roleManager,
     IDeviceManager deviceManager,
     IEmailManager emailManager,
@@ -36,7 +34,6 @@ public sealed class ManualSignUpStrategy(
     private readonly IUserManager _userManager = userManager;
     private readonly IUsernameManager _usernameManager = usernameManager;
     private readonly IPasswordManager _passwordManager = passwordManager;
-    private readonly IPermissionManager _permissionManager = permissionManager;
     private readonly IRoleManager _roleManager = roleManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly IEmailManager _emailManager = emailManager;
@@ -94,17 +91,6 @@ public sealed class ManualSignUpStrategy(
 
         var assignRoleResult = await _roleManager.AssignAsync(user, role, cancellationToken);
         if (!assignRoleResult.Succeeded) return assignRoleResult;
-
-        if (role.Permissions.Count > 0)
-        {
-            var permissions = role.Permissions.Select(x => x.Permission).ToList();
-
-            foreach (var permission in permissions)
-            {
-                var grantResult = await _permissionManager.GrantAsync(user, permission, cancellationToken);
-                if (!grantResult.Succeeded) return grantResult;
-            }
-        }
 
         var userAgent = _httpContext.GetUserAgent();
         var ipAddress = _httpContext.GetIpV4();
