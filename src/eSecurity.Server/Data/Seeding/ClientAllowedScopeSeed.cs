@@ -48,7 +48,7 @@ public class ClientAllowedScopeSeed : Seed<ClientAllowedScopeEntity>
                 ScopeId = Guid.Parse("33721238-6e31-4cd3-9457-11316dbf5eeb")
             },
 
-            // eCinema.Client
+            // eCinema
             new ClientAllowedScopeEntity
             {
                 Id = Guid.CreateVersion7(),
@@ -84,6 +84,20 @@ public class ClientAllowedScopeSeed : Seed<ClientAllowedScopeEntity>
                 Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("307268b0-005c-4ee4-a0e8-a93bd0010382"),
                 ScopeId = Guid.Parse("f067c039-ee63-44bb-b224-00a5872dfe28")
+            },
+            
+            // eCinema TV App
+            new ClientAllowedScopeEntity
+            {
+                Id = Guid.CreateVersion7(),
+                ClientId = Guid.Parse("19362a03-8793-4300-82ad-28719f21a8e2"),
+                ScopeId = Guid.Parse("4f49143c-14b4-435c-aa36-9654a9944f63")
+            },
+            new ClientAllowedScopeEntity
+            {
+                Id = Guid.CreateVersion7(),
+                ClientId = Guid.Parse("19362a03-8793-4300-82ad-28719f21a8e2"),
+                ScopeId = Guid.Parse("eeb1769f-f45e-43f8-b781-790a80eeb952")
             },
             
             // eMessage

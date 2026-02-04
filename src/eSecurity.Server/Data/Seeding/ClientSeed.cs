@@ -42,6 +42,18 @@ public class ClientSeed : Seed<ClientEntity>
             },
             new ClientEntity
             {
+                Id = Guid.Parse("19362a03-8793-4300-82ad-28719f21a8e2"),
+                Secret = "16346a29ab018d8b3381931e11befaec0ec9d93e8800bd4cf6728bddf60e0f34",
+                Name = "eCinema TV App",
+                AllowOfflineAccess = true,
+                RefreshTokenRotationEnabled = true,
+                RefreshTokenLifetime = TimeSpan.FromDays(30),
+                ClientType = ClientType.Lid,
+                AccessTokenType = AccessTokenType.Jwt,
+                SubjectType = SubjectType.Public,
+            },
+            new ClientEntity
+            {
                 Id = Guid.Parse("fc1c1662-cd80-4fab-b924-a39168765558"),
                 Secret = "09ba08a500f11aa321fb1dfd8c40ed017e2c1b70f992b86dac6d591089e33cb2",
                 Name = "eMessage",

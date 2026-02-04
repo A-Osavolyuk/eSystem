@@ -17,7 +17,7 @@ public sealed class ClientAudienceSeed : Seed<ClientAudienceEntity>
                 Audience = "api://esecurity"
             },
             
-            // eSecurity
+            // eCinema
             new ClientAudienceEntity()
             {
                 Id = Guid.CreateVersion7(),
@@ -25,7 +25,15 @@ public sealed class ClientAudienceSeed : Seed<ClientAudienceEntity>
                 Audience = "api://ecinema"
             },
             
-            // eSecurity
+            // eCinema TV App
+            new ClientAudienceEntity()
+            {
+                Id = Guid.CreateVersion7(),
+                ClientId = Guid.Parse("19362a03-8793-4300-82ad-28719f21a8e2"),
+                Audience = "api://ecinema-tv"
+            },
+            
+            // eMessage
             new ClientAudienceEntity()
             {
                 Id = Guid.CreateVersion7(),

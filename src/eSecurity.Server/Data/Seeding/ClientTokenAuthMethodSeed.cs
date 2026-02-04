@@ -38,6 +38,20 @@ public class ClientTokenAuthMethodSeed : Seed<ClientTokenAuthMethodEntity>
                 Method = TokenAuthMethods.ClientSecretPost
             },
             
+            // eCinema TV App
+            new ClientTokenAuthMethodEntity()
+            {
+                Id = Guid.CreateVersion7(),
+                ClientId = Guid.Parse("19362a03-8793-4300-82ad-28719f21a8e2"),
+                Method = TokenAuthMethods.ClientSecretBasic
+            },
+            new ClientTokenAuthMethodEntity()
+            {
+                Id = Guid.CreateVersion7(),
+                ClientId = Guid.Parse("19362a03-8793-4300-82ad-28719f21a8e2"),
+                Method = TokenAuthMethods.ClientSecretPost
+            },
+            
             // eMessage
             new ClientTokenAuthMethodEntity()
             {

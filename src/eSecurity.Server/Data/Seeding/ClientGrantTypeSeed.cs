@@ -10,7 +10,7 @@ public class ClientGrantTypeSeed : Seed<ClientGrantTypeEntity>
     {
         return
         [
-            // eSecurity.Client
+            // eSecurity
             new ClientGrantTypeEntity
             {
                 Id = Guid.CreateVersion7(),
@@ -24,7 +24,7 @@ public class ClientGrantTypeSeed : Seed<ClientGrantTypeEntity>
                 Type = GrantTypes.AuthorizationCode,
             },
             
-            // eCinema.Client
+            // eCinema
             new ClientGrantTypeEntity
             {
                 Id = Guid.CreateVersion7(),
@@ -36,6 +36,20 @@ public class ClientGrantTypeSeed : Seed<ClientGrantTypeEntity>
                 Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("307268b0-005c-4ee4-a0e8-a93bd0010382"),
                 Type = GrantTypes.AuthorizationCode,
+            },
+            
+            // eCinema TV App
+            new ClientGrantTypeEntity
+            {
+                Id = Guid.CreateVersion7(),
+                ClientId = Guid.Parse("19362a03-8793-4300-82ad-28719f21a8e2"),
+                Type = GrantTypes.RefreshToken,
+            },
+            new ClientGrantTypeEntity
+            {
+                Id = Guid.CreateVersion7(),
+                ClientId = Guid.Parse("19362a03-8793-4300-82ad-28719f21a8e2"),
+                Type = GrantTypes.DeviceCode,
             },
             
             // eMessage

@@ -3,5 +3,10 @@
 public enum ClientType
 {
     Confidential,
-    Public
+    Public,
+    Desktop,
+    Embedded,
+    IoT,
+    Cli,
+    Lid,
 }
