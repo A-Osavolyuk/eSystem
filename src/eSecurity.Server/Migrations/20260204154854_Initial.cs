@@ -359,6 +359,45 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DeviceCodes",
+                schema: "public",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    DeviceCodeHash = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    UserCode = table.Column<string>(type: "character varying(9)", maxLength: 9, nullable: false),
+                    Interval = table.Column<int>(type: "integer", nullable: false),
+                    ExpiresAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    IsConsumed = table.Column<bool>(type: "boolean", nullable: false),
+                    IsDenied = table.Column<bool>(type: "boolean", nullable: false),
+                    Scope = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    AcrValues = table.Column<string[]>(type: "text[]", nullable: true),
+                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DeviceCodes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DeviceCodes_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalSchema: "public",
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DeviceCodes_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "public",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "LockoutStates",
                 schema: "public",
                 columns: table => new
@@ -991,6 +1030,18 @@ namespace eSecurity.Server.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_DeviceCodes_ClientId",
+                schema: "public",
+                table: "DeviceCodes",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DeviceCodes_UserId",
+                schema: "public",
+                table: "DeviceCodes",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_GrantedScopes_ClientScopeId",
                 schema: "public",
                 table: "GrantedScopes",
@@ -1171,6 +1222,10 @@ namespace eSecurity.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "Codes",
+                schema: "public");
+
+            migrationBuilder.DropTable(
+                name: "DeviceCodes",
                 schema: "public");
 
             migrationBuilder.DropTable(
