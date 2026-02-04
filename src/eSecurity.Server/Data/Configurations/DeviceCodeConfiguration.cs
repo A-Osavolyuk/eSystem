@@ -23,5 +23,11 @@ public sealed class DeviceCodeConfiguration : IEntityTypeConfiguration<DeviceCod
             .HasForeignKey(x => x.UserId)
             .IsRequired(false)
             .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.HasOne(x => x.Session)
+            .WithMany()
+            .HasForeignKey(x => x.SessionId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -52,6 +52,10 @@ public static class AuthorizationExtensions
         builder.Services.AddScoped<IRefreshTokenFlowResolver, RefreshTokenFlowResolver>();
         builder.Services.AddKeyedScoped<IRefreshTokenFlow, OidcRefreshTokenFlow>(AuthorizationProtocol.OpenIdConnect);
         builder.Services.AddKeyedScoped<IRefreshTokenFlow, OAuthRefreshTokenFlow>(AuthorizationProtocol.OAuth);
+        
+        builder.Services.AddScoped<IDeviceCodeFlowResolver, DeviceCodeFlowResolver>();
+        builder.Services.AddKeyedScoped<IDeviceCodeFlow, OidcDeviceCodeFlow>(AuthorizationProtocol.OpenIdConnect);
+        builder.Services.AddKeyedScoped<IDeviceCodeFlow, OAuthDeviceCodeFlow>(AuthorizationProtocol.OAuth);
             
         builder.Services.AddScoped<ITokenManager, TokenManager>();
         builder.Services.AddScoped<ITokenStrategyResolver, TokenStrategyResolver>();

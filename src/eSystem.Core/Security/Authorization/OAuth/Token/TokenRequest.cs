@@ -19,6 +19,9 @@ public class TokenRequest
     [FromForm(Name = "code")]
     public string? Code { get; set; }
     
+    [FromForm(Name = "device_code")]
+    public string? DeviceCode { get; set; }
+    
     [FromForm(Name = "client_secret")]
     public string? ClientSecret { get; set; }
     

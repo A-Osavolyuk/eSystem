@@ -14,6 +14,7 @@ public sealed class DeviceCodeEntity : Entity
     public DateTimeOffset CreatedAt { get; set; }
 
     public DeviceCodeState State { get; set; }
+    public bool IsFirstPoll { get; set; }
     
     public required string Scope { get; set; }
     public string[]? AcrValues { get; set; }
@@ -23,4 +24,7 @@ public sealed class DeviceCodeEntity : Entity
 
     public Guid? UserId { get; set; }
     public UserEntity? User { get; set; }
+    
+    public Guid? SessionId { get; set; }
+    public SessionEntity? Session { get; set; }
 }

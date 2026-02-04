@@ -71,6 +71,7 @@ public sealed class DeviceAuthorizationCommandHandler(
             Id = Guid.CreateVersion7(),
             ClientId = client.Id,
             DeviceCodeHash = _hasher.Hash(deviceCode),
+            IsFirstPoll = true,
             UserCode = userCode,
             AcrValues = request.Request.AcrValues,
             State = DeviceCodeState.Pending,

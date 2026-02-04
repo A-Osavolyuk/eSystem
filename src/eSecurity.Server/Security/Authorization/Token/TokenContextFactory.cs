@@ -32,6 +32,12 @@ public class TokenContextFactory : ITokenContextFactory
                 GrantType = request.GrantType,
                 Scope = request.Scope
             },
+            GrantTypes.DeviceCode => new DeviceCodeContext()
+            {
+                ClientId = request.ClientId,
+                GrantType = request.GrantType,
+                DeviceCode = request.DeviceCode
+            },
             _ => null
         };
     }
