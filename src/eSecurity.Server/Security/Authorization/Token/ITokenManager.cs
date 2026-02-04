@@ -14,7 +14,7 @@ public interface ITokenManager
     public Task<OpaqueTokenEntity?> FindByHashAsync(string hash, OpaqueTokenType type,
         CancellationToken cancellationToken = default);
 
-    public Task<Result> CreateAsync(OpaqueTokenEntity token, IEnumerable<string> scopes,
+    public Task<Result> CreateAsync(OpaqueTokenEntity token, IEnumerable<ClientAllowedScopeEntity> scopes,
         CancellationToken cancellationToken = default);
 
     public Task<Result> RevokeAsync(OpaqueTokenEntity token,

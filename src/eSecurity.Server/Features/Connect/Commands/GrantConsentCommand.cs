@@ -52,18 +52,28 @@ public class GrantConsentCommandHandler(
             var createResult = await _consentManager.CreateAsync(consent, cancellationToken);
             if (!createResult.Succeeded) return createResult;
 
-            foreach (var requestedScope in request.Request.Scopes)
+            foreach (var scope in request.Request.Scopes)
             {
-                if (!_options.ScopesSupported.Contains(requestedScope))
+                if (!_options.ScopesSupported.Contains(scope))
                 {
                     return Results.BadRequest(new Error
                     {
                         Code = ErrorTypes.OAuth.InvalidScope,
-                        Description = $"'{requestedScope}' scope is not supported."
+                        Description = $"'{scope}' scope is not supported."
                     });
                 }
 
-                var grantResult = await _consentManager.GrantAsync(consent, requestedScope, cancellationToken);
+                var clientScope = client.AllowedScopes.FirstOrDefault(x => x.Scope.Value == scope);
+                if (clientScope is null)
+                {
+                    return Results.BadRequest(new Error
+                    {
+                        Code = ErrorTypes.OAuth.InvalidScope,
+                        Description = $"'{scope}' scope is not supported by client."
+                    });
+                }
+                
+                var grantResult = await _consentManager.GrantAsync(consent, clientScope, cancellationToken);
                 if (!grantResult.Succeeded) return grantResult;
             }
 
@@ -72,18 +82,19 @@ public class GrantConsentCommandHandler(
 
         if (!consent.HasScopes(request.Request.Scopes, out var remainingScopes))
         {
-            foreach (var requestedScope in remainingScopes)
+            foreach (var scope in remainingScopes)
             {
-                if (!_options.ScopesSupported.Contains(requestedScope))
+                if (!_options.ScopesSupported.Contains(scope))
                 {
                     return Results.BadRequest(new Error
                     {
                         Code = ErrorTypes.OAuth.InvalidScope,
-                        Description = $"'{requestedScope}' scope is not supported."
+                        Description = $"'{scope}' scope is not supported."
                     });
                 }
 
-                var grantResult = await _consentManager.GrantAsync(consent, requestedScope, cancellationToken);
+                var clientScope = client.AllowedScopes.First(x => x.Scope.Value == scope);
+                var grantResult = await _consentManager.GrantAsync(consent, clientScope, cancellationToken);
                 if (!grantResult.Succeeded) return grantResult;
             }
         }

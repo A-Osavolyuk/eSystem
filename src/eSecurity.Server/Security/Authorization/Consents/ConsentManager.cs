@@ -19,7 +19,7 @@ public class ConsentManager(AuthDbContext context) : IConsentManager
     {
         return await _context.Consents
             .Include(x => x.GrantedScopes)
-            .ThenInclude(x => x.Scope)
+            .ThenInclude(x => x.ClientScope)
             .FirstOrDefaultAsync(c => c.UserId == user.Id && c.ClientId == client.Id, cancellationToken);
     }
 
@@ -31,14 +31,14 @@ public class ConsentManager(AuthDbContext context) : IConsentManager
         return Results.Ok();
     }
 
-    public async ValueTask<Result> GrantAsync(ConsentEntity consent, string scope,
+    public async ValueTask<Result> GrantAsync(ConsentEntity consent, ClientAllowedScopeEntity scope,
         CancellationToken cancellationToken = default)
     {
         var grantedScope = new GrantedScopeEntity
         {
             Id = Guid.CreateVersion7(),
             ConsentId = consent.Id,
-            Scope = scope
+            ClientScope = scope
         };
 
         await _context.GrantedScopes.AddAsync(grantedScope, cancellationToken);
@@ -47,11 +47,11 @@ public class ConsentManager(AuthDbContext context) : IConsentManager
         return Results.Ok();
     }
 
-    public async ValueTask<Result> RevokeAsync(ConsentEntity consent, string scope,
+    public async ValueTask<Result> RevokeAsync(ConsentEntity consent, ClientAllowedScopeEntity scope,
         CancellationToken cancellationToken = default)
     {
         var grantedScope = await _context.GrantedScopes.FirstOrDefaultAsync(
-            x => x.ConsentId == consent.Id && x.Scope == scope, cancellationToken);
+            x => x.ConsentId == consent.Id && x.ClientScopeId == scope.Id, cancellationToken);
 
         if (grantedScope is null) return Results.NotFound("Scope is not granted.");
 

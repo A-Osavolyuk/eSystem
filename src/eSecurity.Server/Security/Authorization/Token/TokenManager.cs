@@ -16,7 +16,7 @@ public sealed class TokenManager(
             .Where(x => x.TokenHash == hash && x.TokenType == type)
             .Include(x => x.Client)
             .Include(x => x.Scopes)
-            .ThenInclude(x => x.Scope)
+            .ThenInclude(x => x.ClientScope)
             .FirstOrDefaultAsync(cancellationToken);
     }
     
@@ -27,11 +27,11 @@ public sealed class TokenManager(
             .Where(x => x.TokenHash == hash)
             .Include(x => x.Client)
             .Include(x => x.Scopes)
-            .ThenInclude(x => x.Scope)
+            .ThenInclude(x => x.ClientScope)
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<Result> CreateAsync(OpaqueTokenEntity token, IEnumerable<string> scopes,
+    public async Task<Result> CreateAsync(OpaqueTokenEntity token, IEnumerable<ClientAllowedScopeEntity> scopes,
         CancellationToken cancellationToken = default)
     {
         var tokenScopes = scopes
@@ -39,7 +39,7 @@ public sealed class TokenManager(
             {
                 Id = Guid.CreateVersion7(),
                 TokenId = token.Id,
-                Scope = s
+                ClientScopeId = s.Id
             }).ToList();
 
         await _context.OpaqueTokens.AddAsync(token, cancellationToken);

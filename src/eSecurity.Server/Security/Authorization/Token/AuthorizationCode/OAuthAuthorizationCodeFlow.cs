@@ -121,7 +121,7 @@ public class OAuthAuthorizationCodeFlow(
             var claims = await claimsFactory.GetClaimsAsync(user, new AccessTokenClaimsContext
             {
                 Aud = client.Audiences.Select(x => x.Audience),
-                Scopes = client.AllowedScopes.Select(x => x.Scope),
+                Scopes = client.AllowedScopes.Select(x => x.Scope.Value),
                 Nonce = code.Nonce
             }, cancellationToken);
 
@@ -145,9 +145,8 @@ public class OAuthAuthorizationCodeFlow(
                 TokenType = OpaqueTokenType.AccessToken,
                 ExpiredDate = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime)
             };
-
-            var scopes = client.AllowedScopes.Select(x => x.Scope);
-            var createResult = await _tokenManager.CreateAsync(newRefreshToken, scopes, cancellationToken);
+            
+            var createResult = await _tokenManager.CreateAsync(newRefreshToken, client.AllowedScopes, cancellationToken);
             if (!createResult.Succeeded) return createResult;
 
             response.AccessToken = rawToken;
@@ -168,9 +167,8 @@ public class OAuthAuthorizationCodeFlow(
                 TokenType = OpaqueTokenType.RefreshToken,
                 ExpiredDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime)
             };
-
-            var scopes = client.AllowedScopes.Select(x => x.Scope);
-            var tokenResult = await _tokenManager.CreateAsync(refreshToken, scopes, cancellationToken);
+            
+            var tokenResult = await _tokenManager.CreateAsync(refreshToken, client.AllowedScopes, cancellationToken);
             if (!tokenResult.Succeeded) return tokenResult;
 
             response.RefreshToken = rawToken;

@@ -13,5 +13,10 @@ public sealed class OpaqueTokenScopeConfiguration : IEntityTypeConfiguration<Opa
             .WithMany(x => x.Scopes)
             .HasForeignKey(x => x.TokenId)
             .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.HasOne(x => x.ClientScope)
+            .WithMany()
+            .HasForeignKey(x => x.ClientScopeId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -15,6 +15,7 @@ public class ClientManager(AuthDbContext context) : IClientManager
             .Where(x => x.SessionId == session.Id)
             .Include(x => x.Client.Uris)
             .Include(x => x.Client.AllowedScopes)
+            .ThenInclude(x => x.Scope)
             .Include(x => x.Client.GrantTypes)
             .Include(x => x.Client.PairwiseSubjects)
             .Include(x => x.Client.Audiences)

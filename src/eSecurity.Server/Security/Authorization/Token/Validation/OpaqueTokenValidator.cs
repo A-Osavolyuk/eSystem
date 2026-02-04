@@ -27,7 +27,7 @@ public class OpaqueTokenValidator(
             return TokenValidationResult.Fail();
 
         var aud = JsonSerializer.Serialize(opaqueToken.Client.Audiences.Select(x => x.Audience));
-        var scopes = opaqueToken.Scopes.Select(x => x.Scope);
+        var scopes = opaqueToken.Scopes.Select(x => x.ClientScope);
         var claims = new List<Claim>
         {
             new(AppClaimTypes.Jti, opaqueToken.Id.ToString()),

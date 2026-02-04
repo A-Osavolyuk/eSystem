@@ -37,10 +37,10 @@ public class ClientEntity : Entity
     public ICollection<ClientUriEntity> Uris { get; set; } = null!;
 
     public bool HasScopes(List<string> scopes)
-        => scopes.All(scope => AllowedScopes.Any(x => x.Scope == scope));
+        => scopes.All(scope => AllowedScopes.Any(x => x.Scope.Value == scope));
 
     public bool HasScope(string scope)
-        => AllowedScopes.Any(x => x.Scope == scope);
+        => AllowedScopes.Any(x => x.Scope.Value == scope);
 
     public bool HasGrantType(string grantType)
         => GrantTypes.Any(x => x.Type == grantType);

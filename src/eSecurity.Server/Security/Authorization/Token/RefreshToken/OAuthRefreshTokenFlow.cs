@@ -92,7 +92,7 @@ public sealed class OAuthRefreshTokenFlow(
             var claims = await claimsFactory.GetClaimsAsync(user, new AccessTokenClaimsContext
             {
                 Aud = client.Audiences.Select(x => x.Audience),
-                Scopes = client.AllowedScopes.Select(x => x.Scope),
+                Scopes = client.AllowedScopes.Select(x => x.Scope.Value),
             }, cancellationToken);
 
             var tokenContext = new JwtTokenContext { Claims = claims, Type = JwtTokenTypes.AccessToken };
@@ -114,9 +114,8 @@ public sealed class OAuthRefreshTokenFlow(
                 TokenType = OpaqueTokenType.AccessToken,
                 ExpiredDate = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime)
             };
-
-            var scopes = client.AllowedScopes.Select(x => x.Scope);
-            var createResult = await _tokenManager.CreateAsync(newRefreshToken, scopes, cancellationToken);
+            
+            var createResult = await _tokenManager.CreateAsync(newRefreshToken, client.AllowedScopes, cancellationToken);
             if (!createResult.Succeeded) return createResult;
 
             response.AccessToken = rawToken;
@@ -138,9 +137,8 @@ public sealed class OAuthRefreshTokenFlow(
             };
 
             response.RefreshToken = rawToken;
-
-            var scopes = client.AllowedScopes.Select(x => x.Scope);
-            var createResult = await _tokenManager.CreateAsync(newRefreshToken, scopes, cancellationToken);
+            
+            var createResult = await _tokenManager.CreateAsync(newRefreshToken, client.AllowedScopes, cancellationToken);
             if (!createResult.Succeeded) return createResult;
 
             var revokeResult = await _tokenManager.RevokeAsync(token, cancellationToken);
