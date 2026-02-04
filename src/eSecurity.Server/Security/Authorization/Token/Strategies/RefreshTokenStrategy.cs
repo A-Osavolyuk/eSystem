@@ -18,25 +18,13 @@ public sealed class RefreshTokenContext : TokenContext
 }
 
 public class RefreshTokenStrategy(
-    ITokenFactoryProvider tokenFactoryProvider,
-    IClientManager clientManager,
     ITokenManager tokenManager,
-    IUserManager userManager,
     IHasherProvider hasherProvider,
-    ISessionManager sessionManager,
-    IClaimFactoryProvider claimFactoryProvider,
-    IOptions<TokenOptions> options,
     IRefreshTokenFlowResolver resolver) : ITokenStrategy
 {
-    private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
-    private readonly IClientManager _clientManager = clientManager;
     private readonly ITokenManager _tokenManager = tokenManager;
-    private readonly IUserManager _userManager = userManager;
     private readonly IHasherProvider _hasherProvider = hasherProvider;
-    private readonly ISessionManager _sessionManager = sessionManager;
-    private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
     private readonly IRefreshTokenFlowResolver _resolver = resolver;
-    private readonly TokenOptions _options = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(TokenContext context,
         CancellationToken cancellationToken = default)
