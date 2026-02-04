@@ -439,10 +439,16 @@ namespace eSecurity.Server.Migrations
                     b.Property<int>("Interval")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("IsFirstPoll")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Scope")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
+
+                    b.Property<Guid?>("SessionId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("State")
                         .IsRequired()
@@ -462,6 +468,8 @@ namespace eSecurity.Server.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId");
+
+                    b.HasIndex("SessionId");
 
                     b.HasIndex("UserId");
 
@@ -1422,12 +1430,19 @@ namespace eSecurity.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("eSecurity.Server.Data.Entities.SessionEntity", "Session")
+                        .WithMany()
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Client");
+
+                    b.Navigation("Session");
 
                     b.Navigation("User");
                 });
