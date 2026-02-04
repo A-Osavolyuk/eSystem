@@ -99,10 +99,8 @@ namespace eSecurity.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     Value = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    IsTemplate = table.Column<bool>(type: "boolean", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
@@ -132,29 +130,6 @@ namespace eSecurity.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ClientAllowedScopes",
-                schema: "public",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Scope = table.Column<string>(type: "text", nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ClientAllowedScopes", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ClientAllowedScopes_Clients_ClientId",
-                        column: x => x.ClientId,
-                        principalSchema: "public",
-                        principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -292,6 +267,36 @@ namespace eSecurity.Server.Migrations
                         column: x => x.OwnerId,
                         principalSchema: "public",
                         principalTable: "ResourceOwners",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClientAllowedScopes",
+                schema: "public",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ScopeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientAllowedScopes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClientAllowedScopes_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalSchema: "public",
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClientAllowedScopes_Scopes_ScopeId",
+                        column: x => x.ScopeId,
+                        principalSchema: "public",
+                        principalTable: "Scopes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -820,13 +825,20 @@ namespace eSecurity.Server.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     ConsentId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Scope = table.Column<string>(type: "text", nullable: false),
+                    ClientScopeId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_GrantedScopes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GrantedScopes_ClientAllowedScopes_ClientScopeId",
+                        column: x => x.ClientScopeId,
+                        principalSchema: "public",
+                        principalTable: "ClientAllowedScopes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_GrantedScopes_Consents_ConsentId",
                         column: x => x.ConsentId,
@@ -995,14 +1007,21 @@ namespace eSecurity.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ClientScopeId = table.Column<Guid>(type: "uuid", nullable: false),
                     TokenId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Scope = table.Column<string>(type: "text", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OpaqueTokensScopes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OpaqueTokensScopes_ClientAllowedScopes_ClientScopeId",
+                        column: x => x.ClientScopeId,
+                        principalSchema: "public",
+                        principalTable: "ClientAllowedScopes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_OpaqueTokensScopes_OpaqueTokens_TokenId",
                         column: x => x.TokenId,
@@ -1029,6 +1048,12 @@ namespace eSecurity.Server.Migrations
                 schema: "public",
                 table: "ClientAllowedScopes",
                 column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientAllowedScopes_ScopeId",
+                schema: "public",
+                table: "ClientAllowedScopes",
+                column: "ScopeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ClientAudiences_ClientId",
@@ -1085,6 +1110,12 @@ namespace eSecurity.Server.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_GrantedScopes_ClientScopeId",
+                schema: "public",
+                table: "GrantedScopes",
+                column: "ClientScopeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_GrantedScopes_ConsentId",
                 schema: "public",
                 table: "GrantedScopes",
@@ -1108,6 +1139,12 @@ namespace eSecurity.Server.Migrations
                 schema: "public",
                 table: "OpaqueTokens",
                 column: "SessionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OpaqueTokensScopes_ClientScopeId",
+                schema: "public",
+                table: "OpaqueTokensScopes",
+                column: "ClientScopeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OpaqueTokensScopes_TokenId",
@@ -1252,10 +1289,6 @@ namespace eSecurity.Server.Migrations
                 schema: "public");
 
             migrationBuilder.DropTable(
-                name: "ClientAllowedScopes",
-                schema: "public");
-
-            migrationBuilder.DropTable(
                 name: "ClientAudiences",
                 schema: "public");
 
@@ -1316,10 +1349,6 @@ namespace eSecurity.Server.Migrations
                 schema: "public");
 
             migrationBuilder.DropTable(
-                name: "Scopes",
-                schema: "public");
-
-            migrationBuilder.DropTable(
                 name: "UserClients",
                 schema: "public");
 
@@ -1364,6 +1393,10 @@ namespace eSecurity.Server.Migrations
                 schema: "public");
 
             migrationBuilder.DropTable(
+                name: "ClientAllowedScopes",
+                schema: "public");
+
+            migrationBuilder.DropTable(
                 name: "OpaqueTokens",
                 schema: "public");
 
@@ -1377,6 +1410,10 @@ namespace eSecurity.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "Roles",
+                schema: "public");
+
+            migrationBuilder.DropTable(
+                name: "Scopes",
                 schema: "public");
 
             migrationBuilder.DropTable(
