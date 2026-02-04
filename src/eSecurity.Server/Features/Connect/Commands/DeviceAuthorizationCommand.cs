@@ -73,6 +73,7 @@ public sealed class DeviceAuthorizationCommandHandler(
             DeviceCodeHash = _hasher.Hash(deviceCode),
             UserCode = userCode,
             AcrValues = request.Request.AcrValues,
+            State = DeviceCodeState.Pending,
             Scope = request.Request.Scope,
             Interval = _deviceAuthorizationOptions.Interval,
             CreatedAt = DateTimeOffset.UtcNow,

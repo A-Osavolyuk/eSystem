@@ -1,4 +1,5 @@
-﻿using eSystem.Core.Data.Entities;
+﻿using eSecurity.Server.Security.Authorization.Token.DeviceCode;
+using eSystem.Core.Data.Entities;
 
 namespace eSecurity.Server.Data.Entities;
 
@@ -12,8 +13,7 @@ public sealed class DeviceCodeEntity : Entity
     public DateTimeOffset ExpiresAt { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
 
-    public bool IsConsumed { get; set; }
-    public bool IsDenied { get; set; }
+    public DeviceCodeState State { get; set; }
     
     public required string Scope { get; set; }
     public string[]? AcrValues { get; set; }

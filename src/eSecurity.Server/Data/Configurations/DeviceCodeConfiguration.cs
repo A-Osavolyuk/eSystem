@@ -11,6 +11,7 @@ public sealed class DeviceCodeConfiguration : IEntityTypeConfiguration<DeviceCod
         builder.Property(x => x.DeviceCodeHash).HasMaxLength(200);
         builder.Property(x => x.UserCode).HasMaxLength(9);
         builder.Property(x => x.Scope).HasMaxLength(200);
+        builder.Property(x => x.State).HasConversion<string>();
 
         builder.HasOne(x => x.Client)
             .WithMany()
