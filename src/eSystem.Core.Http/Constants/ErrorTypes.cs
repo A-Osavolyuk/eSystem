@@ -24,6 +24,9 @@ public static class ErrorTypes
         public const string ConsentRequired = "consent_required";
         public const string InteractionRequired = "interaction_required";
         public const string InsufficientScope = "insufficient_scope";
+        public const string SlowDown = "slow_down";
+        public const string ExpiredToken = "expired_token";
+        public const string AuthorizationPending = "authorization_pending";
 
         // ===== OpenID Connect Request Object Errors =====  
         public const string InvalidRequestUri = "invalid_request_uri";
