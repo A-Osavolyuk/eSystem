@@ -157,9 +157,9 @@ public class ConnectController(ISender sender) : ControllerBase
     [EndpointSummary("Device authorization")]
     [EndpointDescription("Device authorization")]
     [ProducesResponseType(200)]
-    [Authorize(Policy = AuthorizationPolicies.BasicAuthorization)]
+    [Consumes(ContentTypes.Application.XwwwFormUrlEncoded)]
     [HttpPost("device_authorization")]
-    public async ValueTask<IActionResult> DeviceAuthorizationAsync([FromBody] DeviceAuthorizationRequest request)
+    public async ValueTask<IActionResult> DeviceAuthorizationAsync([FromForm] DeviceAuthorizationRequest request)
     {
         var result = await _sender.Send(new DeviceAuthorizationCommand(request));
         return HttpContext.HandleResult(result);
