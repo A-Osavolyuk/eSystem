@@ -2,20 +2,14 @@
 
 namespace eSystem.Core.Security.Authorization.OAuth.Token;
 
-public class TokenResponse
+public abstract class TokenResponse
 {
-    [JsonPropertyName("access_token")]
-    public string AccessToken { get; set; } = string.Empty;
-    
     [JsonPropertyName("token_type")]
     public required string TokenType { get; set; }
     
     [JsonPropertyName("expires_in")]
     public required int ExpiresIn { get; set; }
     
-    [JsonPropertyName("refresh_token")]
-    public string? RefreshToken { get; set; }
-    
-    [JsonPropertyName("id_token")]
-    public string? IdToken { get; set; }
+    [JsonPropertyName("access_token")]
+    public string? AccessToken { get; set; }
 }

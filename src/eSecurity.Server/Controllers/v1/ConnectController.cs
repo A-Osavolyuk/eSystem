@@ -5,7 +5,6 @@ using eSecurity.Server.Security.Authorization.Constants;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Http.Results;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Registration;
 using eSystem.Core.Security.Authentication.OpenIdConnect.User;
 using eSystem.Core.Security.Authorization.OAuth.DeviceAuthorization;
 using eSystem.Core.Security.Authorization.OAuth.Introspection;
@@ -104,7 +103,7 @@ public class ConnectController(ISender sender) : ControllerBase
     [HttpPost("token")]
     [Authorize(Policy = AuthorizationPolicies.TokenAuthorization)]
     [Consumes(ContentTypes.Application.XwwwFormUrlEncoded)]
-    public async ValueTask<IActionResult> TokenAsync([FromForm] TokenRequest request)
+    public async ValueTask<IActionResult> TokenAsync([FromForm] Dictionary<string, string> request)
     {
         var result = await _sender.Send(new TokenCommand(request));
         return HttpContext.HandleResult(result);

@@ -8,6 +8,7 @@ using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Token;
+using eSystem.Core.Security.Authorization.OAuth.Token.RefreshToken;
 using eSystem.Core.Security.Cryptography.Encoding;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
@@ -116,7 +117,7 @@ public class ApiClient(
         request.Headers.WithCookies(_httpContext.GetCookies());
         request.Headers.WithUserAgent(_httpContext.GetUserAgent());
 
-        var content = FormUrl.Encode(new TokenRequest
+        var content = FormUrl.Encode(new RefreshTokenRequest
         {
             ClientId = _clientOptions.ClientId,
             ClientSecret = _clientOptions.ClientSecret,
@@ -130,14 +131,14 @@ public class ApiClient(
         if (!tokenResult.IsSuccessStatusCode) return responseMessage;
 
         var tokenResponseJson = await tokenResult.Content.ReadAsStringAsync(cancellationToken);
-        var tokenResponse = JsonSerializer.Deserialize<TokenResponse>(tokenResponseJson);
+        var tokenResponse = JsonSerializer.Deserialize<RefreshTokenResponse>(tokenResponseJson);
         if (tokenResponse is null) return responseMessage;
 
         var metadata = new AuthenticationMetadata
         {
             Tokens =
             [
-                new AuthenticationToken { Name = AuthTokenTypes.AccessToken, Value = tokenResponse.AccessToken },
+                new AuthenticationToken { Name = AuthTokenTypes.AccessToken, Value = tokenResponse.AccessToken! },
                 new AuthenticationToken { Name = AuthTokenTypes.RefreshToken, Value = tokenResponse.RefreshToken! },
                 new AuthenticationToken { Name = AuthTokenTypes.IdToken, Value = tokenResponse.IdToken! }
             ]

@@ -7,6 +7,7 @@
 @using eSystem.Core.Security.Authentication.OpenIdConnect.Client
 @using eSystem.Core.Security.Authorization.OAuth.Constants
 @using eSystem.Core.Security.Authorization.OAuth.Token
+@using eSystem.Core.Security.Authorization.OAuth.Token.AuthorizationCode
 @using Microsoft.AspNetCore.Authentication
 @using TokenTypes = eSecurity.Client.Security.Authentication.OpenIdConnect.Token.AuthTokenTypes
 
@@ -80,7 +81,7 @@ else
         if (firstRender && string.IsNullOrEmpty(Error) && string.IsNullOrEmpty(ErrorDescription))
         {
             var options = ClientOptions.Value;
-            var request = new TokenRequest
+            var request = new AuthorizationCodeRequest
             {
                 ClientId = options.ClientId,
                 ClientSecret = options.ClientSecret,
@@ -90,7 +91,7 @@ else
             };
 
             var result = await ConnectService.TokenAsync(request);
-            if (result.Succeeded && result.TryGetValue<TokenResponse>(out var response) && response is not null)
+            if (result.Succeeded && result.TryGetValue<AuthorizationCodeResponse>(out var response) && response is not null)
             {
                 var tokenResult = await TokenValidator.ValidateAsync(response.IdToken!);
                 if (!tokenResult.Succeeded)
@@ -104,7 +105,7 @@ else
                     Claims = tokenResult.Get<List<ClaimValue>>(),
                     Tokens =
                     [
-                        new AuthenticationToken { Name = TokenTypes.AccessToken, Value = response.AccessToken },
+                        new AuthenticationToken { Name = TokenTypes.AccessToken, Value = response.AccessToken! },
                         new AuthenticationToken { Name = TokenTypes.IdToken, Value = response.IdToken! },
                         new AuthenticationToken { Name = TokenTypes.RefreshToken, Value = response.RefreshToken! },
                     ]

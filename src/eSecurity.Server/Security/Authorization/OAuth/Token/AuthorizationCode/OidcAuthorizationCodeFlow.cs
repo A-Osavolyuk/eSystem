@@ -14,6 +14,7 @@ using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Token;
+using eSystem.Core.Security.Authorization.OAuth.Token.AuthorizationCode;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.AuthorizationCode;
 
@@ -40,8 +41,8 @@ public class OidcAuthorizationCodeFlow(
     private readonly IAuthorizationCodeManager _authorizationCodeManager = authorizationCodeManager;
     private readonly TokenOptions _options = options.Value;
 
-    public async ValueTask<Result> ExecuteAsync(AuthorizationCodeContext context, AuthorizationCodeEntity code,
-        CancellationToken cancellationToken = default)
+    public async ValueTask<Result> ExecuteAsync(AuthorizationCodeEntity code,
+        AuthorizationCodeFlowContext context, CancellationToken cancellationToken = default)
     {
         var client = await _clientManager.FindByIdAsync(context.ClientId, cancellationToken);
         if (client is null)
@@ -106,7 +107,7 @@ public class OidcAuthorizationCodeFlow(
         var codeResult = await _authorizationCodeManager.UseAsync(code, cancellationToken);
         if (!codeResult.Succeeded) return codeResult;
 
-        var response = new TokenResponse
+        var response = new AuthorizationCodeResponse
         {
             ExpiresIn = (int)_options.AccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenTypes.Bearer,

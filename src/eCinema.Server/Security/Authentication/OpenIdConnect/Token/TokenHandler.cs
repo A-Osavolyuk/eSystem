@@ -3,6 +3,7 @@ using eSystem.Core.Common.Gateway;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Token;
+using eSystem.Core.Security.Authorization.OAuth.Token.RefreshToken;
 using eSystem.Core.Security.Cryptography.Encoding;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -44,7 +45,7 @@ public class TokenHandler (
         if (discovery is null) return null;
 
         var requestMessage = new HttpRequestMessage(HttpMethod.Post, discovery.TokenEndpoint);
-        var content = FormUrl.Encode(new TokenRequest
+        var content = FormUrl.Encode(new RefreshTokenRequest
         {
             GrantType = GrantTypes.RefreshToken,
             ClientId = _oauthOptions.ClientId,
@@ -57,7 +58,7 @@ public class TokenHandler (
         var response = await _httpClient.SendAsync(requestMessage, cancellationToken);
         response.EnsureSuccessStatusCode();
 
-        var tokenResponse = await response.Content.ReadFromJsonAsync<TokenResponse>(cancellationToken);
+        var tokenResponse = await response.Content.ReadFromJsonAsync<RefreshTokenResponse>(cancellationToken);
         
         authResult.Properties?.UpdateTokenValue("access_token", tokenResponse?.AccessToken);
         authResult.Properties?.UpdateTokenValue("refresh_token", tokenResponse?.RefreshToken);

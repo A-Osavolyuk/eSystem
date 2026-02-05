@@ -9,14 +9,9 @@ using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Token;
+using eSystem.Core.Security.Authorization.OAuth.Token.ClientCredentials;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.ClientCredentials;
-
-public sealed class ClientCredentialsContext : TokenContext
-{
-    public string? ClientSecret { get; set; }
-    public string? Scope { get; set; }
-}
 
 public sealed class ClientCredentialsStrategy(
     IClientManager clientManager,
@@ -33,13 +28,13 @@ public sealed class ClientCredentialsStrategy(
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly TokenOptions _options = options.Value;
 
-    public async ValueTask<Result> ExecuteAsync(TokenContext context, 
+    public async ValueTask<Result> ExecuteAsync(TokenRequest tokenRequest, 
         CancellationToken cancellationToken = default)
     {
-        if (context is not ClientCredentialsContext clientCredentialsContext)
-            throw new NotSupportedException("Payload type must be 'ClientCredentialsContext'");
+        if (tokenRequest is not ClientCredentialsRequest request)
+            throw new NotSupportedException("Payload type must be 'ClientCredentialsRequest'");
         
-        if (string.IsNullOrEmpty(clientCredentialsContext.ClientSecret))
+        if (string.IsNullOrEmpty(request.ClientSecret))
         {
             return Results.BadRequest(new Error
             {
@@ -48,7 +43,7 @@ public sealed class ClientCredentialsStrategy(
             });
         }
         
-        if (string.IsNullOrEmpty(clientCredentialsContext.Scope))
+        if (string.IsNullOrEmpty(request.Scope))
         {
             return Results.BadRequest(new Error
             {
@@ -57,7 +52,7 @@ public sealed class ClientCredentialsStrategy(
             });
         }
 
-        var client = await _clientManager.FindByIdAsync(clientCredentialsContext.ClientId, cancellationToken);
+        var client = await _clientManager.FindByIdAsync(request.ClientId, cancellationToken);
         if (client is null)
         {
             return Results.Unauthorized(new Error
@@ -67,17 +62,17 @@ public sealed class ClientCredentialsStrategy(
             });
         }
 
-        if (!client.HasGrantType(clientCredentialsContext.GrantType))
+        if (!client.HasGrantType(request.GrantType))
         {
             return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.OAuth.UnsupportedGrantType,
-                Description = $"'{clientCredentialsContext.GrantType}' grant is not supported by client."
+                Description = $"'{request.GrantType}' grant is not supported by client."
             });
         }
 
         var grantedScopes = client.AllowedScopes.Select(x => x.Scope.Value);
-        var requestScopes = clientCredentialsContext.Scope!.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var requestScopes = request.Scope!.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         var allowedScopes = grantedScopes.Intersect(requestScopes).ToList();
         
         if (allowedScopes.Count == 0)
@@ -89,7 +84,7 @@ public sealed class ClientCredentialsStrategy(
             });
         }
 
-        var response = new TokenResponse
+        var response = new ClientCredentialsResponse
         {
             ExpiresIn = (int)_options.AccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenTypes.Bearer

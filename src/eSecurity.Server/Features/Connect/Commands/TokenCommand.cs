@@ -2,24 +2,23 @@
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
-using eSystem.Core.Security.Authorization.OAuth.Token;
 
 namespace eSecurity.Server.Features.Connect.Commands;
 
-public record TokenCommand(TokenRequest Request) : IRequest<Result>;
+public record TokenCommand(Dictionary<string, string> Request) : IRequest<Result>;
 
 public class TokenCommandHandler(
     ITokenStrategyResolver tokenStrategyResolver,
-    ITokenContextFactory tokenContextFactory,
+    ITokenRequestMapper tokenRequestMapper,
     IOptions<OpenIdConfiguration> options) : IRequestHandler<TokenCommand, Result>
 {
     private readonly ITokenStrategyResolver _tokenStrategyResolver = tokenStrategyResolver;
-    private readonly ITokenContextFactory _tokenContextFactory = tokenContextFactory;
+    private readonly ITokenRequestMapper _tokenRequestMapper = tokenRequestMapper;
     private readonly OpenIdConfiguration _configuration = options.Value;
 
     public async Task<Result> Handle(TokenCommand request, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrEmpty(request.Request.GrantType))
+        if (!request.Request.TryGetValue("grant_type", out var grantType) || string.IsNullOrEmpty(grantType))
         {
             return Results.BadRequest(new Error
             {
@@ -27,8 +26,17 @@ public class TokenCommandHandler(
                 Description = "grant_type is required"
             });
         }
+        
+        if (!_configuration.GrantTypesSupported.Contains(grantType))
+        {
+            return Results.BadRequest(new Error
+            {
+                Code = ErrorTypes.OAuth.InvalidGrant,
+                Description = $"'{grantType}' grant type is not supported"
+            });
+        }
 
-        if (string.IsNullOrEmpty(request.Request.ClientId))
+        if (!request.Request.TryGetValue("client_id", out var clientId) || string.IsNullOrEmpty(clientId))
         {
             return Results.BadRequest(new Error
             {
@@ -37,26 +45,17 @@ public class TokenCommandHandler(
             });
         }
 
-        if (!_configuration.GrantTypesSupported.Contains(request.Request.GrantType))
-        {
-            return Results.BadRequest(new Error
-            {
-                Code = ErrorTypes.OAuth.InvalidGrant,
-                Description = $"'{request.Request.GrantType}' grant type is not supported"
-            });
-        }
-
-        var context = _tokenContextFactory.CreateContext(request.Request);
-        if (context is null)
+        var tokenRequest = _tokenRequestMapper.Map(request.Request);
+        if (tokenRequest is null)
         {
             return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.OAuth.UnsupportedGrantType,
-                Description = $"'{request.Request.GrantType}' grant type is not supported"
+                Description = $"'{grantType}' grant type is allowed, but not supported"
             });
         }
 
-        var strategy = _tokenStrategyResolver.Resolve(context.GrantType);
-        return await strategy.ExecuteAsync(context, cancellationToken);
+        var strategy = _tokenStrategyResolver.Resolve(grantType);
+        return await strategy.ExecuteAsync(tokenRequest, cancellationToken);
     }
 }

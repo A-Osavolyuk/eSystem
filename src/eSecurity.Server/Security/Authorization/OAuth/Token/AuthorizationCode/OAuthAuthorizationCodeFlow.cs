@@ -13,6 +13,7 @@ using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Token;
+using eSystem.Core.Security.Authorization.OAuth.Token.AuthorizationCode;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.AuthorizationCode;
 
@@ -22,7 +23,6 @@ public class OAuthAuthorizationCodeFlow(
     ITokenManager tokenManager,
     IClientManager clientManager,
     IHasherProvider hasherProvider,
-    ISessionManager sessionManager,
     IClaimFactoryProvider claimFactoryProvider,
     ITokenFactoryProvider tokenFactoryProvider,
     IAuthorizationCodeManager authorizationCodeManager,
@@ -33,14 +33,13 @@ public class OAuthAuthorizationCodeFlow(
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IClientManager _clientManager = clientManager;
     private readonly IHasherProvider _hasherProvider = hasherProvider;
-    private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly IAuthorizationCodeManager _authorizationCodeManager = authorizationCodeManager;
     private readonly TokenOptions _options = options.Value;
 
-    public async ValueTask<Result> ExecuteAsync(AuthorizationCodeContext context, AuthorizationCodeEntity code,
-        CancellationToken cancellationToken = default)
+    public async ValueTask<Result> ExecuteAsync(AuthorizationCodeEntity code, 
+        AuthorizationCodeFlowContext context, CancellationToken cancellationToken = default)
     {
         var client = await _clientManager.FindByIdAsync(context.ClientId, cancellationToken);
         if (client is null)
@@ -50,7 +49,7 @@ public class OAuthAuthorizationCodeFlow(
                 Description = "Client was not found."
             });
 
-        if (client.Id != code.ClientId || !client.HasUri(context.RedirectUri!, UriType.Redirect))
+        if (client.Id != code.ClientId || !client.HasUri(context.RedirectUri, UriType.Redirect))
         {
             return Results.BadRequest(new Error
             {
@@ -108,7 +107,7 @@ public class OAuthAuthorizationCodeFlow(
         var codeResult = await _authorizationCodeManager.UseAsync(code, cancellationToken);
         if (!codeResult.Succeeded) return codeResult;
 
-        var response = new TokenResponse
+        var response = new AuthorizationCodeResponse()
         {
             ExpiresIn = (int)_options.AccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenTypes.Bearer,

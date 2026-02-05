@@ -3,13 +3,10 @@ using eSecurity.Server.Security.Cryptography.Hashing;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
+using eSystem.Core.Security.Authorization.OAuth.Token;
+using eSystem.Core.Security.Authorization.OAuth.Token.DeviceCode;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.DeviceCode;
-
-public sealed class DeviceCodeContext : TokenContext
-{
-    public string? DeviceCode { get; set; }
-}
 
 public sealed class DeviceCodeStrategy(
     IDeviceCodeManager deviceCodeManager,
@@ -20,12 +17,12 @@ public sealed class DeviceCodeStrategy(
     private readonly IDeviceCodeFlowResolver _resolver = resolver;
     private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
 
-    public async ValueTask<Result> ExecuteAsync(TokenContext context, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> ExecuteAsync(TokenRequest tokenRequest, CancellationToken cancellationToken = default)
     {
-        if (context is not DeviceCodeContext deviceContext)
+        if (tokenRequest is not DeviceCodeRequest request)
             throw new NotSupportedException("Payload type must be 'DeviceCodeContext'.");
 
-        if (string.IsNullOrEmpty(deviceContext.DeviceCode))
+        if (string.IsNullOrEmpty(request.DeviceCode))
         {
             return Results.BadRequest(new Error()
             {
@@ -34,11 +31,11 @@ public sealed class DeviceCodeStrategy(
             });
         }
         
-        var deviceCodeHash = _hasher.Hash(deviceContext.DeviceCode);
+        var deviceCodeHash = _hasher.Hash(request.DeviceCode);
         var deviceCode = await _deviceCodeManager.FindByHashAsync(deviceCodeHash, cancellationToken);
         if (deviceCode is null || deviceCode.State == DeviceCodeState.Consumed || 
             deviceCode is { State: DeviceCodeState.Denied, IsFirstPoll: false } ||
-            deviceCode.ClientId.ToString() != deviceContext.ClientId)
+            deviceCode.ClientId.ToString() != request.ClientId)
         {
             return Results.BadRequest(new Error()
             {
@@ -84,7 +81,7 @@ public sealed class DeviceCodeStrategy(
             ? AuthorizationProtocol.OpenIdConnect 
             : AuthorizationProtocol.OAuth;
         
-        var deviceCodeFlowContext = new DeviceCodeFlowContext() { ClientId = deviceContext.ClientId };
+        var deviceCodeFlowContext = new DeviceCodeFlowContext() { ClientId = request.ClientId };
         var flow = _resolver.Resolve(protocol);
         
         return await flow.ExecuteAsync(deviceCode, deviceCodeFlowContext, cancellationToken);

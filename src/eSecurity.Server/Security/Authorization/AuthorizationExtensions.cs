@@ -62,7 +62,7 @@ public static class AuthorizationExtensions
         builder.Services.AddKeyedScoped<ITokenStrategy, AuthorizationCodeStrategy>(GrantTypes.AuthorizationCode);
         builder.Services.AddKeyedScoped<ITokenStrategy, RefreshTokenStrategy>(GrantTypes.RefreshToken);
         builder.Services.AddKeyedScoped<ITokenStrategy, ClientCredentialsStrategy>(GrantTypes.ClientCredentials);
-        builder.Services.AddScoped<ITokenContextFactory, TokenContextFactory>();
+        builder.Services.AddScoped<ITokenRequestMapper, TokenRequestMapper>();
 
         builder.Services.AddAuthorizationBuilder()
             .AddPolicy(AuthorizationPolicies.BasicAuthorization, policy =>

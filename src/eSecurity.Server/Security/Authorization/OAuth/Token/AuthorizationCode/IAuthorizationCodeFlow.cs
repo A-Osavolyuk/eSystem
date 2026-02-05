@@ -1,10 +1,11 @@
 ﻿using eSecurity.Server.Data.Entities;
 using eSystem.Core.Http.Results;
+using eSystem.Core.Security.Authorization.OAuth.Token;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.AuthorizationCode;
 
 public interface IAuthorizationCodeFlow
 {
-    public ValueTask<Result> ExecuteAsync(AuthorizationCodeContext context, 
-        AuthorizationCodeEntity code, CancellationToken cancellationToken = default);
+    public ValueTask<Result> ExecuteAsync(AuthorizationCodeEntity code, 
+        AuthorizationCodeFlowContext context, CancellationToken cancellationToken = default);
 }

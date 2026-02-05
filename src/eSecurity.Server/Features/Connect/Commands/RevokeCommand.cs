@@ -27,8 +27,8 @@ public class RevokeCommandHandler(
 
         OpaqueTokenType? tokenType = request.Request.TokenTypeHint switch
         {
-            TokenTypeHints.AccessToken => OpaqueTokenType.AccessToken,
-            TokenTypeHints.RefreshToken => OpaqueTokenType.RefreshToken,
+            TokenTypes.Short.AccessToken or TokenTypes.Full.AccessToken => OpaqueTokenType.AccessToken,
+            TokenTypes.Short.RefreshToken or TokenTypes.Full.RefreshToken => OpaqueTokenType.RefreshToken,
             _ => null
         };
 

@@ -10,6 +10,7 @@ using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Token;
+using eSystem.Core.Security.Authorization.OAuth.Token.RefreshToken;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.RefreshToken;
 
@@ -80,7 +81,7 @@ public sealed class OAuthRefreshTokenFlow(
             });
         }
 
-        var response = new TokenResponse
+        var response = new RefreshTokenResponse
         {
             ExpiresIn = (int)_options.AccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenTypes.Bearer,

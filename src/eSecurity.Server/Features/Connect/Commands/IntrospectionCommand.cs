@@ -28,16 +28,18 @@ public class IntrospectionCommandHandler(
     public async Task<Result> Handle(IntrospectionCommand request, CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(request.Request.Token))
+        {
             return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "token is required"
             });
+        }
 
         OpaqueTokenType? opaqueTokenType = request.Request.TokenTypeHint switch
         {
-            TokenTypeHints.AccessToken => OpaqueTokenType.AccessToken,
-            TokenTypeHints.RefreshToken => OpaqueTokenType.RefreshToken,
+            TokenTypes.Full.AccessToken or TokenTypes.Short.AccessToken => OpaqueTokenType.AccessToken,
+            TokenTypes.Full.RefreshToken or TokenTypes.Short.RefreshToken => OpaqueTokenType.RefreshToken,
             _ => null
         };
 
@@ -53,8 +55,8 @@ public class IntrospectionCommandHandler(
 
         var tokenType = token.TokenType switch
         {
-            OpaqueTokenType.AccessToken => IntrospectionTokenTypes.AccessToken,
-            OpaqueTokenType.RefreshToken => IntrospectionTokenTypes.RefreshToken,
+            OpaqueTokenType.AccessToken => TokenTypes.Short.AccessToken,
+            OpaqueTokenType.RefreshToken => TokenTypes.Short.RefreshToken,
             _ => throw new NotSupportedException("Unsupported token type")
         };
 

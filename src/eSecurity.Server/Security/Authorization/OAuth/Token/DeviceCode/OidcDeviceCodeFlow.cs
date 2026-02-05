@@ -12,6 +12,7 @@ using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Token;
+using eSystem.Core.Security.Authorization.OAuth.Token.DeviceCode;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.DeviceCode;
 
@@ -65,7 +66,7 @@ public sealed class OidcDeviceCodeFlow(
             });
         }
 
-        var response = new TokenResponse
+        var response = new DeviceCodeResponse
         {
             ExpiresIn = (int)_tokenOptions.AccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenTypes.Bearer,
