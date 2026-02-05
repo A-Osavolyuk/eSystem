@@ -57,13 +57,23 @@ public class DeviceController(ISender sender) : ControllerBase
         return HttpContext.HandleResult(result);
     }
     
-    [EndpointSummary("Activate device code")]
-    [EndpointDescription("Activate device code")]
+    [EndpointSummary("Allow device code")]
+    [EndpointDescription("Allow device code")]
     [ProducesResponseType(200)]
-    [HttpPost("device-code/activate")]
-    public async ValueTask<IActionResult> ActivateDeviceCode([FromBody] ActivateDeviceCodeRequest request)
+    [HttpPost("device-code/allow")]
+    public async ValueTask<IActionResult> AllowDeviceCode([FromBody] AllowDeviceCodeRequest request)
     {
-        var result = await _sender.Send(new ActivateDeviceCodeCommand(request));
+        var result = await _sender.Send(new AllowDeviceCodeCommand(request));
+        return HttpContext.HandleResult(result);
+    }
+    
+    [EndpointSummary("Deny device code")]
+    [EndpointDescription("Deny device code")]
+    [ProducesResponseType(200)]
+    [HttpPost("device-code/deny")]
+    public async ValueTask<IActionResult> DenyDeviceCode([FromBody] DenyDeviceCodeRequest request)
+    {
+        var result = await _sender.Send(new DenyDeviceCodeCommand(request));
         return HttpContext.HandleResult(result);
     }
 }

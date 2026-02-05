@@ -3,7 +3,7 @@
 public enum DeviceCodeState
 {
     Pending,
-    Activated,
+    Allowed,
     Denied,
     Consumed
 }
