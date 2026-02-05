@@ -831,6 +831,8 @@ namespace eSecurity.Server.Migrations
                     IsFirstPoll = table.Column<bool>(type: "boolean", nullable: false),
                     Scope = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     AcrValues = table.Column<string[]>(type: "text[]", nullable: true),
+                    DeviceModel = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    DeviceName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     ClientId = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: true),
                     SessionId = table.Column<Guid>(type: "uuid", nullable: true),
