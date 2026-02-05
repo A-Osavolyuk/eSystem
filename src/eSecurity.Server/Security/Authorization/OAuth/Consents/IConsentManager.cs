@@ -14,6 +14,9 @@ public interface IConsentManager
     public ValueTask<Result> CreateAsync(ConsentEntity consent, 
         CancellationToken cancellationToken = default);
     
+    public ValueTask<Result> UpdateAsync(ConsentEntity consent, 
+        CancellationToken cancellationToken = default);
+    
     public ValueTask<Result> GrantAsync(ConsentEntity consent, ClientAllowedScopeEntity scope, 
         CancellationToken cancellationToken = default);
     

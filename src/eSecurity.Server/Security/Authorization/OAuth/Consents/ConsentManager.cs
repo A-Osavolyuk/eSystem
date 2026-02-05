@@ -31,6 +31,14 @@ public class ConsentManager(AuthDbContext context) : IConsentManager
         return Results.Ok();
     }
 
+    public async ValueTask<Result> UpdateAsync(ConsentEntity consent, CancellationToken cancellationToken = default)
+    {
+        _context.Consents.Update(consent);
+        await _context.SaveChangesAsync(cancellationToken);
+        
+        return Results.Ok();
+    }
+
     public async ValueTask<Result> GrantAsync(ConsentEntity consent, ClientAllowedScopeEntity scope,
         CancellationToken cancellationToken = default)
     {
