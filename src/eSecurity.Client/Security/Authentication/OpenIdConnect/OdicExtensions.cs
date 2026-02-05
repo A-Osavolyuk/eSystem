@@ -28,7 +28,7 @@ public static class OdicExtensions
                 cfg.ClientId = "392e390f-33bd-4f30-af70-ccbe04bbb2c4";
                 cfg.ClientSecret = "09ba08a500f11aa321fb1dfd8c40ed017e2c1b70f992b86dac6d591089e33cb2";
                 cfg.CallbackUri = "https://localhost:6501/connect/callback";
-                cfg.PostLogoutRedirectUri = "https://localhost:6501/connect/logged-out";
+                cfg.PostLogoutRedirectUri = "https://localhost:6501/login";
                 cfg.SupportedScopes =
                 [
                     ScopeTypes.OpenId,
