@@ -94,7 +94,7 @@
 
     private void OnLogout()
     {
-        var idToken = TokenProvider.Get(TokenTypes.IdToken);
+        var idToken = TokenProvider.Get(AuthTokenTypes.IdToken);
         if (!string.IsNullOrEmpty(idToken))
         {
             NavigationManager.NavigateTo(QueryBuilder.Create()

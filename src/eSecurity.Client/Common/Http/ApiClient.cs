@@ -85,7 +85,7 @@ public class ApiClient(
         var message = new HttpRequestMessage(apiRequest.Method, apiRequest.Url);
         if (apiOptions.Authentication == AuthenticationType.Bearer)
         {
-            var token = _tokenProvider.Get(TokenTypes.AccessToken);
+            var token = _tokenProvider.Get(AuthTokenTypes.AccessToken);
             message.Headers.WithBearerAuthentication(token);
         }
         else if (apiOptions.Authentication == AuthenticationType.Basic)
@@ -121,7 +121,7 @@ public class ApiClient(
             ClientId = _clientOptions.ClientId,
             ClientSecret = _clientOptions.ClientSecret,
             GrantType = GrantTypes.RefreshToken,
-            RefreshToken = _tokenProvider.Get(TokenTypes.RefreshToken)
+            RefreshToken = _tokenProvider.Get(AuthTokenTypes.RefreshToken)
         });
 
         request.Content = new FormUrlEncodedContent(content);
@@ -137,9 +137,9 @@ public class ApiClient(
         {
             Tokens =
             [
-                new AuthenticationToken { Name = TokenTypes.AccessToken, Value = tokenResponse.AccessToken },
-                new AuthenticationToken { Name = TokenTypes.RefreshToken, Value = tokenResponse.RefreshToken! },
-                new AuthenticationToken { Name = TokenTypes.IdToken, Value = tokenResponse.IdToken! }
+                new AuthenticationToken { Name = AuthTokenTypes.AccessToken, Value = tokenResponse.AccessToken },
+                new AuthenticationToken { Name = AuthTokenTypes.RefreshToken, Value = tokenResponse.RefreshToken! },
+                new AuthenticationToken { Name = AuthTokenTypes.IdToken, Value = tokenResponse.IdToken! }
             ]
         };
         
