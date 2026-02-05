@@ -19,7 +19,7 @@
     [SupplyParameterFromQuery(Name = "error_description")]
     public string? ErrorDescription { get; set; }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnAfterRender(bool firstRender)
     {
         if (!string.IsNullOrEmpty(ErrorCode) && !string.IsNullOrEmpty(ErrorDescription))
         {
@@ -106,6 +106,9 @@
 
         if (!string.IsNullOrEmpty(state.RedirectUri))
             builder.WithQueryParam("redirect_uri", state.RedirectUri);
+        
+        if (!string.IsNullOrEmpty(state.ReturnUrl))
+            builder.WithQueryParam("return_url", state.ReturnUrl);
 
         if (!string.IsNullOrEmpty(state.Scope))
             builder.WithQueryParam("scope", state.Scope);

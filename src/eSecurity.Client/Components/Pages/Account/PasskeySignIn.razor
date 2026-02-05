@@ -122,8 +122,11 @@ else
                         return;
                     }
                 }
-                
-                NavigationManager.NavigateTo(AuthenticationManager.GetAuthorizationUri());
+                else
+                {
+                    var returnUrl = queryParams.GetValueOrDefault("return_url");
+                    NavigationManager.NavigateTo(AuthenticationManager.GetAuthorizationUri(returnUrl));
+                }
             }
             else
             {

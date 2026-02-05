@@ -24,4 +24,7 @@ public class OAuthState
     
     [JsonPropertyName("prompt")]
     public string? Prompt { get; set; }
+    
+    [JsonPropertyName("return_url")] 
+    public string? ReturnUrl { get; set; }
 }

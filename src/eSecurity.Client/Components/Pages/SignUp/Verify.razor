@@ -61,6 +61,9 @@
 
     [SupplyParameterFromQuery(Name = "state")]
     private string? State { get; set; }
+    
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string? ReturnUrl { get; set; } = string.Empty;
 
     private readonly VerifyEmailModel _model = new();
 
@@ -153,7 +156,7 @@
                 }
             }
 
-            NavigationManager.NavigateTo(AuthenticationManager.GetAuthorizationState());
+            NavigationManager.NavigateTo(AuthenticationManager.GetAuthorizationState(ReturnUrl));
         }
         else
         {

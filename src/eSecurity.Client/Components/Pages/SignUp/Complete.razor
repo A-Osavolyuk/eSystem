@@ -72,6 +72,9 @@
 
     [SupplyParameterFromQuery(Name = "state")]
     public string? State { get; set; }
+    
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string? ReturnUrl { get; set; } = string.Empty;
 
     private MudForm _form = new();
     private SignUpModel _model = new();
@@ -86,7 +89,7 @@
         {
             NavigationManager.NavigateTo(QueryBuilder.Create()
                 .WithUri(Links.Common.SignUp)
-                .WithQueryParam("state", AuthenticationManager.GetAuthorizationState())
+                .WithQueryParam("state", AuthenticationManager.GetAuthorizationState(ReturnUrl))
                 .Build());
         }
         else
@@ -96,7 +99,7 @@
             {
                 NavigationManager.NavigateTo(QueryBuilder.Create()
                     .WithUri(Links.Common.SignUp)
-                    .WithQueryParam("state", AuthenticationManager.GetAuthorizationState())
+                    .WithQueryParam("state", AuthenticationManager.GetAuthorizationState(ReturnUrl))
                     .Build());
 
                 return;
@@ -129,7 +132,7 @@
                 _showError = false;
                     
                 var authorizationState = string.IsNullOrEmpty(_authorizationState)
-                    ? AuthenticationManager.GetAuthorizationState()
+                    ? AuthenticationManager.GetAuthorizationState(ReturnUrl)
                     : _authorizationState;
 
                 var state = StateBuilder.Create()
@@ -162,7 +165,7 @@
     private string OnLogin()
     {
         var state = string.IsNullOrEmpty(_authorizationState)
-            ? AuthenticationManager.GetAuthorizationState()
+            ? AuthenticationManager.GetAuthorizationState(ReturnUrl)
             : _authorizationState;
 
         var builder = QueryBuilder.Create()

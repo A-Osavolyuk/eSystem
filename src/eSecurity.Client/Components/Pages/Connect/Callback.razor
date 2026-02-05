@@ -64,6 +64,9 @@ else
 
     [SupplyParameterFromQuery(Name = "state")]
     public string State { get; set; } = string.Empty;
+    
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string ReturnUrl { get; set; } = string.Empty;
 
     [SupplyParameterFromQuery(Name = "error")]
     public string? Error { get; set; } = string.Empty;
@@ -116,7 +119,8 @@ else
                 var signResult = await FetchClient.FetchAsync(fetchOptions);
                 if (signResult.Succeeded)
                 {
-                    NavigationManager.NavigateTo(Links.Common.Profile, true);
+                    var url = string.IsNullOrEmpty(ReturnUrl) ? Links.Common.Profile : ReturnUrl;
+                    NavigationManager.NavigateTo(url, true);
                 }
             }
         }

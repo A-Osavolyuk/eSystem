@@ -52,9 +52,11 @@
 </MudStack>
 
 @code {
-
     [SupplyParameterFromQuery(Name = "state")]
     public string? State { get; set; }
+    
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string? ReturnUrl { get; set; } = string.Empty;
 
     private string BuildUrl(string type)
     {
@@ -77,7 +79,8 @@
                 Scope = queryParams.GetValueOrDefault("scope"),
                 Nonce = queryParams.GetValueOrDefault("nonce"),
                 State = queryParams.GetValueOrDefault("state"),
-                Prompt = queryParams.GetValueOrDefault("prompt")
+                Prompt = queryParams.GetValueOrDefault("prompt"),
+                ReturnUrl = ReturnUrl
             };
         }
         else
@@ -91,7 +94,8 @@
                 Scope = string.Join(" ", options.SupportedScopes),
                 Nonce = Guid.NewGuid().ToString(),
                 State = Guid.NewGuid().ToString(),
-                Prompt = PromptTypes.Consent
+                Prompt = PromptTypes.Consent,
+                ReturnUrl = ReturnUrl
             };
         }
 

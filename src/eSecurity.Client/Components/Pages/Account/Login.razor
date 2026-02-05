@@ -73,6 +73,9 @@
 
     [SupplyParameterFromQuery(Name = "state")]
     public string? State { get; set; } = string.Empty;
+    
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string? ReturnUrl { get; set; } = string.Empty;
 
     private CheckLoginModel _model = new();
     private MudForm _form = new();
@@ -103,7 +106,7 @@
                 var state = StateBuilder.Create()
                     .WithData("login", _model.Login)
                     .WithData("state", string.IsNullOrEmpty(State) 
-                        ? AuthenticationManager.GetAuthorizationState() 
+                        ? AuthenticationManager.GetAuthorizationState(ReturnUrl) 
                         : State)
                     .Build();
                 
@@ -123,7 +126,7 @@
     private string OnSignUp()
     {
         var state = string.IsNullOrEmpty(State)
-            ? AuthenticationManager.GetAuthorizationState()
+            ? AuthenticationManager.GetAuthorizationState(ReturnUrl)
             : State;
         
         var builder = QueryBuilder.Create()

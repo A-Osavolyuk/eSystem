@@ -74,6 +74,9 @@
 
     [SupplyParameterFromQuery(Name = "state")]
     public string? State { get; set; }
+    
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string? ReturnUrl { get; set; } = string.Empty;
 
     [SupplyParameterFromQuery(Name = "amr")]
     public string InitMethod { get; set; } = string.Empty;
@@ -136,7 +139,7 @@
                 }
             }
 
-            NavigationManager.NavigateTo(AuthenticationManager.GetAuthorizationUri());
+            NavigationManager.NavigateTo(AuthenticationManager.GetAuthorizationUri(ReturnUrl));
         }
         else
         {
