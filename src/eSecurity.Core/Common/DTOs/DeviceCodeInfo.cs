@@ -4,5 +4,6 @@ public sealed class DeviceCodeInfo
 {
     public required string ClientName { get; set; }
     public string? DeviceModel { get; set; }
+    public string? DeviceName { get; set; }
     public required string[] Scopes { get; set; }
 }

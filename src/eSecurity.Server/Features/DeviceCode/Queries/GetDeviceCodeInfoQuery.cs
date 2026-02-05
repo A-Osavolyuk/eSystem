@@ -36,6 +36,7 @@ public sealed class GetDeviceCodeInfoQueryHandler(
         {
             ClientName = client.Name,
             DeviceModel = deviceCode.DeviceModel,
+            DeviceName = deviceCode.DeviceName,
             Scopes = deviceCode.Scope.Split(' ')
         };
         
