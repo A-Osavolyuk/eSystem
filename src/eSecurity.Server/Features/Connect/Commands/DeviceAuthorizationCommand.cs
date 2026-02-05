@@ -65,7 +65,6 @@ public sealed class DeviceAuthorizationCommandHandler(
         
         var deviceCode = _keyFactory.Create(_deviceAuthorizationOptions.DeviceCodeLenght);
         var userCode = _keyFactory.Create(_deviceAuthorizationOptions.UserCodeLenght);
-        var formattedUserCode = $"{userCode[..4]}-{userCode[4..]}";
         var deviceCodeEntity = new DeviceCodeEntity
         {
             Id = Guid.CreateVersion7(),
@@ -87,13 +86,13 @@ public sealed class DeviceAuthorizationCommandHandler(
         
         var verificationUriComplete = QueryBuilder.Create()
             .WithUri(_deviceAuthorizationOptions.VerificationUri)
-            .WithQueryParam("user_code", formattedUserCode)
+            .WithQueryParam("user_code", userCode)
             .Build();
         
         var response = new DeviceAuthorizationResponse
         {
             DeviceCode = deviceCode,
-            UserCode = formattedUserCode,
+            UserCode = userCode,
             Interval = _deviceAuthorizationOptions.Interval,
             ExpiresIn = (int)_deviceAuthorizationOptions.Timestamp.TotalSeconds,
             VerificationUri = _deviceAuthorizationOptions.VerificationUri,
