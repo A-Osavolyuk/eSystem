@@ -1,0 +1,139 @@
+﻿@page "/device/activate"
+
+@using eSecurity.Client.Security.Authorization.Devices
+@using eSystem.Core.Utilities.State
+@using eSecurity.Core.Common.Responses
+
+@inherits PageBase
+@layout AuthenticationLayout
+
+@inject IDeviceService DeviceService
+
+<Title Text="Device activation"/>
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="3" Style="margin-top: 50px">
+        <MudPaper Elevation="4" Class="pa-10">
+            <MudStack Spacing="3">
+                <MudStack AlignItems="AlignItems.Center" Spacing="3">
+                    <MudIcon Style="font-size: 5rem" Icon="@Icons.Material.Filled.Lock"/>
+                    <MudTextM3 Typo="TypoM3.Headline" Size="Size.Small">
+                        Device activation
+                    </MudTextM3>
+                </MudStack>
+                <MudTextM3 Align="Align.Center" Size="Size.Medium" Typo="TypoM3.Body">
+                    Enter verification code from your device to continue
+                </MudTextM3>
+                <MudForm Model="_model" @ref="_form">
+                    <MudTextFieldExtended
+                        T="string"
+                        Variant="Variant.Outlined"
+                        @bind-Value="_model.UserCode"
+                        For="() => _model.UserCode"
+                        Label="Code"
+                        Immediate="true"
+                        Mask="@(new PatternMask("********"))"
+                        Placeholder="XXXXXXXX"
+                        Error="_showError"
+                        ErrorText="@_error"/>
+                </MudForm>
+                <MudButton
+                    Color="Color.Primary"
+                    Variant="Variant.Filled"
+                    Size="Size.Large"
+                    Disabled="@(_model.UserCode.Length <= 7)"
+                    OnClick="@(async () => await OnContinueAsync())">
+                    Continue
+                </MudButton>
+            </MudStack>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+
+    [SupplyParameterFromQuery(Name = "user_code")]
+    public string? UserCode { get; set; }
+
+    private DeviceActivationModel _model = new();
+    private MudForm _form = new();
+
+    private string? _error;
+    private bool _showError;
+
+    protected override void OnInitialized()
+    {
+        if (!string.IsNullOrEmpty(UserCode))
+        {
+            _model.UserCode = UserCode;
+        }
+    }
+
+    private async Task OnContinueAsync()
+    {
+        await _form.Validate();
+        if (_form.IsValid)
+        {
+            var request = new CheckDeviceCodeRequest() { UserCode = _model.UserCode };
+            var result = await DeviceService.CheckDeviceCodeAsync(request);
+            if (result.Succeeded && result.TryGetValue<CheckDeviceCodeResponse>(out var response) && response is not null)
+            {
+                switch (response)
+                {
+                    case { Exists: false }:
+                    {
+                        _error = "This code was not found";
+                        _showError = true;
+                        break;
+                    }
+                    case { IsActivated: true }:
+                    {
+                        _error = "This code is already activated";
+                        _showError = true;
+                        break;
+                    }
+                    case { IsConsumed: true }:
+                    {
+                        _error = "This code is already consumed";
+                        _showError = true;
+                        break;
+                    }
+                    case { IsDenied: true }:
+                    {
+                        _error = "This code is already denied";
+                        _showError = true;
+                        break;
+                    }
+                    case { IsExpired: true }:
+                    {
+                        _error = "This code is already expired";
+                        _showError = true;
+                        break;
+                    }
+                    default:
+                    {
+                        _error = null;
+                        _showError = false;
+
+                        var state = StateBuilder.Create()
+                            .WithData("user_code", _model.UserCode)
+                            .Build();
+                        
+                        NavigationManager.NavigateTo(QueryBuilder.Create()
+                            .WithUri(Links.Device.DeviceActivation)
+                            .WithQueryParam("state", state)
+                            .Build(), !UserState.IsAuthenticated);
+                        
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                var error = result.GetError();
+                Snackbar.Add(error.Description, Severity.Error);
+            }
+        }
+    }
+
+}

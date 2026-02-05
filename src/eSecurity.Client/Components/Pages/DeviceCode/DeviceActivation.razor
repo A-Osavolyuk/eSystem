@@ -1,0 +1,175 @@
+﻿@page "/device/activation"
+
+@using eSecurity.Client.Security.Authentication.OpenIdConnect.Session
+@using eSecurity.Client.Security.Authorization.Devices
+@using eSecurity.Core.Common.DTOs
+@using eSystem.Core.Utilities.State
+
+@inherits PageBase
+
+@layout AuthenticationLayout
+
+@attribute [Authorize]
+
+@inject IDeviceService DeviceService
+@inject ISessionAccessor SessionAccessor
+
+<Title Text="Device activation"/>
+
+@if (_deviceCodeInfo is not null)
+{
+    <MudGrid Justify="Justify.Center">
+        <MudItem xs="3" Style="margin-top: 50px">
+            <MudPaper Elevation="4" Class="pa-10">
+                <MudStack Spacing="3">
+                    <MudStack AlignItems="AlignItems.Center">
+                        <MudIcon Style="font-size: 5rem" Icon="@Icons.Material.Filled.Lock"/>
+                        <MudTextM3 Size="Size.Small" Typo="TypoM3.Headline" Align="Align.Center">
+                            Device activation
+                        </MudTextM3>
+                    </MudStack>
+                    <MudStack Spacing="4">
+                        <MudTextM3 Size="Size.Small" Typo="TypoM3.Headline" Align="Align.Center">
+                        <MudTextM3 Color="Color.Primary" Size="Size.Small" Typo="TypoM3.Headline" Inline="true">
+                            @_deviceCodeInfo.ClientName
+                        </MudTextM3>
+                        wants to access your eSystem Account
+                    </MudTextM3>
+                    <MudStack Spacing="1">
+                        @if (!string.IsNullOrEmpty(_deviceCodeInfo.DeviceName))
+                        {
+                            <MudTextM3 Class="fw-bold" Typo="TypoM3.Body" Size="Size.Large">
+                                Device name:
+                                <MudTextM3 Size="Size.Large" Typo="TypoM3.Body" Inline="true">
+                                    @_deviceCodeInfo.DeviceName
+                                </MudTextM3>
+                            </MudTextM3>
+                            
+                        }
+                        @if (!string.IsNullOrEmpty(_deviceCodeInfo.DeviceModel))
+                        {
+                            <MudTextM3 Class="fw-bold" Typo="TypoM3.Body" Size="Size.Large">
+                                Device model: 
+                                <MudTextM3 Size="Size.Large" Typo="TypoM3.Body" Inline="true">
+                                    @_deviceCodeInfo.DeviceModel
+                                </MudTextM3>
+                            </MudTextM3>
+                        }
+                        <MudTextM3 Class="fw-bold" Typo="TypoM3.Body" Size="Size.Large" Inline="true">
+                            Device location:
+                            <MudTextM3 Size="Size.Large" Typo="TypoM3.Body" Inline="true">
+                                Warsaw, Poland
+                            </MudTextM3>
+                        </MudTextM3>
+                        <MudTextM3 Class="fw-bold" Typo="TypoM3.Body" Size="Size.Large">
+                            Time:
+                            <MudTextM3 Size="Size.Large" Typo="TypoM3.Body" Inline="true">
+                                9:35 PM
+                            </MudTextM3>
+                        </MudTextM3>
+                    </MudStack>
+                    <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Align="Align.Center">
+                        You need to allow access to your eSystem Account 
+                        for this device to continue using this device
+                    </MudTextM3>
+                    </MudStack>
+                    <MudStack Spacing="1">
+                        <MudButton
+                            Color="Color.Primary"
+                            Variant="Variant.Filled"
+                            Size="Size.Large"
+                            OnClick="@(async () => await OnAllowAsync())">
+                            Allow
+                        </MudButton>
+                        <MudButton
+                            Color="Color.Error"
+                            Variant="Variant.Text"
+                            Size="Size.Large"
+                            OnClick="@(async () => await OnDenyAsync())">
+                            Deny
+                        </MudButton>
+                    </MudStack>
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+}
+
+@code {
+
+    [SupplyParameterFromQuery(Name = "state")]
+    public string? State { get; set; }
+
+    private string? _userCode;
+    private DeviceCodeInfo? _deviceCodeInfo;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!string.IsNullOrEmpty(State))
+        {
+            var stateData = StateParser.Parse(State);
+            if (stateData.TryGetValue("user_code", out var userCode))
+            {
+                _userCode = userCode;
+
+                var result = await DeviceService.GetDeviceCodeInfoAsync(userCode);
+                if (result.Succeeded && result.TryGetValue<DeviceCodeInfo>(out var deviceCodeInfo) &&
+                    deviceCodeInfo is not null)
+                {
+                    _deviceCodeInfo = deviceCodeInfo;
+                }
+                else
+                {
+                    var error = result.GetError();
+                    Snackbar.Add(error.Description, Severity.Error);
+                }
+            }
+        }
+    }
+
+    private async Task OnAllowAsync()
+    {
+        var session = SessionAccessor.Get();
+        var request = new AllowDeviceCodeRequest()
+        {
+            UserCode = _userCode!,
+            UserId = UserState.UserId,
+            SessionId = session?.Id
+        };
+        
+        var result = await DeviceService.AllowDeviceCodeAsync(request);
+        if (result.Succeeded)
+        {
+            Snackbar.Add("Device activation was successfully allowed", Severity.Success);
+            NavigationManager.NavigateTo(Links.Common.Profile);
+        }
+        else
+        {
+            var error = result.GetError();
+            Snackbar.Add(error.Description, Severity.Error);
+        }
+    }
+
+    private async Task OnDenyAsync()
+    {
+        var session = SessionAccessor.Get();
+        var request = new DenyDeviceCodeRequest()
+        {
+            UserCode = _userCode!,
+            UserId = UserState.UserId,
+            SessionId = session?.Id
+        };
+        
+        var result = await DeviceService.DenyDeviceCodeAsync(request);
+        if (result.Succeeded)
+        {
+            Snackbar.Add("Device activation was successfully denied", Severity.Success);
+            NavigationManager.NavigateTo(Links.Common.Profile);
+        }
+        else
+        {
+            var error = result.GetError();
+            Snackbar.Add(error.Description, Severity.Error);
+        }
+    }
+}

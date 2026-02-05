@@ -15,7 +15,11 @@ public static class Links
         public const string CompleteSignUp = "/sign-up/complete";
         public const string VerifySignUp = "/sign-up/verification";
     }
-    
+
+    public static class Device
+    {
+        public const string DeviceActivation = "/device/activation";
+    }
 
     public static class Settings
     {
