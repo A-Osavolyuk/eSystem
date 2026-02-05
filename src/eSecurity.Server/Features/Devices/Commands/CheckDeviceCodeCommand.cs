@@ -37,7 +37,7 @@ public class CheckDeviceCodeCommandHandler(
             DeviceCodeState.Activated => new CheckDeviceCodeResponse { Exists = true, IsActivated = true },
             DeviceCodeState.Denied => new CheckDeviceCodeResponse { Exists = true, IsDenied = true },
             DeviceCodeState.Consumed => new CheckDeviceCodeResponse { Exists = true, IsConsumed = true },
-            DeviceCodeState.Pending => new CheckDeviceCodeResponse { Exists = true, ClientId = deviceCode.ClientId },
+            DeviceCodeState.Pending => new CheckDeviceCodeResponse { Exists = true },
             _ => throw new NotSupportedException("Unsupported device code state")
         };
         
