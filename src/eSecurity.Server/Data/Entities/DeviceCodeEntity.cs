@@ -18,6 +18,8 @@ public sealed class DeviceCodeEntity : Entity
     
     public required string Scope { get; set; }
     public string[]? AcrValues { get; set; }
+    public string? DeviceModel { get; set; }
+    public string? DeviceName { get; set; }
     
     public Guid ClientId { get; set; }
     public ClientEntity Client { get; set; } = null!;

@@ -12,4 +12,10 @@ public class DeviceAuthorizationRequest
     
     [FromForm(Name = "acr_values")]
     public string[]? AcrValues { get; set; }
+    
+    [FromForm(Name = "device_name")] 
+    public string? DeviceName { get; set; }
+    
+    [FromForm(Name = "device_model")] 
+    public string? DeviceModel { get; set; }
 }
