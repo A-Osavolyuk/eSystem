@@ -12,6 +12,7 @@ namespace eSecurity.Server.Security.Identity.Claims.Factories;
 
 public sealed class IdTokenClaimsContext : TokenClaimsContext
 {
+    public required string Aud { get; set; }
     public required string Sid { get; set; } = string.Empty;
     public string[] AuthenticationMethods { get; set; } = [];
     public DateTimeOffset? AuthTime { get; set; }
@@ -41,7 +42,7 @@ public sealed class IdTokenClaimsFactory(
         {
             new(AppClaimTypes.Jti, Guid.NewGuid().ToString()),
             new(AppClaimTypes.Iss, _options.Issuer),
-            new(AppClaimTypes.Aud, JsonSerializer.Serialize(context.Aud)),
+            new(AppClaimTypes.Aud, context.Aud),
             new(AppClaimTypes.Sub, user.Id.ToString()),
             new(AppClaimTypes.Sid, context.Sid),
             new(AppClaimTypes.Exp, exp, ClaimValueTypes.Integer64),

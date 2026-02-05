@@ -41,7 +41,7 @@ public class BackchannelLogoutStrategy(
 
             var claimsContext = new LogoutTokenClaimsContext()
             {
-                Aud = [client.Id.ToString()],
+                Aud = client.Id.ToString(),
                 Sid = session.Id.ToString(),
             };
 

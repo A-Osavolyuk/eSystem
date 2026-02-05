@@ -188,7 +188,7 @@ public class OidcAuthorizationCodeFlow(
         var idClaimsFactory = _claimFactoryProvider.GetClaimFactory<IdTokenClaimsContext, UserEntity>();
         var idClaims = await idClaimsFactory.GetClaimsAsync(user, new IdTokenClaimsContext
         {
-            Aud = [client.Id.ToString()],
+            Aud = client.Id.ToString(),
             Nonce = code.Nonce,
             Scopes = client.AllowedScopes.Select(x => x.Scope.Value),
             Sid = session.Id.ToString(),

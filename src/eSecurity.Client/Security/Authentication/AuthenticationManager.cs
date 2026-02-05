@@ -21,9 +21,9 @@ public sealed class AuthenticationManager(
     private readonly IFetchClient _fetchClient = fetchClient;
     private readonly ClientOptions _clientOptions = clientOptions.Value;
     
-    public string GetAuthorizationUri()
+    public string GetAuthorizationUri(string? returnUrl = null)
     {
-        return QueryBuilder.Create().WithUri(Links.Connect.Authorize)
+        var builder = QueryBuilder.Create().WithUri(Links.Connect.Authorize)
             .WithQueryParam("prompt", PromptTypes.Consent)
             .WithQueryParam("response_type", ResponseTypes.Code)
             .WithQueryParam("client_id", _clientOptions.ClientId)
@@ -31,14 +31,18 @@ public sealed class AuthenticationManager(
             .WithQueryParam("scope", string.Join(" ", _clientOptions.SupportedScopes))
             .WithQueryParam("state", Guid.NewGuid().ToString())
             .WithQueryParam("nonce", Guid.NewGuid().ToString())
-            .WithQueryParam("prompt", PromptTypes.Consent)
-            .Build();
+            .WithQueryParam("prompt", PromptTypes.Consent);
+
+        if (!string.IsNullOrEmpty(returnUrl))
+            builder.WithQueryParam("return_url", returnUrl);
+
+        return builder.Build();
     }
 
-    public string GetAuthorizationState()
+    public string GetAuthorizationState(string? returnUrl = null)
     {
         return StateBuilder.Create()
-            .WithData("return_url", GetAuthorizationUri())
+            .WithData("return_url", GetAuthorizationUri(returnUrl))
             .Build();
     }
 

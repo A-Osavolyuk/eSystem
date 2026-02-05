@@ -7,6 +7,7 @@ namespace eSecurity.Server.Security.Identity.Claims.Factories;
 
 public sealed class AccessTokenClaimsContext : TokenClaimsContext
 {
+    public required IEnumerable<string> Aud { get; set; }
 }
 
 public sealed class AccessTokenClaimsFactory(IOptions<TokenOptions> options)

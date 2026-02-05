@@ -144,7 +144,7 @@ public sealed class OidcDeviceCodeFlow(
         var idClaimsFactory = _claimFactoryProvider.GetClaimFactory<IdTokenClaimsContext, UserEntity>();
         var idClaims = await idClaimsFactory.GetClaimsAsync(user, new IdTokenClaimsContext
         {
-            Aud = [client.Id.ToString()],
+            Aud = client.Id.ToString(),
             Scopes = client.AllowedScopes.Select(x => x.Scope.Value),
             Sid = session.Id.ToString(),
             AuthenticationMethods = session.AuthenticationMethods,
