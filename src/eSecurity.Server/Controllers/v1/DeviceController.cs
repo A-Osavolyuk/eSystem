@@ -2,7 +2,6 @@ using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Features.DeviceCode.Commands;
 using eSecurity.Server.Features.DeviceCode.Queries;
 using eSecurity.Server.Features.Devices.Commands;
-using eSecurity.Server.Features.Devices.Queries;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 
@@ -55,6 +54,16 @@ public class DeviceController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> CheckDeviceCode([FromBody] CheckDeviceCodeRequest request)
     {
         var result = await _sender.Send(new CheckDeviceCodeCommand(request));
+        return HttpContext.HandleResult(result);
+    }
+    
+    [EndpointSummary("Activate device code")]
+    [EndpointDescription("Activate device code")]
+    [ProducesResponseType(200)]
+    [HttpPost("device-code/activate")]
+    public async ValueTask<IActionResult> ActivateDeviceCode([FromBody] ActivateDeviceCodeRequest request)
+    {
+        var result = await _sender.Send(new ActivateDeviceCodeCommand(request));
         return HttpContext.HandleResult(result);
     }
 }
