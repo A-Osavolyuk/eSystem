@@ -34,4 +34,14 @@ public class DeviceController(ISender sender) : ControllerBase
         var result = await _sender.Send(new UnblockDeviceCommand(request));
         return HttpContext.HandleResult(result);
     }
+    
+    [EndpointSummary("Check device code")]
+    [EndpointDescription("Check device code")]
+    [ProducesResponseType(200)]
+    [HttpPost("device-code/check")]
+    public async ValueTask<IActionResult> CheckDeviceCode([FromBody] CheckDeviceCodeRequest request)
+    {
+        var result = await _sender.Send(new CheckDeviceCodeCommand(request));
+        return HttpContext.HandleResult(result);
+    }
 }
