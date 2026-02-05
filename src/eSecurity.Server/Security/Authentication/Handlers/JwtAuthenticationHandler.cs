@@ -30,7 +30,7 @@ public sealed class JwtAuthenticationHandler(
         }
         
         var token = header.Split(" ").Last();
-        var tokenType = _handler.CanReadToken(token) ? TokenTypes.Jwt : TokenTypes.Opaque;
+        var tokenType = _handler.CanReadToken(token) ? TokenKinds.Jwt : TokenKinds.Opaque;
         var validator = _validationProvider.CreateValidator(tokenType);
         var result = await validator.ValidateAsync(token);
         

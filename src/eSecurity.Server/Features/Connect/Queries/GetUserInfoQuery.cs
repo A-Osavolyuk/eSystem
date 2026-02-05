@@ -33,7 +33,7 @@ public class GetUserInfoQueryHandler(
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IPersonalDataManager _personalDataManager = personalDataManager;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
-    private readonly ITokenValidator _validator = validationProvider.CreateValidator(TokenTypes.Jwt);
+    private readonly ITokenValidator _validator = validationProvider.CreateValidator(TokenKinds.Jwt);
 
     public async Task<Result> Handle(GetUserInfoQuery request, CancellationToken cancellationToken)
     {
