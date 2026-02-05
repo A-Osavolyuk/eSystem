@@ -3,7 +3,7 @@ using eSecurity.Core.Common.Responses;
 using eSecurity.Server.Security.Authorization.OAuth.Token.DeviceCode;
 using eSystem.Core.Http.Results;
 
-namespace eSecurity.Server.Features.Devices.Commands;
+namespace eSecurity.Server.Features.DeviceCode.Commands;
 
 public record CheckDeviceCodeCommand(CheckDeviceCodeRequest Request) : IRequest<Result>;
 

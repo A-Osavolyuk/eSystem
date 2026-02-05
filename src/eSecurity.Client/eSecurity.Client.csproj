@@ -15,6 +15,8 @@
       <_ContentIncludedByDefault Remove="Components\Routes.razor" />
       <_ContentIncludedByDefault Remove="Components\_Imports.razor" />
       <_ContentIncludedByDefault Remove="wwwroot\app.css" />
+      <_ContentIncludedByDefault Remove="Components\DeviceCode\DeviceActivate.razor" />
+      <_ContentIncludedByDefault Remove="Components\DeviceCode\DeviceActivation.razor" />
     </ItemGroup>
 
     <ItemGroup>

@@ -4,7 +4,7 @@ using eSecurity.Server.Security.Authorization.OAuth.Token.DeviceCode;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
 
-namespace eSecurity.Server.Features.Devices.Queries;
+namespace eSecurity.Server.Features.DeviceCode.Queries;
 
 public sealed record GetDeviceCodeInfoQuery(string UserCode) : IRequest<Result>;
 

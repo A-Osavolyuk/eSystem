@@ -1,4 +1,6 @@
 using eSecurity.Core.Common.Requests;
+using eSecurity.Server.Features.DeviceCode.Commands;
+using eSecurity.Server.Features.DeviceCode.Queries;
 using eSecurity.Server.Features.Devices.Commands;
 using eSecurity.Server.Features.Devices.Queries;
 using eSystem.Core.Http.Constants;
