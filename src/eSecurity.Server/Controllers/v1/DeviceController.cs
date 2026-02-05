@@ -1,5 +1,6 @@
 using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Features.Devices.Commands;
+using eSecurity.Server.Features.Devices.Queries;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 
@@ -32,6 +33,16 @@ public class DeviceController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> UnblockAsync([FromBody] UnblockDeviceRequest request)
     {
         var result = await _sender.Send(new UnblockDeviceCommand(request));
+        return HttpContext.HandleResult(result);
+    }
+    
+    [EndpointSummary("Get device code info")]
+    [EndpointDescription("Get device code info")]
+    [ProducesResponseType(200)]
+    [HttpGet("device-code/{userCode}")]
+    public async ValueTask<IActionResult> GetDeviceCodeInfo(string userCode)
+    {
+        var result = await _sender.Send(new GetDeviceCodeInfoQuery(userCode));
         return HttpContext.HandleResult(result);
     }
     
