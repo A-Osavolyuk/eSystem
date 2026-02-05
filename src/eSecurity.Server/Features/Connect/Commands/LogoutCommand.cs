@@ -1,7 +1,7 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Logout;
 using eSecurity.Server.Security.Authorization.Constants;
-using eSecurity.Server.Security.Authorization.Token.Validation;
+using eSecurity.Server.Security.Authorization.OAuth.Token.Validation;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authorization.OAuth.Token.Validation;

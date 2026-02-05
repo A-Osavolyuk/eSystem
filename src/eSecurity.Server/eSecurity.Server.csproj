@@ -43,8 +43,4 @@
         <ProjectReference Include="..\eSystem.Core\eSystem.Core.csproj" />
         <ProjectReference Include="..\eSystem.ServiceDefaults\eSystem.ServiceDefaults.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Security\Authorization\Scopes\" />
-    </ItemGroup>
 </Project>

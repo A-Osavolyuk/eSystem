@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
-using eSecurity.Server.Security.Authorization.Token;
+using eSecurity.Server.Security.Authorization.OAuth.Token;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Constants;

@@ -1,4 +1,4 @@
-﻿using eSecurity.Server.Security.Authorization.Token;
+﻿using eSecurity.Server.Security.Authorization.OAuth.Token;
 using eSystem.Core.Data.Entities;
 
 namespace eSecurity.Server.Data.Entities;

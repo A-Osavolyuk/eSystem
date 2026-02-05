@@ -1,5 +1,4 @@
-﻿using eSecurity.Server.Security.Authorization.Token;
-using eSecurity.Server.Security.Authorization.Token.Strategies;
+﻿using eSecurity.Server.Security.Authorization.OAuth.Token;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
