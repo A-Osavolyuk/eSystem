@@ -16,7 +16,4 @@ public sealed class TokenExchangeResponse : TokenResponse
     
     [JsonPropertyName("issued_at")]
     public long? IssuedAt { get; set; }
-    
-    [JsonPropertyName("actor")]
-    public ActorClaim? Actor { get; set; }
 }
