@@ -46,6 +46,7 @@ public static class AppClaimTypes
     public const string PhoneNumberVerified = "phone_number_verified";
     
     public const string Act = "act";
+    public const string Delegated = "delegated";
     public const string Events = "events";
     public const string ClientId = "client_id";
     public const string ClientSecret = "client_secret";
