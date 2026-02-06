@@ -120,7 +120,6 @@ public class OAuthAuthorizationCodeFlow(
             {
                 Aud = client.Audiences.Select(x => x.Audience),
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Value),
-                Nonce = code.Nonce
             }, cancellationToken);
 
             var tokenContext = new JwtTokenContext { Claims = claims, Type = JwtTokenTypes.AccessToken };

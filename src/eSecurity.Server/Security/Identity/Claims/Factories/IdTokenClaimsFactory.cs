@@ -15,6 +15,7 @@ public sealed class IdTokenClaimsContext : TokenClaimsContext
     public required string Aud { get; set; }
     public required string Sid { get; set; } = string.Empty;
     public string[] AuthenticationMethods { get; set; } = [];
+    public string? Nonce { get; set; }
     public DateTimeOffset? AuthTime { get; set; }
 }
 

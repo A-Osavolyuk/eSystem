@@ -8,6 +8,7 @@ namespace eSecurity.Server.Security.Identity.Claims.Factories;
 public sealed class AccessTokenClaimsContext : TokenClaimsContext
 {
     public required IEnumerable<string> Aud { get; set; }
+    public string? ClientId { get; set; }
 }
 
 public sealed class AccessTokenClaimsFactory(IOptions<TokenOptions> options)
@@ -32,8 +33,14 @@ public sealed class AccessTokenClaimsFactory(IOptions<TokenOptions> options)
             new(AppClaimTypes.Iat, iat, ClaimValueTypes.Integer64),
         };
 
-        if (!string.IsNullOrEmpty(context.Nonce))
-            claims.Add(new Claim(AppClaimTypes.Nonce, context.Nonce));
+        if (context.Nbf.HasValue)
+        {
+            var nbf = context.Nbf.Value.ToUnixTimeSeconds().ToString();
+            claims.Add(new Claim(AppClaimTypes.Nbf, nbf, ClaimValueTypes.Integer64));
+        }
+
+        if (string.IsNullOrEmpty(context.ClientId))
+            claims.Add(new Claim(AppClaimTypes.ClientId, user.Id.ToString()));
 
         return ValueTask.FromResult(claims);
     }
@@ -54,9 +61,6 @@ public sealed class AccessTokenClaimsFactory(IOptions<TokenOptions> options)
             new(AppClaimTypes.Exp, exp, ClaimValueTypes.Integer64),
             new(AppClaimTypes.Iat, iat, ClaimValueTypes.Integer64),
         };
-
-        if (!string.IsNullOrEmpty(context.Nonce))
-            claims.Add(new Claim(AppClaimTypes.Nonce, context.Nonce));
 
         return ValueTask.FromResult(claims);
     }
