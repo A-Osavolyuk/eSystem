@@ -36,8 +36,11 @@ public class ClientEntity : Entity
     public ICollection<ClientAudienceEntity> Audiences { get; set; } = null!;
     public ICollection<ClientUriEntity> Uris { get; set; } = null!;
 
-    public bool HasScopes(List<string> scopes)
-        => scopes.All(scope => AllowedScopes.Any(x => x.Scope.Value == scope));
+    public bool HasScopes(IEnumerable<string> scopes, out IEnumerable<string> unsupportedScopes)
+    {
+        unsupportedScopes = scopes.Except(AllowedScopes.Select(x => x.Scope.Value));
+        return !unsupportedScopes.Any();
+    }
 
     public bool HasScope(string scope)
         => AllowedScopes.Any(x => x.Scope.Value == scope);
@@ -47,4 +50,7 @@ public class ClientEntity : Entity
 
     public bool HasUri(string uri, UriType type)
         => Uris.Any(x => x.Uri == uri && x.Type == type);
+    
+    public bool IsValidAudience(string aud) 
+        => Audiences.Any(x => x.Audience == aud);
 }

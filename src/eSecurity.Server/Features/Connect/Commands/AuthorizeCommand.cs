@@ -93,12 +93,12 @@ public class AuthorizeCommandHandler(
             });
         }
         
-        if (!client.HasScopes(request.Request.Scopes))
+        if (!client.HasScopes(request.Request.Scopes, out var scopes))
         {
             return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidScope,
-                Description = "Invalid scopes."
+                Description = $"'{string.Join(',', scopes)}' are not supported scopes."
             });
         }
 
