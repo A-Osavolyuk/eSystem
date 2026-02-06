@@ -1,7 +1,7 @@
 ﻿namespace eSecurity.Server.Security.Authorization.Constants;
 
-public static class TokenKinds
+public enum TokenKind
 {
-    public const string Opaque = "Opaque";
-    public const string Jwt = "JWT";
+    Opaque,
+    Jwt
 }

@@ -38,8 +38,8 @@ public static class AuthorizationExtensions
         
         builder.Services.AddScoped<ITokenValidationProvider, TokenValidationProvider>();
         builder.Services.AddScoped<IJwtTokenValidationProvider, JwtTokenValidationProvider>();
-        builder.Services.AddKeyedScoped<ITokenValidator, OpaqueTokenValidator>(TokenKinds.Opaque);
-        builder.Services.AddKeyedScoped<ITokenValidator, JwtTokenValidator>(TokenKinds.Jwt);
+        builder.Services.AddKeyedScoped<ITokenValidator, OpaqueTokenValidator>(TokenKind.Opaque);
+        builder.Services.AddKeyedScoped<ITokenValidator, JwtTokenValidator>(TokenKind.Jwt);
         builder.Services.AddKeyedScoped<IJwtTokenValidator, IdTokenValidator>(JwtTokenTypes.IdToken);
         builder.Services.AddKeyedScoped<IJwtTokenValidator, AccessTokenValidator>(JwtTokenTypes.AccessToken);
         builder.Services.AddKeyedScoped<IJwtTokenValidator, GenericJwtTokenValidator>(JwtTokenTypes.Generic);

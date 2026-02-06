@@ -16,7 +16,7 @@ public class LogoutCommandHandler(
     ILogoutHandler logoutHandler) : IRequestHandler<LogoutCommand, Result>
 {
     private readonly ILogoutHandler _logoutHandler = logoutHandler;
-    private readonly ITokenValidator _validator = validationProvider.CreateValidator(TokenKinds.Jwt);
+    private readonly ITokenValidator _validator = validationProvider.CreateValidator(TokenKind.Jwt);
 
     public async Task<Result> Handle(LogoutCommand request, CancellationToken cancellationToken)
     {
