@@ -12,6 +12,7 @@ public static class ErrorTypes
         public const string UnsupportedGrantType = "unsupported_grant_type";
         public const string InvalidScope = "invalid_scope";
         public const string InvalidToken = "invalid_token";
+        public const string InvalidTarget = "invalid_target";
 
         // Optional OAuth 2.0 errors  
         public const string ServerError = "server_error";
@@ -19,7 +20,8 @@ public static class ErrorTypes
 
         // ===== OpenID Connect Core Errors (OIDC) =====  
         public const string AccessDenied = "access_denied";
-        public const string UnsupportedResponseType = "unsupported_response_type";  
+        public const string UnsupportedResponseType = "unsupported_response_type";
+        public const string UnsupportedTokenType = "unsupported_token_type";
         public const string LoginRequired = "login_required";
         public const string ConsentRequired = "consent_required";
         public const string InteractionRequired = "interaction_required";
