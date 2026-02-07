@@ -6,7 +6,7 @@ public class OpaqueTokenScopeEntity : Entity
 {
     public Guid Id { get; set; }
 
-    public Guid ClientScopeId { get; set; }
+    public Guid ScopeId { get; set; }
     public ClientAllowedScopeEntity ClientScope { get; set; } = null!;
 
     public Guid TokenId { get; set; }
