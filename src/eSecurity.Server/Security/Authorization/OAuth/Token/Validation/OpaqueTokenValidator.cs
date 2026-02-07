@@ -34,11 +34,20 @@ public class OpaqueTokenValidator(
             new(AppClaimTypes.Sid, opaqueToken.SessionId!.Value.ToString()),
             new(AppClaimTypes.Aud, aud),
             new(AppClaimTypes.Iss, _tokenOptions.Issuer),
-            new(AppClaimTypes.Sub, opaqueToken.Session!.UserId.ToString()),
-            new(AppClaimTypes.Iat, opaqueToken.CreateDate!.Value.ToUnixTimeSeconds().ToString()),
-            new(AppClaimTypes.Exp, opaqueToken.ExpiredAt.ToUnixTimeSeconds().ToString()),
+            new(AppClaimTypes.Sub, opaqueToken.Subject),
+            new(AppClaimTypes.Iat, opaqueToken.IssuedAt.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64),
+            new(AppClaimTypes.Exp, opaqueToken.ExpiredAt.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64),
             new(AppClaimTypes.Scope, string.Join(" ", scopes)),
         };
+
+        if (opaqueToken.NotBefore.HasValue)
+        {
+            var nbf = opaqueToken.NotBefore.Value.ToUnixTimeSeconds().ToString();
+            claims.Add(new Claim(AppClaimTypes.Nbf, nbf, ClaimValueTypes.Integer64));
+        }
+        
+        if (opaqueToken.SessionId.HasValue)
+            claims.Add(new Claim(AppClaimTypes.Nbf, opaqueToken.SessionId.Value.ToString()));
 
         var claimsIdentity = new ClaimsIdentity(claims, JwtBearerDefaults.AuthenticationScheme);
         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
