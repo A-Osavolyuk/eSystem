@@ -23,4 +23,5 @@ public class OpaqueTokenEntity : Entity
     public ClientEntity Client { get; set; } = null!;
     public SessionEntity? Session { get; set; }
     public ICollection<OpaqueTokenScopeEntity> Scopes { get; set; } = null!;
+    public ICollection<OpaqueTokenAudienceEntity> Audiences { get; set; } = null!;
 }
