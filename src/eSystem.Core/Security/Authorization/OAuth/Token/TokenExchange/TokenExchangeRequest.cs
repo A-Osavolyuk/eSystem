@@ -4,11 +4,17 @@ namespace eSystem.Core.Security.Authorization.OAuth.Token.TokenExchange;
 
 public sealed class TokenExchangeRequest : TokenRequest
 {
-    [FromForm(Name = "subject_token")]
-    public string? SubjectToken { get; set; }
-    
     [FromForm(Name = "actor_token")]
     public string? ActorToken { get; set; }
+    
+    [FromForm(Name = "actor_token_type")]
+    public string? ActorTokenType { get; set; }
+    
+    [FromForm(Name = "actor_subject")]
+    public string? ActorSubject { get; set; }
+    
+    [FromForm(Name = "subject_token")]
+    public string? SubjectToken { get; set; }
     
     [FromForm(Name = "subject_token_type")]
     public string? SubjectTokenType { get; set; }
