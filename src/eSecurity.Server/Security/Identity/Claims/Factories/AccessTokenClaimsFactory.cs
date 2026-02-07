@@ -56,6 +56,7 @@ public sealed class AccessTokenClaimsFactory(IOptions<TokenOptions> options)
             new(AppClaimTypes.Jti, Guid.NewGuid().ToString()),
             new(AppClaimTypes.Iss, _options.Issuer),
             new(AppClaimTypes.Aud, JsonSerializer.Serialize(context.Aud)),
+            new(AppClaimTypes.ClientId, source.Id.ToString()),
             new(AppClaimTypes.Sub, source.Id.ToString()),
             new(AppClaimTypes.Scope, string.Join(" ", context.Scopes)),
             new(AppClaimTypes.Exp, exp, ClaimValueTypes.Integer64),
