@@ -94,7 +94,7 @@ public sealed class OAuthDeviceCodeFlow(
                 Subject = user.Id.ToString(),
                 TokenHash = _hasher.Hash(rawToken),
                 TokenType = OpaqueTokenType.AccessToken,
-                ExpiredDate = DateTimeOffset.UtcNow.Add(_tokenOptions.AccessTokenLifetime)
+                ExpiredAt = DateTimeOffset.UtcNow.Add(_tokenOptions.AccessTokenLifetime)
             };
             
             var createResult = await _tokenManager.CreateAsync(newRefreshToken, client.AllowedScopes, cancellationToken);
@@ -115,7 +115,7 @@ public sealed class OAuthDeviceCodeFlow(
                 Subject = user.Id.ToString(),
                 TokenHash = _hasher.Hash(rawToken),
                 TokenType = OpaqueTokenType.RefreshToken,
-                ExpiredDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime)
+                ExpiredAt = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime)
             };
             
             var tokenResult = await _tokenManager.CreateAsync(refreshToken, client.AllowedScopes, cancellationToken);

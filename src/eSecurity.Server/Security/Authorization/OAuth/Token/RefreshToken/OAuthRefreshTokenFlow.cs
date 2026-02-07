@@ -113,7 +113,7 @@ public sealed class OAuthRefreshTokenFlow(
                 Subject = user.Id.ToString(),
                 TokenHash = _hasher.Hash(rawToken),
                 TokenType = OpaqueTokenType.AccessToken,
-                ExpiredDate = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime)
+                ExpiredAt = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime)
             };
             
             var createResult = await _tokenManager.CreateAsync(newRefreshToken, client.AllowedScopes, cancellationToken);
@@ -134,7 +134,7 @@ public sealed class OAuthRefreshTokenFlow(
                 Subject = user.Id.ToString(),
                 TokenHash = _hasher.Hash(rawToken),
                 TokenType = OpaqueTokenType.RefreshToken,
-                ExpiredDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime)
+                ExpiredAt = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime)
             };
 
             response.RefreshToken = rawToken;

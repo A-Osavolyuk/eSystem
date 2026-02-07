@@ -58,7 +58,7 @@ public sealed class TokenManager(
         CancellationToken cancellationToken = default)
     {
         token.Revoked = true;
-        token.RevokedDate = DateTimeOffset.UtcNow;
+        token.RevokedAt = DateTimeOffset.UtcNow;
 
         _context.OpaqueTokens.Update(token);
         await _context.SaveChangesAsync(cancellationToken);

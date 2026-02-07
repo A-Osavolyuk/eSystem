@@ -140,7 +140,7 @@ public class OAuthAuthorizationCodeFlow(
                 Subject = user.Id.ToString(),
                 TokenHash = hasher.Hash(rawToken),
                 TokenType = OpaqueTokenType.AccessToken,
-                ExpiredDate = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime)
+                ExpiredAt = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime)
             };
             
             var createResult = await _tokenManager.CreateAsync(newRefreshToken, client.AllowedScopes, cancellationToken);
@@ -162,7 +162,7 @@ public class OAuthAuthorizationCodeFlow(
                 Subject = user.Id.ToString(),
                 TokenHash = hasher.Hash(rawToken),
                 TokenType = OpaqueTokenType.RefreshToken,
-                ExpiredDate = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime)
+                ExpiredAt = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime)
             };
             
             var tokenResult = await _tokenManager.CreateAsync(refreshToken, client.AllowedScopes, cancellationToken);

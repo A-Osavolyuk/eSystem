@@ -36,7 +36,7 @@ public class OpaqueTokenValidator(
             new(AppClaimTypes.Iss, _tokenOptions.Issuer),
             new(AppClaimTypes.Sub, opaqueToken.Session!.UserId.ToString()),
             new(AppClaimTypes.Iat, opaqueToken.CreateDate!.Value.ToUnixTimeSeconds().ToString()),
-            new(AppClaimTypes.Exp, opaqueToken.ExpiredDate.ToUnixTimeSeconds().ToString()),
+            new(AppClaimTypes.Exp, opaqueToken.ExpiredAt.ToUnixTimeSeconds().ToString()),
             new(AppClaimTypes.Scope, string.Join(" ", scopes)),
         };
 

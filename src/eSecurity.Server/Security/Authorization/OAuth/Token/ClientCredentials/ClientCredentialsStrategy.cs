@@ -124,7 +124,7 @@ public sealed class ClientCredentialsStrategy(
                 Subject = client.Id.ToString(),
                 TokenHash = hasher.Hash(rawToken),
                 TokenType = OpaqueTokenType.AccessToken,
-                ExpiredDate = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime)
+                ExpiredAt = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime)
             };
 
             var scopes = client.AllowedScopes

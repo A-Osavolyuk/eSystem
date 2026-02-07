@@ -68,7 +68,7 @@ public class IntrospectionCommandHandler(
             Issuer = _options.Issuer,
             Audience = JsonSerializer.Serialize(token.Client.Audiences),
             IssuedAt = token.CreateDate!.Value.ToUnixTimeSeconds(),
-            Expiration = token.ExpiredDate.ToUnixTimeSeconds(),
+            Expiration = token.ExpiredAt.ToUnixTimeSeconds(),
             Scope = string.Join(" ", token.Scopes.Select(x => x.ClientScope))
         };
         

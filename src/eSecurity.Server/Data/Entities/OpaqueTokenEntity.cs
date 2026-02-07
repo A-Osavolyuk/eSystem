@@ -13,10 +13,12 @@ public class OpaqueTokenEntity : Entity
     public required string TokenHash { get; set; }
     public required string Subject { get; set; }
     public bool Revoked { get; set; }
-    public bool IsValid => !Revoked && DateTimeOffset.UtcNow < ExpiredDate;
+    public bool IsValid => !Revoked && DateTimeOffset.UtcNow < ExpiredAt;
     
-    public DateTimeOffset? RevokedDate { get; set; }
-    public DateTimeOffset ExpiredDate { get; set; }
+    public DateTimeOffset? RevokedAt { get; set; }
+    public DateTimeOffset? NotBefore { get; set; }
+    public DateTimeOffset ExpiredAt { get; set; }
+    public DateTimeOffset IssuedAt { get; set; }
     
     public ClientEntity Client { get; set; } = null!;
     public SessionEntity? Session { get; set; }
