@@ -3,12 +3,17 @@ using eSecurity.Server.Security.Authorization.Constants;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Authorization.OAuth;
 using eSecurity.Server.Security.Authorization.OAuth.Consents;
+using eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
 using eSecurity.Server.Security.Authorization.OAuth.Protocol;
 using eSecurity.Server.Security.Authorization.OAuth.Token;
 using eSecurity.Server.Security.Authorization.OAuth.Token.AuthorizationCode;
 using eSecurity.Server.Security.Authorization.OAuth.Token.ClientCredentials;
 using eSecurity.Server.Security.Authorization.OAuth.Token.DeviceCode;
 using eSecurity.Server.Security.Authorization.OAuth.Token.RefreshToken;
+using eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange;
+using eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Actor;
+using eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Claims;
+using eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Transformation;
 using eSecurity.Server.Security.Authorization.OAuth.Token.Validation;
 using eSecurity.Server.Security.Authorization.Roles;
 using eSystem.Core.Security.Authentication.Schemes;
@@ -24,7 +29,6 @@ public static class AuthorizationExtensions
         builder.Services.AddRoleManagement();
         builder.Services.AddAccessManagement();
         builder.Services.AddDeviceManagement();
-        builder.Services.AddOAuthAuthorization();
         builder.Services.AddDeviceAuthorization(options =>
         {
             options.DeviceCodeLenght = 32;
@@ -35,6 +39,7 @@ public static class AuthorizationExtensions
         });
 
         builder.Services.AddScoped<IConsentManager, ConsentManager>();
+        builder.Services.AddScoped<ILinkedAccountManager, LinkedAccountManager>();
         
         builder.Services.AddScoped<ITokenValidationProvider, TokenValidationProvider>();
         builder.Services.AddScoped<IJwtTokenValidationProvider, JwtTokenValidationProvider>();
@@ -56,6 +61,14 @@ public static class AuthorizationExtensions
         builder.Services.AddScoped<IDeviceCodeFlowResolver, DeviceCodeFlowResolver>();
         builder.Services.AddKeyedScoped<IDeviceCodeFlow, OidcDeviceCodeFlow>(AuthorizationProtocol.OpenIdConnect);
         builder.Services.AddKeyedScoped<IDeviceCodeFlow, OAuthDeviceCodeFlow>(AuthorizationProtocol.OAuth);
+        
+        builder.Services.AddScoped<ITokenExchangeFlowResolver, TokenExchangeFlowResolver>();
+        builder.Services.AddKeyedScoped<ITokenExchangeFlow, TransformationTokenExchangeFlow>(TokenExchangeFlow.Transformation);
+        builder.Services.AddScoped<ITokenTransformationHandlerResolver, TokenTransformationHandlerResolver>();
+        builder.Services.AddKeyedScoped<ITokenTransformationHandler, JwtTokenTransformationHandler>(TokenKind.Jwt);
+        builder.Services.AddKeyedScoped<ITokenTransformationHandler, OpaqueTokenTransformationHandler>(TokenKind.Opaque);
+        builder.Services.AddScoped<ITokenClaimsExtractor, JwtTokenClaimsExtractor>();
+        builder.Services.AddScoped<ITokenActorExtractor, JwtTokenActorExtractor>();
             
         builder.Services.AddScoped<ITokenManager, TokenManager>();
         builder.Services.AddScoped<ITokenStrategyResolver, TokenStrategyResolver>();
