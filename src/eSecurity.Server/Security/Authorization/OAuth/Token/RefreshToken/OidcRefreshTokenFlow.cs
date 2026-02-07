@@ -11,7 +11,6 @@ using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
-using eSystem.Core.Security.Authorization.OAuth.Token;
 using eSystem.Core.Security.Authorization.OAuth.Token.RefreshToken;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.RefreshToken;
@@ -46,7 +45,7 @@ public sealed class OidcRefreshTokenFlow(
                 Description = "Invalid refresh token."
             });
         }
-        
+
         var session = await _sessionManager.FindByIdAsync(token.SessionId.Value, cancellationToken);
         if (session is null)
         {
@@ -56,12 +55,12 @@ public sealed class OidcRefreshTokenFlow(
                 Description = "Invalid refresh token."
             });
         }
-        
+
         if (token.Revoked)
         {
             var sessionResult = await _sessionManager.RemoveAsync(session, cancellationToken);
             if (!sessionResult.Succeeded) return sessionResult;
-            
+
             return Results.NotFound(new Error
             {
                 Code = ErrorTypes.OAuth.InvalidGrant,
@@ -150,7 +149,7 @@ public sealed class OidcRefreshTokenFlow(
             var tokenContext = new OpaqueTokenContext { Length = _options.RefreshTokenLength };
             var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
             var rawToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
-            var newRefreshToken = new OpaqueTokenEntity
+            var accessToken = new OpaqueTokenEntity
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = client.Id,
@@ -159,8 +158,22 @@ public sealed class OidcRefreshTokenFlow(
                 TokenType = OpaqueTokenType.AccessToken,
                 ExpiredAt = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime)
             };
-            
-            var createResult = await _tokenManager.CreateAsync(newRefreshToken, client.AllowedScopes, cancellationToken);
+
+            accessToken.Audiences = client.Audiences.Select(x => new OpaqueTokenAudienceEntity()
+            {
+                Id = Guid.CreateVersion7(),
+                TokenId = accessToken.Id,
+                AudienceId = x.Id
+            }).ToList();
+
+            accessToken.Scopes = client.AllowedScopes.Select(x => new OpaqueTokenScopeEntity()
+            {
+                Id = Guid.CreateVersion7(),
+                TokenId = accessToken.Id,
+                ScopeId = x.Id
+            }).ToList();
+
+            var createResult = await _tokenManager.CreateAsync(accessToken, cancellationToken);
             if (!createResult.Succeeded) return createResult;
 
             response.AccessToken = rawToken;
@@ -179,16 +192,18 @@ public sealed class OidcRefreshTokenFlow(
                 Subject = user.Id.ToString(),
                 TokenHash = _hasher.Hash(rawToken),
                 TokenType = OpaqueTokenType.RefreshToken,
-                ExpiredAt = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime)
+                ExpiredAt = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
+                Scopes = token.Scopes,
+                Audiences = token.Audiences
             };
 
-            response.RefreshToken = rawToken;
-            
-            var createResult = await _tokenManager.CreateAsync(newRefreshToken, client.AllowedScopes, cancellationToken);
+            var createResult = await _tokenManager.CreateAsync(newRefreshToken, cancellationToken);
             if (!createResult.Succeeded) return createResult;
 
             var revokeResult = await _tokenManager.RevokeAsync(token, cancellationToken);
             if (!revokeResult.Succeeded) return revokeResult;
+
+            response.RefreshToken = rawToken;
         }
         else
         {

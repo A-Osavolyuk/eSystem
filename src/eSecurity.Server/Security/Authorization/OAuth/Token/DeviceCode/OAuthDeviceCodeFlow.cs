@@ -9,7 +9,6 @@ using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
-using eSystem.Core.Security.Authorization.OAuth.Token;
 using eSystem.Core.Security.Authorization.OAuth.Token.DeviceCode;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.DeviceCode;
@@ -84,10 +83,10 @@ public sealed class OAuthDeviceCodeFlow(
         }
         else
         {
-            var tokenContext = new OpaqueTokenContext { Length = _tokenOptions.RefreshTokenLength };
+            var tokenContext = new OpaqueTokenContext { Length = _tokenOptions.OpaqueTokenLength };
             var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
             var rawToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
-            var newRefreshToken = new OpaqueTokenEntity
+            var accessToken = new OpaqueTokenEntity
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = client.Id,
@@ -97,7 +96,21 @@ public sealed class OAuthDeviceCodeFlow(
                 ExpiredAt = DateTimeOffset.UtcNow.Add(_tokenOptions.AccessTokenLifetime)
             };
             
-            var createResult = await _tokenManager.CreateAsync(newRefreshToken, client.AllowedScopes, cancellationToken);
+            accessToken.Audiences = client.Audiences.Select(x => new OpaqueTokenAudienceEntity()
+            {
+                Id = Guid.CreateVersion7(),
+                TokenId = accessToken.Id,
+                AudienceId = x.Id
+            }).ToList();
+            
+            accessToken.Scopes = client.AllowedScopes.Select(x => new OpaqueTokenScopeEntity()
+            {
+                Id = Guid.CreateVersion7(),
+                TokenId = accessToken.Id,
+                ScopeId = x.Id
+            }).ToList();
+            
+            var createResult = await _tokenManager.CreateAsync(accessToken, cancellationToken);
             if (!createResult.Succeeded) return createResult;
 
             response.AccessToken = rawToken;
@@ -118,7 +131,21 @@ public sealed class OAuthDeviceCodeFlow(
                 ExpiredAt = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime)
             };
             
-            var tokenResult = await _tokenManager.CreateAsync(refreshToken, client.AllowedScopes, cancellationToken);
+            refreshToken.Audiences = client.Audiences.Select(x => new OpaqueTokenAudienceEntity()
+            {
+                Id = Guid.CreateVersion7(),
+                TokenId = refreshToken.Id,
+                AudienceId = x.Id
+            }).ToList();
+            
+            refreshToken.Scopes = client.AllowedScopes.Select(x => new OpaqueTokenScopeEntity()
+            {
+                Id = Guid.CreateVersion7(),
+                TokenId = refreshToken.Id,
+                ScopeId = x.Id
+            }).ToList();
+            
+            var tokenResult = await _tokenManager.CreateAsync(refreshToken, cancellationToken);
             if (!tokenResult.Succeeded) return tokenResult;
 
             response.RefreshToken = rawToken;

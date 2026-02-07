@@ -117,7 +117,7 @@ public sealed class ClientCredentialsStrategy(
             var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
             var rawToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
             var hasher = _hasherProvider.GetHasher(HashAlgorithm.Sha512);
-            var newRefreshToken = new OpaqueTokenEntity
+            var accessToken = new OpaqueTokenEntity
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = client.Id,
@@ -127,10 +127,21 @@ public sealed class ClientCredentialsStrategy(
                 ExpiredAt = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime)
             };
 
-            var scopes = client.AllowedScopes
-                .Where(x => allowedScopes.Contains(x.Scope.Value));
+            accessToken.Scopes = client.AllowedScopes.Select(x => new OpaqueTokenScopeEntity()
+            {
+                Id = Guid.CreateVersion7(),
+                TokenId = accessToken.Id,
+                ScopeId = x.Id
+            }).ToList();
             
-            var createResult = await _tokenManager.CreateAsync(newRefreshToken, scopes, cancellationToken);
+            accessToken.Audiences = client.Audiences.Select(x => new OpaqueTokenAudienceEntity()
+            {
+                Id = Guid.CreateVersion7(),
+                TokenId = accessToken.Id,
+                AudienceId = x.Id
+            }).ToList();
+            
+            var createResult = await _tokenManager.CreateAsync(accessToken, cancellationToken);
             if (!createResult.Succeeded) return createResult;
             
             response.AccessToken = rawToken;

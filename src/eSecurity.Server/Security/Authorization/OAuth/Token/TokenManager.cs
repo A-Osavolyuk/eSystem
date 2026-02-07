@@ -31,19 +31,10 @@ public sealed class TokenManager(
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<Result> CreateAsync(OpaqueTokenEntity token, IEnumerable<ClientAllowedScopeEntity> scopes,
+    public async Task<Result> CreateAsync(OpaqueTokenEntity token,
         CancellationToken cancellationToken = default)
     {
-        var tokenScopes = scopes
-            .Select(s => new OpaqueTokenScopeEntity
-            {
-                Id = Guid.CreateVersion7(),
-                TokenId = token.Id,
-                ClientScopeId = s.Id
-            }).ToList();
-
         await _context.OpaqueTokens.AddAsync(token, cancellationToken);
-        await _context.OpaqueTokensScopes.AddRangeAsync(tokenScopes, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Results.Ok();

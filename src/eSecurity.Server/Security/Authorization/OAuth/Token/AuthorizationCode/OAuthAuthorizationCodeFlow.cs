@@ -1,7 +1,6 @@
 ﻿using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
-using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Cryptography.Pkce;
 using eSecurity.Server.Security.Cryptography.Tokens;
@@ -12,7 +11,6 @@ using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
-using eSystem.Core.Security.Authorization.OAuth.Token;
 using eSystem.Core.Security.Authorization.OAuth.Token.AuthorizationCode;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.AuthorizationCode;
@@ -133,7 +131,7 @@ public class OAuthAuthorizationCodeFlow(
             var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
             var rawToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
             var hasher = _hasherProvider.GetHasher(HashAlgorithm.Sha512);
-            var newRefreshToken = new OpaqueTokenEntity
+            var accessToken = new OpaqueTokenEntity
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = client.Id,
@@ -142,8 +140,22 @@ public class OAuthAuthorizationCodeFlow(
                 TokenType = OpaqueTokenType.AccessToken,
                 ExpiredAt = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime)
             };
+
+            accessToken.Scopes = client.AllowedScopes.Select(x => new OpaqueTokenScopeEntity()
+            {
+                Id = Guid.CreateVersion7(),
+                TokenId = accessToken.Id,
+                ScopeId = x.Id
+            }).ToList();
+
+            accessToken.Audiences = client.Audiences.Select(x => new OpaqueTokenAudienceEntity()
+            {
+                Id = Guid.CreateVersion7(),
+                TokenId = accessToken.Id,
+                AudienceId = x.Id
+            }).ToList();
             
-            var createResult = await _tokenManager.CreateAsync(newRefreshToken, client.AllowedScopes, cancellationToken);
+            var createResult = await _tokenManager.CreateAsync(accessToken, cancellationToken);
             if (!createResult.Succeeded) return createResult;
 
             response.AccessToken = rawToken;
@@ -165,7 +177,21 @@ public class OAuthAuthorizationCodeFlow(
                 ExpiredAt = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime)
             };
             
-            var tokenResult = await _tokenManager.CreateAsync(refreshToken, client.AllowedScopes, cancellationToken);
+            refreshToken.Scopes = client.AllowedScopes.Select(x => new OpaqueTokenScopeEntity()
+            {
+                Id = Guid.CreateVersion7(),
+                TokenId = refreshToken.Id,
+                ScopeId = x.Id
+            }).ToList();
+            
+            refreshToken.Audiences = client.Audiences.Select(x => new OpaqueTokenAudienceEntity()
+            {
+                Id = Guid.CreateVersion7(),
+                TokenId = refreshToken.Id,
+                AudienceId = x.Id
+            }).ToList();
+            
+            var tokenResult = await _tokenManager.CreateAsync(refreshToken, cancellationToken);
             if (!tokenResult.Succeeded) return tokenResult;
 
             response.RefreshToken = rawToken;
