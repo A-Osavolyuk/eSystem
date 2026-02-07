@@ -877,8 +877,10 @@ namespace eSecurity.Server.Migrations
                     TokenHash = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     Subject = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Revoked = table.Column<bool>(type: "boolean", nullable: false),
-                    RevokedDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    ExpiredDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    RevokedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    NotBefore = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    ExpiredAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    IssuedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },

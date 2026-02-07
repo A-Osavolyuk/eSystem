@@ -523,13 +523,19 @@ namespace eSecurity.Server.Migrations
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTimeOffset>("ExpiredDate")
+                    b.Property<DateTimeOffset>("ExpiredAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("IssuedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("NotBefore")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("Revoked")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTimeOffset?>("RevokedDate")
+                    b.Property<DateTimeOffset?>("RevokedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid?>("SessionId")
