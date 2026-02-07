@@ -22,5 +22,11 @@ public sealed class OpaqueTokenConfiguration : IEntityTypeConfiguration<OpaqueTo
             .HasForeignKey(x => x.SessionId)
             .OnDelete(DeleteBehavior.Cascade)
             .IsRequired(false);
+        
+        builder.HasOne(x => x.Actor)
+            .WithOne()
+            .HasForeignKey<OpaqueTokenEntity>(x => x.ActorId)
+            .OnDelete(DeleteBehavior.Cascade)
+            .IsRequired(false);
     }
 }
