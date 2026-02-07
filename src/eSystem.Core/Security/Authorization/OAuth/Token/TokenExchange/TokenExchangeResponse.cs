@@ -1,5 +1,4 @@
 ﻿using System.Text.Json.Serialization;
-using eSystem.Core.Security.Identity.Claims;
 
 namespace eSystem.Core.Security.Authorization.OAuth.Token.TokenExchange;
 

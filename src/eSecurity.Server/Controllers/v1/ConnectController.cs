@@ -9,7 +9,6 @@ using eSystem.Core.Security.Authentication.OpenIdConnect.User;
 using eSystem.Core.Security.Authorization.OAuth.DeviceAuthorization;
 using eSystem.Core.Security.Authorization.OAuth.Introspection;
 using eSystem.Core.Security.Authorization.OAuth.Revocation;
-using eSystem.Core.Security.Authorization.OAuth.Token;
 
 namespace eSecurity.Server.Controllers.v1;
 
