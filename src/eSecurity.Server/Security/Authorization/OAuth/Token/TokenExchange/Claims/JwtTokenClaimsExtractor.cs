@@ -36,7 +36,6 @@ public sealed class JwtTokenClaimsExtractor(
         {
             new (AppClaimTypes.Iss, _options.Issuer),
             new (AppClaimTypes.Jti, Guid.CreateVersion7().ToString()),
-            new (AppClaimTypes.Delegated, "true")
         };
         
         var iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
@@ -62,6 +61,10 @@ public sealed class JwtTokenClaimsExtractor(
         var actClaim = tokenClaims.FirstOrDefault(x => x.Type == AppClaimTypes.Act);
         if (actClaim is not null)
             extractedClaims.Add(actClaim);
+        
+        var delegatedClaim = tokenClaims.FirstOrDefault(x => x.Type == AppClaimTypes.Delegated);
+        if (delegatedClaim is not null)
+            extractedClaims.Add(delegatedClaim);
         
         return ClaimExtractionResult.Success(extractedClaims);
     }
