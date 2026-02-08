@@ -54,7 +54,10 @@ public sealed class GetOAuthAuthorizationServerQueryHandler : IRequestHandler<Ge
                 ScopeTypes.Email,
                 ScopeTypes.Profile,
                 ScopeTypes.Phone,
-                ScopeTypes.Address
+                ScopeTypes.Address,
+                ScopeTypes.ClientRegistration,
+                ScopeTypes.Transformation,
+                ScopeTypes.Delegation
             ]
         };
 

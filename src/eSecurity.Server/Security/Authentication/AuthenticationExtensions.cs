@@ -75,7 +75,10 @@ public static class AuthenticationExtensions
                 ScopeTypes.Email,
                 ScopeTypes.Profile,
                 ScopeTypes.Phone,
-                ScopeTypes.Address
+                ScopeTypes.Address,
+                ScopeTypes.ClientRegistration,
+                ScopeTypes.Transformation,
+                ScopeTypes.Delegation
             ];
 
             cfg.BackchannelLogoutSupported = true;
