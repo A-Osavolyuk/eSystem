@@ -5,7 +5,6 @@ using eSecurity.Server.Security.Authorization.OAuth.Token.ClientCredentials;
 using eSecurity.Server.Security.Authorization.OAuth.Token.DeviceCode;
 using eSecurity.Server.Security.Authorization.OAuth.Token.RefreshToken;
 using eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange;
-using eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Actor;
 using eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Claims;
 using eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Transformation;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
@@ -35,7 +34,6 @@ public static class TokenExtensions
         services.AddKeyedScoped<ITokenTransformationHandler, JwtTokenTransformationHandler>(TokenKind.Jwt);
         services.AddKeyedScoped<ITokenTransformationHandler, OpaqueTokenTransformationHandler>(TokenKind.Opaque);
         services.AddScoped<ITokenClaimsExtractor, JwtTokenClaimsExtractor>();
-        services.AddScoped<ITokenActorExtractor, JwtTokenActorExtractor>();
             
         services.AddScoped<ITokenManager, TokenManager>();
         services.AddScoped<ITokenStrategyResolver, TokenStrategyResolver>();
