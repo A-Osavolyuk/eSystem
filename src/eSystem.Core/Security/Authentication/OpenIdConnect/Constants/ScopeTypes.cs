@@ -9,4 +9,6 @@ public static class ScopeTypes
     public const string Address = "address";
     public const string OfflineAccess = "offline_access";
     public const string ClientRegistration = "client_registration";
+    public const string Delegation = "delegation";
+    public const string Transformation = "transformation";
 }
