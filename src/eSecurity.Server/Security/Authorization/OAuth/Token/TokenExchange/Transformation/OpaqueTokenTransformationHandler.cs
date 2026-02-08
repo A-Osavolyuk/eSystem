@@ -72,7 +72,7 @@ public sealed class OpaqueTokenTransformationHandler(
             Audiences = token.Audiences,
             Scopes = token.Scopes
         };
-        
+
         if (!string.IsNullOrEmpty(context.Audience))
         {
             if (!client.IsValidAudience(context.Audience))
@@ -95,36 +95,33 @@ public sealed class OpaqueTokenTransformationHandler(
                 });
             }
         }
-        
-        if (!string.IsNullOrEmpty(context.Scope))
+
+        var scopes = context.Scope.Split(' ').ToList();
+        var subjectScopes = token.Scopes
+            .Select(x => x.ClientScope.Scope.Value)
+            .ToHashSet();
+
+        if (!scopes.All(s => subjectScopes.Contains(s)))
         {
-            var scopes = context.Scope.Split(' ').ToList();
-            var subjectScopes = token.Scopes
-                .Select(x => x.ClientScope.Scope.Value)
-                .ToHashSet();
-
-            if (!scopes.All(s => subjectScopes.Contains(s)))
+            return Results.BadRequest(new Error
             {
-                return Results.BadRequest(new Error
-                {
-                    Code = ErrorTypes.OAuth.InvalidScope,
-                    Description = "Requested scopes exceed the subject token scopes."
-                });
-            }
-
-            transformedToken.Scopes = client.AllowedScopes.Select(x => new OpaqueTokenScopeEntity
-            {
-                Id = Guid.CreateVersion7(),
-                TokenId = transformedToken.Id,
-                ScopeId = x.Id
-            }).ToList();
+                Code = ErrorTypes.OAuth.InvalidScope,
+                Description = "Requested scopes exceed the subject token scopes."
+            });
         }
+
+        transformedToken.Scopes = client.AllowedScopes.Select(x => new OpaqueTokenScopeEntity
+        {
+            Id = Guid.CreateVersion7(),
+            TokenId = transformedToken.Id,
+            ScopeId = x.Id
+        }).ToList();
 
         var aud = JsonSerializer.Serialize(transformedToken.Audiences
             .Select(x => x.Audience.Audience)
             .ToArray()
         );
-        
+
         var response = new TokenExchangeResponse
         {
             ExpiresIn = (int)_options.AccessTokenLifetime.TotalSeconds,
@@ -135,7 +132,7 @@ public sealed class OpaqueTokenTransformationHandler(
             AccessToken = opaqueToken,
             IssuedAt = transformedToken.IssuedAt.ToUnixTimeSeconds(),
         };
-        
+
         var result = await _tokenManager.CreateAsync(transformedToken, cancellationToken);
         return result.Succeeded ? Results.Ok(response) : result;
     }

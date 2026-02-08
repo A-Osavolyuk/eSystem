@@ -53,7 +53,7 @@ public sealed class OpaqueTokenDelegationHandler(
                 Description = $"{TokenTypes.Full.AccessToken} is the only allowed actor_token_type value"
             });
         }
-        
+
         if (!await _tokenManager.IsOpaqueAsync(context.SubjectToken, cancellationToken))
         {
             return Results.BadRequest(new Error()
@@ -82,7 +82,7 @@ public sealed class OpaqueTokenDelegationHandler(
                 Description = "Subject token is invalid."
             });
         }
-        
+
         var actorTokenHash = _hasher.Hash(context.ActorToken);
         var actorToken = await _tokenManager.FindByHashAsync(actorTokenHash, cancellationToken);
         if (actorToken is null || !actorToken.IsValid || actorToken.TokenType != OpaqueTokenType.AccessToken)
@@ -93,7 +93,7 @@ public sealed class OpaqueTokenDelegationHandler(
                 Description = "Actor token is invalid."
             });
         }
-        
+
         if (subjectToken.IsDelegated || actorToken.IsDelegated)
         {
             return Results.BadRequest(new Error()
@@ -154,32 +154,29 @@ public sealed class OpaqueTokenDelegationHandler(
             }
         }
 
-        if (!string.IsNullOrEmpty(context.Scope))
+        var scopes = context.Scope.Split(' ').ToList();
+        var subjectScopes = subjectToken.Scopes
+            .Select(x => x.ClientScope.Scope.Value)
+            .ToHashSet();
+
+        if (!scopes.All(s => subjectScopes.Contains(s)))
         {
-            var scopes = context.Scope.Split(' ').ToList();
-            var subjectScopes = subjectToken.Scopes
-                .Select(x => x.ClientScope.Scope.Value)
-                .ToHashSet();
-
-            if (!scopes.All(s => subjectScopes.Contains(s)))
+            return Results.BadRequest(new Error
             {
-                return Results.BadRequest(new Error
-                {
-                    Code = ErrorTypes.OAuth.InvalidScope,
-                    Description = "Requested scopes exceed the subject token scopes."
-                });
-            }
-
-            delegatedToken.Scopes = subjectToken.Scopes
-                .Where(x => scopes.Contains(x.ClientScope.Scope.Value))
-                .Select(x => new OpaqueTokenScopeEntity
-                {
-                    Id = Guid.CreateVersion7(),
-                    TokenId = delegatedToken.Id,
-                    ScopeId = x.ScopeId
-                })
-                .ToList();
+                Code = ErrorTypes.OAuth.InvalidScope,
+                Description = "Requested scopes exceed the subject token scopes."
+            });
         }
+
+        delegatedToken.Scopes = subjectToken.Scopes
+            .Where(x => scopes.Contains(x.ClientScope.Scope.Value))
+            .Select(x => new OpaqueTokenScopeEntity
+            {
+                Id = Guid.CreateVersion7(),
+                TokenId = delegatedToken.Id,
+                ScopeId = x.ScopeId
+            })
+            .ToList();
 
         var aud = JsonSerializer.Serialize(delegatedToken.Audiences
             .Select(x => x.Audience.Audience)

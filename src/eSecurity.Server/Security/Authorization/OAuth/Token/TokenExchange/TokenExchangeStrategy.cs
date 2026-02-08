@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Token;
 using eSystem.Core.Security.Authorization.OAuth.Token.TokenExchange;
@@ -68,6 +69,34 @@ public sealed class TokenExchangeStrategy(
                 Description = "Unauthorized client"
             });
         }
+        
+        if (string.IsNullOrEmpty(request.Scope))
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = ErrorTypes.OAuth.InvalidRequest,
+                Description = "scope is required"
+            });
+        }
+        
+        var scopes = request.Scope.Split(' ').ToList();
+        if (scopes.Contains(ScopeTypes.Delegation) && scopes.Contains(ScopeTypes.Transformation))
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = ErrorTypes.OAuth.InvalidScope,
+                Description = "delegation and transformation scopes are not allowed to use in the same time"
+            });
+        }
+
+        if (!scopes.Contains(ScopeTypes.Delegation) && !scopes.Contains(ScopeTypes.Transformation))
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = ErrorTypes.OAuth.InvalidScope,
+                Description = "scope must contain either delegation or transformation scope"
+            });
+        }
 
         var context = new TokenExchangeFlowContext()
         {
@@ -83,15 +112,11 @@ public sealed class TokenExchangeStrategy(
             Scope = request.Scope
         };
         
-        var flow = _resolver.Resolve(ResolveFlow(context));
-        return await flow.ExecuteAsync(context, cancellationToken);
-    }
-
-    private TokenExchangeFlow ResolveFlow(TokenExchangeFlowContext context)
-    {
-        if (string.IsNullOrEmpty(context.ActorToken) || string.Equals(context.ActorToken, context.SubjectToken))
-            return TokenExchangeFlow.Transformation;
+        var tokenExchangeFlow = scopes.Contains(ScopeTypes.Delegation) 
+            ? TokenExchangeFlow.Delegation 
+            : TokenExchangeFlow.Transformation;
         
-        return TokenExchangeFlow.Delegation;
+        var flow = _resolver.Resolve(tokenExchangeFlow);
+        return await flow.ExecuteAsync(context, cancellationToken);
     }
 }

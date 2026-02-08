@@ -22,7 +22,7 @@ public sealed class JwtTokenTransformationHandler(
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly TokenOptions _options = options.Value;
 
-    public async ValueTask<Result> HandleAsync(TokenExchangeFlowContext context, 
+    public async ValueTask<Result> HandleAsync(TokenExchangeFlowContext context,
         CancellationToken cancellationToken = default)
     {
         var extractionResult = await _claimsExtractor.ExtractAsync(context.SubjectToken, cancellationToken);
@@ -45,7 +45,7 @@ public sealed class JwtTokenTransformationHandler(
                 Description = "Unauthorized client"
             });
         }
-        
+
         if (!string.IsNullOrEmpty(context.Audience))
         {
             if (!client.IsValidAudience(context.Audience))
@@ -56,36 +56,33 @@ public sealed class JwtTokenTransformationHandler(
                     Description = "The requested audience is not an allowed audience for this client."
                 });
             }
-            
+
             claims.Add(new Claim(AppClaimTypes.Aud, context.Audience));
         }
 
-        if (!string.IsNullOrEmpty(context.Scope))
+        var scopes = context.Scope.Split(' ').ToList();
+        var subjectScopes = claims
+            .FirstOrDefault(x => x.Type == AppClaimTypes.Scope)?.Value
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .ToHashSet();
+
+        if (subjectScopes is not null && !scopes.All(s => subjectScopes.Contains(s)))
         {
-            var scopes = context.Scope.Split(' ').ToList();
-            var subjectScopes = claims
-                .FirstOrDefault(x => x.Type == AppClaimTypes.Scope)?.Value
-                .Split(' ', StringSplitOptions.RemoveEmptyEntries)
-                .ToHashSet();
-
-            if (subjectScopes is not null && !scopes.All(s => subjectScopes.Contains(s)))
+            return Results.BadRequest(new Error
             {
-                return Results.BadRequest(new Error
-                {
-                    Code = ErrorTypes.OAuth.InvalidScope,
-                    Description = "Requested scopes exceed the subject token scopes."
-                });
-            }
-
-            if (claims.Any(x => x.Type == AppClaimTypes.Scope))
-            {
-                var scopeClaim = claims.First(x => x.Type == AppClaimTypes.Scope);
-                claims.Remove(scopeClaim);
-            }
-            
-            claims.Add(new Claim(AppClaimTypes.Scope, context.Scope));
+                Code = ErrorTypes.OAuth.InvalidScope,
+                Description = "Requested scopes exceed the subject token scopes."
+            });
         }
-        
+
+        if (claims.Any(x => x.Type == AppClaimTypes.Scope))
+        {
+            var scopeClaim = claims.First(x => x.Type == AppClaimTypes.Scope);
+            claims.Remove(scopeClaim);
+        }
+
+        claims.Add(new Claim(AppClaimTypes.Scope, context.Scope));
+
         var tokenFactory = _tokenFactoryProvider.GetFactory<JwtTokenContext, string>();
         var tokenContext = new JwtTokenContext { Claims = claims, Type = JwtTokenTypes.AccessToken };
         var accessToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
@@ -100,7 +97,7 @@ public sealed class JwtTokenTransformationHandler(
             AccessToken = accessToken,
             IssuedAt = long.Parse(claims.First(x => x.Type == AppClaimTypes.Iat).Value)
         };
-        
+
         return Results.Ok(response);
     }
 }
