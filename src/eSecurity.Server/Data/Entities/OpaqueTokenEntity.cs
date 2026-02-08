@@ -11,6 +11,7 @@ public class OpaqueTokenEntity : Entity
     public required string Subject { get; set; }
     public bool Revoked { get; set; }
     public bool IsValid => !Revoked && DateTimeOffset.UtcNow < ExpiredAt;
+    public bool IsDelegated => ActorId.HasValue;
     
     public DateTimeOffset? RevokedAt { get; set; }
     public DateTimeOffset? NotBefore { get; set; }
