@@ -17,6 +17,8 @@ public sealed class TokenManager(
             .Include(x => x.Client)
             .Include(x => x.Scopes)
             .ThenInclude(x => x.ClientScope)
+            .Include(x => x.Audiences)
+            .ThenInclude(x => x.Audience)
             .FirstOrDefaultAsync(cancellationToken);
     }
     
@@ -28,6 +30,8 @@ public sealed class TokenManager(
             .Include(x => x.Client)
             .Include(x => x.Scopes)
             .ThenInclude(x => x.ClientScope)
+            .Include(x => x.Audiences)
+            .ThenInclude(x => x.Audience)
             .FirstOrDefaultAsync(cancellationToken);
     }
 
