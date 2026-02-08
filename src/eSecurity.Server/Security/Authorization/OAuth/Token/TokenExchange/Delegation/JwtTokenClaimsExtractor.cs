@@ -4,7 +4,7 @@ using eSecurity.Server.Security.Authorization.OAuth.Token.Validation;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Identity.Claims;
 
-namespace eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Claims;
+namespace eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Delegation;
 
 public sealed class JwtTokenClaimsExtractor(
     IJwtTokenValidationProvider validationProvider,

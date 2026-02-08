@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Extraction;
 
-namespace eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Claims;
+namespace eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Delegation;
 
 public sealed class ClaimExtractionResult : ExtractionResult<IEnumerable<Claim>>
 {
