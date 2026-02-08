@@ -26,6 +26,7 @@ public static class AuthorizationExtensions
 {
     public static void AddAuthorization(this IHostApplicationBuilder builder)
     {
+        builder.Services.AddTokenFlow();
         builder.Services.AddRoleManagement();
         builder.Services.AddAccessManagement();
         builder.Services.AddDeviceManagement();
@@ -40,7 +41,6 @@ public static class AuthorizationExtensions
 
         builder.Services.AddScoped<IConsentManager, ConsentManager>();
         builder.Services.AddScoped<ILinkedAccountManager, LinkedAccountManager>();
-        
         builder.Services.AddScoped<ITokenValidationProvider, TokenValidationProvider>();
         builder.Services.AddScoped<IJwtTokenValidationProvider, JwtTokenValidationProvider>();
         builder.Services.AddKeyedScoped<ITokenValidator, OpaqueTokenValidator>(TokenKind.Opaque);
@@ -48,34 +48,6 @@ public static class AuthorizationExtensions
         builder.Services.AddKeyedScoped<IJwtTokenValidator, IdTokenValidator>(JwtTokenTypes.IdToken);
         builder.Services.AddKeyedScoped<IJwtTokenValidator, AccessTokenValidator>(JwtTokenTypes.AccessToken);
         builder.Services.AddKeyedScoped<IJwtTokenValidator, GenericJwtTokenValidator>(JwtTokenTypes.Generic);
-            
-        builder.Services.AddScoped<IAuthorizationCodeManager, AuthorizationCodeManager>();
-        builder.Services.AddScoped<IAuthorizationCodeFlowResolver, AuthorizationCodeFlowResolver>();
-        builder.Services.AddKeyedScoped<IAuthorizationCodeFlow, OidcAuthorizationCodeFlow>(AuthorizationProtocol.OpenIdConnect);
-        builder.Services.AddKeyedScoped<IAuthorizationCodeFlow, OAuthAuthorizationCodeFlow>(AuthorizationProtocol.OAuth);
-        
-        builder.Services.AddScoped<IRefreshTokenFlowResolver, RefreshTokenFlowResolver>();
-        builder.Services.AddKeyedScoped<IRefreshTokenFlow, OidcRefreshTokenFlow>(AuthorizationProtocol.OpenIdConnect);
-        builder.Services.AddKeyedScoped<IRefreshTokenFlow, OAuthRefreshTokenFlow>(AuthorizationProtocol.OAuth);
-        
-        builder.Services.AddScoped<IDeviceCodeFlowResolver, DeviceCodeFlowResolver>();
-        builder.Services.AddKeyedScoped<IDeviceCodeFlow, OidcDeviceCodeFlow>(AuthorizationProtocol.OpenIdConnect);
-        builder.Services.AddKeyedScoped<IDeviceCodeFlow, OAuthDeviceCodeFlow>(AuthorizationProtocol.OAuth);
-        
-        builder.Services.AddScoped<ITokenExchangeFlowResolver, TokenExchangeFlowResolver>();
-        builder.Services.AddKeyedScoped<ITokenExchangeFlow, TransformationTokenExchangeFlow>(TokenExchangeFlow.Transformation);
-        builder.Services.AddScoped<ITokenTransformationHandlerResolver, TokenTransformationHandlerResolver>();
-        builder.Services.AddKeyedScoped<ITokenTransformationHandler, JwtTokenTransformationHandler>(TokenKind.Jwt);
-        builder.Services.AddKeyedScoped<ITokenTransformationHandler, OpaqueTokenTransformationHandler>(TokenKind.Opaque);
-        builder.Services.AddScoped<ITokenClaimsExtractor, JwtTokenClaimsExtractor>();
-        builder.Services.AddScoped<ITokenActorExtractor, JwtTokenActorExtractor>();
-            
-        builder.Services.AddScoped<ITokenManager, TokenManager>();
-        builder.Services.AddScoped<ITokenStrategyResolver, TokenStrategyResolver>();
-        builder.Services.AddKeyedScoped<ITokenStrategy, AuthorizationCodeStrategy>(GrantTypes.AuthorizationCode);
-        builder.Services.AddKeyedScoped<ITokenStrategy, RefreshTokenStrategy>(GrantTypes.RefreshToken);
-        builder.Services.AddKeyedScoped<ITokenStrategy, ClientCredentialsStrategy>(GrantTypes.ClientCredentials);
-        builder.Services.AddScoped<ITokenRequestMapper, TokenRequestMapper>();
 
         builder.Services.AddAuthorizationBuilder()
             .AddPolicy(AuthorizationPolicies.BasicAuthorization, policy =>
