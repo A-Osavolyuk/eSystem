@@ -57,10 +57,10 @@ public sealed class OpaqueTokenTransformationHandler(
             });
         }
 
-        var tokenContext = new OpaqueTokenContext() { Length = _options.OpaqueTokenLength };
+        var tokenContext = new OpaqueTokenContext { Length = _options.OpaqueTokenLength };
         var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
         var opaqueToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
-        var opaqueTokenEntity = new OpaqueTokenEntity
+        var transformedToken = new OpaqueTokenEntity
         {
             Id = Guid.CreateVersion7(),
             ClientId = client.Id,
@@ -84,13 +84,13 @@ public sealed class OpaqueTokenTransformationHandler(
                 });
             }
 
-            if (opaqueTokenEntity.Audiences.All(x => x.Audience.Audience != context.Audience))
+            if (transformedToken.Audiences.All(x => x.Audience.Audience != context.Audience))
             {
                 var audience = client.Audiences.First(x => x.Audience == context.Audience);
-                opaqueTokenEntity.Audiences.Add(new OpaqueTokenAudienceEntity()
+                transformedToken.Audiences.Add(new OpaqueTokenAudienceEntity()
                 {
                     Id = Guid.CreateVersion7(),
-                    TokenId = opaqueTokenEntity.Id,
+                    TokenId = transformedToken.Id,
                     AudienceId = audience.Id
                 });
             }
@@ -112,16 +112,18 @@ public sealed class OpaqueTokenTransformationHandler(
                 });
             }
 
-            opaqueTokenEntity.Scopes = client.AllowedScopes.Select(x => new OpaqueTokenScopeEntity
+            transformedToken.Scopes = client.AllowedScopes.Select(x => new OpaqueTokenScopeEntity
             {
                 Id = Guid.CreateVersion7(),
-                TokenId = opaqueTokenEntity.Id,
+                TokenId = transformedToken.Id,
                 ScopeId = x.Id
             }).ToList();
         }
 
-        var aud = JsonSerializer.Serialize(opaqueTokenEntity.Audiences.Select(
-            x => x.Audience.Audience));
+        var aud = JsonSerializer.Serialize(transformedToken.Audiences
+            .Select(x => x.Audience.Audience)
+            .ToArray()
+        );
         
         var response = new TokenExchangeResponse
         {
@@ -131,10 +133,10 @@ public sealed class OpaqueTokenTransformationHandler(
             Scope = context.Scope,
             Audience = aud,
             AccessToken = opaqueToken,
-            IssuedAt = opaqueTokenEntity.IssuedAt.ToUnixTimeSeconds(),
+            IssuedAt = transformedToken.IssuedAt.ToUnixTimeSeconds(),
         };
         
-        var result = await _tokenManager.CreateAsync(opaqueTokenEntity, cancellationToken);
+        var result = await _tokenManager.CreateAsync(transformedToken, cancellationToken);
         return result.Succeeded ? Results.Ok(response) : result;
     }
 }
