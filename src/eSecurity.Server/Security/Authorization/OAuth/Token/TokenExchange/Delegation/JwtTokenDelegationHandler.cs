@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
+using System.Text.Json;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
-using eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Delegation;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
@@ -9,13 +9,13 @@ using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Token.TokenExchange;
 using eSystem.Core.Security.Identity.Claims;
 
-namespace eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Transformation;
+namespace eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Delegation;
 
-public sealed class JwtTokenTransformationHandler(
+public sealed class JwtTokenDelegationHandler(
     ITokenClaimsExtractor claimsExtractor,
     IClientManager clientManager,
     ITokenFactoryProvider tokenFactoryProvider,
-    IOptions<TokenOptions> options) : ITokenTransformationHandler
+    IOptions<TokenOptions> options) : ITokenDelegationHandler
 {
     private readonly ITokenClaimsExtractor _claimsExtractor = claimsExtractor;
     private readonly IClientManager _clientManager = clientManager;
@@ -25,8 +25,36 @@ public sealed class JwtTokenTransformationHandler(
     public async ValueTask<Result> HandleAsync(TokenExchangeFlowContext context, 
         CancellationToken cancellationToken = default)
     {
-        var extractionResult = await _claimsExtractor.ExtractAsync(context.SubjectToken, cancellationToken);
-        if (!extractionResult.IsSucceeded || extractionResult.Value is null)
+        if (string.IsNullOrEmpty(context.ActorToken))
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = ErrorTypes.OAuth.InvalidRequest,
+                Description = "actor_token is required"
+            });
+        }
+        
+        if (string.IsNullOrEmpty(context.ActorTokenType))
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = ErrorTypes.OAuth.InvalidRequest,
+                Description = "actor_token_type is required"
+            });
+        }
+
+        var actorTokenExtractionResult = await _claimsExtractor.ExtractAsync(context.ActorToken, cancellationToken);
+        if (!actorTokenExtractionResult.IsSucceeded || actorTokenExtractionResult.Value is null)
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = ErrorTypes.OAuth.InvalidGrant,
+                Description = "Actor token is invalid"
+            });
+        }
+
+        var subjectTokenExtractionResult = await _claimsExtractor.ExtractAsync(context.SubjectToken, cancellationToken);
+        if (!subjectTokenExtractionResult.IsSucceeded || subjectTokenExtractionResult.Value is null)
         {
             return Results.BadRequest(new Error()
             {
@@ -35,7 +63,18 @@ public sealed class JwtTokenTransformationHandler(
             });
         }
 
-        var claims = extractionResult.Value.ToList();
+        var actorTokenClaims = actorTokenExtractionResult.Value.ToList();
+        var subjectTokenClaims = subjectTokenExtractionResult.Value.ToList();
+        if (actorTokenClaims.Any(x => x.Type == AppClaimTypes.Delegated) ||
+            subjectTokenClaims.Any(x => x.Type == AppClaimTypes.Delegated))
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = ErrorTypes.OAuth.InvalidGrant,
+                Description = "Delegation chaining is not allowed"
+            });
+        }
+        
         var client = await _clientManager.FindByIdAsync(context.ClientId, cancellationToken);
         if (client is null)
         {
@@ -57,13 +96,13 @@ public sealed class JwtTokenTransformationHandler(
                 });
             }
             
-            claims.Add(new Claim(AppClaimTypes.Aud, context.Audience));
+            subjectTokenClaims.Add(new Claim(AppClaimTypes.Aud, context.Audience));
         }
 
         if (!string.IsNullOrEmpty(context.Scope))
         {
             var scopes = context.Scope.Split(' ').ToList();
-            var subjectScopes = claims
+            var subjectScopes = subjectTokenClaims
                 .FirstOrDefault(x => x.Type == AppClaimTypes.Scope)?.Value
                 .Split(' ', StringSplitOptions.RemoveEmptyEntries)
                 .ToHashSet();
@@ -77,17 +116,31 @@ public sealed class JwtTokenTransformationHandler(
                 });
             }
 
-            if (claims.Any(x => x.Type == AppClaimTypes.Scope))
+            if (subjectTokenClaims.Any(x => x.Type == AppClaimTypes.Scope))
             {
-                var scopeClaim = claims.First(x => x.Type == AppClaimTypes.Scope);
-                claims.Remove(scopeClaim);
+                var scopeClaim = subjectTokenClaims.First(x => x.Type == AppClaimTypes.Scope);
+                subjectTokenClaims.Remove(scopeClaim);
             }
             
-            claims.Add(new Claim(AppClaimTypes.Scope, context.Scope));
+            subjectTokenClaims.Add(new Claim(AppClaimTypes.Scope, context.Scope));
         }
+
+        var subClaim = actorTokenClaims.FirstOrDefault(x => x.Type == AppClaimTypes.Sub);
+        var clientIdClaim = actorTokenClaims.First(x => x.Type == AppClaimTypes.ClientId);
+
+        var actor = new ActorClaim()
+        {
+            Subject = subClaim?.Value ?? clientIdClaim.Value,
+            ClientId = clientIdClaim.Value,
+            Issuer = _options.Issuer,
+            AuthenticationTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
+        };
+        
+        subjectTokenClaims.Add(new Claim(AppClaimTypes.Act, JsonSerializer.Serialize(actor)));
+        subjectTokenClaims.Add(new Claim(AppClaimTypes.Delegated, "true"));
         
         var tokenFactory = _tokenFactoryProvider.GetFactory<JwtTokenContext, string>();
-        var tokenContext = new JwtTokenContext { Claims = claims, Type = JwtTokenTypes.AccessToken };
+        var tokenContext = new JwtTokenContext { Claims = subjectTokenClaims, Type = JwtTokenTypes.AccessToken };
         var accessToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
 
         var response = new TokenExchangeResponse
@@ -98,7 +151,7 @@ public sealed class JwtTokenTransformationHandler(
             Scope = context.Scope,
             Audience = context.Audience,
             AccessToken = accessToken,
-            IssuedAt = long.Parse(claims.First(x => x.Type == AppClaimTypes.Iat).Value)
+            IssuedAt = long.Parse(subjectTokenClaims.First(x => x.Type == AppClaimTypes.Iat).Value)
         };
         
         return Results.Ok(response);

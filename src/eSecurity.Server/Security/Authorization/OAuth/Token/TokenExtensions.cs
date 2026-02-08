@@ -5,7 +5,7 @@ using eSecurity.Server.Security.Authorization.OAuth.Token.ClientCredentials;
 using eSecurity.Server.Security.Authorization.OAuth.Token.DeviceCode;
 using eSecurity.Server.Security.Authorization.OAuth.Token.RefreshToken;
 using eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange;
-using eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Claims;
+using eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Delegation;
 using eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Transformation;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 
@@ -30,9 +30,13 @@ public static class TokenExtensions
         
         services.AddScoped<ITokenExchangeFlowResolver, TokenExchangeFlowResolver>();
         services.AddKeyedScoped<ITokenExchangeFlow, TransformationTokenExchangeFlow>(TokenExchangeFlow.Transformation);
+        services.AddKeyedScoped<ITokenExchangeFlow, DelegationTokenExchangeFlow>(TokenExchangeFlow.Delegation);
         services.AddScoped<ITokenTransformationHandlerResolver, TokenTransformationHandlerResolver>();
         services.AddKeyedScoped<ITokenTransformationHandler, JwtTokenTransformationHandler>(TokenKind.Jwt);
         services.AddKeyedScoped<ITokenTransformationHandler, OpaqueTokenTransformationHandler>(TokenKind.Opaque);
+        services.AddScoped<ITokenDelegationHandlerResolver, TokenDelegationHandlerResolver>();
+        services.AddKeyedScoped<ITokenDelegationHandler, JwtTokenDelegationHandler>(TokenKind.Jwt);
+        services.AddKeyedScoped<ITokenDelegationHandler, OpaqueTokenDelegationHandler>(TokenKind.Opaque);
         services.AddScoped<ITokenClaimsExtractor, JwtTokenClaimsExtractor>();
             
         services.AddScoped<ITokenManager, TokenManager>();
