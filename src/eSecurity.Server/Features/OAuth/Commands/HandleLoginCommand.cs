@@ -12,7 +12,7 @@ using eSystem.Core.Utilities.Query;
 using Microsoft.AspNetCore.Authentication;
 using AuthenticationTypes = eSecurity.Core.Security.Authorization.OAuth.Constants.AuthenticationTypes;
 
-namespace eSecurity.Server.Features.OAuth;
+namespace eSecurity.Server.Features.OAuth.Commands;
 
 public sealed record HandleLoginCommand(string? RemoteError, string ReturnUri) : IRequest<Result>;
 

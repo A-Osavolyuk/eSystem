@@ -1,5 +1,7 @@
 ﻿using eSecurity.Server.Common.Responses;
 using eSecurity.Server.Features.OAuth;
+using eSecurity.Server.Features.OAuth.Commands;
+using eSecurity.Server.Features.OAuth.Queries;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 
@@ -38,6 +40,16 @@ public class OAuthController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> HandleOAuthLoginAsync(string returnUri, string? remoteError = null)
     {
         var result = await _sender.Send(new HandleLoginCommand(remoteError, returnUri));
+        return HttpContext.HandleResult(result);
+    }
+    
+    [EndpointSummary("Get OAuth session")]
+    [EndpointDescription("Get OAuth session")]
+    [ProducesResponseType(200)]
+    [HttpGet("{id:guid}")]
+    public async ValueTask<IActionResult> GetSessionAsync(Guid id)
+    {
+        var result = await _sender.Send(new GetOAuthSessionQuery(id));
         return HttpContext.HandleResult(result);
     }
 }
