@@ -83,7 +83,7 @@ public sealed class PasskeySignInStrategy(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            AuthenticationMethods = [AuthenticationMethods.Swk],
+            AuthenticationMethods = [AuthenticationMethods.SoftwareKey],
             ExpireDate = DateTimeOffset.UtcNow.Add(_options.Timestamp)
         };
         

@@ -181,7 +181,7 @@ public sealed class PasswordSignInStrategy(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            AuthenticationMethods = [AuthenticationMethods.Pwd],
+            AuthenticationMethods = [AuthenticationMethods.Password],
             ExpireDate = DateTimeOffset.UtcNow.Add(_sessionOptions.Timestamp)
         };
         

@@ -2,18 +2,21 @@
 
 public static class AuthenticationMethods
 {
-    public const string Pwd = "pwd";
-    public const string Mfa = "mfa";
-    public const string Otp = "otp";
-    public const string Swk = "swk";
-    public const string Hwk = "hwk";
+    public const string Password = "pwd";
+    public const string MultiFactorAuthentication = "mfa";
+    public const string OneTimePassword = "otp";
+    public const string SoftwareKey = "swk";
+    public const string HardwareKey = "hwk";
     public const string Saml = "saml";
-
-    public static class OAuth
-    {
-        public const string Google = "oauth:google";
-        public const string Microsoft = "oauth:mircosoft";
-        public const string X = "oauth:x";
-        public const string Facebook = "oauth:facebook";
-    }
+    public const string SmsOtp = "sms";
+    public const string KnowledgeBasedAuthentication = "kba";
+    public const string Fingerprint = "ftp";
+    public const string FaceRecognition = "face";
+    public const string IrisScan = "eye";
+    public const string Federated = "federated";
+    public const string Social = "social";
+    public const string Google = "google";
+    public const string Microsoft = "microsoft";
+    public const string X = "x";
+    public const string Facebook = "facebook";
 }

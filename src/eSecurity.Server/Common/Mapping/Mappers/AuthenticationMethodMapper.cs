@@ -9,10 +9,10 @@ public sealed class AuthenticationMethodMapper : IMapper<LinkedAccountType, stri
     {
         return input switch
         {
-            LinkedAccountType.Google => AuthenticationMethods.OAuth.Google,
-            LinkedAccountType.Facebook => AuthenticationMethods.OAuth.Facebook,
-            LinkedAccountType.Microsoft => AuthenticationMethods.OAuth.Microsoft,
-            LinkedAccountType.X => AuthenticationMethods.OAuth.X,
+            LinkedAccountType.Google => AuthenticationMethods.Google,
+            LinkedAccountType.Facebook => AuthenticationMethods.Facebook,
+            LinkedAccountType.Microsoft => AuthenticationMethods.Microsoft,
+            LinkedAccountType.X => AuthenticationMethods.X,
             _ => throw new NotSupportedException()
         };
     }

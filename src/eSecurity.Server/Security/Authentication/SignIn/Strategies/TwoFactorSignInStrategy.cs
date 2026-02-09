@@ -106,7 +106,7 @@ public class TwoFactorSignInStrategy(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            AuthenticationMethods = [twoFactorPayload.Amr, AuthenticationMethods.Mfa],
+            AuthenticationMethods = [twoFactorPayload.Amr, AuthenticationMethods.MultiFactorAuthentication],
             ExpireDate = DateTimeOffset.UtcNow.Add(_sessionOptions.Timestamp)
         };
         
