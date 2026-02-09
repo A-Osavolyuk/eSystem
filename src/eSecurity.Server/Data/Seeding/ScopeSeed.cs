@@ -1,7 +1,6 @@
 ﻿using eSecurity.Server.Data.Entities;
 using eSystem.Core.Data.Seeding;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
-using Microsoft.OpenApi.Writers;
 
 namespace eSecurity.Server.Data.Seeding;
 
