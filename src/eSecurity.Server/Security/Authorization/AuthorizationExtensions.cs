@@ -3,6 +3,7 @@ using eSecurity.Server.Security.Authorization.Constants;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Authorization.OAuth.Consents;
 using eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
+using eSecurity.Server.Security.Authorization.OAuth.Session;
 using eSecurity.Server.Security.Authorization.OAuth.Token;
 using eSecurity.Server.Security.Authorization.OAuth.Token.DeviceCode;
 using eSecurity.Server.Security.Authorization.OAuth.Token.Validation;
@@ -30,6 +31,7 @@ public static class AuthorizationExtensions
             options.VerificationUri = "https://localhost:6501/device/activate";
         });
 
+        builder.Services.AddScoped<IOAuthSessionManager, OAuthSessionManager>();
         builder.Services.AddScoped<IConsentManager, ConsentManager>();
         builder.Services.AddScoped<ILinkedAccountManager, LinkedAccountManager>();
         builder.Services.AddScoped<ITokenValidationProvider, TokenValidationProvider>();
