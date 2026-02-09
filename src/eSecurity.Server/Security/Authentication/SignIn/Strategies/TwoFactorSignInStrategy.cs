@@ -72,7 +72,7 @@ public class TwoFactorSignInStrategy(
                 {
                     Code = ErrorTypes.Common.FailedLoginAttempt, 
                     Description = "Invalid recovery code.",
-                    Details = new()
+                    Details = new Dictionary<string, object>
                     {
                         { "maxFailedLoginAttempts", _signInOptions.MaxFailedLoginAttempts },
                         { "failedLoginAttempts", user.FailedLoginAttempts },
@@ -90,7 +90,7 @@ public class TwoFactorSignInStrategy(
             {
                 Code = ErrorTypes.Common.AccountLockedOut,
                 Description = "Account is locked out due to too many failed login attempts",
-                Details = new() { { "userId", user.Id } }
+                Details = new Dictionary<string, object> { { "userId", user.Id } }
             });
         }
         
@@ -101,13 +101,19 @@ public class TwoFactorSignInStrategy(
             var userUpdateResult = await _userManager.UpdateAsync(user, cancellationToken);
             if (!userUpdateResult.Succeeded) return userUpdateResult;
         }
+
+        string[] authenticationMethods =
+        [
+            ..twoFactorPayload.AuthenticationMethods,
+            AuthenticationMethods.MultiFactorAuthentication
+        ];
         
         var session = new SessionEntity
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            AuthenticationMethods = [twoFactorPayload.Amr, AuthenticationMethods.MultiFactorAuthentication],
-            ExpireDate = DateTimeOffset.UtcNow.Add(_sessionOptions.Timestamp)
+            AuthenticationMethods = authenticationMethods,
+            ExpireDate = DateTimeOffset.UtcNow.Add(_sessionOptions.Timestamp),
         };
         
         await _sessionManager.CreateAsync(session, cancellationToken);
