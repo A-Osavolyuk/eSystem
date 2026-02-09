@@ -40,6 +40,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<ScopeEntity> Scopes { get; set; }
     public DbSet<DeviceCodeEntity> DeviceCodes { get; set; }
     public DbSet<OpaqueTokenAudienceEntity> OpaqueTokenAudiences { get; set; }
+    public DbSet<OAuthSessionEntity> OAuthSessions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
