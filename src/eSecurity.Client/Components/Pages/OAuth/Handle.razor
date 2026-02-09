@@ -1,5 +1,7 @@
 ﻿@page "/oauth/handle"
 
+@using eSecurity.Client.Security.Authorization.OAuth
+@using eSecurity.Core.Common.DTOs
 @using eSecurity.Core.Security.Authorization.OAuth
 @using eSystem.Core.Utilities.State
 
@@ -7,11 +9,16 @@
 
 @layout AuthenticationLayout
 
+@inject OAuthService OAuthService
+
 <Title Text="Handling OAuth session..."/>
 
 @code {
     [SupplyParameterFromQuery(Name = "state")]
     public string State { get; set; } = string.Empty;
+    
+    [SupplyParameterFromQuery(Name = "sid")]
+    public Guid SessionId { get; set; }
 
     [SupplyParameterFromQuery(Name = "error")]
     public string? ErrorCode { get; set; }
@@ -19,7 +26,7 @@
     [SupplyParameterFromQuery(Name = "error_description")]
     public string? ErrorDescription { get; set; }
 
-    protected override void OnAfterRender(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!string.IsNullOrEmpty(ErrorCode) && !string.IsNullOrEmpty(ErrorDescription))
         {
@@ -28,69 +35,61 @@
                 .WithQueryParam("error", ErrorTypes.Common.InvalidSession)
                 .WithQueryParam("error_description", "Invalid session.")
                 .Build());
+
+            return;
         }
-        else
+
+        var result = await OAuthService.GetSessionAsync(SessionId);
+        if (result.Succeeded && result.TryGetValue<OAuthSessionDto>(out var session) && session is not null)
         {
-            var stateData = StateParser.Parse(State);
-            var userId = stateData["userId"];
-            var flow = stateData["flow"];
-            var provider = stateData["provider"];
-            var stateBase64 = stateData["state"];
-            var initMethod = stateData.GetValueOrDefault("init_method");
-            var stateBytes = WebEncoders.Base64UrlDecode(stateBase64);
-            var stateJson = Encoding.UTF8.GetString(stateBytes);
-            var state = JsonSerializer.Deserialize<OAuthState>(stateJson);
-
-            if (state is null)
+            UserState.UserId = session.UserId;
+            var oauthState = JsonSerializer.Deserialize<OAuthState>(State)!;
+            var authorizationState = StateBuilder.Create()
+                .WithData("return_url", GetRedirectUri(oauthState))
+                .Build();
+                
+            if (session.Flow == OAuthFlow.SignIn)
             {
-                NavigationManager.NavigateTo(QueryBuilder.Create()
-                    .WithUri(Links.OAuth.Error)
-                    .WithQueryParam("error", ErrorTypes.Common.InvalidSession)
-                    .WithQueryParam("error_description", "Invalid session.")
-                    .Build());
-
-                return;
-            }
-            
-            UserState.UserId = Guid.Parse(userId);
-            
-            if (flow == "sign-in")
-            {
-                var requireTwoFactor = Convert.ToBoolean(stateData["requireTwoFactor"]);
-                if (requireTwoFactor)
+                if (session.RequireTwoFactor)
                 {
-                    var stateBuilder = StateBuilder.Create()
-                        .WithData("userId", userId)
-                        .WithData("provider", provider)
-                        .WithData("state", StateBuilder.Create()
-                            .WithData("return_url", GetRedirectUri(state))
-                            .Build());
+                    var state = StateBuilder.Create()
+                        .WithData("userId", session.UserId.ToString())
+                        .WithData("amr", JsonSerializer.Serialize(session.AuthenticationMethods))
+                        .WithData("state", authorizationState)
+                        .Build();
                         
                     NavigationManager.NavigateTo(QueryBuilder.Create()
                         .WithUri(Links.Session.TwoFactor)
-                        .WithQueryParam("state", stateBuilder.Build())
-                        .WithQueryParam("amr", initMethod!)
+                        .WithQueryParam("state", state)
                         .Build());
                 }
                 else
                 {
-                    NavigationManager.NavigateTo(GetRedirectUri(state));
+                    NavigationManager.NavigateTo(GetRedirectUri(oauthState));
                 }
             }
             else
             {
-                var stateBuilder = StateBuilder.Create()
-                    .WithData("userId", userId)
-                    .WithData("provider", provider)
-                    .WithData("state", StateBuilder.Create()
-                        .WithData("return_url", GetRedirectUri(state))
-                        .Build());
+                var state = StateBuilder.Create()
+                    .WithData("userId", session.UserId.ToString())
+                    .WithData("provider", session.Provider)
+                    .WithData("state", authorizationState)
+                    .Build();
                         
                 NavigationManager.NavigateTo(QueryBuilder.Create()
-                    .WithUri(Links.OAuth.SignUp)
-                    .WithQueryParam("state", stateBuilder.Build())
+                    .WithUri(Links.Session.TwoFactor)
+                    .WithQueryParam("state", state)
                     .Build());
             }
+        }
+        else
+        {
+            var error = result.GetError();
+            NavigationManager.NavigateTo(QueryBuilder.Create()
+                .WithUri(Links.OAuth.Error)
+                .WithQueryParam("error", error.Code)
+                .WithQueryParam("error_description", error.Description)
+                .Build());
         }
     }
     

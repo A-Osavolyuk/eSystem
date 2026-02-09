@@ -78,12 +78,10 @@
     [SupplyParameterFromQuery(Name = "return_url")]
     public string? ReturnUrl { get; set; } = string.Empty;
 
-    [SupplyParameterFromQuery(Name = "amr")]
-    public string InitMethod { get; set; } = string.Empty;
-
     private List<UserTwoFactorMethod> _methods = [];
     private TwoFactorMethod _preferredMethod;
     private string? _state;
+    private string[] _authenticationMethods = [];
     private Guid _userId;
 
     protected override async Task OnInitializedAsync()
@@ -109,9 +107,10 @@
             }
 
             if (stateData.TryGetValue("state", out var state))
-            {
                 _state = state;
-            }
+
+            if (stateData.TryGetValue("amr", out var amrJson) && !string.IsNullOrEmpty(amrJson))
+                _authenticationMethods = JsonSerializer.Deserialize<string[]>(amrJson) ?? [];
         }
     }
 
@@ -122,7 +121,7 @@
             Payload = new TwoFactorSignInPayload
             {
                 UserId = _userId,
-                Amr = InitMethod
+                AuthenticationMethods = _authenticationMethods
             }
         };
 
