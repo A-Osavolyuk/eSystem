@@ -7,7 +7,7 @@ public sealed class OAuthSessionEntity : Entity
     public Guid Id { get; set; }
     
     public required string Provider { get; set; }
-    public required string[] Amr { get; set; }
+    public required string[] AuthenticationMethods { get; set; }
     public required DateTimeOffset ExpiredAt { get; set; }
     public bool IsValid => ExpiredAt > DateTimeOffset.UtcNow;
     

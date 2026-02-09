@@ -36,6 +36,7 @@ public sealed class HandleOAuthLoginCommandHandler(
         var items = properties.Items;
         var provider = principal.Identity!.AuthenticationType!;
         var state = items["state"]!;
+        var sid = items["sid"]!;
 
         var linkedAccountType = provider switch
         {
@@ -71,10 +72,11 @@ public sealed class HandleOAuthLoginCommandHandler(
             var signUpStrategy = _signUpResolver.Resolve(SignUpType.OAuth);
             var signUpPayload = new OAuthSignUpPayload
             {
-                Type = linkedAccountType,
+                Provider = linkedAccountType,
                 Email = email,
                 ReturnUri = request.ReturnUri,
-                State = state
+                State = state,
+                Sid = Guid.Parse(sid)
             };
             
             var signUpResult = await signUpStrategy.ExecuteAsync(signUpPayload, cancellationToken);
@@ -94,7 +96,8 @@ public sealed class HandleOAuthLoginCommandHandler(
             Email = email,
             State = state,
             Provider = linkedAccountType,
-            ReturnUri = request.ReturnUri
+            ReturnUri = request.ReturnUri,
+            Sid = Guid.Parse(sid)
         };
         
         var strategy = _signInResolver.Resolve(SignInType.OAuth);

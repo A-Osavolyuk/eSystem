@@ -8,4 +8,5 @@ public sealed class OAuthSignInPayload : SignInPayload
     public required string ReturnUri { get; set; }
     public required string State { get; set; }
     public required LinkedAccountType Provider { get; set; }
+    public required Guid Sid { get; set; }
 }

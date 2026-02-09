@@ -1,12 +1,12 @@
 using eSecurity.Core.Security.Authorization.OAuth;
 using eSecurity.Core.Security.Identity;
-using eSecurity.Server.Common.Mapping;
 using eSecurity.Server.Common.Messaging;
 using eSecurity.Server.Common.Messaging.Messages.Email;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
+using eSecurity.Server.Security.Authorization.OAuth.Session;
 using eSecurity.Server.Security.Authorization.Roles;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
@@ -15,16 +15,16 @@ using eSystem.Core.Common.Messaging;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
 using eSystem.Core.Utilities.Query;
-using eSystem.Core.Utilities.State;
 
 namespace eSecurity.Server.Security.Identity.SignUp.Strategies;
 
 public sealed class OAuthSignUpPayload : SignUpPayload
 {
-    public required LinkedAccountType Type { get; set; }
+    public required LinkedAccountType Provider { get; set; }
     public required string Email { get; set; }
     public required string ReturnUri { get; set; }
     public required string State { get; set; }
+    public required Guid Sid { get; set; }
 }
 
 public sealed class OAuthSignUpStrategy(
@@ -36,7 +36,7 @@ public sealed class OAuthSignUpStrategy(
     IHttpContextAccessor httpContextAccessor,
     IEmailManager emailManager,
     ISessionManager sessionManager,
-    IMappingProvider mappingProvider,
+    IOAuthSessionManager oauthSessionManager,
     IOptions<SessionOptions> sessionOptions) : ISignUpStrategy
 {
     private readonly IUserManager _userManager = userManager;
@@ -47,9 +47,8 @@ public sealed class OAuthSignUpStrategy(
     private readonly IEmailManager _emailManager = emailManager;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly ISessionManager _sessionManager = sessionManager;
+    private readonly IOAuthSessionManager _oauthSessionManager = oauthSessionManager;
     private readonly SessionOptions _sessionOptions = sessionOptions.Value;
-    private readonly IMapper<LinkedAccountType, string> _mapper 
-        = mappingProvider.CreateMapper<LinkedAccountType, string>();
 
     public async ValueTask<Result> ExecuteAsync(SignUpPayload payload,
         CancellationToken cancellationToken = default)
@@ -60,6 +59,16 @@ public sealed class OAuthSignUpStrategy(
             {
                 Code = ErrorTypes.Common.InvalidPayloadType,
                 Description = "Invalid payload"
+            });
+        }
+
+        var oauthSession = await _oauthSessionManager.FindByIdAsync(oauthPayload.Sid, cancellationToken);
+        if (oauthSession is null)
+        {
+            return Results.BadRequest(new Error
+            {
+                Code = ErrorTypes.Common.InvalidSession,
+                Description = "Invalid session"
             });
         }
 
@@ -119,12 +128,12 @@ public sealed class OAuthSignUpStrategy(
             Credentials = new Dictionary<string, string>
             {
                 { "To", email.Email },
-                { "Subject", $"Account registered with {oauthPayload.Type.ToString()}" },
+                { "Subject", $"Account registered with {oauthPayload.Provider.ToString()}" },
             },
             Payload = new()
             {
                 { "UserName", user.Username },
-                { "ProviderName", oauthPayload.Type.ToString() }
+                { "ProviderName", oauthPayload.Provider.ToString() }
             }
         };
 
@@ -134,31 +143,31 @@ public sealed class OAuthSignUpStrategy(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            Type = oauthPayload.Type,
+            Type = oauthPayload.Provider,
         };
 
         var linkedAccountResult = await _providerManager.CreateAsync(userLinkedAccount, cancellationToken);
         if (!linkedAccountResult.Succeeded) return linkedAccountResult;
 
-        var state = StateBuilder.Create()
-            .WithData("userId", user.Id.ToString())
-            .WithData("provider", oauthPayload.Type.ToString())
-            .WithData("flow", "sign-up")
-            .WithData("state", oauthPayload.State)
-            .Build();
-
         var session = new SessionEntity
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            AuthenticationMethods = [_mapper.Map(oauthPayload.Type)],
+            AuthenticationMethods = oauthSession.AuthenticationMethods,
             ExpireDate = DateTimeOffset.UtcNow.Add(_sessionOptions.Timestamp)
         };
         
         await _sessionManager.CreateAsync(session, cancellationToken);
+        
+        oauthSession.Flow = OAuthFlow.SignUp;
+        oauthSession.UserId = user.Id;
+        
+        var sessionResult = await _oauthSessionManager.UpdateAsync(oauthSession, cancellationToken);
+        if (!sessionResult.Succeeded) return sessionResult;
+        
         return Results.Found(QueryBuilder.Create()
             .WithUri(oauthPayload.ReturnUri)
-            .WithQueryParam("state", state)
+            .WithQueryParam("state", oauthPayload.State)
             .Build());
     }
 }
