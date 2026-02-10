@@ -22,6 +22,19 @@ public sealed class OpenIdConfiguration
     [JsonPropertyName("registration_endpoint")]
     public string? RegistrationEndpoint { get; set; }
     
+    
+    [JsonPropertyName("backchannel_authentication_endpoint")]
+    public string? BackchannelAuthenticationEndpoint { get; set; }
+
+    [JsonPropertyName("backchannel_token_delivery_modes_supported")]
+    public string[]? BackchannelDeliveryModesSupported { get; set; }
+    
+    [JsonPropertyName("backchannel_authentication_request_signing_alg_values_supported")]
+    public string? BackchannelAuthenticationRequestSigningAlgValuesSupported { get; set; }
+
+    [JsonPropertyName("backchannel_user_code_parameter_supported")]
+    public bool? BackchannelUserCodeParameterSupported { get; set; }
+    
 
     [JsonPropertyName("authorization_endpoint")]
     public string AuthorizationEndpoint { get; set; } = string.Empty;
