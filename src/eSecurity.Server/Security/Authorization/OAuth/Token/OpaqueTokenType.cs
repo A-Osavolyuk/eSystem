@@ -4,5 +4,5 @@ public enum OpaqueTokenType
 {
     AccessToken,
     RefreshToken,
-    LoginTypeHint
+    LoginToken
 }
