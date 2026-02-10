@@ -155,6 +155,7 @@ public sealed class OidcRefreshTokenFlow(
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
                 ExpiredAt = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime),
                 Subject = user.Id.ToString(),
+                Sid = session.Id
             };
             var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
             response.AccessToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
@@ -171,6 +172,7 @@ public sealed class OidcRefreshTokenFlow(
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
                 ExpiredAt = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
                 Subject = user.Id.ToString(),
+                Sid = session.Id
             };
             
             var refreshTokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();

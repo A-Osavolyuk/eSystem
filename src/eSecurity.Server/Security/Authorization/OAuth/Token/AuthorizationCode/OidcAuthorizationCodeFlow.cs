@@ -107,6 +107,16 @@ public class OidcAuthorizationCodeFlow(
             ExpiresIn = (int)_options.AccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenTypes.Bearer,
         };
+        
+        var session = await _sessionManager.FindAsync(user, cancellationToken);
+        if (session is null || session.ExpireDate < DateTimeOffset.UtcNow)
+        {
+            return Results.BadRequest(new Error
+            {
+                Code = ErrorTypes.OAuth.InvalidGrant,
+                Description = "Invalid authorization code."
+            });
+        }
 
         if (client.AccessTokenType == AccessTokenType.Jwt)
         {
@@ -133,20 +143,11 @@ public class OidcAuthorizationCodeFlow(
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
                 ExpiredAt = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime),
                 Subject = user.Id.ToString(),
+                Sid = session.Id
             };
             
             var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
             response.AccessToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
-        }
-
-        var session = await _sessionManager.FindAsync(user, cancellationToken);
-        if (session is null || session.ExpireDate < DateTimeOffset.UtcNow)
-        {
-            return Results.BadRequest(new Error
-            {
-                Code = ErrorTypes.OAuth.InvalidGrant,
-                Description = "Invalid authorization code."
-            });
         }
 
         var clientResult = await _clientManager.RelateAsync(client, session, cancellationToken);
@@ -163,6 +164,7 @@ public class OidcAuthorizationCodeFlow(
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
                 ExpiredAt = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
                 Subject = user.Id.ToString(),
+                Sid = session.Id
             };
             
             var refreshTokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
