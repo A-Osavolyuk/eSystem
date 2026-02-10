@@ -2,6 +2,7 @@
 using System.Text.Json;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Data.Entities;
+using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Phone;
 using eSecurity.Server.Security.Identity.Privacy;
@@ -20,7 +21,7 @@ public sealed class IdTokenClaimsContext : TokenClaimsContext
 }
 
 public sealed class IdTokenClaimsFactory(
-    IOptions<TokenOptions> options,
+    IOptions<TokenConfigurations> options,
     IEmailManager emailManager,
     IPhoneManager phoneManager,
     IPersonalDataManager personalDataManager) : ITokenClaimsFactory<IdTokenClaimsContext, UserEntity>
@@ -28,7 +29,7 @@ public sealed class IdTokenClaimsFactory(
     private readonly IEmailManager _emailManager = emailManager;
     private readonly IPhoneManager _phoneManager = phoneManager;
     private readonly IPersonalDataManager _personalDataManager = personalDataManager;
-    private readonly TokenOptions _configurations = options.Value;
+    private readonly TokenConfigurations _configurations = options.Value;
 
     public async ValueTask<List<Claim>> GetClaimsAsync(UserEntity user,
         IdTokenClaimsContext context, CancellationToken cancellationToken)

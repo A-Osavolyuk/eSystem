@@ -11,4 +11,3 @@ global using Scalar.AspNetCore;
 global using OAuthFlow = eSecurity.Core.Security.Authorization.OAuth.OAuthFlow;
 global using Results = eSystem.Core.Http.Results.Results;
 global using SessionOptions = eSecurity.Server.Security.Authentication.OpenIdConnect.Session.SessionOptions;
-global using TokenOptions = eSecurity.Server.Security.Cryptography.Tokens.TokenConfigurations;

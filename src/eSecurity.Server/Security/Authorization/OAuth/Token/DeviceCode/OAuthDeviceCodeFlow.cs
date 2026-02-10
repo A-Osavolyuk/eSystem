@@ -21,7 +21,7 @@ public sealed class OAuthDeviceCodeFlow(
     ITokenFactoryProvider tokenFactoryProvider,
     IHasherProvider hasherProvider,
     IUserManager userManager,
-    IOptions<TokenOptions> tokenOptions) : IDeviceCodeFlow
+    IOptions<TokenConfigurations> tokenOptions) : IDeviceCodeFlow
 {
     private readonly IClientManager _clientManager = clientManager;
     private readonly IDeviceCodeManager _deviceCodeManager = deviceCodeManager;
@@ -29,7 +29,7 @@ public sealed class OAuthDeviceCodeFlow(
     private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly IUserManager _userManager = userManager;
-    private readonly TokenOptions _tokenConfigurations = tokenOptions.Value;
+    private readonly TokenConfigurations _tokenConfigurations = tokenOptions.Value;
     private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
 
     public async ValueTask<Result> ExecuteAsync(DeviceCodeEntity deviceCode, DeviceCodeFlowContext context,

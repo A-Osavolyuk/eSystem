@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
 using eSecurity.Server.Data.Entities;
+using eSecurity.Server.Security.Cryptography.Tokens;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Security.Identity.Claims.Factories;
@@ -11,10 +12,10 @@ public sealed class AccessTokenClaimsContext : TokenClaimsContext
     public string? ClientId { get; set; }
 }
 
-public sealed class AccessTokenClaimsFactory(IOptions<TokenOptions> options)
+public sealed class AccessTokenClaimsFactory(IOptions<TokenConfigurations> options)
     : ITokenClaimsFactory<AccessTokenClaimsContext, UserEntity>, ITokenClaimsFactory<AccessTokenClaimsContext, ClientEntity>
 {
-    private readonly TokenOptions _configurations = options.Value;
+    private readonly TokenConfigurations _configurations = options.Value;
 
     public ValueTask<List<Claim>> GetClaimsAsync(UserEntity user,
         AccessTokenClaimsContext context, CancellationToken cancellationToken)

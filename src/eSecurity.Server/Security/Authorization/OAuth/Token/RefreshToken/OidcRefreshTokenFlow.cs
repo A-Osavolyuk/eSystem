@@ -23,7 +23,7 @@ public sealed class OidcRefreshTokenFlow(
     IHasherProvider hasherProvider,
     ISessionManager sessionManager,
     IClaimFactoryProvider claimFactoryProvider,
-    IOptions<TokenOptions> options) : IRefreshTokenFlow
+    IOptions<TokenConfigurations> options) : IRefreshTokenFlow
 {
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly IClientManager _clientManager = clientManager;
@@ -31,7 +31,7 @@ public sealed class OidcRefreshTokenFlow(
     private readonly IUserManager _userManager = userManager;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
-    private readonly TokenOptions _configurations = options.Value;
+    private readonly TokenConfigurations _configurations = options.Value;
     private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
 
     public async ValueTask<Result> ExecuteAsync(OpaqueTokenEntity token, RefreshTokenFlowContext flowContext,

@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using eSecurity.Server.Security.Authorization.OAuth.Token.Validation;
+using eSecurity.Server.Security.Cryptography.Tokens;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Identity.Claims;
 
@@ -8,10 +9,10 @@ namespace eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Dele
 
 public sealed class JwtTokenClaimsExtractor(
     IJwtTokenValidationProvider validationProvider,
-    IOptions<TokenOptions> options) : ITokenClaimsExtractor
+    IOptions<TokenConfigurations> options) : ITokenClaimsExtractor
 {
     private readonly IJwtTokenValidationProvider _validationProvider = validationProvider;
-    private readonly TokenOptions _configurations = options.Value;
+    private readonly TokenConfigurations _configurations = options.Value;
     private readonly JwtSecurityTokenHandler _handler = new();
 
     public async ValueTask<ClaimExtractionResult> ExtractAsync(string subjectToken, CancellationToken cancellationToken)

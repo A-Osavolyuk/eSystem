@@ -2,6 +2,7 @@
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authorization.OAuth.Token;
 using eSecurity.Server.Security.Cryptography.Hashing;
+using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
@@ -17,13 +18,13 @@ public class IntrospectionCommandHandler(
     IUserManager userManager,
     IHasherProvider hasherProvider,
     ISessionManager sessionManager,
-    IOptions<TokenOptions> options) : IRequestHandler<IntrospectionCommand, Result>
+    IOptions<TokenConfigurations> options) : IRequestHandler<IntrospectionCommand, Result>
 {
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IUserManager _userManager = userManager;
     private readonly IHasherProvider _hasherProvider = hasherProvider;
     private readonly ISessionManager _sessionManager = sessionManager;
-    private readonly TokenOptions _configurations = options.Value;
+    private readonly TokenConfigurations _configurations = options.Value;
 
     public async Task<Result> Handle(IntrospectionCommand request, CancellationToken cancellationToken)
     {

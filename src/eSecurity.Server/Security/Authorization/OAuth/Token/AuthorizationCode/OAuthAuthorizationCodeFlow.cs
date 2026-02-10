@@ -22,7 +22,7 @@ public class OAuthAuthorizationCodeFlow(
     IClaimFactoryProvider claimFactoryProvider,
     ITokenFactoryProvider tokenFactoryProvider,
     IAuthorizationCodeManager authorizationCodeManager,
-    IOptions<TokenOptions> options) : IAuthorizationCodeFlow
+    IOptions<TokenConfigurations> options) : IAuthorizationCodeFlow
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IPkceHandler _pkceHandler = pkceHandler;
@@ -30,7 +30,7 @@ public class OAuthAuthorizationCodeFlow(
     private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly IAuthorizationCodeManager _authorizationCodeManager = authorizationCodeManager;
-    private readonly TokenOptions _configurations = options.Value;
+    private readonly TokenConfigurations _configurations = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(AuthorizationCodeEntity code, 
         AuthorizationCodeFlowContext context, CancellationToken cancellationToken = default)

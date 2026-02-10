@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Cryptography.Signing.Certificates;
+using eSecurity.Server.Security.Cryptography.Tokens;
 using TokenValidationResult = eSystem.Core.Security.Authorization.OAuth.Token.Validation.TokenValidationResult;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.Validation;
@@ -10,11 +11,11 @@ namespace eSecurity.Server.Security.Authorization.OAuth.Token.Validation;
 public class GenericJwtTokenValidator(
     IClientManager clientManager,
     ICertificateProvider certificateProvider,
-    IOptions<TokenOptions> options) : IJwtTokenValidator
+    IOptions<TokenConfigurations> options) : IJwtTokenValidator
 {
     private readonly IClientManager _clientManager = clientManager;
     private readonly ICertificateProvider _certificateProvider = certificateProvider;
-    private readonly TokenOptions _tokenConfigurations = options.Value;
+    private readonly TokenConfigurations _tokenConfigurations = options.Value;
     private readonly JwtSecurityTokenHandler _handler = new JwtSecurityTokenHandler();
 
     public async Task<TokenValidationResult> ValidateAsync(string token, 

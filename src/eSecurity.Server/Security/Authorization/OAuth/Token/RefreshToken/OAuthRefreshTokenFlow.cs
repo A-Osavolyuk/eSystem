@@ -20,14 +20,14 @@ public sealed class OAuthRefreshTokenFlow(
     IUserManager userManager,
     IHasherProvider hasherProvider,
     IClaimFactoryProvider claimFactoryProvider,
-    IOptions<TokenOptions> options) : IRefreshTokenFlow
+    IOptions<TokenConfigurations> options) : IRefreshTokenFlow
 {
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly IClientManager _clientManager = clientManager;
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IUserManager _userManager = userManager;
     private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
-    private readonly TokenOptions _configurations = options.Value;
+    private readonly TokenConfigurations _configurations = options.Value;
     private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
 
     public async ValueTask<Result> ExecuteAsync(OpaqueTokenEntity token, RefreshTokenFlowContext flowContext,

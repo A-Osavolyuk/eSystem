@@ -15,11 +15,12 @@ public static class CryptographyExtensions
         builder.Services.AddTokens(cfg =>
         {
             cfg.Issuer = "https://localhost:6201";
+            cfg.OpaqueTokenLength = 20;
+            
             cfg.DefaultAccessTokenLifetime = TimeSpan.FromMinutes(10);
             cfg.DefaultIdTokenLifetime = TimeSpan.FromMinutes(10);
             cfg.DefaultLoginTokenLifetime = TimeSpan.FromDays(7);
             cfg.DefaultRefreshTokenLifetime = TimeSpan.FromDays(30);
-            cfg.OpaqueTokenLength = 20;
         });
 
         builder.Services.AddSigning(cfg =>
@@ -47,7 +48,7 @@ public static class CryptographyExtensions
             services.AddScoped<ICertificateHandler, CertificateHandler>();
         }
 
-        private void AddTokens(Action<TokenOptions> configure)
+        private void AddTokens(Action<TokenConfigurations> configure)
         {
             services.Configure(configure);
 

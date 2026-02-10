@@ -25,7 +25,7 @@ public class OidcAuthorizationCodeFlow(
     IClaimFactoryProvider claimFactoryProvider,
     ITokenFactoryProvider tokenFactoryProvider,
     IAuthorizationCodeManager authorizationCodeManager,
-    IOptions<TokenOptions> options) : IAuthorizationCodeFlow
+    IOptions<TokenConfigurations> options) : IAuthorizationCodeFlow
 {
     private readonly IClientManager _clientManager = clientManager;
     private readonly ISessionManager _sessionManager = sessionManager;
@@ -34,7 +34,7 @@ public class OidcAuthorizationCodeFlow(
     private readonly IUserManager _userManager = userManager;
     private readonly IPkceHandler _pkceHandler = pkceHandler;
     private readonly IAuthorizationCodeManager _authorizationCodeManager = authorizationCodeManager;
-    private readonly TokenOptions _configurations = options.Value;
+    private readonly TokenConfigurations _configurations = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(AuthorizationCodeEntity code,
         AuthorizationCodeFlowContext context, CancellationToken cancellationToken = default)

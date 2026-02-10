@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
 using eSecurity.Server.Data.Entities;
+using eSecurity.Server.Security.Cryptography.Tokens;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Security.Identity.Claims;
 
@@ -13,9 +14,9 @@ public sealed class LogoutTokenClaimsContext : TokenClaimsContext
 }
 
 public sealed class LogoutTokenClaimsFactory(
-    IOptions<TokenOptions> options) : ITokenClaimsFactory<LogoutTokenClaimsContext, UserEntity>
+    IOptions<TokenConfigurations> options) : ITokenClaimsFactory<LogoutTokenClaimsContext, UserEntity>
 {
-    private readonly TokenOptions _tokenConfigurations = options.Value;
+    private readonly TokenConfigurations _tokenConfigurations = options.Value;
 
     public ValueTask<List<Claim>> GetClaimsAsync(UserEntity source, LogoutTokenClaimsContext context, 
         CancellationToken cancellationToken)

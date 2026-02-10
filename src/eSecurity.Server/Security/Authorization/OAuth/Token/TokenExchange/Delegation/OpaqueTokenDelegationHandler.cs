@@ -15,12 +15,12 @@ public sealed class OpaqueTokenDelegationHandler(
     IHasherProvider hasherProvider,
     ITokenManager tokenManager,
     IClientManager clientManager,
-    IOptions<TokenOptions> options,
+    IOptions<TokenConfigurations> options,
     ITokenFactoryProvider tokenFactoryProvider) : ITokenDelegationHandler
 {
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IClientManager _clientManager = clientManager;
-    private readonly TokenOptions _configurations = options.Value;
+    private readonly TokenConfigurations _configurations = options.Value;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
 

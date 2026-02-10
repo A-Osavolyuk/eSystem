@@ -22,7 +22,7 @@ public sealed class OidcDeviceCodeFlow(
     ITokenFactoryProvider tokenFactoryProvider,
     IUserManager userManager,
     ISessionManager sessionManager,
-    IOptions<TokenOptions> tokenOptions) : IDeviceCodeFlow
+    IOptions<TokenConfigurations> tokenOptions) : IDeviceCodeFlow
 {
     private readonly IClientManager _clientManager = clientManager;
     private readonly IDeviceCodeManager _deviceCodeManager = deviceCodeManager;
@@ -30,7 +30,7 @@ public sealed class OidcDeviceCodeFlow(
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly IUserManager _userManager = userManager;
     private readonly ISessionManager _sessionManager = sessionManager;
-    private readonly TokenOptions _tokenConfigurations = tokenOptions.Value;
+    private readonly TokenConfigurations _tokenConfigurations = tokenOptions.Value;
 
     public async ValueTask<Result> ExecuteAsync(DeviceCodeEntity deviceCode, DeviceCodeFlowContext context,
         CancellationToken cancellationToken = default)

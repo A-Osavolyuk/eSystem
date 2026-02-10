@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
 using eSecurity.Server.Security.Cryptography.Hashing;
+using eSecurity.Server.Security.Cryptography.Tokens;
 using eSystem.Core.Security.Authorization.OAuth.Token.Validation;
 using eSystem.Core.Security.Identity.Claims;
 using TokenValidationResult = eSystem.Core.Security.Authorization.OAuth.Token.Validation.TokenValidationResult;
@@ -10,11 +11,11 @@ namespace eSecurity.Server.Security.Authorization.OAuth.Token.Validation;
 public class OpaqueTokenValidator(
     ITokenManager tokenManager,
     IHasherProvider hasherProvider,
-    IOptions<TokenOptions> options) : ITokenValidator
+    IOptions<TokenConfigurations> options) : ITokenValidator
 {
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
-    private readonly TokenOptions _tokenConfigurations = options.Value;
+    private readonly TokenConfigurations _tokenConfigurations = options.Value;
 
     public async Task<TokenValidationResult> ValidateAsync(string token, CancellationToken cancellationToken = default)
     {

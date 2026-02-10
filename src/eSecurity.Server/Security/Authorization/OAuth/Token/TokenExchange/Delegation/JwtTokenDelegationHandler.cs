@@ -15,12 +15,12 @@ public sealed class JwtTokenDelegationHandler(
     ITokenClaimsExtractor claimsExtractor,
     IClientManager clientManager,
     ITokenFactoryProvider tokenFactoryProvider,
-    IOptions<TokenOptions> options) : ITokenDelegationHandler
+    IOptions<TokenConfigurations> options) : ITokenDelegationHandler
 {
     private readonly ITokenClaimsExtractor _claimsExtractor = claimsExtractor;
     private readonly IClientManager _clientManager = clientManager;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
-    private readonly TokenOptions _configurations = options.Value;
+    private readonly TokenConfigurations _configurations = options.Value;
 
     public async ValueTask<Result> HandleAsync(TokenExchangeFlowContext context,
         CancellationToken cancellationToken = default)

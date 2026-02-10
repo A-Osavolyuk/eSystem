@@ -19,14 +19,14 @@ public sealed class ClientCredentialsStrategy(
     ITokenFactoryProvider tokenFactoryProvider,
     IHasherProvider hasherProvider,
     ITokenManager tokenManager,
-    IOptions<TokenOptions> options) : ITokenStrategy
+    IOptions<TokenConfigurations> options) : ITokenStrategy
 {
     private readonly IClientManager _clientManager = clientManager;
     private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly IHasherProvider _hasherProvider = hasherProvider;
     private readonly ITokenManager _tokenManager = tokenManager;
-    private readonly TokenOptions _configurations = options.Value;
+    private readonly TokenConfigurations _configurations = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(TokenRequest tokenRequest, 
         CancellationToken cancellationToken = default)
