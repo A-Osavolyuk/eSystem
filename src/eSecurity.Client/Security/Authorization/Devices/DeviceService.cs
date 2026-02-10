@@ -33,12 +33,12 @@ public class DeviceService(IApiClient apiClient) : IDeviceService
         });
     }
 
-    public async ValueTask<ApiResponse> AllowDeviceCodeAsync(AllowDeviceCodeRequest request)
+    public async ValueTask<ApiResponse> ApproveDeviceCodeAsync(ApproveDeviceCodeRequest request)
     {
         return await _apiClient.SendAsync(new ApiRequest()
         {
             Method = HttpMethod.Post,
-            Url = "/api/v1/Device/device-code/allow",
+            Url = "/api/v1/Device/device-code/approve",
             Data = request
         }, new ApiOptions()
         {

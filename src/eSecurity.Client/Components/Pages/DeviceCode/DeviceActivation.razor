@@ -130,17 +130,17 @@
     private async Task OnAllowAsync()
     {
         var session = SessionAccessor.Get();
-        var request = new AllowDeviceCodeRequest()
+        var request = new ApproveDeviceCodeRequest()
         {
             UserCode = _userCode!,
             UserId = UserState.UserId,
             SessionId = session?.Id
         };
         
-        var result = await DeviceService.AllowDeviceCodeAsync(request);
+        var result = await DeviceService.ApproveDeviceCodeAsync(request);
         if (result.Succeeded)
         {
-            Snackbar.Add("Device activation was successfully allowed", Severity.Success);
+            Snackbar.Add("Device activation was successfully approved", Severity.Success);
             NavigationManager.NavigateTo(Links.Common.Profile);
         }
         else

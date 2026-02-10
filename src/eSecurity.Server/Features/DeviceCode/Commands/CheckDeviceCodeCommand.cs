@@ -34,7 +34,7 @@ public class CheckDeviceCodeCommandHandler(
 
         var response = deviceCode.State switch
         {
-            DeviceCodeState.Allowed => new CheckDeviceCodeResponse { Exists = true, IsActivated = true },
+            DeviceCodeState.Approved => new CheckDeviceCodeResponse { Exists = true, IsActivated = true },
             DeviceCodeState.Denied => new CheckDeviceCodeResponse { Exists = true, IsDenied = true },
             DeviceCodeState.Consumed => new CheckDeviceCodeResponse { Exists = true, IsConsumed = true },
             DeviceCodeState.Pending => new CheckDeviceCodeResponse { Exists = true },

@@ -23,7 +23,7 @@ public sealed class DenyDeviceCodeCommandHandler(
         var deviceCode = await _deviceCodeManager.FindByCodeAsync(request.Request.UserCode, cancellationToken);
         if (deviceCode is null) return Results.NotFound("Device code was not found");
 
-        if (deviceCode.State is DeviceCodeState.Allowed or DeviceCodeState.Consumed)
+        if (deviceCode.State is DeviceCodeState.Approved or DeviceCodeState.Consumed)
         {
             return Results.BadRequest(new Error()
             {

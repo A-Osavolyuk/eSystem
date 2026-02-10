@@ -46,6 +46,7 @@ public sealed class OAuthDeviceCodeFlow(
         }
 
         deviceCode.State = DeviceCodeState.Consumed;
+        deviceCode.ConsumedAt = DateTimeOffset.UtcNow;
         deviceCode.IsFirstPoll = false;
         
         var deviceResult = await _deviceCodeManager.UpdateAsync(deviceCode, cancellationToken);

@@ -57,13 +57,13 @@ public class DeviceController(ISender sender) : ControllerBase
         return HttpContext.HandleResult(result);
     }
     
-    [EndpointSummary("Allow device code")]
-    [EndpointDescription("Allow device code")]
+    [EndpointSummary("Approve device code")]
+    [EndpointDescription("Approve device code")]
     [ProducesResponseType(200)]
-    [HttpPost("device-code/allow")]
-    public async ValueTask<IActionResult> AllowDeviceCode([FromBody] AllowDeviceCodeRequest request)
+    [HttpPost("device-code/approve")]
+    public async ValueTask<IActionResult> ApproveDeviceCode([FromBody] ApproveDeviceCodeRequest request)
     {
-        var result = await _sender.Send(new AllowDeviceCodeCommand(request));
+        var result = await _sender.Send(new ApproveDeviceCodeCommand(request));
         return HttpContext.HandleResult(result);
     }
     

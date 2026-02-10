@@ -10,14 +10,14 @@ using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Features.DeviceCode.Commands;
 
-public sealed record AllowDeviceCodeCommand(AllowDeviceCodeRequest Request) : IRequest<Result>;
+public sealed record ApproveDeviceCodeCommand(ApproveDeviceCodeRequest Request) : IRequest<Result>;
 
-public sealed class AllowDeviceCodeCommandHandler(
+public sealed class ApproveDeviceCodeCommandHandler(
     IDeviceCodeManager deviceCodeManager,
     IUserManager userManager,
     ISessionManager sessionManager,
     IConsentManager consentManager,
-    IClientManager clientManager) : IRequestHandler<AllowDeviceCodeCommand, Result>
+    IClientManager clientManager) : IRequestHandler<ApproveDeviceCodeCommand, Result>
 {
     private readonly IDeviceCodeManager _deviceCodeManager = deviceCodeManager;
     private readonly IUserManager _userManager = userManager;
@@ -25,7 +25,7 @@ public sealed class AllowDeviceCodeCommandHandler(
     private readonly IConsentManager _consentManager = consentManager;
     private readonly IClientManager _clientManager = clientManager;
 
-    public async Task<Result> Handle(AllowDeviceCodeCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(ApproveDeviceCodeCommand request, CancellationToken cancellationToken)
     {
         var deviceCode = await _deviceCodeManager.FindByCodeAsync(request.Request.UserCode, cancellationToken);
         if (deviceCode is null) return Results.NotFound("Device code was not found");
@@ -108,7 +108,7 @@ public sealed class AllowDeviceCodeCommandHandler(
         }
 
         deviceCode.UserId = user.Id;
-        deviceCode.State = DeviceCodeState.Allowed;
+        deviceCode.State = DeviceCodeState.Approved;
         
         return await _deviceCodeManager.UpdateAsync(deviceCode, cancellationToken);
     }
