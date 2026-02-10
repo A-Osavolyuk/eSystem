@@ -21,7 +21,7 @@ public sealed class OpaqueTokenTransformationHandler(
     private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IClientManager _clientManager = clientManager;
-    private readonly TokenOptions _options = options.Value;
+    private readonly TokenOptions _configurations = options.Value;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
 
     public async ValueTask<Result> HandleAsync(TokenExchangeFlowContext context,
@@ -59,12 +59,12 @@ public sealed class OpaqueTokenTransformationHandler(
 
         var tokenContext = new OpaqueTokenContext
         {
-            TokenLength = _options.OpaqueTokenLength,
+            TokenLength = _configurations.OpaqueTokenLength,
             TokenType = OpaqueTokenType.AccessToken,
             ClientId = client.Id,
             Audiences = client.Audiences.Select(x => x.Audience).ToList(),
             Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
-            ExpiredAt = DateTimeOffset.UtcNow.Add(_options.DefaultAccessTokenLifetime),
+            ExpiredAt = DateTimeOffset.UtcNow.Add(_configurations.DefaultAccessTokenLifetime),
             IssuedAt = DateTimeOffset.UtcNow,
             Subject = token.Subject,
         };
@@ -105,7 +105,7 @@ public sealed class OpaqueTokenTransformationHandler(
 
         return Results.Ok(new TokenExchangeResponse
         {
-            ExpiresIn = (int)_options.DefaultAccessTokenLifetime.TotalSeconds,
+            ExpiresIn = (int)_configurations.DefaultAccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenTypes.Bearer,
             IssuedTokenType = TokenTypes.Full.AccessToken,
             Scope = context.Scope,

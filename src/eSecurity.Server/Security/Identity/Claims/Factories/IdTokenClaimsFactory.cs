@@ -28,12 +28,12 @@ public sealed class IdTokenClaimsFactory(
     private readonly IEmailManager _emailManager = emailManager;
     private readonly IPhoneManager _phoneManager = phoneManager;
     private readonly IPersonalDataManager _personalDataManager = personalDataManager;
-    private readonly TokenOptions _options = options.Value;
+    private readonly TokenOptions _configurations = options.Value;
 
     public async ValueTask<List<Claim>> GetClaimsAsync(UserEntity user,
         IdTokenClaimsContext context, CancellationToken cancellationToken)
     {
-        var exp = DateTimeOffset.UtcNow.Add(_options.DefaultIdTokenLifetime).ToUnixTimeSeconds().ToString();
+        var exp = DateTimeOffset.UtcNow.Add(_configurations.DefaultIdTokenLifetime).ToUnixTimeSeconds().ToString();
         var iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
         var authTime = context.AuthTime.HasValue
             ? context.AuthTime.Value.ToUnixTimeSeconds().ToString()
@@ -42,7 +42,7 @@ public sealed class IdTokenClaimsFactory(
         var claims = new List<Claim>
         {
             new(AppClaimTypes.Jti, Guid.NewGuid().ToString()),
-            new(AppClaimTypes.Iss, _options.Issuer),
+            new(AppClaimTypes.Iss, _configurations.Issuer),
             new(AppClaimTypes.Aud, context.Aud),
             new(AppClaimTypes.Sub, user.Id.ToString()),
             new(AppClaimTypes.Sid, context.Sid),

@@ -15,7 +15,7 @@ public sealed class LogoutTokenClaimsContext : TokenClaimsContext
 public sealed class LogoutTokenClaimsFactory(
     IOptions<TokenOptions> options) : ITokenClaimsFactory<LogoutTokenClaimsContext, UserEntity>
 {
-    private readonly TokenOptions _tokenOptions = options.Value;
+    private readonly TokenOptions _tokenConfigurations = options.Value;
 
     public ValueTask<List<Claim>> GetClaimsAsync(UserEntity source, LogoutTokenClaimsContext context, 
         CancellationToken cancellationToken)
@@ -30,7 +30,7 @@ public sealed class LogoutTokenClaimsFactory(
         var claims = new List<Claim>
         {
             new(AppClaimTypes.Jti, Guid.NewGuid().ToString()),
-            new(AppClaimTypes.Iss, _tokenOptions.Issuer),
+            new(AppClaimTypes.Iss, _tokenConfigurations.Issuer),
             new(AppClaimTypes.Aud, JsonSerializer.Serialize(context.Aud)),
             new(AppClaimTypes.Sub, source.Id.ToString()),
             new(AppClaimTypes.Sid, context.Sid),

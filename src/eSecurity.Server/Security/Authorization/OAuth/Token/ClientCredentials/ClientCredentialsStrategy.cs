@@ -26,7 +26,7 @@ public sealed class ClientCredentialsStrategy(
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly IHasherProvider _hasherProvider = hasherProvider;
     private readonly ITokenManager _tokenManager = tokenManager;
-    private readonly TokenOptions _options = options.Value;
+    private readonly TokenOptions _configurations = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(TokenRequest tokenRequest, 
         CancellationToken cancellationToken = default)
@@ -86,7 +86,7 @@ public sealed class ClientCredentialsStrategy(
 
         var response = new ClientCredentialsResponse
         {
-            ExpiresIn = (int)_options.DefaultAccessTokenLifetime.TotalSeconds,
+            ExpiresIn = (int)_configurations.DefaultAccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenTypes.Bearer
         };
         
@@ -115,12 +115,12 @@ public sealed class ClientCredentialsStrategy(
         {
             var tokenContext = new OpaqueTokenContext
             {
-                TokenLength = _options.OpaqueTokenLength,
+                TokenLength = _configurations.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.AccessToken,
                 ClientId = client.Id,
                 Audiences = client.Audiences.Select(x => x.Audience).ToList(),
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
-                ExpiredAt = DateTimeOffset.UtcNow.Add(_options.DefaultAccessTokenLifetime),
+                ExpiredAt = DateTimeOffset.UtcNow.Add(_configurations.DefaultAccessTokenLifetime),
                 Subject = client.Id.ToString(),
             };
             

@@ -23,7 +23,7 @@ public class IntrospectionCommandHandler(
     private readonly IUserManager _userManager = userManager;
     private readonly IHasherProvider _hasherProvider = hasherProvider;
     private readonly ISessionManager _sessionManager = sessionManager;
-    private readonly TokenOptions _options = options.Value;
+    private readonly TokenOptions _configurations = options.Value;
 
     public async Task<Result> Handle(IntrospectionCommand request, CancellationToken cancellationToken)
     {
@@ -65,7 +65,7 @@ public class IntrospectionCommandHandler(
             Active = true,
             TokenType = tokenType,
             ClientId = token.Client.Id,
-            Issuer = _options.Issuer,
+            Issuer = _configurations.Issuer,
             Audience = JsonSerializer.Serialize(token.Client.Audiences),
             IssuedAt = token.IssuedAt.ToUnixTimeSeconds(),
             NotBefore = token.NotBefore?.ToUnixTimeSeconds(),

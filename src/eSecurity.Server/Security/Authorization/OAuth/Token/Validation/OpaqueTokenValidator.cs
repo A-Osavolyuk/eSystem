@@ -14,7 +14,7 @@ public class OpaqueTokenValidator(
 {
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
-    private readonly TokenOptions _tokenOptions = options.Value;
+    private readonly TokenOptions _tokenConfigurations = options.Value;
 
     public async Task<TokenValidationResult> ValidateAsync(string token, CancellationToken cancellationToken = default)
     {
@@ -33,7 +33,7 @@ public class OpaqueTokenValidator(
             new(AppClaimTypes.Jti, opaqueToken.Id.ToString()),
             new(AppClaimTypes.Sid, opaqueToken.SessionId!.Value.ToString()),
             new(AppClaimTypes.Aud, aud),
-            new(AppClaimTypes.Iss, _tokenOptions.Issuer),
+            new(AppClaimTypes.Iss, _tokenConfigurations.Issuer),
             new(AppClaimTypes.Sub, opaqueToken.Subject),
             new(AppClaimTypes.Iat, opaqueToken.IssuedAt.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64),
             new(AppClaimTypes.Exp, opaqueToken.ExpiredAt.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64),

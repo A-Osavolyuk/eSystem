@@ -20,7 +20,7 @@ public sealed class JwtTokenDelegationHandler(
     private readonly ITokenClaimsExtractor _claimsExtractor = claimsExtractor;
     private readonly IClientManager _clientManager = clientManager;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
-    private readonly TokenOptions _options = options.Value;
+    private readonly TokenOptions _configurations = options.Value;
 
     public async ValueTask<Result> HandleAsync(TokenExchangeFlowContext context,
         CancellationToken cancellationToken = default)
@@ -129,7 +129,7 @@ public sealed class JwtTokenDelegationHandler(
         {
             Subject = subClaim?.Value ?? clientIdClaim.Value,
             ClientId = clientIdClaim.Value,
-            Issuer = _options.Issuer,
+            Issuer = _configurations.Issuer,
             AuthenticationTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
         };
 
@@ -142,7 +142,7 @@ public sealed class JwtTokenDelegationHandler(
 
         var response = new TokenExchangeResponse
         {
-            ExpiresIn = (int)_options.DefaultAccessTokenLifetime.TotalSeconds,
+            ExpiresIn = (int)_configurations.DefaultAccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenTypes.Bearer,
             IssuedTokenType = TokenTypes.Full.AccessToken,
             Scope = context.Scope,

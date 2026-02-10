@@ -14,7 +14,7 @@ public class AccessTokenValidator(
 {
     private readonly IClientManager _clientManager = clientManager;
     private readonly ICertificateProvider _certificateProvider = certificateProvider;
-    private readonly TokenOptions _tokenOptions = options.Value;
+    private readonly TokenOptions _tokenConfigurations = options.Value;
     private readonly JwtSecurityTokenHandler _handler = new JwtSecurityTokenHandler();
 
     public async Task<TokenValidationResult> ValidateAsync(string token, 
@@ -32,7 +32,7 @@ public class AccessTokenValidator(
         var validationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidIssuer = _tokenOptions.Issuer,
+            ValidIssuer = _tokenConfigurations.Issuer,
             ValidateAudience = true,
             ValidAudiences = await _clientManager.GetAudiencesAsync(cancellationToken),
             ValidateIssuerSigningKey = true,

@@ -20,7 +20,7 @@ public sealed class OpaqueTokenDelegationHandler(
 {
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IClientManager _clientManager = clientManager;
-    private readonly TokenOptions _options = options.Value;
+    private readonly TokenOptions _configurations = options.Value;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
 
@@ -115,12 +115,12 @@ public sealed class OpaqueTokenDelegationHandler(
 
         var tokenContext = new OpaqueTokenContext
         {
-            TokenLength = _options.OpaqueTokenLength,
+            TokenLength = _configurations.OpaqueTokenLength,
             TokenType = OpaqueTokenType.AccessToken,
             ClientId = client.Id,
             Audiences = client.Audiences.Select(x => x.Audience).ToList(),
             Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
-            ExpiredAt = DateTimeOffset.UtcNow.Add(_options.DefaultAccessTokenLifetime),
+            ExpiredAt = DateTimeOffset.UtcNow.Add(_configurations.DefaultAccessTokenLifetime),
             IssuedAt = DateTimeOffset.UtcNow,
             Subject = subjectToken.Subject,
             ActorId = actorToken.Id
@@ -162,7 +162,7 @@ public sealed class OpaqueTokenDelegationHandler(
 
         return Results.Ok(new TokenExchangeResponse
         {
-            ExpiresIn = (int)_options.DefaultAccessTokenLifetime.TotalSeconds,
+            ExpiresIn = (int)_configurations.DefaultAccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenTypes.Bearer,
             IssuedTokenType = TokenTypes.Full.AccessToken,
             Scope = context.Scope,

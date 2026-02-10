@@ -30,7 +30,7 @@ public sealed class OidcDeviceCodeFlow(
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly IUserManager _userManager = userManager;
     private readonly ISessionManager _sessionManager = sessionManager;
-    private readonly TokenOptions _tokenOptions = tokenOptions.Value;
+    private readonly TokenOptions _tokenConfigurations = tokenOptions.Value;
 
     public async ValueTask<Result> ExecuteAsync(DeviceCodeEntity deviceCode, DeviceCodeFlowContext context,
         CancellationToken cancellationToken = default)
@@ -64,7 +64,7 @@ public sealed class OidcDeviceCodeFlow(
 
         var response = new DeviceCodeResponse
         {
-            ExpiresIn = (int)_tokenOptions.DefaultAccessTokenLifetime.TotalSeconds,
+            ExpiresIn = (int)_tokenConfigurations.DefaultAccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenTypes.Bearer,
         };
         
@@ -96,12 +96,12 @@ public sealed class OidcDeviceCodeFlow(
         {
             var tokenContext = new OpaqueTokenContext
             {
-                TokenLength = _tokenOptions.OpaqueTokenLength,
+                TokenLength = _tokenConfigurations.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.AccessToken,
                 ClientId = client.Id,
                 Audiences = client.Audiences.Select(x => x.Audience).ToList(),
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
-                ExpiredAt = DateTimeOffset.UtcNow.Add(_tokenOptions.DefaultAccessTokenLifetime),
+                ExpiredAt = DateTimeOffset.UtcNow.Add(_tokenConfigurations.DefaultAccessTokenLifetime),
                 Subject = user.Id.ToString(),
                 Sid = session.Id
             };
@@ -117,7 +117,7 @@ public sealed class OidcDeviceCodeFlow(
         {
             var tokenContext = new OpaqueTokenContext
             {
-                TokenLength = _tokenOptions.OpaqueTokenLength,
+                TokenLength = _tokenConfigurations.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.RefreshToken,
                 ClientId = client.Id,
                 Audiences = client.Audiences.Select(x => x.Audience).ToList(),

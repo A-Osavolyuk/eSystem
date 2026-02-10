@@ -11,7 +11,7 @@ public sealed class JwtTokenClaimsExtractor(
     IOptions<TokenOptions> options) : ITokenClaimsExtractor
 {
     private readonly IJwtTokenValidationProvider _validationProvider = validationProvider;
-    private readonly TokenOptions _options = options.Value;
+    private readonly TokenOptions _configurations = options.Value;
     private readonly JwtSecurityTokenHandler _handler = new();
 
     public async ValueTask<ClaimExtractionResult> ExtractAsync(string subjectToken, CancellationToken cancellationToken)
@@ -34,7 +34,7 @@ public sealed class JwtTokenClaimsExtractor(
         var tokenClaims = validationResult.ClaimsPrincipal.Claims.ToList();
         var extractedClaims = new List<Claim>
         {
-            new (AppClaimTypes.Iss, _options.Issuer),
+            new (AppClaimTypes.Iss, _configurations.Issuer),
             new (AppClaimTypes.Jti, Guid.CreateVersion7().ToString()),
         };
         
@@ -42,7 +42,7 @@ public sealed class JwtTokenClaimsExtractor(
         var iatClaim = new Claim(AppClaimTypes.Iat, iat, ClaimValueTypes.Integer64);
         extractedClaims.Add(iatClaim);
         
-        var exp = DateTimeOffset.UtcNow.Add(_options.DefaultAccessTokenLifetime).ToUnixTimeSeconds().ToString();
+        var exp = DateTimeOffset.UtcNow.Add(_configurations.DefaultAccessTokenLifetime).ToUnixTimeSeconds().ToString();
         var expClaim = new Claim(AppClaimTypes.Exp, exp, ClaimValueTypes.Integer64);
         extractedClaims.Add(expClaim);
         

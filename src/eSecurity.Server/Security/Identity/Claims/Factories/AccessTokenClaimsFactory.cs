@@ -14,18 +14,18 @@ public sealed class AccessTokenClaimsContext : TokenClaimsContext
 public sealed class AccessTokenClaimsFactory(IOptions<TokenOptions> options)
     : ITokenClaimsFactory<AccessTokenClaimsContext, UserEntity>, ITokenClaimsFactory<AccessTokenClaimsContext, ClientEntity>
 {
-    private readonly TokenOptions _options = options.Value;
+    private readonly TokenOptions _configurations = options.Value;
 
     public ValueTask<List<Claim>> GetClaimsAsync(UserEntity user,
         AccessTokenClaimsContext context, CancellationToken cancellationToken)
     {
-        var exp = DateTimeOffset.UtcNow.Add(_options.DefaultAccessTokenLifetime).ToUnixTimeSeconds().ToString();
+        var exp = DateTimeOffset.UtcNow.Add(_configurations.DefaultAccessTokenLifetime).ToUnixTimeSeconds().ToString();
         var iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
         
         var claims = new List<Claim>
         {
             new(AppClaimTypes.Jti, Guid.NewGuid().ToString()),
-            new(AppClaimTypes.Iss, _options.Issuer),
+            new(AppClaimTypes.Iss, _configurations.Issuer),
             new(AppClaimTypes.Aud, JsonSerializer.Serialize(context.Aud)),
             new(AppClaimTypes.Sub, user.Id.ToString()),
             new(AppClaimTypes.Scope, string.Join(" ", context.Scopes)),
@@ -48,13 +48,13 @@ public sealed class AccessTokenClaimsFactory(IOptions<TokenOptions> options)
     public ValueTask<List<Claim>> GetClaimsAsync(ClientEntity source, AccessTokenClaimsContext context,
         CancellationToken cancellationToken)
     {
-        var exp = DateTimeOffset.UtcNow.Add(_options.DefaultAccessTokenLifetime).ToUnixTimeSeconds().ToString();
+        var exp = DateTimeOffset.UtcNow.Add(_configurations.DefaultAccessTokenLifetime).ToUnixTimeSeconds().ToString();
         var iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
 
         var claims = new List<Claim>
         {
             new(AppClaimTypes.Jti, Guid.NewGuid().ToString()),
-            new(AppClaimTypes.Iss, _options.Issuer),
+            new(AppClaimTypes.Iss, _configurations.Issuer),
             new(AppClaimTypes.Aud, JsonSerializer.Serialize(context.Aud)),
             new(AppClaimTypes.ClientId, source.Id.ToString()),
             new(AppClaimTypes.Sub, source.Id.ToString()),
