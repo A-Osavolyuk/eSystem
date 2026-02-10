@@ -18,6 +18,7 @@ public static class CryptographyExtensions
             cfg.DefaultAccessTokenLifetime = TimeSpan.FromMinutes(10);
             cfg.DefaultIdTokenLifetime = TimeSpan.FromMinutes(10);
             cfg.DefaultLoginTokenLifetime = TimeSpan.FromDays(7);
+            cfg.DefaultRefreshTokenLifetime = TimeSpan.FromDays(30);
             cfg.OpaqueTokenLength = 20;
         });
 
