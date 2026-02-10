@@ -21,12 +21,11 @@ public sealed class CibaRequestConfiguration : IEntityTypeConfiguration<CibaRequ
             .WithMany()
             .HasForeignKey(y => y.ClientId)
             .OnDelete(DeleteBehavior.Cascade);
-        
+
         builder.HasOne(x => x.User)
             .WithMany()
             .HasForeignKey(y => y.UserId)
-            .OnDelete(DeleteBehavior.Cascade)
-            .IsRequired(false);
+            .OnDelete(DeleteBehavior.Cascade);
         
         builder.HasOne(x => x.Session)
             .WithMany()

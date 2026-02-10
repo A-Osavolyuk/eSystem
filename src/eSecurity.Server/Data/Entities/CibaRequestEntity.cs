@@ -24,8 +24,8 @@ public sealed class CibaRequestEntity : Entity
     public Guid ClientId { get; set; }
     public ClientEntity Client { get; set; } = null!;
     
-    public Guid? UserId { get; set; }
-    public UserEntity? User { get; set; }
+    public Guid UserId { get; set; }
+    public UserEntity User { get; set; } = null!;
     
     public Guid? SessionId { get; set; }
     public SessionEntity? Session { get; set; }
