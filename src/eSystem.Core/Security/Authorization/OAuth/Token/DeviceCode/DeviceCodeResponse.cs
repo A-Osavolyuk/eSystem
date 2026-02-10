@@ -9,4 +9,7 @@ public sealed class DeviceCodeResponse : TokenResponse
     
     [JsonPropertyName("refresh_token")]
     public string? RefreshToken { get; set; }
+    
+    [JsonPropertyName("login_token_hint")] 
+    public string? LoginTokenHint { get; set; }
 }
