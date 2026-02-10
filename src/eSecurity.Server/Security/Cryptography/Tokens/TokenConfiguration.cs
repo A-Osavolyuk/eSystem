@@ -7,5 +7,4 @@ public class TokenOptions
     public TimeSpan IdTokenLifetime { get; set; }
     public TimeSpan OpaqueTokenLifetime { get; set; }
     public int OpaqueTokenLength { get; set; }
-    public int RefreshTokenLength { get; set; }
 }

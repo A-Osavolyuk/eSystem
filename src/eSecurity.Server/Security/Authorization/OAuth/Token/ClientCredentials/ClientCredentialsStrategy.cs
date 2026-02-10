@@ -113,38 +113,19 @@ public sealed class ClientCredentialsStrategy(
         }
         else
         {
-            var tokenContext = new OpaqueTokenContext { Length = _options.RefreshTokenLength };
-            var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
-            var rawToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
-            var hasher = _hasherProvider.GetHasher(HashAlgorithm.Sha512);
-            var accessToken = new OpaqueTokenEntity
+            var tokenContext = new OpaqueTokenContext
             {
-                Id = Guid.CreateVersion7(),
-                ClientId = client.Id,
-                Subject = client.Id.ToString(),
-                TokenHash = hasher.Hash(rawToken),
+                TokenLength = _options.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.AccessToken,
-                ExpiredAt = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime)
+                ClientId = client.Id,
+                Audiences = client.Audiences.Select(x => x.Audience).ToList(),
+                Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
+                ExpiredAt = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime),
+                Subject = client.Id.ToString(),
             };
-
-            accessToken.Scopes = client.AllowedScopes.Select(x => new OpaqueTokenScopeEntity()
-            {
-                Id = Guid.CreateVersion7(),
-                TokenId = accessToken.Id,
-                ScopeId = x.Id
-            }).ToList();
             
-            accessToken.Audiences = client.Audiences.Select(x => new OpaqueTokenAudienceEntity()
-            {
-                Id = Guid.CreateVersion7(),
-                TokenId = accessToken.Id,
-                AudienceId = x.Id
-            }).ToList();
-            
-            var createResult = await _tokenManager.CreateAsync(accessToken, cancellationToken);
-            if (!createResult.Succeeded) return createResult;
-            
-            response.AccessToken = rawToken;
+            var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
+            response.AccessToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
         }
         
         return Results.Ok(response);

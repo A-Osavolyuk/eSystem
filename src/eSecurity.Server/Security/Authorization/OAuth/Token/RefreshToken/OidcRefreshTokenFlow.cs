@@ -146,64 +146,35 @@ public sealed class OidcRefreshTokenFlow(
         }
         else
         {
-            var tokenContext = new OpaqueTokenContext { Length = _options.RefreshTokenLength };
-            var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
-            var rawToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
-            var accessToken = new OpaqueTokenEntity
+            var tokenContext = new OpaqueTokenContext
             {
-                Id = Guid.CreateVersion7(),
-                ClientId = client.Id,
-                Subject = user.Id.ToString(),
-                TokenHash = _hasher.Hash(rawToken),
+                TokenLength = _options.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.AccessToken,
-                ExpiredAt = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime)
+                ClientId = client.Id,
+                Audiences = client.Audiences.Select(x => x.Audience).ToList(),
+                Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
+                ExpiredAt = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime),
+                Subject = user.Id.ToString(),
             };
-
-            accessToken.Audiences = client.Audiences.Select(x => new OpaqueTokenAudienceEntity()
-            {
-                Id = Guid.CreateVersion7(),
-                TokenId = accessToken.Id,
-                AudienceId = x.Id
-            }).ToList();
-
-            accessToken.Scopes = client.AllowedScopes.Select(x => new OpaqueTokenScopeEntity()
-            {
-                Id = Guid.CreateVersion7(),
-                TokenId = accessToken.Id,
-                ScopeId = x.Id
-            }).ToList();
-
-            var createResult = await _tokenManager.CreateAsync(accessToken, cancellationToken);
-            if (!createResult.Succeeded) return createResult;
-
-            response.AccessToken = rawToken;
+            var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
+            response.AccessToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
         }
 
         if (client.RefreshTokenRotationEnabled)
         {
-            var refreshTokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
-            var refreshTokenContext = new OpaqueTokenContext { Length = _options.RefreshTokenLength };
-            var rawToken = await refreshTokenFactory.CreateTokenAsync(refreshTokenContext, cancellationToken);
-            var newRefreshToken = new OpaqueTokenEntity
+            var tokenContext = new OpaqueTokenContext
             {
-                Id = Guid.CreateVersion7(),
-                ClientId = client.Id,
-                SessionId = session.Id,
-                Subject = user.Id.ToString(),
-                TokenHash = _hasher.Hash(rawToken),
+                TokenLength = _options.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.RefreshToken,
+                ClientId = client.Id,
+                Audiences = client.Audiences.Select(x => x.Audience).ToList(),
+                Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
                 ExpiredAt = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
-                Scopes = token.Scopes,
-                Audiences = token.Audiences
+                Subject = user.Id.ToString(),
             };
-
-            var createResult = await _tokenManager.CreateAsync(newRefreshToken, cancellationToken);
-            if (!createResult.Succeeded) return createResult;
-
-            var revokeResult = await _tokenManager.RevokeAsync(token, cancellationToken);
-            if (!revokeResult.Succeeded) return revokeResult;
-
-            response.RefreshToken = rawToken;
+            
+            var refreshTokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
+            response.RefreshToken = await refreshTokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
         }
         else
         {

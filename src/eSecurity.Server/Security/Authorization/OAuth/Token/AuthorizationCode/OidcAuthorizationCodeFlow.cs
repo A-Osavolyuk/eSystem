@@ -20,9 +20,7 @@ namespace eSecurity.Server.Security.Authorization.OAuth.Token.AuthorizationCode;
 public class OidcAuthorizationCodeFlow(
     IUserManager userManager,
     IPkceHandler pkceHandler,
-    ITokenManager tokenManager,
     IClientManager clientManager,
-    IHasherProvider hasherProvider,
     ISessionManager sessionManager,
     IClaimFactoryProvider claimFactoryProvider,
     ITokenFactoryProvider tokenFactoryProvider,
@@ -30,13 +28,11 @@ public class OidcAuthorizationCodeFlow(
     IOptions<TokenOptions> options) : IAuthorizationCodeFlow
 {
     private readonly IClientManager _clientManager = clientManager;
-    private readonly IHasherProvider _hasherProvider = hasherProvider;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly IUserManager _userManager = userManager;
     private readonly IPkceHandler _pkceHandler = pkceHandler;
-    private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IAuthorizationCodeManager _authorizationCodeManager = authorizationCodeManager;
     private readonly TokenOptions _options = options.Value;
 
@@ -128,38 +124,19 @@ public class OidcAuthorizationCodeFlow(
         }
         else
         {
-            var tokenContext = new OpaqueTokenContext { Length = _options.RefreshTokenLength };
-            var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
-            var rawToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
-            var hasher = _hasherProvider.GetHasher(HashAlgorithm.Sha512);
-            var accessToken = new OpaqueTokenEntity
+            var tokenContext = new OpaqueTokenContext
             {
-                Id = Guid.CreateVersion7(),
-                ClientId = client.Id,
-                Subject = user.Id.ToString(),
-                TokenHash = hasher.Hash(rawToken),
+                TokenLength = _options.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.AccessToken,
-                ExpiredAt = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime)
+                ClientId = client.Id,
+                Audiences = client.Audiences.Select(x => x.Audience).ToList(),
+                Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
+                ExpiredAt = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime),
+                Subject = user.Id.ToString(),
             };
             
-            accessToken.Scopes = client.AllowedScopes.Select(x => new OpaqueTokenScopeEntity()
-            {
-                Id = Guid.CreateVersion7(),
-                TokenId = accessToken.Id,
-                ScopeId = x.Id
-            }).ToList();
-            
-            accessToken.Audiences = client.Audiences.Select(x => new OpaqueTokenAudienceEntity()
-            {
-                Id = Guid.CreateVersion7(),
-                TokenId = accessToken.Id,
-                AudienceId = x.Id
-            }).ToList();
-            
-            var createResult = await _tokenManager.CreateAsync(accessToken, cancellationToken);
-            if (!createResult.Succeeded) return createResult;
-
-            response.AccessToken = rawToken;
+            var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
+            response.AccessToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
         }
 
         var session = await _sessionManager.FindAsync(user, cancellationToken);
@@ -177,39 +154,19 @@ public class OidcAuthorizationCodeFlow(
 
         if (client.AllowOfflineAccess && client.HasScope(ScopeTypes.OfflineAccess))
         {
-            var refreshTokenContext = new OpaqueTokenContext { Length = _options.RefreshTokenLength };
-            var refreshTokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
-            var rawToken = await refreshTokenFactory.CreateTokenAsync(refreshTokenContext, cancellationToken);
-            var hasher = _hasherProvider.GetHasher(HashAlgorithm.Sha512);
-            var refreshToken = new OpaqueTokenEntity
+            var tokenContext = new OpaqueTokenContext
             {
-                Id = Guid.CreateVersion7(),
-                ClientId = client.Id,
-                SessionId = session.Id,
-                Subject = user.Id.ToString(),
-                TokenHash = hasher.Hash(rawToken),
+                TokenLength = _options.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.RefreshToken,
-                ExpiredAt = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime)
+                ClientId = client.Id,
+                Audiences = client.Audiences.Select(x => x.Audience).ToList(),
+                Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
+                ExpiredAt = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
+                Subject = user.Id.ToString(),
             };
             
-            refreshToken.Scopes = client.AllowedScopes.Select(x => new OpaqueTokenScopeEntity()
-            {
-                Id = Guid.CreateVersion7(),
-                TokenId = refreshToken.Id,
-                ScopeId = x.Id
-            }).ToList();
-            
-            refreshToken.Audiences = client.Audiences.Select(x => new OpaqueTokenAudienceEntity()
-            {
-                Id = Guid.CreateVersion7(),
-                TokenId = refreshToken.Id,
-                AudienceId = x.Id
-            }).ToList();
-            
-            var tokenResult = await _tokenManager.CreateAsync(refreshToken, cancellationToken);
-            if (!tokenResult.Succeeded) return tokenResult;
-
-            response.RefreshToken = rawToken;
+            var refreshTokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
+            response.RefreshToken = await refreshTokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
         }
 
         var idClaimsFactory = _claimFactoryProvider.GetClaimFactory<IdTokenClaimsContext, UserEntity>();

@@ -102,8 +102,7 @@ public sealed class OpaqueTokenDelegationHandler(
                 Description = "Delegation chaining is not allowed."
             });
         }
-
-
+        
         var client = await _clientManager.FindByIdAsync(context.ClientId, cancellationToken);
         if (client is null)
         {
@@ -114,23 +113,19 @@ public sealed class OpaqueTokenDelegationHandler(
             });
         }
 
-        var tokenContext = new OpaqueTokenContext { Length = _options.OpaqueTokenLength };
-        var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
-        var opaqueToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
-        var delegatedToken = new OpaqueTokenEntity
+        var tokenContext = new OpaqueTokenContext
         {
-            Id = Guid.CreateVersion7(),
-            ClientId = client.Id,
-            TokenHash = _hasher.Hash(opaqueToken),
-            Subject = subjectToken.Subject,
+            TokenLength = _options.OpaqueTokenLength,
             TokenType = OpaqueTokenType.AccessToken,
-            IssuedAt = DateTimeOffset.UtcNow,
+            ClientId = client.Id,
+            Audiences = client.Audiences.Select(x => x.Audience).ToList(),
+            Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
             ExpiredAt = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime),
-            Audiences = subjectToken.Audiences,
-            Scopes = subjectToken.Scopes,
+            IssuedAt = DateTimeOffset.UtcNow,
+            Subject = subjectToken.Subject,
             ActorId = actorToken.Id
         };
-
+        
         if (!string.IsNullOrEmpty(context.Audience))
         {
             if (!client.IsValidAudience(context.Audience))
@@ -142,16 +137,8 @@ public sealed class OpaqueTokenDelegationHandler(
                 });
             }
 
-            if (delegatedToken.Audiences.All(x => x.Audience.Audience != context.Audience))
-            {
-                var audience = client.Audiences.First(x => x.Audience == context.Audience);
-                delegatedToken.Audiences.Add(new OpaqueTokenAudienceEntity()
-                {
-                    Id = Guid.CreateVersion7(),
-                    TokenId = delegatedToken.Id,
-                    AudienceId = audience.Id
-                });
-            }
+            if (tokenContext.Audiences.All(x => x != context.Audience))
+                tokenContext.Audiences.Add(context.Audience);
         }
 
         var scopes = context.Scope.Split(' ').ToList();
@@ -168,33 +155,20 @@ public sealed class OpaqueTokenDelegationHandler(
             });
         }
 
-        delegatedToken.Scopes = subjectToken.Scopes
-            .Where(x => scopes.Contains(x.ClientScope.Scope.Value))
-            .Select(x => new OpaqueTokenScopeEntity
-            {
-                Id = Guid.CreateVersion7(),
-                TokenId = delegatedToken.Id,
-                ScopeId = x.ScopeId
-            })
-            .ToList();
+        tokenContext.Scopes = scopes;
+        
+        var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
+        var opaqueToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
 
-        var aud = JsonSerializer.Serialize(delegatedToken.Audiences
-            .Select(x => x.Audience.Audience)
-            .ToArray()
-        );
-
-        var response = new TokenExchangeResponse
+        return Results.Ok(new TokenExchangeResponse
         {
             ExpiresIn = (int)_options.AccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenTypes.Bearer,
             IssuedTokenType = TokenTypes.Full.AccessToken,
             Scope = context.Scope,
-            Audience = aud,
+            Audience = JsonSerializer.Serialize(tokenContext.Audiences),
             AccessToken = opaqueToken,
-            IssuedAt = delegatedToken.IssuedAt.ToUnixTimeSeconds(),
-        };
-
-        var result = await _tokenManager.CreateAsync(delegatedToken, cancellationToken);
-        return result.Succeeded ? Results.Ok(response) : result;
+            IssuedAt = tokenContext.IssuedAt!.Value.ToUnixTimeSeconds(),
+        });
     }
 }

@@ -19,7 +19,6 @@ public static class CryptographyExtensions
             cfg.IdTokenLifetime = TimeSpan.FromMinutes(10);
             cfg.OpaqueTokenLifetime = TimeSpan.FromMinutes(10);
             cfg.OpaqueTokenLength = 20;
-            cfg.RefreshTokenLength = 20;
         });
 
         builder.Services.AddSigning(cfg =>
