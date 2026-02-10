@@ -86,7 +86,7 @@ public sealed class ClientCredentialsStrategy(
 
         var response = new ClientCredentialsResponse
         {
-            ExpiresIn = (int)_options.AccessTokenLifetime.TotalSeconds,
+            ExpiresIn = (int)_options.DefaultAccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenTypes.Bearer
         };
         
@@ -120,7 +120,7 @@ public sealed class ClientCredentialsStrategy(
                 ClientId = client.Id,
                 Audiences = client.Audiences.Select(x => x.Audience).ToList(),
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
-                ExpiredAt = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime),
+                ExpiredAt = DateTimeOffset.UtcNow.Add(_options.DefaultAccessTokenLifetime),
                 Subject = client.Id.ToString(),
             };
             

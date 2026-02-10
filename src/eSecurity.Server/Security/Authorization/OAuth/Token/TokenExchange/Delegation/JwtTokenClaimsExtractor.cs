@@ -42,7 +42,7 @@ public sealed class JwtTokenClaimsExtractor(
         var iatClaim = new Claim(AppClaimTypes.Iat, iat, ClaimValueTypes.Integer64);
         extractedClaims.Add(iatClaim);
         
-        var exp = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime).ToUnixTimeSeconds().ToString();
+        var exp = DateTimeOffset.UtcNow.Add(_options.DefaultAccessTokenLifetime).ToUnixTimeSeconds().ToString();
         var expClaim = new Claim(AppClaimTypes.Exp, exp, ClaimValueTypes.Integer64);
         extractedClaims.Add(expClaim);
         

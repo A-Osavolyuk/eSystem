@@ -142,7 +142,7 @@ public sealed class JwtTokenDelegationHandler(
 
         var response = new TokenExchangeResponse
         {
-            ExpiresIn = (int)_options.AccessTokenLifetime.TotalSeconds,
+            ExpiresIn = (int)_options.DefaultAccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenTypes.Bearer,
             IssuedTokenType = TokenTypes.Full.AccessToken,
             Scope = context.Scope,

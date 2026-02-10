@@ -15,9 +15,9 @@ public static class CryptographyExtensions
         builder.Services.AddTokens(cfg =>
         {
             cfg.Issuer = "https://localhost:6201";
-            cfg.AccessTokenLifetime = TimeSpan.FromMinutes(10);
-            cfg.IdTokenLifetime = TimeSpan.FromMinutes(10);
-            cfg.LoginTokenHintLifetime = TimeSpan.FromDays(7);
+            cfg.DefaultAccessTokenLifetime = TimeSpan.FromMinutes(10);
+            cfg.DefaultIdTokenLifetime = TimeSpan.FromMinutes(10);
+            cfg.DefaultLoginTokenLifetime = TimeSpan.FromDays(7);
             cfg.OpaqueTokenLength = 20;
         });
 

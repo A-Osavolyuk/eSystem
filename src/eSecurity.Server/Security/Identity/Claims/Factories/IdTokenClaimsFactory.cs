@@ -33,7 +33,7 @@ public sealed class IdTokenClaimsFactory(
     public async ValueTask<List<Claim>> GetClaimsAsync(UserEntity user,
         IdTokenClaimsContext context, CancellationToken cancellationToken)
     {
-        var exp = DateTimeOffset.UtcNow.Add(_options.IdTokenLifetime).ToUnixTimeSeconds().ToString();
+        var exp = DateTimeOffset.UtcNow.Add(_options.DefaultIdTokenLifetime).ToUnixTimeSeconds().ToString();
         var iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
         var authTime = context.AuthTime.HasValue
             ? context.AuthTime.Value.ToUnixTimeSeconds().ToString()

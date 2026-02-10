@@ -120,7 +120,7 @@ public sealed class OpaqueTokenDelegationHandler(
             ClientId = client.Id,
             Audiences = client.Audiences.Select(x => x.Audience).ToList(),
             Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
-            ExpiredAt = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime),
+            ExpiredAt = DateTimeOffset.UtcNow.Add(_options.DefaultAccessTokenLifetime),
             IssuedAt = DateTimeOffset.UtcNow,
             Subject = subjectToken.Subject,
             ActorId = actorToken.Id
@@ -162,7 +162,7 @@ public sealed class OpaqueTokenDelegationHandler(
 
         return Results.Ok(new TokenExchangeResponse
         {
-            ExpiresIn = (int)_options.AccessTokenLifetime.TotalSeconds,
+            ExpiresIn = (int)_options.DefaultAccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenTypes.Bearer,
             IssuedTokenType = TokenTypes.Full.AccessToken,
             Scope = context.Scope,

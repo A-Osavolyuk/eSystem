@@ -19,7 +19,7 @@ public sealed class AccessTokenClaimsFactory(IOptions<TokenOptions> options)
     public ValueTask<List<Claim>> GetClaimsAsync(UserEntity user,
         AccessTokenClaimsContext context, CancellationToken cancellationToken)
     {
-        var exp = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime).ToUnixTimeSeconds().ToString();
+        var exp = DateTimeOffset.UtcNow.Add(_options.DefaultAccessTokenLifetime).ToUnixTimeSeconds().ToString();
         var iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
         
         var claims = new List<Claim>
@@ -48,7 +48,7 @@ public sealed class AccessTokenClaimsFactory(IOptions<TokenOptions> options)
     public ValueTask<List<Claim>> GetClaimsAsync(ClientEntity source, AccessTokenClaimsContext context,
         CancellationToken cancellationToken)
     {
-        var exp = DateTimeOffset.UtcNow.Add(_options.AccessTokenLifetime).ToUnixTimeSeconds().ToString();
+        var exp = DateTimeOffset.UtcNow.Add(_options.DefaultAccessTokenLifetime).ToUnixTimeSeconds().ToString();
         var iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
 
         var claims = new List<Claim>

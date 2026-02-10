@@ -64,7 +64,7 @@ public sealed class OAuthDeviceCodeFlow(
         
         var response = new DeviceCodeResponse
         {
-            ExpiresIn = (int)_tokenOptions.AccessTokenLifetime.TotalSeconds,
+            ExpiresIn = (int)_tokenOptions.DefaultAccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenTypes.Bearer,
         };
 
@@ -91,7 +91,7 @@ public sealed class OAuthDeviceCodeFlow(
                 ClientId = client.Id,
                 Audiences = client.Audiences.Select(x => x.Audience).ToList(),
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
-                ExpiredAt = DateTimeOffset.UtcNow.Add(_tokenOptions.AccessTokenLifetime),
+                ExpiredAt = DateTimeOffset.UtcNow.Add(_tokenOptions.DefaultAccessTokenLifetime),
                 Subject = user.Id.ToString(),
             };
             
