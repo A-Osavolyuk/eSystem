@@ -47,30 +47,30 @@ public sealed class OpenIdConfiguration
     public string TokenEndpoint { get; set; } = string.Empty;
     
     [JsonPropertyName("token_endpoint_auth_methods_supported")]
-    public string[] TokenEndpointAuthMethodsSupported { get; set; } = [];
+    public string[]? TokenEndpointAuthMethodsSupported { get; set; }
     
     [JsonPropertyName("token_endpoint_auth_signing_alg_values_supported")]
-    public string[] TokenEndpointAuthSigningAlgValuesSupported { get; set; } = [];
+    public string[]? TokenEndpointAuthSigningAlgValuesSupported { get; set; }
     
     
     [JsonPropertyName("userinfo_endpoint")]
     public string UserinfoEndpoint { get; set; } = string.Empty;
 
     [JsonPropertyName("userinfo_signing_alg_values_supported")]
-    public string[] UserInfoSigningAlgValuesSupported { get; set; } = [];
+    public string[]? UserInfoSigningAlgValuesSupported { get; set; }
     
     [JsonPropertyName("userinfo_encryption_alg_values_supported")]
-    public string[] UserInfoEncryptionAlgValuesSupported { get; set; } = [];
+    public string[]? UserInfoEncryptionAlgValuesSupported { get; set; }
     
     [JsonPropertyName("userinfo_encryption_enc_values_supported")]
-    public string[] UserInfoEncryptionEncValuesSupported { get; set; } = [];
+    public string[]? UserInfoEncryptionEncValuesSupported { get; set; }
     
     
     [JsonPropertyName("end_session_endpoint")]
     public string EndSessionEndpoint { get; set; } = string.Empty;
     
     [JsonPropertyName("check_session_iframe")]
-    public string CheckSessionIframe { get; set; } = string.Empty;
+    public string? CheckSessionIframe { get; set; }
     
     [JsonPropertyName("backchannel_logout_supported")]
     public bool BackchannelLogoutSupported { get; set; }
@@ -98,63 +98,63 @@ public sealed class OpenIdConfiguration
     public string[] SubjectTypesSupported { get; set; } = [];
     
     [JsonPropertyName("id_token_signing_alg_values_supported")]
-    public string[] IdTokenSigningAlgValuesSupported { get; set; } = [];
+    public string[]? IdTokenSigningAlgValuesSupported { get; set; }
     
     [JsonPropertyName("id_token_encryption_alg_values_supported")]
-    public string[] IdTokenEncryptionAlgValuesSupported { get; set; } = [];
+    public string[]? IdTokenEncryptionAlgValuesSupported { get; set; }
 
     [JsonPropertyName("id_token_encryption_enc_values_supported")]
-    public string[] IdTokenEncryptionEncValuesSupported { get; set; } = [];
+    public string[]? IdTokenEncryptionEncValuesSupported { get; set; }
 
     
     [JsonPropertyName("claims_supported")]
-    public string[] ClaimsSupported { get; set; } = [];
+    public string[]? ClaimsSupported { get; set; }
     
     [JsonPropertyName("claims_locales_supported")]
-    public string[] ClaimsLocalesSupported { get; set; } = [];
+    public string[]? ClaimsLocalesSupported { get; set; }
     
     [JsonPropertyName("claims_parameter_supported")]
-    public bool ClaimsParameterSupported { get; set; }
+    public bool? ClaimsParameterSupported { get; set; }
     
     [JsonPropertyName("acr_values_supported")]
-    public string[] AcrValuesSupported { get; set; } = [];
+    public string[]? AcrValuesSupported { get; set; }
     
     [JsonPropertyName("ui_locales_supported")]
-    public string[] UiLocalesSupported { get; set; } = [];
+    public string[]? UiLocalesSupported { get; set; }
     
     [JsonPropertyName("service_documentation")]
-    public string ServiceDocumentation { get; set; } = string.Empty;
+    public string? ServiceDocumentation { get; set; }
     
     [JsonPropertyName("op_policy_uri")]
-    public string OpPolicyUri { get; set; } = string.Empty;
+    public string? OpPolicyUri { get; set; }
     
     [JsonPropertyName("op_tos_uri")]
-    public string OpTosUri { get; set; } = string.Empty;
+    public string? OpTosUri { get; set; }
     
     [JsonPropertyName("response_modes_supported")]
-    public string[] ResponseModesSupported { get; set; } = [];
+    public string[]? ResponseModesSupported { get; set; }
     
     [JsonPropertyName("display_values_supported")]
-    public string[] DisplayValuesSupported { get; set; } = [];
+    public string[]? DisplayValuesSupported { get; set; }
     
 
     [JsonPropertyName("request_parameter_supported")]
-    public bool RequestParameterSupported { get; set; }
+    public bool? RequestParameterSupported { get; set; }
     
     [JsonPropertyName("request_uri_parameter_supported")]
-    public bool RequestUriParameterSupported { get; set; }
+    public bool? RequestUriParameterSupported { get; set; }
     
     [JsonPropertyName("require_request_uri_registration")]
-    public bool RequireRequestUriRegistration { get; set; }
+    public bool? RequireRequestUriRegistration { get; set; }
 
     [JsonPropertyName("request_object_signing_alg_values_supported")]
-    public string[] RequestObjectSigningAlgValuesSupported { get; set; } = [];
+    public string[]? RequestObjectSigningAlgValuesSupported { get; set; }
     
     [JsonPropertyName("request_object_encryption_alg_values_supported")]
-    public string[] RequestObjectEncryptionAlgValuesSupported { get; set; } = [];
+    public string[]? RequestObjectEncryptionAlgValuesSupported { get; set; }
     
     [JsonPropertyName("request_object_encryption_enc_values_supported")]
-    public string[] RequestObjectEncryptionEncValuesSupported { get; set; } = [];
+    public string[]? RequestObjectEncryptionEncValuesSupported { get; set; }
     
     
     [JsonPropertyName("scopes_supported")]
