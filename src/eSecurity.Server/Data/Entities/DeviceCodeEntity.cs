@@ -10,8 +10,10 @@ public sealed class DeviceCodeEntity : Entity
     public required string DeviceCodeHash { get; set; }
     public required string UserCode { get; set; }
     public int Interval { get; set; }
+    
     public DateTimeOffset ExpiresAt { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
+    public DateTimeOffset ConsumedAt { get; set; }
 
     public DeviceCodeState State { get; set; }
     public bool IsFirstPoll { get; set; }
