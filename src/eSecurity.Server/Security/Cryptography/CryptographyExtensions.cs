@@ -15,12 +15,23 @@ public static class CryptographyExtensions
         builder.Services.AddTokens(cfg =>
         {
             cfg.Issuer = "https://localhost:6201";
-            cfg.OpaqueTokenLength = 20;
+            cfg.OpaqueTokenLength = 32;
             
             cfg.DefaultAccessTokenLifetime = TimeSpan.FromMinutes(10);
+            cfg.MinAccessTokenLifetime = TimeSpan.FromMinutes(5);
+            cfg.MaxAccessTokenLifetime = TimeSpan.FromMinutes(15);
+            
             cfg.DefaultIdTokenLifetime = TimeSpan.FromMinutes(10);
+            cfg.MinIdTokenLifetime = TimeSpan.FromMinutes(5);
+            cfg.MaxIdTokenLifetime = TimeSpan.FromMinutes(15);
+            
             cfg.DefaultLoginTokenLifetime = TimeSpan.FromDays(7);
+            cfg.MinLoginTokenLifetime = TimeSpan.FromDays(1);
+            cfg.MaxLoginTokenLifetime = TimeSpan.FromDays(14);
+            
             cfg.DefaultRefreshTokenLifetime = TimeSpan.FromDays(30);
+            cfg.MinRefreshTokenLifetime = TimeSpan.FromDays(7);
+            cfg.MaxRefreshTokenLifetime = TimeSpan.FromDays(180);
         });
 
         builder.Services.AddSigning(cfg =>
