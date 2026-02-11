@@ -51,7 +51,7 @@ public class IntrospectionCommandHandler(
             ? await _tokenManager.FindByHashAsync(incomingHash, opaqueTokenType.Value, cancellationToken)
             : await _tokenManager.FindByHashAsync(incomingHash, cancellationToken);
 
-        if (token is null || !token.IsValid)
+        if (token is null || !token.IsValid || token.TokenType is OpaqueTokenType.LoginToken)
             return Results.Ok(IntrospectionResponse.Fail());
 
         var tokenType = token.TokenType switch
@@ -71,7 +71,8 @@ public class IntrospectionCommandHandler(
             IssuedAt = token.IssuedAt.ToUnixTimeSeconds(),
             NotBefore = token.NotBefore?.ToUnixTimeSeconds(),
             Expiration = token.ExpiredAt.ToUnixTimeSeconds(),
-            Scope = string.Join(" ", token.Scopes.Select(x => x.ClientScope))
+            Scope = string.Join(" ", token.Scopes.Select(x => x.ClientScope)),
+            Subject = token.Subject
         };
         
         if (token.SessionId.HasValue)
