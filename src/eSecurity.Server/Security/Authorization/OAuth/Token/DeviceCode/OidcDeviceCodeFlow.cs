@@ -79,9 +79,11 @@ public sealed class OidcDeviceCodeFlow(
 
         if (client.AccessTokenType == AccessTokenType.Jwt)
         {
+            var lifetime = client.AccessTokenLifetime ?? _tokenConfigurations.DefaultAccessTokenLifetime;
             var claimsFactory = _claimFactoryProvider.GetClaimFactory<AccessTokenClaimsContext, UserEntity>();
             var claims = await claimsFactory.GetClaimsAsync(user, new AccessTokenClaimsContext
             {
+                Exp = DateTimeOffset.UtcNow.Add(lifetime),
                 Aud = client.Audiences.Select(x => x.Audience),
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Value),
             }, cancellationToken);
@@ -93,6 +95,7 @@ public sealed class OidcDeviceCodeFlow(
         }
         else
         {
+            var lifetime = client.AccessTokenLifetime ?? _tokenConfigurations.DefaultAccessTokenLifetime;
             var tokenContext = new OpaqueTokenContext
             {
                 TokenLength = _tokenConfigurations.OpaqueTokenLength,
@@ -100,7 +103,7 @@ public sealed class OidcDeviceCodeFlow(
                 ClientId = client.Id,
                 Audiences = client.Audiences.Select(x => x.Audience).ToList(),
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
-                ExpiredAt = DateTimeOffset.UtcNow.Add(_tokenConfigurations.DefaultAccessTokenLifetime),
+                ExpiredAt = DateTimeOffset.UtcNow.Add(lifetime),
                 Subject = user.Id.ToString(),
                 Sid = session.Id
             };
@@ -130,6 +133,7 @@ public sealed class OidcDeviceCodeFlow(
             response.RefreshToken = await refreshTokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
         }
 
+        var idTokenLifetime = client.IdTokenLifetime ?? _tokenConfigurations.DefaultIdTokenLifetime;
         var idClaimsFactory = _claimFactoryProvider.GetClaimFactory<IdTokenClaimsContext, UserEntity>();
         var idClaims = await idClaimsFactory.GetClaimsAsync(user, new IdTokenClaimsContext
         {
@@ -138,6 +142,7 @@ public sealed class OidcDeviceCodeFlow(
             Sid = session.Id.ToString(),
             AuthenticationMethods = session.AuthenticationMethods,
             AuthTime = DateTimeOffset.UtcNow,
+            Exp = DateTimeOffset.UtcNow.Add(idTokenLifetime)
         }, cancellationToken);
 
         var idTokenContext = new JwtTokenContext { Claims = idClaims, Type = JwtTokenTypes.IdToken };

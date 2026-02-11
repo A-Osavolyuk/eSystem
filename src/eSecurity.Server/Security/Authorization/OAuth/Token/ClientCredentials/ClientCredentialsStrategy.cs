@@ -26,7 +26,7 @@ public sealed class ClientCredentialsStrategy(
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly IHasherProvider _hasherProvider = hasherProvider;
     private readonly ITokenManager _tokenManager = tokenManager;
-    private readonly TokenConfigurations _configurations = options.Value;
+    private readonly TokenConfigurations _tokenConfigurations = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(TokenRequest tokenRequest, 
         CancellationToken cancellationToken = default)
@@ -86,15 +86,17 @@ public sealed class ClientCredentialsStrategy(
 
         var response = new ClientCredentialsResponse
         {
-            ExpiresIn = (int)_configurations.DefaultAccessTokenLifetime.TotalSeconds,
+            ExpiresIn = (int)_tokenConfigurations.DefaultAccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenTypes.Bearer
         };
         
         if (client.AccessTokenType == AccessTokenType.Jwt)
         {
+            var lifetime = client.AccessTokenLifetime ?? _tokenConfigurations.DefaultAccessTokenLifetime;
             var claimsFactory = _claimFactoryProvider.GetClaimFactory<AccessTokenClaimsContext, ClientEntity>();
             var claimsContext = new AccessTokenClaimsContext
             {
+                Exp = DateTimeOffset.UtcNow.Add(lifetime),
                 Aud = client.Audiences.Select(x => x.Audience),
                 Scopes = allowedScopes
             };
@@ -113,14 +115,15 @@ public sealed class ClientCredentialsStrategy(
         }
         else
         {
+            var lifetime = client.AccessTokenLifetime ?? _tokenConfigurations.DefaultAccessTokenLifetime;
             var tokenContext = new OpaqueTokenContext
             {
-                TokenLength = _configurations.OpaqueTokenLength,
+                TokenLength = _tokenConfigurations.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.AccessToken,
                 ClientId = client.Id,
                 Audiences = client.Audiences.Select(x => x.Audience).ToList(),
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
-                ExpiredAt = DateTimeOffset.UtcNow.Add(_configurations.DefaultAccessTokenLifetime),
+                ExpiredAt = DateTimeOffset.UtcNow.Add(lifetime),
                 Subject = client.Id.ToString(),
             };
             

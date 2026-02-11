@@ -38,10 +38,7 @@ public sealed class IdTokenClaimsFactory(
             ? context.Iat.Value.ToUnixTimeSeconds().ToString() 
             : DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
         
-        var exp = context.Exp.HasValue 
-            ? context.Exp.Value.ToUnixTimeSeconds().ToString() 
-            : DateTimeOffset.UtcNow.Add(_configurations.DefaultIdTokenLifetime).ToUnixTimeSeconds().ToString();
-        
+        var exp = context.Exp.ToUnixTimeSeconds().ToString();
         var authTime = context.AuthTime.HasValue
             ? context.AuthTime.Value.ToUnixTimeSeconds().ToString()
             : DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();

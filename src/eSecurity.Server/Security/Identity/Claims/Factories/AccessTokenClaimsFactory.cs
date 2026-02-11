@@ -23,11 +23,8 @@ public sealed class AccessTokenClaimsFactory(IOptions<TokenConfigurations> optio
         var iat = context.Iat.HasValue 
             ? context.Iat.Value.ToUnixTimeSeconds().ToString() 
             : DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
-        
-        var exp = context.Exp.HasValue 
-            ? context.Exp.Value.ToUnixTimeSeconds().ToString() 
-            : DateTimeOffset.UtcNow.Add(_configurations.DefaultAccessTokenLifetime).ToUnixTimeSeconds().ToString();
-        
+
+        var exp = context.Exp.ToUnixTimeSeconds().ToString();
         var claims = new List<Claim>
         {
             new(AppClaimTypes.Jti, Guid.NewGuid().ToString()),
@@ -58,10 +55,7 @@ public sealed class AccessTokenClaimsFactory(IOptions<TokenConfigurations> optio
             ? context.Iat.Value.ToUnixTimeSeconds().ToString() 
             : DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
         
-        var exp = context.Exp.HasValue 
-            ? context.Exp.Value.ToUnixTimeSeconds().ToString() 
-            : DateTimeOffset.UtcNow.Add(_configurations.DefaultIdTokenLifetime).ToUnixTimeSeconds().ToString();
-
+        var exp = context.Exp.ToUnixTimeSeconds().ToString();
         var claims = new List<Claim>
         {
             new(AppClaimTypes.Jti, Guid.NewGuid().ToString()),

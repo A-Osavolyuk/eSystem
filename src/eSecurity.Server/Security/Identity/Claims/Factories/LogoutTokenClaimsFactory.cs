@@ -30,10 +30,7 @@ public sealed class LogoutTokenClaimsFactory(
             ? context.Iat.Value.ToUnixTimeSeconds().ToString() 
             : DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
         
-        var exp = context.Exp.HasValue 
-            ? context.Exp.Value.ToUnixTimeSeconds().ToString() 
-            : DateTimeOffset.UtcNow.Add(_tokenConfigurations.DefaultLogoutTokenLifetime).ToUnixTimeSeconds().ToString();
-        
+        var exp = context.Exp.ToUnixTimeSeconds().ToString();
         var claims = new List<Claim>
         {
             new(AppClaimTypes.Jti, Guid.NewGuid().ToString()),

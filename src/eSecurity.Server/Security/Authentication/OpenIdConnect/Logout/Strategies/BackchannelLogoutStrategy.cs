@@ -16,10 +16,12 @@ public class BackchannelLogoutStrategy(
     IClientManager clientManager,
     IUserManager userManager,
     IClaimFactoryProvider claimFactoryProvider,
-    ITokenFactoryProvider tokenFactoryProvider) : ILogoutStrategy<Result>
+    ITokenFactoryProvider tokenFactoryProvider,
+    IOptions<TokenConfigurations> options) : ILogoutStrategy<Result>
 {
     private readonly IClientManager _clientManager = clientManager;
     private readonly IUserManager _userManager = userManager;
+    private readonly TokenConfigurations _tokenConfigurations = options.Value;
     private readonly HttpClient _httpClient = httpClientFactory.CreateClient("BackchannelLogoutHandler");
 
     private readonly ITokenClaimsFactory<LogoutTokenClaimsContext, UserEntity> _claimsFactory =
@@ -39,14 +41,16 @@ public class BackchannelLogoutStrategy(
             var backchannelLogoutUri = client.Uris.FirstOrDefault(x => x.Type == UriType.BackChannelLogout);
             if (backchannelLogoutUri is null) continue;
 
+            var lifetime = client.LogoutTokenLifetime ?? _tokenConfigurations.DefaultLogoutTokenLifetime;
             var claimsContext = new LogoutTokenClaimsContext()
             {
                 Aud = client.Id.ToString(),
                 Sid = session.Id.ToString(),
+                Exp = DateTimeOffset.UtcNow.Add(lifetime)
             };
 
             var claims = await _claimsFactory.GetClaimsAsync(user, claimsContext, cancellationToken);
-            var tokenContext = new JwtTokenContext() { Claims = claims, Type = JwtTokenTypes.Generic };
+            var tokenContext = new JwtTokenContext { Claims = claims, Type = JwtTokenTypes.Generic };
             var token = await _tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, backchannelLogoutUri.Uri)
             {

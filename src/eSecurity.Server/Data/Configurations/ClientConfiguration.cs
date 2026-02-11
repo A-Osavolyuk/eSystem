@@ -17,5 +17,9 @@ public sealed class ClientConfiguration : IEntityTypeConfiguration<ClientEntity>
         builder.Property(x => x.AccessTokenType).HasConversion<string>();
         builder.Property(x => x.SubjectType).HasConversion<string>();
         builder.Property(x => x.RefreshTokenLifetime).HasConversion(ValueConverters.NullableTimeSpan);
+        builder.Property(x => x.AccessTokenLifetime).HasConversion(ValueConverters.NullableTimeSpan);
+        builder.Property(x => x.IdTokenLifetime).HasConversion(ValueConverters.NullableTimeSpan);
+        builder.Property(x => x.LoginTokenLifetime).HasConversion(ValueConverters.NullableTimeSpan);
+        builder.Property(x => x.LogoutTokenLifetime).HasConversion(ValueConverters.NullableTimeSpan);
     }
 }

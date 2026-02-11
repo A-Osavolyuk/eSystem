@@ -108,9 +108,11 @@ public class OAuthAuthorizationCodeFlow(
 
         if (client.AccessTokenType == AccessTokenType.Jwt)
         {
+            var lifetime = client.AccessTokenLifetime ?? _tokenConfigurations.DefaultAccessTokenLifetime;
             var claimsFactory = _claimFactoryProvider.GetClaimFactory<AccessTokenClaimsContext, UserEntity>();
             var claims = await claimsFactory.GetClaimsAsync(user, new AccessTokenClaimsContext
             {
+                Exp = DateTimeOffset.UtcNow.Add(lifetime),
                 Aud = client.Audiences.Select(x => x.Audience),
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Value),
             }, cancellationToken);
@@ -122,6 +124,7 @@ public class OAuthAuthorizationCodeFlow(
         }
         else
         {
+            var lifetime = client.AccessTokenLifetime ?? _tokenConfigurations.DefaultAccessTokenLifetime;
             var tokenContext = new OpaqueTokenContext
             {
                 TokenLength = _tokenConfigurations.OpaqueTokenLength,
@@ -129,7 +132,7 @@ public class OAuthAuthorizationCodeFlow(
                 ClientId = client.Id,
                 Audiences = client.Audiences.Select(x => x.Audience).ToList(),
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
-                ExpiredAt = DateTimeOffset.UtcNow.Add(_tokenConfigurations.DefaultAccessTokenLifetime),
+                ExpiredAt = DateTimeOffset.UtcNow.Add(lifetime),
                 Subject = user.Id.ToString(),
             };
             

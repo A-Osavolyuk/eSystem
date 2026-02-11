@@ -18,6 +18,10 @@ public class ClientEntity : Entity
     public bool AllowOfflineAccess { get; set; }
     public bool RefreshTokenRotationEnabled { get; set; } = true;
     public TimeSpan? RefreshTokenLifetime { get; set; }
+    public TimeSpan? AccessTokenLifetime { get; set; }
+    public TimeSpan? IdTokenLifetime { get; set; }
+    public TimeSpan? LoginTokenLifetime { get; set; }
+    public TimeSpan? LogoutTokenLifetime { get; set; }
 
     public bool AllowFrontChannelLogout { get; set; }
     public bool AllowBackChannelLogout { get; set; }
