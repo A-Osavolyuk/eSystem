@@ -19,8 +19,6 @@ public class GetClientInfoQueryHandler(IClientManager clientManager) : IRequestH
         {
             ClientName = client.Name,
             ClientType = client.ClientType,
-            LogoUri = client.LogoUri,
-            ClientUri = client.ClientUri,
             RequiredScopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
         };
         
