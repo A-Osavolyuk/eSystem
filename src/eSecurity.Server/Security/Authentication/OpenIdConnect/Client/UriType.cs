@@ -5,5 +5,8 @@ public enum UriType
     Redirect,
     PostLogoutRedirect,
     FrontChannelLogout,
-    BackChannelLogout
+    BackChannelLogout,
+    NotificationEndpoint,
+    LogoUri,
+    ClientUri
 }
