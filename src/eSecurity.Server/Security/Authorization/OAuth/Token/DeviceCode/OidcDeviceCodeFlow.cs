@@ -132,6 +132,23 @@ public sealed class OidcDeviceCodeFlow(
             var refreshTokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
             response.RefreshToken = await refreshTokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
         }
+        
+        if (client.HasGrantType(GrantTypes.Ciba))
+        {
+            var lifetime = client.LoginTokenLifetime ?? _tokenConfigurations.DefaultLoginTokenLifetime;
+            var tokenContext = new OpaqueTokenContext
+            {
+                TokenLength = _tokenConfigurations.OpaqueTokenLength,
+                TokenType = OpaqueTokenType.LoginToken,
+                Sid = session.Id,
+                ClientId = client.Id,
+                ExpiredAt = DateTimeOffset.UtcNow.Add(lifetime),
+                Subject = user.Id.ToString(),
+            };
+            
+            var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
+            response.LoginTokenHint = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
+        }
 
         var idTokenLifetime = client.IdTokenLifetime ?? _tokenConfigurations.DefaultIdTokenLifetime;
         var idClaimsFactory = _claimFactoryProvider.GetClaimFactory<IdTokenClaimsContext, UserEntity>();

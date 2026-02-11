@@ -12,7 +12,7 @@ public sealed class OpaqueTokenContext : TokenContext
     public required string Subject { get; set; }
     public required OpaqueTokenType TokenType { get; set; }
     public required int TokenLength { get; set; }
-    public required List<string> Scopes { get; set; }
+    public List<string> Scopes { get; set; } = [];
     public required DateTimeOffset ExpiredAt { get; set; }
     public List<string> Audiences { get; set; } = [];
     public Guid? Sid { get; set; }
@@ -66,7 +66,7 @@ public class OpaqueTokenFactory(
                 .ToList();
         }
 
-        if (context.Scopes.Count > 0)
+        if (context.TokenType is not OpaqueTokenType.LoginToken && context.Scopes.Count > 0)
         {
             opaqueToken.Scopes = client.AllowedScopes
                 .Where(scope => context.Scopes.Contains(scope.Scope.Value))

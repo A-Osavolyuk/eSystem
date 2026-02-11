@@ -119,6 +119,22 @@ public sealed class OAuthDeviceCodeFlow(
             var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
             response.RefreshToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
         }
+
+        if (client.HasGrantType(GrantTypes.Ciba))
+        {
+            var lifetime = client.LoginTokenLifetime ?? _tokenConfigurations.DefaultLoginTokenLifetime;
+            var tokenContext = new OpaqueTokenContext
+            {
+                TokenLength = _tokenConfigurations.OpaqueTokenLength,
+                TokenType = OpaqueTokenType.LoginToken,
+                ClientId = client.Id,
+                ExpiredAt = DateTimeOffset.UtcNow.Add(lifetime),
+                Subject = user.Id.ToString(),
+            };
+            
+            var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
+            response.LoginTokenHint = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
+        }
         
         return Results.Ok(response);
     }
