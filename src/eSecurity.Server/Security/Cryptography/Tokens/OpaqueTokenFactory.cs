@@ -13,8 +13,8 @@ public sealed class OpaqueTokenContext : TokenContext
     public required OpaqueTokenType TokenType { get; set; }
     public required int TokenLength { get; set; }
     public required List<string> Scopes { get; set; }
-    public required List<string> Audiences { get; set; }
     public required DateTimeOffset ExpiredAt { get; set; }
+    public List<string> Audiences { get; set; } = [];
     public Guid? Sid { get; set; }
     public Guid? ActorId { get; set; }
     public DateTimeOffset? NotBefore { get; set; }
@@ -53,25 +53,31 @@ public class OpaqueTokenFactory(
             IssuedAt = context.IssuedAt ?? DateTimeOffset.UtcNow,
         };
 
-        opaqueToken.Audiences = client.Audiences
-            .Where(aud => context.Audiences.Contains(aud.Audience))
-            .Select(aud => new OpaqueTokenAudienceEntity()
-            {
-                Id = Guid.CreateVersion7(),
-                TokenId = opaqueToken.Id,
-                AudienceId = aud.Id
-            })
-            .ToList();
+        if (context.TokenType is not OpaqueTokenType.LoginToken && context.Audiences.Count > 0)
+        {
+            opaqueToken.Audiences = client.Audiences
+                .Where(aud => context.Audiences.Contains(aud.Audience))
+                .Select(aud => new OpaqueTokenAudienceEntity()
+                {
+                    Id = Guid.CreateVersion7(),
+                    TokenId = opaqueToken.Id,
+                    AudienceId = aud.Id
+                })
+                .ToList();
+        }
 
-        opaqueToken.Scopes = client.AllowedScopes
-            .Where(scope => context.Scopes.Contains(scope.Scope.Value))
-            .Select(scope => new OpaqueTokenScopeEntity()
-            {
-                Id = Guid.CreateVersion7(),
-                TokenId = opaqueToken.Id,
-                ScopeId = scope.Id
-            })
-            .ToList();
+        if (context.Scopes.Count > 0)
+        {
+            opaqueToken.Scopes = client.AllowedScopes
+                .Where(scope => context.Scopes.Contains(scope.Scope.Value))
+                .Select(scope => new OpaqueTokenScopeEntity()
+                {
+                    Id = Guid.CreateVersion7(),
+                    TokenId = opaqueToken.Id,
+                    ScopeId = scope.Id
+                })
+                .ToList();
+        }
 
         var result = await _tokenManager.CreateAsync(opaqueToken, cancellationToken);
         if (!result.Succeeded)
