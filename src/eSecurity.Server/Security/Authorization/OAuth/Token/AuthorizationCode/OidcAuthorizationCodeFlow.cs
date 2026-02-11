@@ -2,7 +2,6 @@
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
-using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Cryptography.Pkce;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.Claims;
@@ -34,7 +33,7 @@ public class OidcAuthorizationCodeFlow(
     private readonly IUserManager _userManager = userManager;
     private readonly IPkceHandler _pkceHandler = pkceHandler;
     private readonly IAuthorizationCodeManager _authorizationCodeManager = authorizationCodeManager;
-    private readonly TokenConfigurations _configurations = options.Value;
+    private readonly TokenConfigurations _tokenConfigurations = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(AuthorizationCodeEntity code,
         AuthorizationCodeFlowContext context, CancellationToken cancellationToken = default)
@@ -104,7 +103,7 @@ public class OidcAuthorizationCodeFlow(
 
         var response = new AuthorizationCodeResponse
         {
-            ExpiresIn = (int)_configurations.DefaultAccessTokenLifetime.TotalSeconds,
+            ExpiresIn = (int)_tokenConfigurations.DefaultAccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenTypes.Bearer,
         };
         
@@ -136,12 +135,12 @@ public class OidcAuthorizationCodeFlow(
         {
             var tokenContext = new OpaqueTokenContext
             {
-                TokenLength = _configurations.OpaqueTokenLength,
+                TokenLength = _tokenConfigurations.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.AccessToken,
                 ClientId = client.Id,
                 Audiences = client.Audiences.Select(x => x.Audience).ToList(),
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
-                ExpiredAt = DateTimeOffset.UtcNow.Add(_configurations.DefaultAccessTokenLifetime),
+                ExpiredAt = DateTimeOffset.UtcNow.Add(_tokenConfigurations.DefaultAccessTokenLifetime),
                 Subject = user.Id.ToString(),
                 Sid = session.Id
             };
@@ -155,14 +154,15 @@ public class OidcAuthorizationCodeFlow(
 
         if (client.AllowOfflineAccess && client.HasScope(ScopeTypes.OfflineAccess))
         {
+            var lifetime = client.RefreshTokenLifetime ?? _tokenConfigurations.DefaultRefreshTokenLifetime;
             var tokenContext = new OpaqueTokenContext
             {
-                TokenLength = _configurations.OpaqueTokenLength,
+                TokenLength = _tokenConfigurations.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.RefreshToken,
                 ClientId = client.Id,
                 Audiences = client.Audiences.Select(x => x.Audience).ToList(),
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
-                ExpiredAt = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
+                ExpiredAt = DateTimeOffset.UtcNow.Add(lifetime),
                 Subject = user.Id.ToString(),
                 Sid = session.Id
             };

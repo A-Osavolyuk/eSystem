@@ -27,7 +27,7 @@ public sealed class OAuthRefreshTokenFlow(
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IUserManager _userManager = userManager;
     private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
-    private readonly TokenConfigurations _configurations = options.Value;
+    private readonly TokenConfigurations _tokenConfigurations = options.Value;
     private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
 
     public async ValueTask<Result> ExecuteAsync(OpaqueTokenEntity token, RefreshTokenFlowContext flowContext,
@@ -82,7 +82,7 @@ public sealed class OAuthRefreshTokenFlow(
 
         var response = new RefreshTokenResponse
         {
-            ExpiresIn = (int)_configurations.DefaultAccessTokenLifetime.TotalSeconds,
+            ExpiresIn = (int)_tokenConfigurations.DefaultAccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenTypes.Bearer,
         };
 
@@ -104,12 +104,12 @@ public sealed class OAuthRefreshTokenFlow(
         {
             var tokenContext = new OpaqueTokenContext
             {
-                TokenLength = _configurations.OpaqueTokenLength,
+                TokenLength = _tokenConfigurations.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.AccessToken,
                 ClientId = client.Id,
                 Audiences = client.Audiences.Select(x => x.Audience).ToList(),
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
-                ExpiredAt = DateTimeOffset.UtcNow.Add(_configurations.DefaultAccessTokenLifetime),
+                ExpiredAt = DateTimeOffset.UtcNow.Add(_tokenConfigurations.DefaultAccessTokenLifetime),
                 Subject = user.Id.ToString(),
             };
             
@@ -119,14 +119,15 @@ public sealed class OAuthRefreshTokenFlow(
 
         if (client.RefreshTokenRotationEnabled)
         {
+            var lifetime = client.RefreshTokenLifetime ?? _tokenConfigurations.DefaultRefreshTokenLifetime;
             var tokenContext = new OpaqueTokenContext
             {
-                TokenLength = _configurations.OpaqueTokenLength,
+                TokenLength = _tokenConfigurations.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.RefreshToken,
                 ClientId = client.Id,
                 Audiences = client.Audiences.Select(x => x.Audience).ToList(),
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
-                ExpiredAt = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
+                ExpiredAt = DateTimeOffset.UtcNow.Add(lifetime),
                 Subject = user.Id.ToString(),
             };
             

@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
 using eSecurity.Server.Security.Cryptography.Hashing;

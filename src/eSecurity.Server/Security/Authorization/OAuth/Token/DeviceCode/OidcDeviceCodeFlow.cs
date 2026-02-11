@@ -2,7 +2,6 @@
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
-using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.Claims;
 using eSecurity.Server.Security.Identity.Claims.Factories;
@@ -115,6 +114,7 @@ public sealed class OidcDeviceCodeFlow(
 
         if (client.AllowOfflineAccess && client.HasScope(ScopeTypes.OfflineAccess))
         {
+            var lifetime = client.RefreshTokenLifetime ?? _tokenConfigurations.DefaultRefreshTokenLifetime;
             var tokenContext = new OpaqueTokenContext
             {
                 TokenLength = _tokenConfigurations.OpaqueTokenLength,
@@ -122,7 +122,7 @@ public sealed class OidcDeviceCodeFlow(
                 ClientId = client.Id,
                 Audiences = client.Audiences.Select(x => x.Audience).ToList(),
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
-                ExpiredAt = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
+                ExpiredAt = DateTimeOffset.UtcNow.Add(lifetime),
                 Subject = user.Id.ToString(),
                 Sid = session.Id
             };

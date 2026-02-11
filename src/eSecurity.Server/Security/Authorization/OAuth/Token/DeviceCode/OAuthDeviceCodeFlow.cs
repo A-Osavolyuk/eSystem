@@ -101,6 +101,7 @@ public sealed class OAuthDeviceCodeFlow(
         
         if (client.AllowOfflineAccess)
         {
+            var lifetime = client.RefreshTokenLifetime ?? _tokenConfigurations.DefaultRefreshTokenLifetime;
             var tokenContext = new OpaqueTokenContext
             {
                 TokenLength = _tokenConfigurations.OpaqueTokenLength,
@@ -108,7 +109,7 @@ public sealed class OAuthDeviceCodeFlow(
                 ClientId = client.Id,
                 Audiences = client.Audiences.Select(x => x.Audience).ToList(),
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
-                ExpiredAt = DateTimeOffset.UtcNow.Add(client.RefreshTokenLifetime),
+                ExpiredAt = DateTimeOffset.UtcNow.Add(lifetime),
                 Subject = user.Id.ToString(),
             };
             
