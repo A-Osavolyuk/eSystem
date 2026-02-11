@@ -83,6 +83,80 @@ namespace eSecurity.Server.Migrations
                     b.ToTable("AuthorizationCodes", "public");
                 });
 
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.CibaRequestEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AcrValues")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("AuthReqId")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)");
+
+                    b.Property<string>("BindingMessage")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("ConsumedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DeniedReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Interval")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Scope")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<Guid?>("SessionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UserCode")
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("SessionId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CibaRequests", "public");
+                });
+
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientAllowedScopeEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -143,6 +217,9 @@ namespace eSecurity.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<long?>("AccessTokenLifetime")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("AccessTokenType")
                         .IsRequired()
                         .HasColumnType("text");
@@ -160,23 +237,28 @@ namespace eSecurity.Server.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("ClientUri")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("LogoUri")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                    b.Property<long?>("IdTokenLifetime")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("LoginTokenLifetime")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("LogoutTokenLifetime")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
 
-                    b.Property<long>("RefreshTokenLifetime")
+                    b.Property<string>("NotificationDeliveryMode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long?>("RefreshTokenLifetime")
                         .HasColumnType("bigint");
 
                     b.Property<bool>("RefreshTokenRotationEnabled")
@@ -422,6 +504,9 @@ namespace eSecurity.Server.Migrations
                     b.Property<Guid>("ClientId")
                         .HasColumnType("uuid");
 
+                    b.Property<DateTimeOffset>("ConsumedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -509,6 +594,46 @@ namespace eSecurity.Server.Migrations
                     b.HasIndex("ConsentId");
 
                     b.ToTable("GrantedScopes", "public");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.OAuthSessionEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.PrimitiveCollection<string[]>("AuthenticationMethods")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("ExpiredAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Flow")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<bool?>("RequireTwoFactor")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("OAuthSessions", "public");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.OpaqueTokenAudienceEntity", b =>
@@ -1346,6 +1471,32 @@ namespace eSecurity.Server.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.CibaRequestEntity", b =>
+                {
+                    b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("eSecurity.Server.Data.Entities.SessionEntity", "Session")
+                        .WithMany()
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Session");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientAllowedScopeEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
@@ -1511,6 +1662,16 @@ namespace eSecurity.Server.Migrations
                     b.Navigation("ClientScope");
 
                     b.Navigation("Consent");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.OAuthSessionEntity", b =>
+                {
+                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.OpaqueTokenAudienceEntity", b =>

@@ -47,13 +47,16 @@ namespace eSecurity.Server.Migrations
                     Secret = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     AllowOfflineAccess = table.Column<bool>(type: "boolean", nullable: false),
                     RefreshTokenRotationEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    RefreshTokenLifetime = table.Column<long>(type: "bigint", nullable: false),
+                    RefreshTokenLifetime = table.Column<long>(type: "bigint", nullable: true),
+                    AccessTokenLifetime = table.Column<long>(type: "bigint", nullable: true),
+                    IdTokenLifetime = table.Column<long>(type: "bigint", nullable: true),
+                    LoginTokenLifetime = table.Column<long>(type: "bigint", nullable: true),
+                    LogoutTokenLifetime = table.Column<long>(type: "bigint", nullable: true),
                     AllowFrontChannelLogout = table.Column<bool>(type: "boolean", nullable: false),
                     AllowBackChannelLogout = table.Column<bool>(type: "boolean", nullable: false),
                     SubjectType = table.Column<string>(type: "text", nullable: false),
                     SectorIdentifierUri = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
-                    LogoUri = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    ClientUri = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    NotificationDeliveryMode = table.Column<string>(type: "text", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
@@ -378,6 +381,33 @@ namespace eSecurity.Server.Migrations
                     table.PrimaryKey("PK_LockoutStates", x => x.Id);
                     table.ForeignKey(
                         name: "FK_LockoutStates_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "public",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OAuthSessions",
+                schema: "public",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Provider = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
+                    AuthenticationMethods = table.Column<string[]>(type: "text[]", nullable: false),
+                    ExpiredAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    RequireTwoFactor = table.Column<bool>(type: "boolean", nullable: true),
+                    Flow = table.Column<string>(type: "text", nullable: true),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OAuthSessions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OAuthSessions_Users_UserId",
                         column: x => x.UserId,
                         principalSchema: "public",
                         principalTable: "Users",
@@ -788,6 +818,55 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CibaRequests",
+                schema: "public",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    AuthReqId = table.Column<string>(type: "character varying(36)", maxLength: 36, nullable: false),
+                    Scope = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Interval = table.Column<int>(type: "integer", nullable: false),
+                    State = table.Column<string>(type: "text", nullable: false),
+                    ExpiresAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    ConsumedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UserCode = table.Column<string>(type: "character varying(8)", maxLength: 8, nullable: true),
+                    AcrValues = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    BindingMessage = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    DeniedReason = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    SessionId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CibaRequests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CibaRequests_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalSchema: "public",
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CibaRequests_Sessions_SessionId",
+                        column: x => x.SessionId,
+                        principalSchema: "public",
+                        principalTable: "Sessions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CibaRequests_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "public",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ClientSessions",
                 schema: "public",
                 columns: table => new
@@ -827,6 +906,7 @@ namespace eSecurity.Server.Migrations
                     Interval = table.Column<int>(type: "integer", nullable: false),
                     ExpiresAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    ConsumedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     State = table.Column<string>(type: "text", nullable: false),
                     IsFirstPoll = table.Column<bool>(type: "boolean", nullable: false),
                     Scope = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
@@ -1014,6 +1094,24 @@ namespace eSecurity.Server.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CibaRequests_ClientId",
+                schema: "public",
+                table: "CibaRequests",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CibaRequests_SessionId",
+                schema: "public",
+                table: "CibaRequests",
+                column: "SessionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CibaRequests_UserId",
+                schema: "public",
+                table: "CibaRequests",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ClientAllowedScopes_ClientId",
                 schema: "public",
                 table: "ClientAllowedScopes",
@@ -1115,6 +1213,12 @@ namespace eSecurity.Server.Migrations
                 table: "LockoutStates",
                 column: "UserId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OAuthSessions_UserId",
+                schema: "public",
+                table: "OAuthSessions",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OpaqueTokenAudiences_AudienceId",
@@ -1272,6 +1376,10 @@ namespace eSecurity.Server.Migrations
                 schema: "public");
 
             migrationBuilder.DropTable(
+                name: "CibaRequests",
+                schema: "public");
+
+            migrationBuilder.DropTable(
                 name: "ClientGrantTypes",
                 schema: "public");
 
@@ -1305,6 +1413,10 @@ namespace eSecurity.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "LockoutStates",
+                schema: "public");
+
+            migrationBuilder.DropTable(
+                name: "OAuthSessions",
                 schema: "public");
 
             migrationBuilder.DropTable(
