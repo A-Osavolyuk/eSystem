@@ -1,5 +1,6 @@
 ﻿using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Data.Entities;
+using eSystem.Core.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 
 namespace eSecurity.Server.Data.Entities;
@@ -28,9 +29,7 @@ public class ClientEntity : Entity
 
     public SubjectType SubjectType { get; set; }
     public string? SectorIdentifierUri { get; set; }
-
-    public string? LogoUri { get; set; }
-    public string? ClientUri { get; set; }
+    public NotificationDeliveryMode NotificationDeliveryMode { get; set; }
 
     public ICollection<ClientTokenAuthMethodEntity> TokenAuthMethods { get; set; } = null!;
     public ICollection<PairwiseSubjectEntity> PairwiseSubjects { get; set; } = null!;
@@ -54,6 +53,9 @@ public class ClientEntity : Entity
 
     public bool HasUri(string uri, UriType type)
         => Uris.Any(x => x.Uri == uri && x.Type == type);
+    
+    public bool HasUri(UriType type)
+        => Uris.Any(x => x.Type == type);
     
     public bool IsValidAudience(string aud) 
         => Audiences.Any(x => x.Audience == aud);
