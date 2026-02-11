@@ -18,7 +18,7 @@ public sealed class OidcDeviceCodeFlow(
     IClientManager clientManager,
     IDeviceCodeManager deviceCodeManager,
     IClaimFactoryProvider claimFactoryProvider,
-    ITokenFactoryProvider tokenFactoryProvider,
+    ITokenBuilderProvider tokenBuilderProvider,
     IUserManager userManager,
     ISessionManager sessionManager,
     IOptions<TokenConfigurations> tokenOptions) : IDeviceCodeFlow
@@ -26,7 +26,7 @@ public sealed class OidcDeviceCodeFlow(
     private readonly IClientManager _clientManager = clientManager;
     private readonly IDeviceCodeManager _deviceCodeManager = deviceCodeManager;
     private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
-    private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
+    private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
     private readonly IUserManager _userManager = userManager;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly TokenConfigurations _tokenConfigurations = tokenOptions.Value;
@@ -88,15 +88,15 @@ public sealed class OidcDeviceCodeFlow(
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Value),
             }, cancellationToken);
 
-            var tokenContext = new JwtTokenContext { Claims = claims, Type = JwtTokenTypes.AccessToken };
-            var tokenFactory = _tokenFactoryProvider.GetFactory<JwtTokenContext, string>();
+            var tokenContext = new JwtTokenBuildContext { Claims = claims, Type = JwtTokenTypes.AccessToken };
+            var tokenFactory = _tokenBuilderProvider.GetFactory<JwtTokenBuildContext, string>();
 
-            response.AccessToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
+            response.AccessToken = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
         }
         else
         {
             var lifetime = client.AccessTokenLifetime ?? _tokenConfigurations.DefaultAccessTokenLifetime;
-            var tokenContext = new OpaqueTokenContext
+            var tokenContext = new OpaqueTokenBuildContext
             {
                 TokenLength = _tokenConfigurations.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.AccessToken,
@@ -108,8 +108,8 @@ public sealed class OidcDeviceCodeFlow(
                 Sid = session.Id
             };
             
-            var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
-            response.AccessToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
+            var tokenFactory = _tokenBuilderProvider.GetFactory<OpaqueTokenBuildContext, string>();
+            response.AccessToken = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
         }
 
         var clientResult = await _clientManager.RelateAsync(client, session, cancellationToken);
@@ -118,7 +118,7 @@ public sealed class OidcDeviceCodeFlow(
         if (client.AllowOfflineAccess && client.HasScope(ScopeTypes.OfflineAccess))
         {
             var lifetime = client.RefreshTokenLifetime ?? _tokenConfigurations.DefaultRefreshTokenLifetime;
-            var tokenContext = new OpaqueTokenContext
+            var tokenContext = new OpaqueTokenBuildContext
             {
                 TokenLength = _tokenConfigurations.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.RefreshToken,
@@ -129,14 +129,14 @@ public sealed class OidcDeviceCodeFlow(
                 Subject = user.Id.ToString(),
                 Sid = session.Id
             };
-            var refreshTokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
-            response.RefreshToken = await refreshTokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
+            var refreshTokenFactory = _tokenBuilderProvider.GetFactory<OpaqueTokenBuildContext, string>();
+            response.RefreshToken = await refreshTokenFactory.BuildAsync(tokenContext, cancellationToken);
         }
         
         if (client.HasGrantType(GrantTypes.Ciba))
         {
             var lifetime = client.LoginTokenLifetime ?? _tokenConfigurations.DefaultLoginTokenLifetime;
-            var tokenContext = new OpaqueTokenContext
+            var tokenContext = new OpaqueTokenBuildContext
             {
                 TokenLength = _tokenConfigurations.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.LoginToken,
@@ -146,8 +146,8 @@ public sealed class OidcDeviceCodeFlow(
                 Subject = user.Id.ToString(),
             };
             
-            var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
-            response.LoginTokenHint = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
+            var tokenFactory = _tokenBuilderProvider.GetFactory<OpaqueTokenBuildContext, string>();
+            response.LoginTokenHint = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
         }
 
         var idTokenLifetime = client.IdTokenLifetime ?? _tokenConfigurations.DefaultIdTokenLifetime;
@@ -162,10 +162,10 @@ public sealed class OidcDeviceCodeFlow(
             Exp = DateTimeOffset.UtcNow.Add(idTokenLifetime)
         }, cancellationToken);
 
-        var idTokenContext = new JwtTokenContext { Claims = idClaims, Type = JwtTokenTypes.IdToken };
-        var idTokenFactory = _tokenFactoryProvider.GetFactory<JwtTokenContext, string>();
+        var idTokenContext = new JwtTokenBuildContext { Claims = idClaims, Type = JwtTokenTypes.IdToken };
+        var idTokenFactory = _tokenBuilderProvider.GetFactory<JwtTokenBuildContext, string>();
 
-        response.IdToken = await idTokenFactory.CreateTokenAsync(idTokenContext, cancellationToken);
+        response.IdToken = await idTokenFactory.BuildAsync(idTokenContext, cancellationToken);
         return Results.Ok(response);
     }
 }

@@ -16,14 +16,14 @@ namespace eSecurity.Server.Security.Authorization.OAuth.Token.ClientCredentials;
 public sealed class ClientCredentialsStrategy(
     IClientManager clientManager,
     IClaimFactoryProvider claimFactoryProvider,
-    ITokenFactoryProvider tokenFactoryProvider,
+    ITokenBuilderProvider tokenBuilderProvider,
     IHasherProvider hasherProvider,
     ITokenManager tokenManager,
     IOptions<TokenConfigurations> options) : ITokenStrategy
 {
     private readonly IClientManager _clientManager = clientManager;
     private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
-    private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
+    private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
     private readonly IHasherProvider _hasherProvider = hasherProvider;
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
@@ -102,21 +102,21 @@ public sealed class ClientCredentialsStrategy(
             };
             
             var claims = await claimsFactory.GetClaimsAsync(client, claimsContext, cancellationToken);
-            var jwtTokenContext = new JwtTokenContext
+            var jwtTokenContext = new JwtTokenBuildContext
             {
                 Claims = claims,
                 Type = JwtTokenTypes.AccessToken
             };
             
-            var tokenFactory = _tokenFactoryProvider.GetFactory<JwtTokenContext, string>();
-            var token = await tokenFactory.CreateTokenAsync(jwtTokenContext, cancellationToken);
+            var tokenFactory = _tokenBuilderProvider.GetFactory<JwtTokenBuildContext, string>();
+            var token = await tokenFactory.BuildAsync(jwtTokenContext, cancellationToken);
             
             response.AccessToken = token;
         }
         else
         {
             var lifetime = client.AccessTokenLifetime ?? _tokenConfigurations.DefaultAccessTokenLifetime;
-            var tokenContext = new OpaqueTokenContext
+            var tokenContext = new OpaqueTokenBuildContext
             {
                 TokenLength = _tokenConfigurations.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.AccessToken,
@@ -127,8 +127,8 @@ public sealed class ClientCredentialsStrategy(
                 Subject = client.Id.ToString(),
             };
             
-            var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
-            response.AccessToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
+            var tokenFactory = _tokenBuilderProvider.GetFactory<OpaqueTokenBuildContext, string>();
+            response.AccessToken = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
         }
         
         return Results.Ok(response);

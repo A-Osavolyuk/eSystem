@@ -14,12 +14,12 @@ namespace eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Tran
 public sealed class JwtTokenTransformationHandler(
     ITokenClaimsExtractor claimsExtractor,
     IClientManager clientManager,
-    ITokenFactoryProvider tokenFactoryProvider,
+    ITokenBuilderProvider tokenBuilderProvider,
     IOptions<TokenConfigurations> options) : ITokenTransformationHandler
 {
     private readonly ITokenClaimsExtractor _claimsExtractor = claimsExtractor;
     private readonly IClientManager _clientManager = clientManager;
-    private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
+    private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
     private readonly TokenConfigurations _configurations = options.Value;
 
     public async ValueTask<Result> HandleAsync(TokenExchangeFlowContext context,
@@ -83,9 +83,9 @@ public sealed class JwtTokenTransformationHandler(
 
         claims.Add(new Claim(AppClaimTypes.Scope, context.Scope));
 
-        var tokenFactory = _tokenFactoryProvider.GetFactory<JwtTokenContext, string>();
-        var tokenContext = new JwtTokenContext { Claims = claims, Type = JwtTokenTypes.AccessToken };
-        var accessToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
+        var tokenFactory = _tokenBuilderProvider.GetFactory<JwtTokenBuildContext, string>();
+        var tokenContext = new JwtTokenBuildContext { Claims = claims, Type = JwtTokenTypes.AccessToken };
+        var accessToken = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
 
         var response = new TokenExchangeResponse
         {

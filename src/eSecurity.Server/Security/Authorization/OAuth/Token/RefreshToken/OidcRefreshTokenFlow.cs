@@ -16,7 +16,7 @@ using eSystem.Core.Security.Authorization.OAuth.Token.RefreshToken;
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.RefreshToken;
 
 public sealed class OidcRefreshTokenFlow(
-    ITokenFactoryProvider tokenFactoryProvider,
+    ITokenBuilderProvider tokenBuilderProvider,
     IClientManager clientManager,
     ITokenManager tokenManager,
     IUserManager userManager,
@@ -25,7 +25,7 @@ public sealed class OidcRefreshTokenFlow(
     IClaimFactoryProvider claimFactoryProvider,
     IOptions<TokenConfigurations> options) : IRefreshTokenFlow
 {
-    private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
+    private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
     private readonly IClientManager _clientManager = clientManager;
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IUserManager _userManager = userManager;
@@ -141,15 +141,15 @@ public sealed class OidcRefreshTokenFlow(
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Value),
             }, cancellationToken);
 
-            var tokenContext = new JwtTokenContext { Claims = claims, Type = JwtTokenTypes.AccessToken };
-            var tokenFactory = _tokenFactoryProvider.GetFactory<JwtTokenContext, string>();
+            var tokenContext = new JwtTokenBuildContext { Claims = claims, Type = JwtTokenTypes.AccessToken };
+            var tokenFactory = _tokenBuilderProvider.GetFactory<JwtTokenBuildContext, string>();
 
-            response.AccessToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
+            response.AccessToken = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
         }
         else
         {
             var lifetime = client.AccessTokenLifetime ?? _tokenConfigurations.DefaultAccessTokenLifetime;
-            var tokenContext = new OpaqueTokenContext
+            var tokenContext = new OpaqueTokenBuildContext
             {
                 TokenLength = _tokenConfigurations.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.AccessToken,
@@ -160,14 +160,14 @@ public sealed class OidcRefreshTokenFlow(
                 Subject = user.Id.ToString(),
                 Sid = session.Id
             };
-            var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
-            response.AccessToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
+            var tokenFactory = _tokenBuilderProvider.GetFactory<OpaqueTokenBuildContext, string>();
+            response.AccessToken = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
         }
 
         if (client.RefreshTokenRotationEnabled)
         {
             var lifetime = client.RefreshTokenLifetime ?? _tokenConfigurations.DefaultRefreshTokenLifetime;
-            var tokenContext = new OpaqueTokenContext
+            var tokenContext = new OpaqueTokenBuildContext
             {
                 TokenLength = _tokenConfigurations.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.RefreshToken,
@@ -179,8 +179,8 @@ public sealed class OidcRefreshTokenFlow(
                 Sid = session.Id
             };
             
-            var refreshTokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
-            response.RefreshToken = await refreshTokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
+            var refreshTokenFactory = _tokenBuilderProvider.GetFactory<OpaqueTokenBuildContext, string>();
+            response.RefreshToken = await refreshTokenFactory.BuildAsync(tokenContext, cancellationToken);
         }
         else
         {
@@ -199,10 +199,10 @@ public sealed class OidcRefreshTokenFlow(
             Exp = DateTimeOffset.UtcNow.Add(idTokenLifetime),
         }, cancellationToken);
 
-        var idTokenContext = new JwtTokenContext { Claims = idClaims, Type = JwtTokenTypes.IdToken };
-        var idTokenFactory = _tokenFactoryProvider.GetFactory<JwtTokenContext, string>();
+        var idTokenContext = new JwtTokenBuildContext { Claims = idClaims, Type = JwtTokenTypes.IdToken };
+        var idTokenFactory = _tokenBuilderProvider.GetFactory<JwtTokenBuildContext, string>();
 
-        response.IdToken = await idTokenFactory.CreateTokenAsync(idTokenContext, cancellationToken);
+        response.IdToken = await idTokenFactory.BuildAsync(idTokenContext, cancellationToken);
 
         return Results.Ok(response);
     }

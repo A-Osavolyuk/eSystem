@@ -15,12 +15,12 @@ public sealed class OpaqueTokenDelegationHandler(
     ITokenManager tokenManager,
     IClientManager clientManager,
     IOptions<TokenConfigurations> options,
-    ITokenFactoryProvider tokenFactoryProvider) : ITokenDelegationHandler
+    ITokenBuilderProvider tokenBuilderProvider) : ITokenDelegationHandler
 {
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IClientManager _clientManager = clientManager;
     private readonly TokenConfigurations _configurations = options.Value;
-    private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
+    private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
     private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
 
     public async ValueTask<Result> HandleAsync(TokenExchangeFlowContext context,
@@ -112,7 +112,7 @@ public sealed class OpaqueTokenDelegationHandler(
             });
         }
 
-        var tokenContext = new OpaqueTokenContext
+        var tokenContext = new OpaqueTokenBuildContext
         {
             TokenLength = _configurations.OpaqueTokenLength,
             TokenType = OpaqueTokenType.AccessToken,
@@ -156,8 +156,8 @@ public sealed class OpaqueTokenDelegationHandler(
 
         tokenContext.Scopes = scopes;
         
-        var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
-        var opaqueToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
+        var tokenFactory = _tokenBuilderProvider.GetFactory<OpaqueTokenBuildContext, string>();
+        var opaqueToken = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
 
         return Results.Ok(new TokenExchangeResponse
         {

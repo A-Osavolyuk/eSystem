@@ -14,7 +14,7 @@ using eSystem.Core.Security.Authorization.OAuth.Token.RefreshToken;
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.RefreshToken;
 
 public sealed class OAuthRefreshTokenFlow(
-    ITokenFactoryProvider tokenFactoryProvider,
+    ITokenBuilderProvider tokenBuilderProvider,
     IClientManager clientManager,
     ITokenManager tokenManager,
     IUserManager userManager,
@@ -22,7 +22,7 @@ public sealed class OAuthRefreshTokenFlow(
     IClaimFactoryProvider claimFactoryProvider,
     IOptions<TokenConfigurations> options) : IRefreshTokenFlow
 {
-    private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
+    private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
     private readonly IClientManager _clientManager = clientManager;
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IUserManager _userManager = userManager;
@@ -97,15 +97,15 @@ public sealed class OAuthRefreshTokenFlow(
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Value),
             }, cancellationToken);
 
-            var tokenContext = new JwtTokenContext { Claims = claims, Type = JwtTokenTypes.AccessToken };
-            var tokenFactory = _tokenFactoryProvider.GetFactory<JwtTokenContext, string>();
+            var tokenContext = new JwtTokenBuildContext { Claims = claims, Type = JwtTokenTypes.AccessToken };
+            var tokenFactory = _tokenBuilderProvider.GetFactory<JwtTokenBuildContext, string>();
 
-            response.AccessToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
+            response.AccessToken = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
         }
         else
         {
             var lifetime = client.AccessTokenLifetime ?? _tokenConfigurations.DefaultAccessTokenLifetime;
-            var tokenContext = new OpaqueTokenContext
+            var tokenContext = new OpaqueTokenBuildContext
             {
                 TokenLength = _tokenConfigurations.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.AccessToken,
@@ -116,14 +116,14 @@ public sealed class OAuthRefreshTokenFlow(
                 Subject = user.Id.ToString(),
             };
             
-            var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
-            response.AccessToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
+            var tokenFactory = _tokenBuilderProvider.GetFactory<OpaqueTokenBuildContext, string>();
+            response.AccessToken = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
         }
 
         if (client.RefreshTokenRotationEnabled)
         {
             var lifetime = client.RefreshTokenLifetime ?? _tokenConfigurations.DefaultRefreshTokenLifetime;
-            var tokenContext = new OpaqueTokenContext
+            var tokenContext = new OpaqueTokenBuildContext
             {
                 TokenLength = _tokenConfigurations.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.RefreshToken,
@@ -134,8 +134,8 @@ public sealed class OAuthRefreshTokenFlow(
                 Subject = user.Id.ToString(),
             };
             
-            var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
-            response.RefreshToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
+            var tokenFactory = _tokenBuilderProvider.GetFactory<OpaqueTokenBuildContext, string>();
+            response.RefreshToken = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
 
             var revokeResult = await _tokenManager.RevokeAsync(token, cancellationToken);
             return revokeResult.Succeeded ? Results.Ok(response) : revokeResult;

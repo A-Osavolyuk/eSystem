@@ -15,13 +15,13 @@ public sealed class OpaqueTokenTransformationHandler(
     ITokenManager tokenManager,
     IClientManager clientManager,
     IOptions<TokenConfigurations> options,
-    ITokenFactoryProvider tokenFactoryProvider) : ITokenTransformationHandler
+    ITokenBuilderProvider tokenBuilderProvider) : ITokenTransformationHandler
 {
     private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IClientManager _clientManager = clientManager;
     private readonly TokenConfigurations _configurations = options.Value;
-    private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
+    private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
 
     public async ValueTask<Result> HandleAsync(TokenExchangeFlowContext context,
         CancellationToken cancellationToken = default)
@@ -56,7 +56,7 @@ public sealed class OpaqueTokenTransformationHandler(
             });
         }
 
-        var tokenContext = new OpaqueTokenContext
+        var tokenContext = new OpaqueTokenBuildContext
         {
             TokenLength = _configurations.OpaqueTokenLength,
             TokenType = OpaqueTokenType.AccessToken,
@@ -99,8 +99,8 @@ public sealed class OpaqueTokenTransformationHandler(
 
         tokenContext.Scopes = scopes;
 
-        var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
-        var opaqueToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
+        var tokenFactory = _tokenBuilderProvider.GetFactory<OpaqueTokenBuildContext, string>();
+        var opaqueToken = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
 
         return Results.Ok(new TokenExchangeResponse
         {

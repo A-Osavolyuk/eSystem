@@ -1,3 +1,3 @@
 ﻿namespace eSecurity.Server.Security.Cryptography.Tokens;
 
-public abstract class TokenContext {}
+public abstract class TokenBuildContext {}

@@ -6,7 +6,7 @@ using eSecurity.Server.Security.Cryptography.Keys;
 
 namespace eSecurity.Server.Security.Cryptography.Tokens;
 
-public sealed class OpaqueTokenContext : TokenContext
+public sealed class OpaqueTokenBuildContext : TokenBuildContext
 {
     public required Guid ClientId { get; set; }
     public required string Subject { get; set; }
@@ -21,42 +21,42 @@ public sealed class OpaqueTokenContext : TokenContext
     public DateTimeOffset? IssuedAt { get; set; }
 }
 
-public class OpaqueTokenFactory(
+public class OpaqueTokenBuilder(
     IKeyFactory keyFactory,
     ITokenManager tokenManager,
     IHasherProvider hasherProvider,
-    IClientManager clientManager) : ITokenFactory<OpaqueTokenContext, string>
+    IClientManager clientManager) : ITokenBuilder<OpaqueTokenBuildContext, string>
 {
     private readonly IKeyFactory _keyFactory = keyFactory;
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IClientManager _clientManager = clientManager;
     private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
 
-    public async ValueTask<string> CreateTokenAsync(OpaqueTokenContext context,
+    public async ValueTask<string> BuildAsync(OpaqueTokenBuildContext buildContext,
         CancellationToken cancellationToken = default)
     {
-        var client = await _clientManager.FindByIdAsync(context.ClientId, cancellationToken);
+        var client = await _clientManager.FindByIdAsync(buildContext.ClientId, cancellationToken);
         if (client is null) throw new Exception("Client was not found");
 
-        var token = _keyFactory.Create(context.TokenLength);
+        var token = _keyFactory.Create(buildContext.TokenLength);
         var opaqueToken = new OpaqueTokenEntity()
         {
             Id = Guid.CreateVersion7(),
-            Subject = context.Subject,
+            Subject = buildContext.Subject,
             TokenHash = _hasher.Hash(token),
-            TokenType = context.TokenType,
-            SessionId = context.Sid,
-            ActorId = context.ActorId,
-            ClientId = context.ClientId,
-            NotBefore = context.NotBefore,
-            ExpiredAt = context.ExpiredAt,
-            IssuedAt = context.IssuedAt ?? DateTimeOffset.UtcNow,
+            TokenType = buildContext.TokenType,
+            SessionId = buildContext.Sid,
+            ActorId = buildContext.ActorId,
+            ClientId = buildContext.ClientId,
+            NotBefore = buildContext.NotBefore,
+            ExpiredAt = buildContext.ExpiredAt,
+            IssuedAt = buildContext.IssuedAt ?? DateTimeOffset.UtcNow,
         };
 
-        if (context.TokenType is not OpaqueTokenType.LoginToken && context.Audiences.Count > 0)
+        if (buildContext.TokenType is not OpaqueTokenType.LoginToken && buildContext.Audiences.Count > 0)
         {
             opaqueToken.Audiences = client.Audiences
-                .Where(aud => context.Audiences.Contains(aud.Audience))
+                .Where(aud => buildContext.Audiences.Contains(aud.Audience))
                 .Select(aud => new OpaqueTokenAudienceEntity()
                 {
                     Id = Guid.CreateVersion7(),
@@ -66,10 +66,10 @@ public class OpaqueTokenFactory(
                 .ToList();
         }
 
-        if (context.TokenType is not OpaqueTokenType.LoginToken && context.Scopes.Count > 0)
+        if (buildContext.TokenType is not OpaqueTokenType.LoginToken && buildContext.Scopes.Count > 0)
         {
             opaqueToken.Scopes = client.AllowedScopes
-                .Where(scope => context.Scopes.Contains(scope.Scope.Value))
+                .Where(scope => buildContext.Scopes.Contains(scope.Scope.Value))
                 .Select(scope => new OpaqueTokenScopeEntity()
                 {
                     Id = Guid.CreateVersion7(),

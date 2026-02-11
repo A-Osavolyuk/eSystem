@@ -67,9 +67,9 @@ public static class CryptographyExtensions
         {
             services.Configure(configure);
 
-            services.AddScoped<ITokenFactoryProvider, TokenFactoryProvider>();
-            services.AddScoped<ITokenFactory<JwtTokenContext, string>, JwtTokenFactory>();
-            services.AddScoped<ITokenFactory<OpaqueTokenContext, string>, OpaqueTokenFactory>();
+            services.AddScoped<ITokenBuilderProvider, TokenBuilderProvider>();
+            services.AddScoped<ITokenBuilder<JwtTokenBuildContext, string>, JwtTokenBuilder>();
+            services.AddScoped<ITokenBuilder<OpaqueTokenBuildContext, string>, OpaqueTokenBuilder>();
             services.AddScoped<IJwtSigner, JwtSigner>();
         }
     }

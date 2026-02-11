@@ -18,7 +18,7 @@ public sealed class OAuthDeviceCodeFlow(
     IDeviceCodeManager deviceCodeManager,
     ITokenManager tokenManager,
     IClaimFactoryProvider claimFactoryProvider,
-    ITokenFactoryProvider tokenFactoryProvider,
+    ITokenBuilderProvider tokenBuilderProvider,
     IHasherProvider hasherProvider,
     IUserManager userManager,
     IOptions<TokenConfigurations> tokenOptions) : IDeviceCodeFlow
@@ -27,7 +27,7 @@ public sealed class OAuthDeviceCodeFlow(
     private readonly IDeviceCodeManager _deviceCodeManager = deviceCodeManager;
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
-    private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
+    private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
     private readonly IUserManager _userManager = userManager;
     private readonly TokenConfigurations _tokenConfigurations = tokenOptions.Value;
     private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
@@ -79,15 +79,15 @@ public sealed class OAuthDeviceCodeFlow(
                 Scopes = client.AllowedScopes.Select(x => x.Scope.Value),
             }, cancellationToken);
 
-            var tokenContext = new JwtTokenContext { Claims = claims, Type = JwtTokenTypes.AccessToken };
-            var tokenFactory = _tokenFactoryProvider.GetFactory<JwtTokenContext, string>();
+            var tokenContext = new JwtTokenBuildContext { Claims = claims, Type = JwtTokenTypes.AccessToken };
+            var tokenFactory = _tokenBuilderProvider.GetFactory<JwtTokenBuildContext, string>();
 
-            response.AccessToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
+            response.AccessToken = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
         }
         else
         {
             var lifetime = client.AccessTokenLifetime ?? _tokenConfigurations.DefaultAccessTokenLifetime;
-            var tokenContext = new OpaqueTokenContext
+            var tokenContext = new OpaqueTokenBuildContext
             {
                 TokenLength = _tokenConfigurations.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.AccessToken,
@@ -98,14 +98,14 @@ public sealed class OAuthDeviceCodeFlow(
                 Subject = user.Id.ToString(),
             };
             
-            var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
-            response.AccessToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
+            var tokenFactory = _tokenBuilderProvider.GetFactory<OpaqueTokenBuildContext, string>();
+            response.AccessToken = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
         }
         
         if (client.AllowOfflineAccess)
         {
             var lifetime = client.RefreshTokenLifetime ?? _tokenConfigurations.DefaultRefreshTokenLifetime;
-            var tokenContext = new OpaqueTokenContext
+            var tokenContext = new OpaqueTokenBuildContext
             {
                 TokenLength = _tokenConfigurations.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.RefreshToken,
@@ -116,14 +116,14 @@ public sealed class OAuthDeviceCodeFlow(
                 Subject = user.Id.ToString(),
             };
             
-            var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
-            response.RefreshToken = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
+            var tokenFactory = _tokenBuilderProvider.GetFactory<OpaqueTokenBuildContext, string>();
+            response.RefreshToken = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
         }
 
         if (client.HasGrantType(GrantTypes.Ciba))
         {
             var lifetime = client.LoginTokenLifetime ?? _tokenConfigurations.DefaultLoginTokenLifetime;
-            var tokenContext = new OpaqueTokenContext
+            var tokenContext = new OpaqueTokenBuildContext
             {
                 TokenLength = _tokenConfigurations.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.LoginToken,
@@ -132,8 +132,8 @@ public sealed class OAuthDeviceCodeFlow(
                 Subject = user.Id.ToString(),
             };
             
-            var tokenFactory = _tokenFactoryProvider.GetFactory<OpaqueTokenContext, string>();
-            response.LoginTokenHint = await tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
+            var tokenFactory = _tokenBuilderProvider.GetFactory<OpaqueTokenBuildContext, string>();
+            response.LoginTokenHint = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
         }
         
         return Results.Ok(response);

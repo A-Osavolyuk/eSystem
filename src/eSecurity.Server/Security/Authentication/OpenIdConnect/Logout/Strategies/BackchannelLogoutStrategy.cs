@@ -16,7 +16,7 @@ public class BackchannelLogoutStrategy(
     IClientManager clientManager,
     IUserManager userManager,
     IClaimFactoryProvider claimFactoryProvider,
-    ITokenFactoryProvider tokenFactoryProvider,
+    ITokenBuilderProvider tokenBuilderProvider,
     IOptions<TokenConfigurations> options) : ILogoutStrategy<Result>
 {
     private readonly IClientManager _clientManager = clientManager;
@@ -27,8 +27,8 @@ public class BackchannelLogoutStrategy(
     private readonly ITokenClaimsFactory<LogoutTokenClaimsContext, UserEntity> _claimsFactory =
         claimFactoryProvider.GetClaimFactory<LogoutTokenClaimsContext, UserEntity>();
 
-    private readonly ITokenFactory<JwtTokenContext, string> _tokenFactory =
-        tokenFactoryProvider.GetFactory<JwtTokenContext, string>();
+    private readonly ITokenBuilder<JwtTokenBuildContext, string> _tokenBuilder =
+        tokenBuilderProvider.GetFactory<JwtTokenBuildContext, string>();
 
     public async ValueTask<Result> ExecuteAsync(SessionEntity session, CancellationToken cancellationToken)
     {
@@ -50,8 +50,8 @@ public class BackchannelLogoutStrategy(
             };
 
             var claims = await _claimsFactory.GetClaimsAsync(user, claimsContext, cancellationToken);
-            var tokenContext = new JwtTokenContext { Claims = claims, Type = JwtTokenTypes.Generic };
-            var token = await _tokenFactory.CreateTokenAsync(tokenContext, cancellationToken);
+            var tokenContext = new JwtTokenBuildContext { Claims = claims, Type = JwtTokenTypes.Generic };
+            var token = await _tokenBuilder.BuildAsync(tokenContext, cancellationToken);
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, backchannelLogoutUri.Uri)
             {
                 Content = new FormUrlEncodedContent(FormUrl.Encode(

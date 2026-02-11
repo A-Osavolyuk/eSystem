@@ -5,20 +5,20 @@ using eSecurity.Server.Security.Cryptography.Signing.Certificates;
 
 namespace eSecurity.Server.Security.Cryptography.Tokens;
 
-public sealed class JwtTokenContext : TokenContext
+public sealed class JwtTokenBuildContext : TokenBuildContext
 {
     public required IEnumerable<Claim> Claims { get; set; }
     public required string Type { get; set; }
 }
 
-public class JwtTokenFactory(
+public class JwtTokenBuilder(
     IJwtSigner signer,
-    ICertificateProvider certificateProvider) : ITokenFactory<JwtTokenContext, string>
+    ICertificateProvider certificateProvider) : ITokenBuilder<JwtTokenBuildContext, string>
 {
     private readonly IJwtSigner _signer = signer;
     private readonly ICertificateProvider _certificateProvider = certificateProvider;
 
-    public async ValueTask<string> CreateTokenAsync(JwtTokenContext context, CancellationToken cancellationToken = default)
+    public async ValueTask<string> BuildAsync(JwtTokenBuildContext buildContext, CancellationToken cancellationToken = default)
     {
         var certificate = await _certificateProvider.GetActiveAsync(cancellationToken);
         var privateKey = certificate.Certificate.GetRSAPrivateKey();
@@ -26,6 +26,6 @@ public class JwtTokenFactory(
 
         var securityKey = new RsaSecurityKey(privateKey) { KeyId = certificate.Id.ToString() };
         var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.RsaSha256);
-        return _signer.Sign(context.Claims, signingCredentials, context.Type);
+        return _signer.Sign(buildContext.Claims, signingCredentials, buildContext.Type);
     }
 }
