@@ -18,17 +18,15 @@ public class OAuthAuthorizationCodeFlow(
     IUserManager userManager,
     IPkceHandler pkceHandler,
     IClientManager clientManager,
-    IClaimFactoryProvider claimFactoryProvider,
-    ITokenBuilderProvider tokenBuilderProvider,
     IAuthorizationCodeManager authorizationCodeManager,
+    ITokenFactoryProvider tokenFactoryProvider,
     IOptions<TokenConfigurations> options) : IAuthorizationCodeFlow
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IPkceHandler _pkceHandler = pkceHandler;
     private readonly IClientManager _clientManager = clientManager;
-    private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
-    private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
     private readonly IAuthorizationCodeManager _authorizationCodeManager = authorizationCodeManager;
+    private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(AuthorizationCodeEntity code, 
@@ -106,56 +104,21 @@ public class OAuthAuthorizationCodeFlow(
             TokenType = ResponseTokenTypes.Bearer,
         };
 
-        if (client.AccessTokenType == AccessTokenType.Jwt)
-        {
-            var lifetime = client.AccessTokenLifetime ?? _tokenConfigurations.DefaultAccessTokenLifetime;
-            var claimsFactory = _claimFactoryProvider.GetClaimFactory<AccessTokenClaimsContext, UserEntity>();
-            var claims = await claimsFactory.GetClaimsAsync(user, new AccessTokenClaimsContext
-            {
-                Exp = DateTimeOffset.UtcNow.Add(lifetime),
-                Aud = client.Audiences.Select(x => x.Audience),
-                Scopes = client.AllowedScopes.Select(x => x.Scope.Value),
-            }, cancellationToken);
-
-            var tokenContext = new JwtTokenBuildContext { Claims = claims, Type = JwtTokenTypes.AccessToken };
-            var tokenFactory = _tokenBuilderProvider.GetFactory<JwtTokenBuildContext, string>();
-
-            response.AccessToken = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
-        }
-        else
-        {
-            var lifetime = client.AccessTokenLifetime ?? _tokenConfigurations.DefaultAccessTokenLifetime;
-            var tokenContext = new OpaqueTokenBuildContext
-            {
-                TokenLength = _tokenConfigurations.OpaqueTokenLength,
-                TokenType = OpaqueTokenType.AccessToken,
-                ClientId = client.Id,
-                Audiences = client.Audiences.Select(x => x.Audience).ToList(),
-                Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
-                ExpiredAt = DateTimeOffset.UtcNow.Add(lifetime),
-                Subject = user.Id.ToString(),
-            };
-            
-            var tokenFactory = _tokenBuilderProvider.GetFactory<OpaqueTokenBuildContext, string>();
-            response.AccessToken = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
-        }
+        var accessTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.AccessToken);
+        var accessTokenResult = await accessTokenFactory.CreateAsync(client, user, cancellationToken: cancellationToken);
+        if (!accessTokenResult.IsSucceeded) 
+            return Results.InternalServerError(accessTokenResult.Error!);
+        
+        response.AccessToken = accessTokenResult.Token;
 
         if (client.AllowOfflineAccess)
         {
-            var lifetime = client.RefreshTokenLifetime ?? _tokenConfigurations.DefaultRefreshTokenLifetime;
-            var tokenContext = new OpaqueTokenBuildContext
-            {
-                TokenLength = _tokenConfigurations.OpaqueTokenLength,
-                TokenType = OpaqueTokenType.RefreshToken,
-                ClientId = client.Id,
-                Audiences = client.Audiences.Select(x => x.Audience).ToList(),
-                Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
-                ExpiredAt = DateTimeOffset.UtcNow.Add(lifetime),
-                Subject = user.Id.ToString(),
-            };
+            var refreshTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.RefreshToken);
+            var refreshTokenResult = await refreshTokenFactory.CreateAsync(client, user, cancellationToken: cancellationToken);
+            if (!refreshTokenResult.IsSucceeded) 
+                return Results.InternalServerError(refreshTokenResult.Error!);
             
-            var tokenFactory = _tokenBuilderProvider.GetFactory<OpaqueTokenBuildContext, string>();
-            response.RefreshToken = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
+            response.RefreshToken = refreshTokenResult.Token;
         }
 
         return Results.Ok(response);

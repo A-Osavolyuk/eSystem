@@ -19,6 +19,7 @@ public sealed class ClientCredentialsStrategy(
     ITokenBuilderProvider tokenBuilderProvider,
     IHasherProvider hasherProvider,
     ITokenManager tokenManager,
+    ITokenFactoryProvider tokenFactoryProvider,
     IOptions<TokenConfigurations> options) : ITokenStrategy
 {
     private readonly IClientManager _clientManager = clientManager;
@@ -26,14 +27,15 @@ public sealed class ClientCredentialsStrategy(
     private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
     private readonly IHasherProvider _hasherProvider = hasherProvider;
     private readonly ITokenManager _tokenManager = tokenManager;
+    private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
 
-    public async ValueTask<Result> ExecuteAsync(TokenRequest tokenRequest, 
+    public async ValueTask<Result> ExecuteAsync(TokenRequest tokenRequest,
         CancellationToken cancellationToken = default)
     {
         if (tokenRequest is not ClientCredentialsRequest request)
             throw new NotSupportedException("Payload type must be 'ClientCredentialsRequest'");
-        
+
         if (string.IsNullOrEmpty(request.ClientSecret))
         {
             return Results.BadRequest(new Error
@@ -42,7 +44,7 @@ public sealed class ClientCredentialsStrategy(
                 Description = "client_secret is required"
             });
         }
-        
+
         if (string.IsNullOrEmpty(request.Scope))
         {
             return Results.BadRequest(new Error
@@ -74,7 +76,7 @@ public sealed class ClientCredentialsStrategy(
         var grantedScopes = client.AllowedScopes.Select(x => x.Scope.Value);
         var requestScopes = request.Scope!.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         var allowedScopes = grantedScopes.Intersect(requestScopes).ToList();
-        
+
         if (allowedScopes.Count == 0)
         {
             return Results.BadRequest(new Error
@@ -89,48 +91,17 @@ public sealed class ClientCredentialsStrategy(
             ExpiresIn = (int)_tokenConfigurations.DefaultAccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenTypes.Bearer
         };
+
+        var factoryOptions = new TokenFactoryOptions() { AllowedScopes = allowedScopes };
+        var accessTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.AccessToken);
+        var accessTokenResult = await accessTokenFactory.CreateAsync(client, 
+            factoryOptions: factoryOptions, cancellationToken: cancellationToken);
         
-        if (client.AccessTokenType == AccessTokenType.Jwt)
-        {
-            var lifetime = client.AccessTokenLifetime ?? _tokenConfigurations.DefaultAccessTokenLifetime;
-            var claimsFactory = _claimFactoryProvider.GetClaimFactory<AccessTokenClaimsContext, ClientEntity>();
-            var claimsContext = new AccessTokenClaimsContext
-            {
-                Exp = DateTimeOffset.UtcNow.Add(lifetime),
-                Aud = client.Audiences.Select(x => x.Audience),
-                Scopes = allowedScopes
-            };
-            
-            var claims = await claimsFactory.GetClaimsAsync(client, claimsContext, cancellationToken);
-            var jwtTokenContext = new JwtTokenBuildContext
-            {
-                Claims = claims,
-                Type = JwtTokenTypes.AccessToken
-            };
-            
-            var tokenFactory = _tokenBuilderProvider.GetFactory<JwtTokenBuildContext, string>();
-            var token = await tokenFactory.BuildAsync(jwtTokenContext, cancellationToken);
-            
-            response.AccessToken = token;
-        }
-        else
-        {
-            var lifetime = client.AccessTokenLifetime ?? _tokenConfigurations.DefaultAccessTokenLifetime;
-            var tokenContext = new OpaqueTokenBuildContext
-            {
-                TokenLength = _tokenConfigurations.OpaqueTokenLength,
-                TokenType = OpaqueTokenType.AccessToken,
-                ClientId = client.Id,
-                Audiences = client.Audiences.Select(x => x.Audience).ToList(),
-                Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
-                ExpiredAt = DateTimeOffset.UtcNow.Add(lifetime),
-                Subject = client.Id.ToString(),
-            };
-            
-            var tokenFactory = _tokenBuilderProvider.GetFactory<OpaqueTokenBuildContext, string>();
-            response.AccessToken = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
-        }
-        
+        if (!accessTokenResult.IsSucceeded) 
+            return Results.InternalServerError(accessTokenResult.Error!);
+
+        response.AccessToken = accessTokenResult.Token;
+
         return Results.Ok(response);
     }
 }

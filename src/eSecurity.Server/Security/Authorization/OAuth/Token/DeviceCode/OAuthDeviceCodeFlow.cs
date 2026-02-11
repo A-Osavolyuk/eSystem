@@ -8,6 +8,7 @@ using eSecurity.Server.Security.Identity.Claims.Factories;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Token.DeviceCode;
 
@@ -16,21 +17,15 @@ namespace eSecurity.Server.Security.Authorization.OAuth.Token.DeviceCode;
 public sealed class OAuthDeviceCodeFlow(
     IClientManager clientManager,
     IDeviceCodeManager deviceCodeManager,
-    ITokenManager tokenManager,
-    IClaimFactoryProvider claimFactoryProvider,
-    ITokenBuilderProvider tokenBuilderProvider,
-    IHasherProvider hasherProvider,
     IUserManager userManager,
+    ITokenFactoryProvider tokenFactoryProvider,
     IOptions<TokenConfigurations> tokenOptions) : IDeviceCodeFlow
 {
     private readonly IClientManager _clientManager = clientManager;
     private readonly IDeviceCodeManager _deviceCodeManager = deviceCodeManager;
-    private readonly ITokenManager _tokenManager = tokenManager;
-    private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
-    private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
     private readonly IUserManager _userManager = userManager;
+    private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly TokenConfigurations _tokenConfigurations = tokenOptions.Value;
-    private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
 
     public async ValueTask<Result> ExecuteAsync(DeviceCodeEntity deviceCode, DeviceCodeFlowContext context,
         CancellationToken cancellationToken = default)
@@ -68,72 +63,31 @@ public sealed class OAuthDeviceCodeFlow(
             TokenType = ResponseTokenTypes.Bearer,
         };
 
-        if (client.AccessTokenType == AccessTokenType.Jwt)
-        {
-            var lifetime = client.AccessTokenLifetime ?? _tokenConfigurations.DefaultAccessTokenLifetime;
-            var claimsFactory = _claimFactoryProvider.GetClaimFactory<AccessTokenClaimsContext, UserEntity>();
-            var claims = await claimsFactory.GetClaimsAsync(user, new AccessTokenClaimsContext
-            {
-                Exp = DateTimeOffset.UtcNow.Add(lifetime),
-                Aud = client.Audiences.Select(x => x.Audience),
-                Scopes = client.AllowedScopes.Select(x => x.Scope.Value),
-            }, cancellationToken);
-
-            var tokenContext = new JwtTokenBuildContext { Claims = claims, Type = JwtTokenTypes.AccessToken };
-            var tokenFactory = _tokenBuilderProvider.GetFactory<JwtTokenBuildContext, string>();
-
-            response.AccessToken = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
-        }
-        else
-        {
-            var lifetime = client.AccessTokenLifetime ?? _tokenConfigurations.DefaultAccessTokenLifetime;
-            var tokenContext = new OpaqueTokenBuildContext
-            {
-                TokenLength = _tokenConfigurations.OpaqueTokenLength,
-                TokenType = OpaqueTokenType.AccessToken,
-                ClientId = client.Id,
-                Audiences = client.Audiences.Select(x => x.Audience).ToList(),
-                Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
-                ExpiredAt = DateTimeOffset.UtcNow.Add(lifetime),
-                Subject = user.Id.ToString(),
-            };
-            
-            var tokenFactory = _tokenBuilderProvider.GetFactory<OpaqueTokenBuildContext, string>();
-            response.AccessToken = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
-        }
+        var accessTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.AccessToken);
+        var accessTokenResult = await accessTokenFactory.CreateAsync(client, user, cancellationToken: cancellationToken);
+        if (!accessTokenResult.IsSucceeded) 
+            return Results.InternalServerError(accessTokenResult.Error!);
         
-        if (client.AllowOfflineAccess)
+        response.AccessToken = accessTokenResult.Token;
+        
+        if (client.AllowOfflineAccess && client.HasScope(ScopeTypes.OfflineAccess))
         {
-            var lifetime = client.RefreshTokenLifetime ?? _tokenConfigurations.DefaultRefreshTokenLifetime;
-            var tokenContext = new OpaqueTokenBuildContext
-            {
-                TokenLength = _tokenConfigurations.OpaqueTokenLength,
-                TokenType = OpaqueTokenType.RefreshToken,
-                ClientId = client.Id,
-                Audiences = client.Audiences.Select(x => x.Audience).ToList(),
-                Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
-                ExpiredAt = DateTimeOffset.UtcNow.Add(lifetime),
-                Subject = user.Id.ToString(),
-            };
-            
-            var tokenFactory = _tokenBuilderProvider.GetFactory<OpaqueTokenBuildContext, string>();
-            response.RefreshToken = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
+            var refreshTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.RefreshToken);
+            var refreshTokenResult = await refreshTokenFactory.CreateAsync(client, user, cancellationToken: cancellationToken);
+            if (!refreshTokenResult.IsSucceeded) 
+                return Results.InternalServerError(refreshTokenResult.Error!);
+        
+            response.RefreshToken = refreshTokenResult.Token;
         }
 
         if (client.HasGrantType(GrantTypes.Ciba))
         {
-            var lifetime = client.LoginTokenLifetime ?? _tokenConfigurations.DefaultLoginTokenLifetime;
-            var tokenContext = new OpaqueTokenBuildContext
-            {
-                TokenLength = _tokenConfigurations.OpaqueTokenLength,
-                TokenType = OpaqueTokenType.LoginToken,
-                ClientId = client.Id,
-                ExpiredAt = DateTimeOffset.UtcNow.Add(lifetime),
-                Subject = user.Id.ToString(),
-            };
-            
-            var tokenFactory = _tokenBuilderProvider.GetFactory<OpaqueTokenBuildContext, string>();
-            response.LoginTokenHint = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
+            var loginTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.LoginToken);
+            var loginTokenResult = await loginTokenFactory.CreateAsync(client, user, cancellationToken: cancellationToken);
+            if (!loginTokenResult.IsSucceeded) 
+                return Results.InternalServerError(loginTokenResult.Error!);
+        
+            response.LoginTokenHint = loginTokenResult.Token;
         }
         
         return Results.Ok(response);
