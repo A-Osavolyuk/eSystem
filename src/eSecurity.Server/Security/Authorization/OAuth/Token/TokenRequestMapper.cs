@@ -1,6 +1,7 @@
 ﻿using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Token;
 using eSystem.Core.Security.Authorization.OAuth.Token.AuthorizationCode;
+using eSystem.Core.Security.Authorization.OAuth.Token.Ciba;
 using eSystem.Core.Security.Authorization.OAuth.Token.ClientCredentials;
 using eSystem.Core.Security.Authorization.OAuth.Token.DeviceCode;
 using eSystem.Core.Security.Authorization.OAuth.Token.RefreshToken;
@@ -57,6 +58,15 @@ public class TokenRequestMapper : ITokenRequestMapper
                 RequestTokenType = input.GetValueOrDefault("request_token_type"),
                 Audience = input.GetValueOrDefault("audience"),
                 Scope = input.GetValueOrDefault("scope")
+            },
+            GrantTypes.Ciba => new CibaRequest()
+            {
+                GrantType = grantType,
+                AuthReqId = input["auth_req_id"],
+                ClientId = input["client_id"],
+                ClientSecret = input.GetValueOrDefault("client_secret"),
+                ClientAssertion = input.GetValueOrDefault("client_assertion"),
+                ClientAssertionType = input.GetValueOrDefault("client_assertion_type"),
             },
             _ => null
         };
