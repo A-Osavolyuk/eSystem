@@ -14,8 +14,8 @@ namespace eSecurity.Server.Security.Identity.Claims.Factories;
 public sealed class IdTokenClaimsContext : TokenClaimsContext
 {
     public required string Aud { get; set; }
-    public required string Sid { get; set; } = string.Empty;
-    public string[] AuthenticationMethods { get; set; } = [];
+    public required string Sid { get; set; }
+    public string[]? AuthenticationMethods { get; set; }
     public string? Nonce { get; set; }
     public DateTimeOffset? AuthTime { get; set; }
 }
@@ -34,8 +34,14 @@ public sealed class IdTokenClaimsFactory(
     public async ValueTask<List<Claim>> GetClaimsAsync(UserEntity user,
         IdTokenClaimsContext context, CancellationToken cancellationToken)
     {
-        var exp = DateTimeOffset.UtcNow.Add(_configurations.DefaultIdTokenLifetime).ToUnixTimeSeconds().ToString();
-        var iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
+        var iat = context.Iat.HasValue 
+            ? context.Iat.Value.ToUnixTimeSeconds().ToString() 
+            : DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
+        
+        var exp = context.Exp.HasValue 
+            ? context.Exp.Value.ToUnixTimeSeconds().ToString() 
+            : DateTimeOffset.UtcNow.Add(_configurations.DefaultIdTokenLifetime).ToUnixTimeSeconds().ToString();
+        
         var authTime = context.AuthTime.HasValue
             ? context.AuthTime.Value.ToUnixTimeSeconds().ToString()
             : DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
@@ -52,16 +58,20 @@ public sealed class IdTokenClaimsFactory(
             new(AppClaimTypes.AuthTime, authTime, ClaimValueTypes.Integer64),
         };
 
-        if (context.AuthenticationMethods.Length > 0)
+        if (context.Nbf.HasValue)
+        {
+            var nbf = context.Nbf.Value.ToUnixTimeSeconds().ToString();
+            claims.Add(new Claim(AppClaimTypes.Nbf, nbf, ClaimValueTypes.Integer64));
+        }
+
+        if (context.AuthenticationMethods is not null && context.AuthenticationMethods.Length > 0)
         {
             var amrValue = JsonSerializer.Serialize(context.AuthenticationMethods);
             claims.Add(new (AppClaimTypes.Amr, amrValue));
         }
 
         if (!string.IsNullOrEmpty(context.Nonce))
-        {
             claims.Add(new(AppClaimTypes.Nonce, context.Nonce));
-        }
 
         if (context.Scopes.Contains(ScopeTypes.Email))
         {

@@ -20,8 +20,13 @@ public sealed class AccessTokenClaimsFactory(IOptions<TokenConfigurations> optio
     public ValueTask<List<Claim>> GetClaimsAsync(UserEntity user,
         AccessTokenClaimsContext context, CancellationToken cancellationToken)
     {
-        var exp = DateTimeOffset.UtcNow.Add(_configurations.DefaultAccessTokenLifetime).ToUnixTimeSeconds().ToString();
-        var iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
+        var iat = context.Iat.HasValue 
+            ? context.Iat.Value.ToUnixTimeSeconds().ToString() 
+            : DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
+        
+        var exp = context.Exp.HasValue 
+            ? context.Exp.Value.ToUnixTimeSeconds().ToString() 
+            : DateTimeOffset.UtcNow.Add(_configurations.DefaultAccessTokenLifetime).ToUnixTimeSeconds().ToString();
         
         var claims = new List<Claim>
         {
@@ -49,8 +54,13 @@ public sealed class AccessTokenClaimsFactory(IOptions<TokenConfigurations> optio
     public ValueTask<List<Claim>> GetClaimsAsync(ClientEntity source, AccessTokenClaimsContext context,
         CancellationToken cancellationToken)
     {
-        var exp = DateTimeOffset.UtcNow.Add(_configurations.DefaultAccessTokenLifetime).ToUnixTimeSeconds().ToString();
-        var iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
+        var iat = context.Iat.HasValue 
+            ? context.Iat.Value.ToUnixTimeSeconds().ToString() 
+            : DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
+        
+        var exp = context.Exp.HasValue 
+            ? context.Exp.Value.ToUnixTimeSeconds().ToString() 
+            : DateTimeOffset.UtcNow.Add(_configurations.DefaultIdTokenLifetime).ToUnixTimeSeconds().ToString();
 
         var claims = new List<Claim>
         {
@@ -63,6 +73,12 @@ public sealed class AccessTokenClaimsFactory(IOptions<TokenConfigurations> optio
             new(AppClaimTypes.Exp, exp, ClaimValueTypes.Integer64),
             new(AppClaimTypes.Iat, iat, ClaimValueTypes.Integer64),
         };
+        
+        if (context.Nbf.HasValue)
+        {
+            var nbf = context.Nbf.Value.ToUnixTimeSeconds().ToString();
+            claims.Add(new Claim(AppClaimTypes.Nbf, nbf, ClaimValueTypes.Integer64));
+        }
 
         return ValueTask.FromResult(claims);
     }

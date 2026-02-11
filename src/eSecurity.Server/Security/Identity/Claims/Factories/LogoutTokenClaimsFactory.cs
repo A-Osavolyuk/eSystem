@@ -21,13 +21,19 @@ public sealed class LogoutTokenClaimsFactory(
     public ValueTask<List<Claim>> GetClaimsAsync(UserEntity source, LogoutTokenClaimsContext context, 
         CancellationToken cancellationToken)
     {
-        var events = new Dictionary<string, object>
+        var eventsJson = JsonSerializer.Serialize(new Dictionary<string, object>
         {
             { LogoutEvents.BackChannelLogout, new object() }
-        };
+        });
         
-        var eventsJson = JsonSerializer.Serialize(events);
-        var iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
+        var iat = context.Iat.HasValue 
+            ? context.Iat.Value.ToUnixTimeSeconds().ToString() 
+            : DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
+        
+        var exp = context.Exp.HasValue 
+            ? context.Exp.Value.ToUnixTimeSeconds().ToString() 
+            : DateTimeOffset.UtcNow.Add(_tokenConfigurations.DefaultLogoutTokenLifetime).ToUnixTimeSeconds().ToString();
+        
         var claims = new List<Claim>
         {
             new(AppClaimTypes.Jti, Guid.NewGuid().ToString()),
@@ -35,9 +41,16 @@ public sealed class LogoutTokenClaimsFactory(
             new(AppClaimTypes.Aud, JsonSerializer.Serialize(context.Aud)),
             new(AppClaimTypes.Sub, source.Id.ToString()),
             new(AppClaimTypes.Sid, context.Sid),
-            new(AppClaimTypes.Iat, iat, ClaimValueTypes.Integer64),
             new(AppClaimTypes.Events, eventsJson),
+            new(AppClaimTypes.Iat, iat, ClaimValueTypes.Integer64),
+            new(AppClaimTypes.Exp, exp, ClaimValueTypes.Integer64),
         };
+        
+        if (context.Nbf.HasValue)
+        {
+            var nbf = context.Nbf.Value.ToUnixTimeSeconds().ToString();
+            claims.Add(new Claim(AppClaimTypes.Nbf, nbf, ClaimValueTypes.Integer64));
+        }
 
         return ValueTask.FromResult(claims);
     }

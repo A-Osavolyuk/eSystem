@@ -25,6 +25,10 @@ public static class CryptographyExtensions
             cfg.MinIdTokenLifetime = TimeSpan.FromMinutes(5);
             cfg.MaxIdTokenLifetime = TimeSpan.FromMinutes(15);
             
+            cfg.DefaultLogoutTokenLifetime = TimeSpan.FromMinutes(2);
+            cfg.MinLogoutTokenLifetime = TimeSpan.FromSeconds(30);
+            cfg.MaxLogoutTokenLifetime = TimeSpan.FromMinutes(5);
+            
             cfg.DefaultLoginTokenLifetime = TimeSpan.FromDays(7);
             cfg.MinLoginTokenLifetime = TimeSpan.FromDays(1);
             cfg.MaxLoginTokenLifetime = TimeSpan.FromDays(14);
