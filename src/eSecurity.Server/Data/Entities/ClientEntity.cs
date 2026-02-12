@@ -49,7 +49,7 @@ public class ClientEntity : Entity
         => AllowedScopes.Any(x => x.Scope.Value == scope);
 
     public bool HasGrantType(string grantType)
-        => GrantTypes.Any(x => x.Type == grantType);
+        => GrantTypes.Any(x => x.Grant.Grant == grantType);
 
     public bool HasUri(string uri, UriType type)
         => Uris.Any(x => x.Uri == uri && x.Type == type);
