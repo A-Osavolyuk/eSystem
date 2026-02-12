@@ -7,12 +7,16 @@ public sealed class ClientResponseTypeConfiguration : IEntityTypeConfiguration<C
 {
     public void Configure(EntityTypeBuilder<ClientResponseTypeEntity> builder)
     {
-        builder.HasKey(x => x.Id);
-        builder.Property(x => x.ResponseType).HasMaxLength(32);
+        builder.HasKey(x => new { x.ClientId, x.ResponseTypeId });
         
         builder.HasOne(x => x.Client)
             .WithMany(x => x.ResponseTypes)
             .HasForeignKey(x => x.ClientId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.HasOne(x => x.ResponseType)
+            .WithMany()
+            .HasForeignKey(x => x.ResponseTypeId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }
