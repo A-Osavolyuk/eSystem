@@ -12,7 +12,7 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20260211204216_Initial")]
+    [Migration("20260212100333_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -295,27 +295,21 @@ namespace eSecurity.Server.Migrations
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientGrantTypeEntity", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("ClientId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ClientId")
+                    b.Property<Guid>("GrantId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("Id");
+                    b.HasKey("ClientId", "GrantId");
 
-                    b.HasIndex("ClientId");
+                    b.HasIndex("GrantId");
 
                     b.ToTable("ClientGrantTypes", "public");
                 });
@@ -570,6 +564,28 @@ namespace eSecurity.Server.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("DeviceCodes", "public");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.GrantTypeEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Grant")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GrantTypes", "public");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.GrantedScopeEntity", b =>
@@ -1538,7 +1554,15 @@ namespace eSecurity.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("eSecurity.Server.Data.Entities.GrantTypeEntity", "Grant")
+                        .WithMany()
+                        .HasForeignKey("GrantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Client");
+
+                    b.Navigation("Grant");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientResponseTypeEntity", b =>

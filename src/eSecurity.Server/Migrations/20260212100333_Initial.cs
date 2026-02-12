@@ -66,6 +66,21 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "GrantTypes",
+                schema: "public",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Grant = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GrantTypes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Roles",
                 schema: "public",
                 columns: table => new
@@ -144,29 +159,6 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ClientGrantTypes",
-                schema: "public",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ClientGrantTypes", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ClientGrantTypes_Clients_ClientId",
-                        column: x => x.ClientId,
-                        principalSchema: "public",
-                        principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ClientResponseTypes",
                 schema: "public",
                 columns: table => new
@@ -232,6 +224,35 @@ namespace eSecurity.Server.Migrations
                         column: x => x.ClientId,
                         principalSchema: "public",
                         principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClientGrantTypes",
+                schema: "public",
+                columns: table => new
+                {
+                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
+                    GrantId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientGrantTypes", x => new { x.ClientId, x.GrantId });
+                    table.ForeignKey(
+                        name: "FK_ClientGrantTypes_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalSchema: "public",
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClientGrantTypes_GrantTypes_GrantId",
+                        column: x => x.GrantId,
+                        principalSchema: "public",
+                        principalTable: "GrantTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -1130,10 +1151,10 @@ namespace eSecurity.Server.Migrations
                 column: "ClientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientGrantTypes_ClientId",
+                name: "IX_ClientGrantTypes_GrantId",
                 schema: "public",
                 table: "ClientGrantTypes",
-                column: "ClientId");
+                column: "GrantId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ClientResponseTypes_ClientId",
@@ -1477,6 +1498,10 @@ namespace eSecurity.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "Verifications",
+                schema: "public");
+
+            migrationBuilder.DropTable(
+                name: "GrantTypes",
                 schema: "public");
 
             migrationBuilder.DropTable(
