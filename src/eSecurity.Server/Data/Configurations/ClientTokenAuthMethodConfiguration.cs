@@ -7,12 +7,16 @@ public class ClientTokenAuthMethodConfiguration : IEntityTypeConfiguration<Clien
 {
     public void Configure(EntityTypeBuilder<ClientTokenAuthMethodEntity> builder)
     {
-        builder.HasKey(e => e.Id);
-        builder.Property(e => e.Method).HasMaxLength(32);
+        builder.HasKey(e => new { e.ClientId, e.MethodId });
         
         builder.HasOne(e => e.Client)
             .WithMany(c => c.TokenAuthMethods)
             .HasForeignKey(e => e.ClientId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.HasOne(e => e.Method)
+            .WithMany()
+            .HasForeignKey(e => e.MethodId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }
