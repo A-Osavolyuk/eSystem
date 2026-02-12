@@ -81,6 +81,21 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ResponseTypes",
+                schema: "public",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ResponseTypes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Roles",
                 schema: "public",
                 columns: table => new
@@ -110,6 +125,21 @@ namespace eSecurity.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Scopes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TokenAuthMethods",
+                schema: "public",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Method = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TokenAuthMethods", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -151,52 +181,6 @@ namespace eSecurity.Server.Migrations
                     table.PrimaryKey("PK_ClientAudiences", x => x.Id);
                     table.ForeignKey(
                         name: "FK_ClientAudiences_Clients_ClientId",
-                        column: x => x.ClientId,
-                        principalSchema: "public",
-                        principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ClientResponseTypes",
-                schema: "public",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ResponseType = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ClientResponseTypes", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ClientResponseTypes_Clients_ClientId",
-                        column: x => x.ClientId,
-                        principalSchema: "public",
-                        principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ClientTokenAuthMethods",
-                schema: "public",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Method = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ClientTokenAuthMethods", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ClientTokenAuthMethods_Clients_ClientId",
                         column: x => x.ClientId,
                         principalSchema: "public",
                         principalTable: "Clients",
@@ -258,6 +242,35 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ClientResponseTypes",
+                schema: "public",
+                columns: table => new
+                {
+                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ResponseTypeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientResponseTypes", x => new { x.ClientId, x.ResponseTypeId });
+                    table.ForeignKey(
+                        name: "FK_ClientResponseTypes_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalSchema: "public",
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClientResponseTypes_ResponseTypes_ResponseTypeId",
+                        column: x => x.ResponseTypeId,
+                        principalSchema: "public",
+                        principalTable: "ResponseTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ClientAllowedScopes",
                 schema: "public",
                 columns: table => new
@@ -283,6 +296,35 @@ namespace eSecurity.Server.Migrations
                         column: x => x.ScopeId,
                         principalSchema: "public",
                         principalTable: "Scopes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClientTokenAuthMethods",
+                schema: "public",
+                columns: table => new
+                {
+                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
+                    MethodId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientTokenAuthMethods", x => new { x.ClientId, x.MethodId });
+                    table.ForeignKey(
+                        name: "FK_ClientTokenAuthMethods_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalSchema: "public",
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClientTokenAuthMethods_TokenAuthMethods_MethodId",
+                        column: x => x.MethodId,
+                        principalSchema: "public",
+                        principalTable: "TokenAuthMethods",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -1157,10 +1199,10 @@ namespace eSecurity.Server.Migrations
                 column: "GrantId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientResponseTypes_ClientId",
+                name: "IX_ClientResponseTypes_ResponseTypeId",
                 schema: "public",
                 table: "ClientResponseTypes",
-                column: "ClientId");
+                column: "ResponseTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ClientSessions_SessionId",
@@ -1169,10 +1211,10 @@ namespace eSecurity.Server.Migrations
                 column: "SessionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientTokenAuthMethods_ClientId",
+                name: "IX_ClientTokenAuthMethods_MethodId",
                 schema: "public",
                 table: "ClientTokenAuthMethods",
-                column: "ClientId");
+                column: "MethodId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ClientUris_ClientId",
@@ -1502,6 +1544,14 @@ namespace eSecurity.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "GrantTypes",
+                schema: "public");
+
+            migrationBuilder.DropTable(
+                name: "ResponseTypes",
+                schema: "public");
+
+            migrationBuilder.DropTable(
+                name: "TokenAuthMethods",
                 schema: "public");
 
             migrationBuilder.DropTable(

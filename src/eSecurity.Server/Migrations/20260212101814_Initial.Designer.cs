@@ -12,7 +12,7 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20260212100333_Initial")]
+    [Migration("20260212101814_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -316,27 +316,21 @@ namespace eSecurity.Server.Migrations
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientResponseTypeEntity", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("ClientId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ClientId")
+                    b.Property<Guid>("ResponseTypeId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("ResponseType")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("character varying(32)");
-
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("Id");
+                    b.HasKey("ClientId", "ResponseTypeId");
 
-                    b.HasIndex("ClientId");
+                    b.HasIndex("ResponseTypeId");
 
                     b.ToTable("ClientResponseTypes", "public");
                 });
@@ -364,27 +358,21 @@ namespace eSecurity.Server.Migrations
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientTokenAuthMethodEntity", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("ClientId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ClientId")
+                    b.Property<Guid>("MethodId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Method")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("character varying(32)");
-
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("Id");
+                    b.HasKey("ClientId", "MethodId");
 
-                    b.HasIndex("ClientId");
+                    b.HasIndex("MethodId");
 
                     b.ToTable("ClientTokenAuthMethods", "public");
                 });
@@ -936,6 +924,28 @@ namespace eSecurity.Server.Migrations
                     b.ToTable("PersonalData", "public");
                 });
 
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.ResponseTypeEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ResponseTypes", "public");
+                });
+
             modelBuilder.Entity("eSecurity.Server.Data.Entities.RoleEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1051,6 +1061,28 @@ namespace eSecurity.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Certificates", "public");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.TokenAuthMethodEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Method")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TokenAuthMethods", "public");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.UserClientEntity", b =>
@@ -1573,7 +1605,15 @@ namespace eSecurity.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("eSecurity.Server.Data.Entities.ResponseTypeEntity", "ResponseType")
+                        .WithMany()
+                        .HasForeignKey("ResponseTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Client");
+
+                    b.Navigation("ResponseType");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientSessionEntity", b =>
@@ -1603,7 +1643,15 @@ namespace eSecurity.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("eSecurity.Server.Data.Entities.TokenAuthMethodEntity", "Method")
+                        .WithMany()
+                        .HasForeignKey("MethodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Client");
+
+                    b.Navigation("Method");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientUriEntity", b =>
