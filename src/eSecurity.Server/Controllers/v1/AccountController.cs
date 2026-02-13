@@ -3,6 +3,7 @@ using eSecurity.Server.Common.Filters;
 using eSecurity.Server.Features.Account.Commands;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
+using eSystem.Core.Mediator;
 
 namespace eSecurity.Server.Controllers.v1;
 

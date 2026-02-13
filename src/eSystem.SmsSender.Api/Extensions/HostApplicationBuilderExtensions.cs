@@ -2,6 +2,7 @@
 using eSystem.Core.Common.Documentation;
 using eSystem.Core.Common.Error;
 using eSystem.Core.Common.Versioning;
+using eSystem.Core.Mediator;
 using eSystem.SmsSender.Api.Consumers;
 using eSystem.SmsSender.Api.Errors;
 using eSystem.SmsSender.Api.Interfaces;
@@ -20,11 +21,11 @@ public static class HostApplicationBuilderExtensions
             builder.AddValidation();
             builder.AddDependencyInjection();
             builder.AddMessageBus();
-            builder.AddMediatR();
             builder.AddRedisCache();
             builder.AddDocumentation();
             builder.AddExceptionHandling<GlobalExceptionHandler>();
             
+            builder.Services.AddMediator<IAssemblyMarker>();
             builder.Services.AddControllers();
 
             return builder;
@@ -33,14 +34,6 @@ public static class HostApplicationBuilderExtensions
         private void AddValidation()
         {
             builder.Services.AddValidatorsFromAssemblyContaining<IAssemblyMarker>();
-        }
-
-        private void AddMediatR()
-        {
-            builder.Services.AddMediatR(x =>
-            {
-                x.RegisterServicesFromAssemblyContaining<IAssemblyMarker>();
-            });
         }
 
         private void AddDependencyInjection()

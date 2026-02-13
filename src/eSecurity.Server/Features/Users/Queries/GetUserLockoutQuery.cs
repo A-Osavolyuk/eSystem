@@ -2,6 +2,7 @@
 using eSecurity.Server.Security.Authentication.Lockout;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Results;
+using eSystem.Core.Mediator;
 
 namespace eSecurity.Server.Features.Users.Queries;
 

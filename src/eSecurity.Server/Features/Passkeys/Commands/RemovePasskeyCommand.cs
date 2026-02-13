@@ -10,6 +10,7 @@ using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Results;
+using eSystem.Core.Mediator;
 
 namespace eSecurity.Server.Features.Passkeys.Commands;
 

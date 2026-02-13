@@ -8,6 +8,7 @@ using eSystem.Core.Http.Extensions;
 using eSystem.Core.Common.Messaging;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
+using eSystem.Core.Mediator;
 
 namespace eSecurity.Server.Features.Account.Commands;
 

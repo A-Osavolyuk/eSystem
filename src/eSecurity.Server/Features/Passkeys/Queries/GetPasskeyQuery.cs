@@ -1,6 +1,7 @@
 ﻿using eSecurity.Core.Common.DTOs;
 using eSecurity.Server.Security.Credentials.PublicKey;
 using eSystem.Core.Http.Results;
+using eSystem.Core.Mediator;
 
 namespace eSecurity.Server.Features.Passkeys.Queries;
 

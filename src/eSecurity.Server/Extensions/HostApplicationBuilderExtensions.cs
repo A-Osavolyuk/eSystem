@@ -11,6 +11,7 @@ using eSystem.Core.Common.Cache.Redis;
 using eSystem.Core.Common.Documentation;
 using eSystem.Core.Common.Error;
 using eSystem.Core.Common.Versioning;
+using eSystem.Core.Mediator;
 using eSystem.Core.Validation;
 
 namespace eSecurity.Server.Extensions;
@@ -34,6 +35,7 @@ public static class HostApplicationBuilderExtensions
             builder.AddExceptionHandling<GlobalExceptionHandler>();
 
             builder.Services.AddTransient<RequestBufferingMiddleware>();
+            builder.Services.AddMediator<IAssemblyMarker>();
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddDistributedMemoryCache();
             builder.Services
@@ -46,8 +48,6 @@ public static class HostApplicationBuilderExtensions
                     cfg.JsonSerializerOptions.WriteIndented = true;
                     cfg.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
                 });
-
-            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<IAssemblyMarker>());
         }
     }
 }

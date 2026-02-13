@@ -1,4 +1,5 @@
 using eSystem.Core.Http.Results;
+using eSystem.Core.Mediator;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
 
 namespace eSecurity.Server.Features.Connect.Queries;

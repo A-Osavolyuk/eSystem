@@ -7,6 +7,7 @@ using eSecurity.Server.Security.Identity.SignUp.Strategies;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
+using eSystem.Core.Mediator;
 using eSystem.Core.Security.Authentication.Schemes;
 using eSystem.Core.Utilities.Query;
 using Microsoft.AspNetCore.Authentication;

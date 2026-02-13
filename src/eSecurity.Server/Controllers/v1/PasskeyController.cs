@@ -2,6 +2,7 @@ using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Features.Passkeys.Commands;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
+using eSystem.Core.Mediator;
 
 namespace eSecurity.Server.Controllers.v1;
 

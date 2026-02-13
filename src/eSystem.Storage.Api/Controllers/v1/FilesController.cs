@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using eSystem.Core.Http.Extensions;
+using eSystem.Core.Mediator;
 using eSystem.Core.Requests;
 using eSystem.Core.Requests.Storage;
 using eSystem.Storage.Api.Features.Commands;

@@ -4,6 +4,7 @@ using eSecurity.Server.Security.Authorization.Constants;
 using eSecurity.Server.Security.Authorization.OAuth.Token.Validation;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
+using eSystem.Core.Mediator;
 using eSystem.Core.Security.Authorization.OAuth.Token.Validation;
 using eSystem.Core.Security.Identity.Claims;
 

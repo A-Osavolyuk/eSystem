@@ -2,6 +2,7 @@
 using eSystem.Core.Common.Documentation;
 using eSystem.Core.Common.Error;
 using eSystem.Core.Common.Versioning;
+using eSystem.Core.Mediator;
 using eSystem.Telegram.Bot.Errors;
 
 namespace eSystem.Telegram.Bot.Extensions;
@@ -15,21 +16,13 @@ public static class HostApplicationBuilderExtensions
             builder.AddServiceDefaults();
             builder.AddVersioning();
             builder.AddMessageBus();
-            builder.AddMediatR();
             builder.AddTelegramBot();
             builder.AddDocumentation();
             builder.AddRedisCache();
             builder.AddExceptionHandling<GlobalExceptionHandler>();
             
             builder.Services.AddControllers();
-        }
-
-        private void AddMediatR()
-        {
-            builder.Services.AddMediatR(x =>
-            {
-                x.RegisterServicesFromAssemblyContaining<IAssemblyMarker>();
-            });
+            builder.Services.AddMediator<IAssemblyMarker>();
         }
 
         private void AddTelegramBot()

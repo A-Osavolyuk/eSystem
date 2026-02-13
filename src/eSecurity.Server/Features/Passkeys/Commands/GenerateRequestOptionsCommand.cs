@@ -9,6 +9,7 @@ using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Http.Results;
+using eSystem.Core.Mediator;
 using CredentialOptions = eSecurity.Server.Security.Credentials.PublicKey.Credentials.CredentialOptions;
 
 namespace eSecurity.Server.Features.Passkeys.Commands;
