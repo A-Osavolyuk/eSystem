@@ -1,4 +1,5 @@
-﻿using eSecurity.Server.Security.Authorization.Access;
+﻿using eSecurity.Server.Security.Authentication.OpenIdConnect.Ciba;
+using eSecurity.Server.Security.Authorization.Access;
 using eSecurity.Server.Security.Authorization.Constants;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Authorization.OAuth.Consents;
@@ -31,6 +32,7 @@ public static class AuthorizationExtensions
             options.VerificationUri = "https://localhost:6501/device/activate";
         });
 
+        builder.Services.AddScoped<ICibaRequestManager, CibaRequestManager>();
         builder.Services.AddScoped<IOAuthSessionManager, OAuthSessionManager>();
         builder.Services.AddScoped<IConsentManager, ConsentManager>();
         builder.Services.AddScoped<ILinkedAccountManager, LinkedAccountManager>();
