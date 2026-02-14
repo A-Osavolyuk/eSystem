@@ -107,7 +107,6 @@ public sealed class TokenExchangeStrategy(
             RequestTokenType = request.RequestTokenType,
             ActorToken = request.ActorToken,
             ActorTokenType = request.ActorTokenType,
-            ActorSubject = request.ActorSubject,
             Audience = request.Audience,
             Scope = request.Scope
         };

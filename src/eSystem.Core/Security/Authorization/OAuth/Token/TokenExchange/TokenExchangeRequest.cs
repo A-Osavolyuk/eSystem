@@ -10,9 +10,6 @@ public sealed class TokenExchangeRequest : TokenRequest
     [FromForm(Name = "actor_token_type")]
     public string? ActorTokenType { get; set; }
     
-    [FromForm(Name = "actor_subject")]
-    public string? ActorSubject { get; set; }
-    
     [FromForm(Name = "subject_token")]
     public string? SubjectToken { get; set; }
     

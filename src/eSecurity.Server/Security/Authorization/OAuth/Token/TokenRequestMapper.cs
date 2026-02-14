@@ -52,7 +52,6 @@ public class TokenRequestMapper : ITokenRequestMapper
                 ClientSecret = input.GetValueOrDefault("client_secret"),
                 ActorToken = input.GetValueOrDefault("actor_token"),
                 ActorTokenType = input.GetValueOrDefault("actor_token_type"),
-                ActorSubject = input.GetValueOrDefault("actor_subject"),
                 SubjectToken = input.GetValueOrDefault("subject_token"),
                 SubjectTokenType = input.GetValueOrDefault("subject_token_type"),
                 RequestTokenType = input.GetValueOrDefault("request_token_type"),
