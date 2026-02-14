@@ -5,7 +5,7 @@ namespace eSystem.Core.Security.Authentication.OpenIdConnect.BackchannelAuthenti
 public sealed class BackchannelAuthenticationRequest
 {
     [FromForm(Name = "scope")]
-    public required string Scope { get; set; }
+    public string? Scope { get; set; }
 
     [FromForm(Name = "client_id")]
     public string? ClientId { get; set; }

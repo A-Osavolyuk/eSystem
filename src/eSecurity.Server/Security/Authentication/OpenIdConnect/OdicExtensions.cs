@@ -1,4 +1,5 @@
-﻿using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
+﻿using eSecurity.Server.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Logout;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Logout.Strategies;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
@@ -21,6 +22,17 @@ public static class OdicExtensions
             services.AddKeyedScoped<ILogoutStrategy<List<string>>, FrontchannelLogoutStrategy>(LogoutFlow.Frontchannel);
             services.AddScoped<ILogoutStrategyResolver, LogoutStrategyResolver>();
             services.AddScoped<ILogoutHandler, LogoutHandler>();
+            
+            services.AddBackchannelAuthentication(options =>
+            {
+                options.Interval = 5;
+                options.AuthReqIdLength = 32;
+                options.UserCodeMaxLength = 8;
+                options.UserCodeMinLength = 4;
+                options.DefaultRequestLifetime = TimeSpan.FromSeconds(300);
+                options.MinRequestLifetime = TimeSpan.FromSeconds(60);
+                options.MaxRequestLifetime = TimeSpan.FromSeconds(600);
+            });
             
             services.AddSession(cfg => { cfg.Timestamp = TimeSpan.FromDays(30); });
         }
