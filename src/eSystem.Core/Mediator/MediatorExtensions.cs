@@ -23,6 +23,6 @@ public static class MediatorExtensions
             }
         }
 
-        services.AddSingleton<ISender, Sender>();
+        services.AddScoped<ISender, Sender>();
     }
 }
