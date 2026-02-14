@@ -145,13 +145,18 @@ public sealed class BackchannelAuthenticationCommandHandler(
         }
 
         var userResolver = _userResolverProvider.GetResolver(hint.Value);
-        var user = await userResolver.ResolveAsync(request.Request, cancellationToken);
-        if (user is null)
+        var resolveResult = await userResolver.ResolveAsync(request.Request, cancellationToken);
+        if (!resolveResult.Succeeded)
+        {
+            return Results.BadRequest(resolveResult.GetError());
+        }
+
+        if (resolveResult.User is null)
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidRequest,
-                Description = "Invalid hint"
+                Code = ErrorTypes.OAuth.UnknownUserId,
+                Description = "Unknown user"
             });
         }
         
@@ -175,8 +180,17 @@ public sealed class BackchannelAuthenticationCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidRequest,
+                Code = ErrorTypes.OAuth.InvalidBindingMessage,
                 Description = "binding_message must not be longer then 255 characters"
+            });
+        }
+
+        if (client.RequireUserCode && string.IsNullOrWhiteSpace(request.Request.UserCode))
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = ErrorTypes.OAuth.MissingUserCode,
+                Description = "user_code is missing"
             });
         }
 
@@ -186,7 +200,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidRequest,
+                Code = ErrorTypes.OAuth.InvalidUserCode,
                 Description = $"user_code length must be between {_options.UserCodeMinLength} " +
                               $"and {_options.UserCodeMaxLength} characters"
             });
@@ -197,7 +211,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
             Id = Guid.CreateVersion7(),
             AuthReqId = _keyFactory.Create(_options.AuthReqIdLength),
             ClientId = client.Id,
-            UserId = user.Id,
+            UserId = resolveResult.User.Id,
             State = CibaRequestState.Pending,
             Interval = _options.Interval,
             Scope = request.Request.Scope,

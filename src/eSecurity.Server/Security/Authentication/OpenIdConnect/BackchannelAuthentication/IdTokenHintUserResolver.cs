@@ -1,6 +1,8 @@
 ﻿using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authorization.OAuth.Token.Validation;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Identity.Claims;
@@ -14,19 +16,53 @@ public sealed class IdTokenHintUserResolver(
     private readonly IJwtTokenValidationProvider _validationProvider = validationProvider;
     private readonly IUserManager _userManager = userManager;
 
-    public async Task<UserEntity?> ResolveAsync(BackchannelAuthenticationRequest request,
+    public async Task<UserResolveResult> ResolveAsync(BackchannelAuthenticationRequest request,
         CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrEmpty(request.IdTokenHint))
-            return null;
+        {
+            return UserResolveResult.Fail(new Error()
+            {
+                Code = ErrorTypes.OAuth.InvalidRequest,
+                Description = "id_token_hind is invalid"
+            });
+        }
         
         var validator = _validationProvider.CreateValidator(JwtTokenTypes.IdToken);
         var validationResult = await validator.ValidateAsync(request.IdTokenHint, cancellationToken);
-        if (!validationResult.IsValid || validationResult.ClaimsPrincipal is null) return null;
+        if (!validationResult.IsValid || validationResult.ClaimsPrincipal is null)
+        {
+            {
+                return UserResolveResult.Fail(new Error()
+                {
+                    Code = ErrorTypes.OAuth.InvalidRequest,
+                    Description = "id_token_hind is invalid"
+                });
+            }
+        }
 
         var subClaim = validationResult.ClaimsPrincipal.Claims.FirstOrDefault(x => x.Type == AppClaimTypes.Sub);
-        if (subClaim is null) return null;
+        if (subClaim is null)
+        {
+            {
+                return UserResolveResult.Fail(new Error()
+                {
+                    Code = ErrorTypes.OAuth.InvalidRequest,
+                    Description = "id_token_hind is invalid"
+                });
+            }
+        }
         
-        return await _userManager.FindByIdAsync(Guid.Parse(subClaim.Value), cancellationToken);
+        var user = await _userManager.FindByIdAsync(Guid.Parse(subClaim.Value), cancellationToken);
+        if (user is null)
+        {
+            return UserResolveResult.Fail(new Error()
+            {
+                Code = ErrorTypes.OAuth.UnknownUserId,
+                Description = "Unknown user"
+            });
+        }
+        
+        return UserResolveResult.Success(user);
     }
 }

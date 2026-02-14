@@ -4,7 +4,6 @@ public static class ErrorTypes
 {
     public static class OAuth
     {
-        // ===== OAuth 2.0 Core Errors (RFC 6749) =====
         public const string InvalidRequest = "invalid_request";
         public const string InvalidClient = "invalid_client";
         public const string InvalidGrant = "invalid_grant";
@@ -13,12 +12,8 @@ public static class ErrorTypes
         public const string InvalidScope = "invalid_scope";
         public const string InvalidToken = "invalid_token";
         public const string InvalidTarget = "invalid_target";
-
-        // Optional OAuth 2.0 errors  
         public const string ServerError = "server_error";
         public const string TemporarilyUnavailable = "temporarily_unavailable"; 
-
-        // ===== OpenID Connect Core Errors (OIDC) =====  
         public const string AccessDenied = "access_denied";
         public const string UnsupportedResponseType = "unsupported_response_type";
         public const string UnsupportedTokenType = "unsupported_token_type";
@@ -29,13 +24,16 @@ public static class ErrorTypes
         public const string SlowDown = "slow_down";
         public const string ExpiredToken = "expired_token";
         public const string AuthorizationPending = "authorization_pending";
-
-        // ===== OpenID Connect Request Object Errors =====  
         public const string InvalidRequestUri = "invalid_request_uri";
         public const string InvalidRequestObject = "invalid_request_object"; 
         public const string RequestNotSupported = "request_not_supported";
         public const string RequestUriNotSupported = "request_uri_not_supported";
         public const string RegistrationNotSupported = "registration_not_supported";
+        public const string MissingUserCode = "missing_user_code";
+        public const string InvalidUserCode = "invalid_user_code";
+        public const string InvalidBindingMessage = "invalid_binding_message";
+        public const string UnknownUserId = "unknown_user_id";
+        public const string ExpiredLoginTokenHint = "expired_login_hint_token";
     }
     
     public static class Common

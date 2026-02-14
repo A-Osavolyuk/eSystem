@@ -5,6 +5,6 @@ namespace eSecurity.Server.Security.Authentication.OpenIdConnect.BackchannelAuth
 
 public interface IUserResolver
 {
-    public Task<UserEntity?> ResolveAsync(BackchannelAuthenticationRequest request,
+    public Task<UserResolveResult> ResolveAsync(BackchannelAuthenticationRequest request,
         CancellationToken cancellationToken = default);
 }

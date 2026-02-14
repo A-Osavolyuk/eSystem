@@ -30,6 +30,7 @@ public class ClientEntity : Entity
     public SubjectType SubjectType { get; set; }
     public string? SectorIdentifierUri { get; set; }
     public NotificationDeliveryMode NotificationDeliveryMode { get; set; }
+    public bool RequireUserCode { get; set; }
 
     public ICollection<ClientTokenAuthMethodEntity> TokenAuthMethods { get; set; } = null!;
     public ICollection<PairwiseSubjectEntity> PairwiseSubjects { get; set; } = null!;
