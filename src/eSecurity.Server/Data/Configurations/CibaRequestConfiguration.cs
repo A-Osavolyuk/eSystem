@@ -11,10 +11,10 @@ public sealed class CibaRequestConfiguration : IEntityTypeConfiguration<CibaRequ
         
         builder.Property(x => x.State).HasConversion<string>();
         builder.Property(x => x.AuthReqId).HasMaxLength(36);
-        builder.Property(x => x.UserCode).HasMaxLength(8);
+        builder.Property(x => x.UserCode).HasMaxLength(12);
         builder.Property(x => x.AcrValues).HasMaxLength(100);
         builder.Property(x => x.Scope).HasMaxLength(100);
-        builder.Property(x => x.BindingMessage).HasMaxLength(500);
+        builder.Property(x => x.BindingMessage).HasMaxLength(255);
         builder.Property(x => x.DeniedReason).HasMaxLength(500);
         
         builder.HasOne(x => x.Client)
