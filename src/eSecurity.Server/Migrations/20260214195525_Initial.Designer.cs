@@ -12,7 +12,7 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20260212101814_Initial")]
+    [Migration("20260214195525_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -102,8 +102,8 @@ namespace eSecurity.Server.Migrations
                         .HasColumnType("character varying(36)");
 
                     b.Property<string>("BindingMessage")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<Guid>("ClientId")
                         .HasColumnType("uuid");
@@ -143,8 +143,8 @@ namespace eSecurity.Server.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("UserCode")
-                        .HasMaxLength(8)
-                        .HasColumnType("character varying(8)");
+                        .HasMaxLength(12)
+                        .HasColumnType("character varying(12)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
