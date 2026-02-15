@@ -10,6 +10,10 @@ public sealed class PublicSubjectConfiguration : IEntityTypeConfiguration<Public
         builder.HasKey(p => p.Id);
         builder.Property(x => x.Subject).HasMaxLength(36);
         
+        builder.HasIndex(x => x.Subject)
+            .HasDatabaseName("IX_PublicSubject_Subject")
+            .IsUnique();
+        
         builder.HasOne(x => x.User)
             .WithOne(x => x.PublicSubject)
             .HasForeignKey<PublicSubjectEntity>(x => x.UserId);
