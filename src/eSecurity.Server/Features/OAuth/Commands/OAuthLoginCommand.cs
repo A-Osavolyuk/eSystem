@@ -1,6 +1,6 @@
 ﻿using eSecurity.Server.Common.Responses;
 using eSecurity.Server.Data.Entities;
-using eSecurity.Server.Security.Authorization.OAuth.Session;
+using eSecurity.Server.Security.Authentication.Session;
 using eSecurity.Server.Security.Identity.Options;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
@@ -8,7 +8,6 @@ using eSystem.Core.Mediator;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Utilities.Query;
 using Microsoft.AspNetCore.Authentication;
-using AuthenticationTypes = eSecurity.Core.Security.Authorization.OAuth.Constants.AuthenticationTypes;
 
 namespace eSecurity.Server.Features.OAuth.Commands;
 
@@ -16,9 +15,9 @@ public sealed record OAuthLoginCommand(string Provider, string ReturnUri, string
 
 public sealed class OAuthLoginCommandHandler(
     IOptions<SignInOptions> options,
-    IOAuthSessionManager sessionManager) : IRequestHandler<OAuthLoginCommand, Result>
+    IAuthenticationSessionManager authenticationSessionManager) : IRequestHandler<OAuthLoginCommand, Result>
 {
-    private readonly IOAuthSessionManager _sessionManager = sessionManager;
+    private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly SignInOptions _options = options.Value;
 
     public async Task<Result> Handle(OAuthLoginCommand request,
@@ -37,15 +36,15 @@ public sealed class OAuthLoginCommandHandler(
             .WithUri("/api/v1/oauth/handle")
             .WithQueryParam("returnUri", request.ReturnUri);
 
-        var session = new OAuthSessionEntity()
+        var session = new AuthenticationSessionEntity()
         {
             Id = Guid.CreateVersion7(),
-            Provider = request.Provider,
-            AuthenticationMethods = [AuthenticationMethods.Federated, AuthenticationMethods.Social],
+            IdentityProvider = request.Provider,
+            PassedAuthenticationMethods = [AuthenticationMethods.Federated, AuthenticationMethods.Social],
             ExpiredAt = DateTimeOffset.UtcNow.AddMinutes(10)
         };
         
-        var result = await _sessionManager.CreateAsync(session, cancellationToken);
+        var result = await _authenticationSessionManager.CreateAsync(session, cancellationToken);
         if (!result.Succeeded) return result;
         
         var properties = new AuthenticationProperties

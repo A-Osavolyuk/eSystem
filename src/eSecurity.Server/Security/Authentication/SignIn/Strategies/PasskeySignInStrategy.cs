@@ -4,6 +4,7 @@ using eSecurity.Core.Security.Credentials.PublicKey.Constants;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Lockout;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
+using eSecurity.Server.Security.Authentication.Session;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Credentials.PublicKey.Credentials;
@@ -22,6 +23,7 @@ public sealed class PasskeySignInStrategy(
     IDeviceManager deviceManager,
     ILockoutManager lockoutManager,
     IHttpContextAccessor accessor,
+    IAuthenticationSessionManager authenticationSessionManager,
     IOptions<SessionOptions> options) : ISignInStrategy
 {
     private readonly IUserManager _userManager = userManager;
@@ -29,6 +31,7 @@ public sealed class PasskeySignInStrategy(
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
+    private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly SessionOptions _options = options.Value;
     private readonly HttpContext _httpContext = accessor.HttpContext!;
 
@@ -67,8 +70,8 @@ public sealed class PasskeySignInStrategy(
                 Details = new() { { "userId", user.Id } }
             });
 
-        var userAgent = _httpContext.GetUserAgent()!;
-        var ipAddress = _httpContext.GetIpV4()!;
+        var userAgent = _httpContext.GetUserAgent();
+        var ipAddress = _httpContext.GetIpV4();
         var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
         if (device is null)
         {
@@ -88,6 +91,24 @@ public sealed class PasskeySignInStrategy(
         };
         
         await _sessionManager.CreateAsync(session, cancellationToken);
-        return Results.Ok(new SignInResponse { UserId = user.Id, });
+        
+        var authenticationSession = new AuthenticationSessionEntity()
+        {
+            Id = Guid.CreateVersion7(),
+            UserId = user.Id,
+            SessionId = session.Id,
+            PassedAuthenticationMethods = [AuthenticationMethods.SoftwareKey],
+            CreatedAt = DateTimeOffset.UtcNow,
+            ExpiredAt = DateTimeOffset.UtcNow.AddMinutes(15)
+        };
+        
+        var sessionResult = await _authenticationSessionManager.CreateAsync(authenticationSession, cancellationToken);
+        if (!sessionResult.Succeeded) return sessionResult;
+        
+        return Results.Ok(new SignInResponse
+        {
+            TransactionId = authenticationSession.Id,
+            SessionId = session.Id
+        });
     }
 }

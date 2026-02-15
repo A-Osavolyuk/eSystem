@@ -2,6 +2,6 @@
 
 public sealed class SignInResponse
 {
-    public Guid UserId { get; set; }
-    public bool RequireTwoFactor { get; set; }
+    public Guid TransactionId { get; set; }
+    public Guid? SessionId { get; set; }
 }

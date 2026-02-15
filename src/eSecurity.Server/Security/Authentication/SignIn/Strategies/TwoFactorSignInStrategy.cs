@@ -5,6 +5,7 @@ using eSecurity.Core.Security.Authorization.Access;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Lockout;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
+using eSecurity.Server.Security.Authentication.Session;
 using eSecurity.Server.Security.Authorization.Access.Verification;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Identity.Options;
@@ -23,6 +24,7 @@ public class TwoFactorSignInStrategy(
     ILockoutManager lockoutManager,
     IDeviceManager deviceManager,
     ISessionManager sessionManager,
+    IAuthenticationSessionManager authenticationSessionManager,
     IOptions<SignInOptions> signInOptions,
     IOptions<SessionOptions> sessionOptions) : ISignInStrategy
 {
@@ -31,6 +33,7 @@ public class TwoFactorSignInStrategy(
     private readonly ILockoutManager _lockoutManager = lockoutManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ISessionManager _sessionManager = sessionManager;
+    private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly SignInOptions _signInOptions = signInOptions.Value;
     private readonly SessionOptions _sessionOptions = sessionOptions.Value;
@@ -46,7 +49,19 @@ public class TwoFactorSignInStrategy(
             });
         }
 
-        var user = await _userManager.FindByIdAsync(twoFactorPayload.UserId, cancellationToken);
+        var authenticationSession = await _authenticationSessionManager.FindByIdAsync(
+            twoFactorPayload.TransactionId, cancellationToken);
+
+        if (authenticationSession?.UserId is null)
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = ErrorTypes.Common.InvalidSession,
+                Description = "Invalid session"
+            });
+        }
+
+        var user = await _userManager.FindByIdAsync(authenticationSession.UserId.Value, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
         
         var userAgent = _httpContext.GetUserAgent()!;
@@ -104,8 +119,9 @@ public class TwoFactorSignInStrategy(
 
         string[] authenticationMethods =
         [
-            ..twoFactorPayload.AuthenticationMethods,
-            AuthenticationMethods.MultiFactorAuthentication
+            ..authenticationSession.PassedAuthenticationMethods,
+            AuthenticationMethods.MultiFactorAuthentication,
+            twoFactorPayload.AuthenticationMethod
         ];
         
         var session = new SessionEntity
@@ -117,6 +133,17 @@ public class TwoFactorSignInStrategy(
         };
         
         await _sessionManager.CreateAsync(session, cancellationToken);
-        return Results.Ok(new SignInResponse { UserId = user.Id });
+        
+        authenticationSession.SessionId = session.Id;
+        authenticationSession.PassedAuthenticationMethods = authenticationMethods;
+        
+        var sessionResult = await _authenticationSessionManager.UpdateAsync(authenticationSession, cancellationToken);
+        if (!sessionResult.Succeeded) return sessionResult;
+        
+        return Results.Ok(new SignInResponse
+        {
+            TransactionId = authenticationSession.Id,
+            SessionId = session.Id
+        });
     }
 }

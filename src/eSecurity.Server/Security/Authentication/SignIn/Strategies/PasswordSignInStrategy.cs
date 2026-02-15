@@ -6,6 +6,7 @@ using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Lockout;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authentication.Password;
+using eSecurity.Server.Security.Authentication.Session;
 using eSecurity.Server.Security.Authentication.TwoFactor;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Identity.Email;
@@ -27,6 +28,7 @@ public sealed class PasswordSignInStrategy(
     IHttpContextAccessor accessor,
     IEmailManager emailManager,
     ITwoFactorManager twoFactorManager,
+    IAuthenticationSessionManager authenticationSessionManager,
     IOptions<SignInOptions> signInOptions,
     IOptions<SessionOptions> sessionOptions) : ISignInStrategy
 {
@@ -37,6 +39,7 @@ public sealed class PasswordSignInStrategy(
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IEmailManager _emailManager = emailManager;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
+    private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly SessionOptions _sessionOptions = sessionOptions.Value;
     private readonly HttpContext _httpContext = accessor.HttpContext!;
     private readonly SignInOptions _signInOptions = signInOptions.Value;
@@ -165,28 +168,51 @@ public sealed class PasswordSignInStrategy(
                 Code = ErrorTypes.Common.BlockedDevice,
                 Description = "Cannot sign in, device is blocked."
             });
-
         }
-
-        if (await _twoFactorManager.IsEnabledAsync(user, cancellationToken))
-        {
-            return Results.Ok(new SignInResponse()
-            {
-                UserId = user.Id,
-                RequireTwoFactor = true
-            });
-        }
-
-        var session = new SessionEntity
+        
+        var authenticationSession = new AuthenticationSessionEntity()
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            AuthenticationMethods = [AuthenticationMethods.Password],
-            ExpireDate = DateTimeOffset.UtcNow.Add(_sessionOptions.Timestamp)
+            PassedAuthenticationMethods = [AuthenticationMethods.Password],
+            CreatedAt = DateTimeOffset.UtcNow,
+            ExpiredAt = DateTimeOffset.UtcNow.AddMinutes(15),
         };
-        
-        await _sessionManager.CreateAsync(session, cancellationToken);
-        return Results.Ok(new SignInResponse { UserId = user.Id });
 
+        if (await _twoFactorManager.IsEnabledAsync(user, cancellationToken))
+        {
+            authenticationSession.RequiredAuthenticationMethods = [AuthenticationMethods.MultiFactorAuthentication];
+            
+            var sessionResult = await _authenticationSessionManager.CreateAsync(authenticationSession, cancellationToken);
+            if (!sessionResult.Succeeded) return sessionResult;
+            
+            return Results.Ok(new SignInResponse()
+            {
+                TransactionId = authenticationSession.Id
+            });
+        }
+        else
+        {
+            var session = new SessionEntity
+            {
+                Id = Guid.CreateVersion7(),
+                UserId = user.Id,
+                AuthenticationMethods = [AuthenticationMethods.Password],
+                ExpireDate = DateTimeOffset.UtcNow.Add(_sessionOptions.Timestamp)
+            };
+
+            await _sessionManager.CreateAsync(session, cancellationToken);
+            
+            authenticationSession.SessionId = session.Id;
+            
+            var sessionResult = await _authenticationSessionManager.CreateAsync(authenticationSession, cancellationToken);
+            if (!sessionResult.Succeeded) return sessionResult;
+            
+            return Results.Ok(new SignInResponse
+            {
+                TransactionId = authenticationSession.Id,
+                SessionId = session.Id
+            });
+        }
     }
 }

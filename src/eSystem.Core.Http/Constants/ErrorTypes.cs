@@ -46,6 +46,7 @@ public static class ErrorTypes
         public const string InvalidLockoutState = "invalid_lockout_state";
         public const string InvalidCredentials = "invalid_credentials";
         public const string InvalidSession = "invalid_session";
+        public const string ExpiredAuthenticationSession = "expired_authentication_session";
         public const string InvalidRp = "invalid_rp";
         public const string InvalidChallenge = "invalid_challenge";
 

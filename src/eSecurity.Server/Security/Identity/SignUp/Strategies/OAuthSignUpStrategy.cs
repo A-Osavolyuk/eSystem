@@ -4,9 +4,9 @@ using eSecurity.Server.Common.Messaging;
 using eSecurity.Server.Common.Messaging.Messages.Email;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
+using eSecurity.Server.Security.Authentication.Session;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
-using eSecurity.Server.Security.Authorization.OAuth.Session;
 using eSecurity.Server.Security.Authorization.Roles;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
@@ -36,7 +36,7 @@ public sealed class OAuthSignUpStrategy(
     IHttpContextAccessor httpContextAccessor,
     IEmailManager emailManager,
     ISessionManager sessionManager,
-    IOAuthSessionManager oauthSessionManager,
+    IAuthenticationSessionManager authenticationSessionManager,
     IOptions<SessionOptions> sessionOptions) : ISignUpStrategy
 {
     private readonly IUserManager _userManager = userManager;
@@ -47,7 +47,7 @@ public sealed class OAuthSignUpStrategy(
     private readonly IEmailManager _emailManager = emailManager;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly ISessionManager _sessionManager = sessionManager;
-    private readonly IOAuthSessionManager _oauthSessionManager = oauthSessionManager;
+    private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly SessionOptions _sessionOptions = sessionOptions.Value;
 
     public async ValueTask<Result> ExecuteAsync(SignUpPayload payload,
@@ -62,8 +62,8 @@ public sealed class OAuthSignUpStrategy(
             });
         }
 
-        var oauthSession = await _oauthSessionManager.FindByIdAsync(oauthPayload.Sid, cancellationToken);
-        if (oauthSession is null)
+        var authenticationSession = await _authenticationSessionManager.FindByIdAsync(oauthPayload.Sid, cancellationToken);
+        if (authenticationSession is null)
         {
             return Results.BadRequest(new Error
             {
@@ -153,20 +153,22 @@ public sealed class OAuthSignUpStrategy(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            AuthenticationMethods = oauthSession.AuthenticationMethods,
+            AuthenticationMethods = authenticationSession.PassedAuthenticationMethods,
             ExpireDate = DateTimeOffset.UtcNow.Add(_sessionOptions.Timestamp)
         };
         
         await _sessionManager.CreateAsync(session, cancellationToken);
         
-        oauthSession.Flow = OAuthFlow.SignUp;
-        oauthSession.UserId = user.Id;
+        authenticationSession.OAuthFlow = OAuthFlow.SignUp;
+        authenticationSession.UserId = user.Id;
+        authenticationSession.SessionId = session.Id;
         
-        var sessionResult = await _oauthSessionManager.UpdateAsync(oauthSession, cancellationToken);
+        var sessionResult = await _authenticationSessionManager.UpdateAsync(authenticationSession, cancellationToken);
         if (!sessionResult.Succeeded) return sessionResult;
         
         return Results.Found(QueryBuilder.Create()
             .WithUri(oauthPayload.ReturnUri)
+            .WithQueryParam("sid", authenticationSession.Id.ToString())
             .WithQueryParam("state", oauthPayload.State)
             .Build());
     }

@@ -2,14 +2,15 @@
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Lockout;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
+using eSecurity.Server.Security.Authentication.Session;
 using eSecurity.Server.Security.Authentication.TwoFactor;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
-using eSecurity.Server.Security.Authorization.OAuth.Session;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Http.Results;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Utilities.Query;
 
 namespace eSecurity.Server.Security.Authentication.SignIn.Strategies;
@@ -22,7 +23,7 @@ public sealed class OAuthSignInStrategy(
     ILinkedAccountManager linkedAccountManager,
     ITwoFactorManager twoFactorManager,
     ISessionManager sessionManager,
-    IOAuthSessionManager oauthSessionManager,
+    IAuthenticationSessionManager authenticationSessionManager,
     IOptions<SessionOptions> options) : ISignInStrategy
 {
     private readonly IUserManager _userManager = userManager;
@@ -31,7 +32,7 @@ public sealed class OAuthSignInStrategy(
     private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly ISessionManager _sessionManager = sessionManager;
-    private readonly IOAuthSessionManager _oauthSessionManager = oauthSessionManager;
+    private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly SessionOptions _options = options.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
@@ -47,8 +48,8 @@ public sealed class OAuthSignInStrategy(
             });
         }
 
-        var oauthSession = await _oauthSessionManager.FindByIdAsync(oauthPayload.Sid, cancellationToken);
-        if (oauthSession is null)
+        var authenticationSession = await _authenticationSessionManager.FindByIdAsync(oauthPayload.Sid, cancellationToken);
+        if (authenticationSession is null)
         {
             return Results.BadRequest(new Error
             {
@@ -109,30 +110,42 @@ public sealed class OAuthSignInStrategy(
             if (!connectResult.Succeeded) return connectResult;
         }
         
-        var twoFactorRequired = await _twoFactorManager.IsEnabledAsync(user, cancellationToken);
-        if (!twoFactorRequired)
+        authenticationSession.OAuthFlow = OAuthFlow.SignIn;
+        authenticationSession.UserId = user.Id;
+        if (await _twoFactorManager.IsEnabledAsync(user, cancellationToken))
+        {
+            authenticationSession.RequiredAuthenticationMethods = [AuthenticationMethods.MultiFactorAuthentication];
+            
+            var sessionResult = await _authenticationSessionManager.UpdateAsync(authenticationSession, cancellationToken);
+            if (!sessionResult.Succeeded) return sessionResult;
+            
+            return Results.Found(QueryBuilder.Create()
+                .WithUri(oauthPayload.ReturnUri)
+                .WithQueryParam("state", oauthPayload.State)
+                .Build());
+        }
+        else
         {
             var session = new SessionEntity
             {
                 Id = Guid.CreateVersion7(),
                 UserId = user.Id,
-                AuthenticationMethods = oauthSession.AuthenticationMethods,
+                AuthenticationMethods = authenticationSession.PassedAuthenticationMethods,
                 ExpireDate = DateTimeOffset.UtcNow.Add(_options.Timestamp)
             };
             
             await _sessionManager.CreateAsync(session, cancellationToken);
+            
+            authenticationSession.SessionId = session.Id;
+            
+            var sessionResult = await _authenticationSessionManager.UpdateAsync(authenticationSession, cancellationToken);
+            if (!sessionResult.Succeeded) return sessionResult;
+            
+            return Results.Found(QueryBuilder.Create()
+                .WithUri(oauthPayload.ReturnUri)
+                .WithQueryParam("sid", authenticationSession.Id.ToString())
+                .WithQueryParam("state", oauthPayload.State)
+                .Build());
         }
-
-        oauthSession.Flow = OAuthFlow.SignIn;
-        oauthSession.UserId = user.Id;
-        oauthSession.RequireTwoFactor = twoFactorRequired;
-        
-        var sessionResult = await _oauthSessionManager.UpdateAsync(oauthSession, cancellationToken);
-        if (!sessionResult.Succeeded) return sessionResult;
-        
-        return Results.Found(QueryBuilder.Create()
-            .WithUri(oauthPayload.ReturnUri)
-            .WithQueryParam("state", oauthPayload.State)
-            .Build());
     }
 }

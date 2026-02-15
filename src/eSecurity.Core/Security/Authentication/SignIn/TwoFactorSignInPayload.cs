@@ -2,6 +2,6 @@
 
 public class TwoFactorSignInPayload : SignInPayload
 {
-    public Guid UserId { get; set; }
-    public required string[] AuthenticationMethods { get; set; }
+    public Guid TransactionId { get; set; }
+    public required string AuthenticationMethod { get; set; }
 }
