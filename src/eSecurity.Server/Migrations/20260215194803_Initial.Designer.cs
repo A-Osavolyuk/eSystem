@@ -12,7 +12,7 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20260215140308_Initial")]
+    [Migration("20260215194803_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -796,7 +796,7 @@ namespace eSecurity.Server.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<string>("SubjectIdentifier")
+                    b.Property<string>("Subject")
                         .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
@@ -810,6 +810,10 @@ namespace eSecurity.Server.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId");
+
+                    b.HasIndex("Subject")
+                        .IsUnique()
+                        .HasDatabaseName("IX_PairwiseSubject_Subject");
 
                     b.HasIndex("UserId");
 
@@ -942,6 +946,38 @@ namespace eSecurity.Server.Migrations
                         .IsUnique();
 
                     b.ToTable("PersonalData", "public");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.PublicSubjectEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Subject")
+                        .IsUnique()
+                        .HasDatabaseName("IX_PublicSubject_Subject");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("PublicSubjects", "public");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ResponseTypeEntity", b =>
@@ -1936,6 +1972,17 @@ namespace eSecurity.Server.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.PublicSubjectEntity", b =>
+                {
+                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
+                        .WithOne("PublicSubject")
+                        .HasForeignKey("eSecurity.Server.Data.Entities.PublicSubjectEntity", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("eSecurity.Server.Data.Entities.SessionEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
@@ -2126,6 +2173,9 @@ namespace eSecurity.Server.Migrations
             modelBuilder.Entity("eSecurity.Server.Data.Entities.UserEntity", b =>
                 {
                     b.Navigation("Emails");
+
+                    b.Navigation("PublicSubject")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

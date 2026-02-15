@@ -461,7 +461,7 @@ namespace eSecurity.Server.Migrations
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     ClientId = table.Column<Guid>(type: "uuid", nullable: false),
                     SectorIdentifier = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    SubjectIdentifier = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    Subject = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
@@ -532,6 +532,29 @@ namespace eSecurity.Server.Migrations
                     table.PrimaryKey("PK_PersonalData", x => x.Id);
                     table.ForeignKey(
                         name: "FK_PersonalData_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "public",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PublicSubjects",
+                schema: "public",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Subject = table.Column<string>(type: "character varying(36)", maxLength: 36, nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PublicSubjects", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PublicSubjects_Users_UserId",
                         column: x => x.UserId,
                         principalSchema: "public",
                         principalTable: "Users",
@@ -1346,6 +1369,13 @@ namespace eSecurity.Server.Migrations
                 column: "TokenId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PairwiseSubject_Subject",
+                schema: "public",
+                table: "PairwiseSubjects",
+                column: "Subject",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PairwiseSubjects_ClientId",
                 schema: "public",
                 table: "PairwiseSubjects",
@@ -1375,6 +1405,20 @@ namespace eSecurity.Server.Migrations
                 name: "IX_PersonalData_UserId",
                 schema: "public",
                 table: "PersonalData",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PublicSubject_Subject",
+                schema: "public",
+                table: "PublicSubjects",
+                column: "Subject",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PublicSubjects_UserId",
+                schema: "public",
+                table: "PublicSubjects",
                 column: "UserId",
                 unique: true);
 
@@ -1523,6 +1567,10 @@ namespace eSecurity.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "PersonalData",
+                schema: "public");
+
+            migrationBuilder.DropTable(
+                name: "PublicSubjects",
                 schema: "public");
 
             migrationBuilder.DropTable(
