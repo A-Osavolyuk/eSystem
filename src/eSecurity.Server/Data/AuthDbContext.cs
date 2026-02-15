@@ -43,7 +43,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<TokenAuthMethodEntity> TokenAuthMethods { get; set; }
     public DbSet<DeviceCodeEntity> DeviceCodes { get; set; }
     public DbSet<OpaqueTokenAudienceEntity> OpaqueTokenAudiences { get; set; }
-    public DbSet<OAuthSessionEntity> OAuthSessions { get; set; }
     public DbSet<CibaRequestEntity> CibaRequests { get; set; }
     public DbSet<AuthenticationSessionEntity> AuthenticationSessions { get; set; }
 
