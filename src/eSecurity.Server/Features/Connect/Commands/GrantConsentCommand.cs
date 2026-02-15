@@ -1,6 +1,7 @@
 using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authorization.OAuth.Consents;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Constants;
@@ -16,30 +17,25 @@ public class GrantConsentCommandHandler(
     IUserManager userManager,
     IClientManager clientManager,
     IConsentManager consentManager,
+    ISessionManager sessionManager,
     IOptions<OpenIdConfiguration> options) : IRequestHandler<GrantConsentCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IClientManager _clientManager = clientManager;
     private readonly IConsentManager _consentManager = consentManager;
+    private readonly ISessionManager _sessionManager = sessionManager;
     private readonly OpenIdConfiguration _options = options.Value;
 
     public async Task<Result> Handle(GrantConsentCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
-        if (user is null)
-            return Results.BadRequest(new Error
-            {
-                Code = ErrorTypes.OAuth.InvalidRequest,
-                Description = "user_id is invalid."
-            });
+        var session = await _sessionManager.FindByIdAsync(request.Request.SessionId, cancellationToken);
+        if (session is null) return Results.NotFound("Session was not found");
+        
+        var user = await _userManager.FindByIdAsync(session.UserId, cancellationToken);
+        if (user is null) return Results.NotFound("User was not found");
 
         var client = await _clientManager.FindByIdAsync(request.Request.ClientId, cancellationToken);
-        if (client is null)
-            return Results.Unauthorized(new Error
-            {
-                Code = ErrorTypes.OAuth.InvalidClient,
-                Description = "Invalid client."
-            });
+        if (client is null) return Results.NotFound("Client was not found");
 
         var consent = await _consentManager.FindAsync(user, client, cancellationToken);
         if (consent is null)

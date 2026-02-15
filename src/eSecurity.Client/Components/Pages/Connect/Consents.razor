@@ -1,6 +1,7 @@
 @page "/connect/consents"
 
 @using eSecurity.Client.Security.Authentication.OpenIdConnect
+@using eSecurity.Client.Security.Authentication.OpenIdConnect.Session
 @using eSecurity.Client.Security.Authorization.Consent
 @using eSecurity.Client.Security.Identity
 @using eSecurity.Core.Common.DTOs
@@ -16,6 +17,7 @@
 @inject IConnectService ConnectService
 @inject IConsentService ConsentService
 @inject IUserService UserService
+@inject ISessionAccessor SessionAccessor
 
 <Title Text="Grant consents"></Title>
 
@@ -174,20 +176,23 @@
         
         _clientId = queryParams["client_id"];
         _redirectUri = queryParams["redirect_uri"];
-        
-        if (!UserState.IsAuthenticated)
+
+        var session = SessionAccessor.Get();
+        if (session is null)
         {
             NavigationManager.NavigateTo(QueryBuilder.Create()
                 .WithUri(_redirectUri)
                 .WithQueryParam("error", ErrorTypes.OAuth.LoginRequired)
                 .WithQueryParam("error_description", "User must pass authentication first.")
                 .Build());
+
+            return;
         }
 
         var request = new CheckConsentRequest
         {
             ClientId = Guid.Parse(_clientId),
-            UserId = UserState.UserId,
+            SessionId = session.Id,
             Scopes = queryParams["scope"].Split(' ').ToList()
         };
 
@@ -264,9 +269,21 @@
 
     private async Task OnAllowAsync()
     {
+        var session = SessionAccessor.Get();
+        if (session is null)
+        {
+            NavigationManager.NavigateTo(QueryBuilder.Create()
+                .WithUri(_redirectUri)
+                .WithQueryParam("error", ErrorTypes.OAuth.LoginRequired)
+                .WithQueryParam("error_description", "User must pass authentication first.")
+                .Build());
+
+            return;
+        }
+        
         var request = new GrantConsentRequest
         {
-            UserId = UserState.UserId,
+            SessionId = session.Id,
             ClientId = Guid.Parse(_clientId),
             Scopes = _scopes
         };

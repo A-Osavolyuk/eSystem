@@ -1,5 +1,6 @@
 ﻿using eSecurity.Client.Common.State.States;
 using eSecurity.Client.Security.Authentication.OpenIdConnect.Authorization;
+using eSecurity.Client.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Client.Security.Authorization.Consent;
 using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Common.Responses;
@@ -10,17 +11,18 @@ using eSystem.Core.Utilities.Query;
 namespace eSecurity.Client.Security.Authentication.OpenIdConnect.Prompts;
 
 public sealed class ConsentPromptStrategy(
-    UserState userState,
-    IConsentService consentService) : IPromptStrategy
+    IConsentService consentService,
+    ISessionAccessor sessionAccessor) : IPromptStrategy
 {
-    private readonly UserState _userState = userState;
     private readonly IConsentService _consentService = consentService;
+    private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
 
     public bool CanHandle(string? prompt) => !string.IsNullOrEmpty(prompt) && prompt == PromptTypes.Consent;
 
     public async Task<AuthorizationResult> ExecuteAsync(AuthorizationContext context)
     {
-        if (!_userState.IsAuthenticated)
+        var session = _sessionAccessor.Get();
+        if (session is null)
         {
             var redirectUri = QueryBuilder.Create()
                 .WithUri(context.RedirectUri)
@@ -34,7 +36,7 @@ public sealed class ConsentPromptStrategy(
         var request = new CheckConsentRequest
         {
             ClientId = Guid.Parse(context.ClientId),
-            UserId = _userState.UserId,
+            SessionId = session.Id,
             Scopes = context.Scope.Split(" ").ToList()
         };
 

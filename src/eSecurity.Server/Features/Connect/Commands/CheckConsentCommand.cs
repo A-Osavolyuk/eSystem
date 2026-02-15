@@ -1,6 +1,7 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Common.Responses;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authorization.OAuth.Consents;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Results;
@@ -12,16 +13,21 @@ public record CheckConsentCommand(CheckConsentRequest Request) : IRequest<Result
 
 public class CheckConsentCommandHandler(
     IConsentManager consentManager,
+    ISessionManager sessionManager,
     IClientManager clientManager,
     IUserManager userManager) : IRequestHandler<CheckConsentCommand, Result>
 {
     private readonly IConsentManager _consentManager = consentManager;
+    private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IClientManager _clientManager = clientManager;
     private readonly IUserManager _userManager = userManager;
 
     public async Task<Result> Handle(CheckConsentCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var session = await _sessionManager.FindByIdAsync(request.Request.SessionId, cancellationToken);
+        if (session is null) return Results.NotFound("Session not found");
+        
+        var user = await _userManager.FindByIdAsync(session.UserId, cancellationToken);
         if (user is null) return Results.NotFound("User not found");
 
         var client = await _clientManager.FindByIdAsync(request.Request.ClientId, cancellationToken);
