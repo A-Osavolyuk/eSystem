@@ -37,20 +37,11 @@ public sealed class OAuthLoginCommandHandler(
             .WithUri("/api/v1/oauth/handle")
             .WithQueryParam("returnUri", request.ReturnUri);
 
-        var providerMethod = request.Provider switch
-        {
-            AuthenticationTypes.Google => AuthenticationMethods.Google,
-            AuthenticationTypes.Facebook => AuthenticationMethods.Facebook,
-            AuthenticationTypes.Microsoft => AuthenticationMethods.Microsoft,
-            AuthenticationTypes.X => AuthenticationMethods.X,
-            _ => throw new NotSupportedException("Provider is not supported")
-        };
-
         var session = new OAuthSessionEntity()
         {
             Id = Guid.CreateVersion7(),
             Provider = request.Provider,
-            AuthenticationMethods = [AuthenticationMethods.Federated, AuthenticationMethods.Social, providerMethod],
+            AuthenticationMethods = [AuthenticationMethods.Federated, AuthenticationMethods.Social],
             ExpiredAt = DateTimeOffset.UtcNow.AddMinutes(10)
         };
         

@@ -15,8 +15,4 @@ public static class AuthenticationMethods
     public const string IrisScan = "eye";
     public const string Federated = "federated";
     public const string Social = "social";
-    public const string Google = "google";
-    public const string Microsoft = "microsoft";
-    public const string X = "x";
-    public const string Facebook = "facebook";
 }
