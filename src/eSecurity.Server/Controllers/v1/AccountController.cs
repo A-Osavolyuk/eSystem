@@ -1,6 +1,7 @@
 using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Common.Filters;
 using eSecurity.Server.Features.Account.Commands;
+using eSecurity.Server.Features.Account.Queries;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Mediator;
@@ -15,6 +16,16 @@ namespace eSecurity.Server.Controllers.v1;
 public class AccountController(ISender sender) : ControllerBase
 {
     private readonly ISender _sender = sender;
+
+    [EndpointSummary("Get authentication session")]
+    [EndpointDescription("Get authentication session")]
+    [ProducesResponseType(200)]
+    [HttpPost("session/{sid:guid}")]
+    public async ValueTask<IActionResult> GetAuthenticationSessionAsync(Guid sid)
+    {
+        var result = await _sender.Send(new GetAuthenticationSessionQuery(sid));
+        return HttpContext.HandleResult(result);
+    }
     
     [EndpointSummary("Sign in")]
     [EndpointDescription("Sign in")]
