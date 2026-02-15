@@ -29,9 +29,6 @@ public class MessageContext
         return new VerifyCodeRequest
         {
             UserId = UserId,
-            Sender = Sender,
-            Purpose = Purpose,
-            Action = Action,
             Code = code
         };
     }

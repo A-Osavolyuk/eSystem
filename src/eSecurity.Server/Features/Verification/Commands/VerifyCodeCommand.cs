@@ -1,6 +1,7 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Security.Authorization.Access.Codes;
 using eSecurity.Server.Security.Authorization.Access.Verification;
+using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Results;
 using eSystem.Core.Mediator;
@@ -12,26 +13,26 @@ public record VerifyCodeCommand(VerifyCodeRequest Request) : IRequest<Result>;
 public class VerifyCodeCommandHandler(
     IUserManager userManager,
     ICodeManager codeManager,
-    IVerificationManager verificationManager) : IRequestHandler<VerifyCodeCommand, Result>
+    IVerificationManager verificationManager,
+    IHasherProvider hasherProvider) : IRequestHandler<VerifyCodeCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly ICodeManager _codeManager = codeManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
+    private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Pbkdf2);
 
     public async Task<Result> Handle(VerifyCodeCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
-        var code = request.Request.Code;
-        var sender = request.Request.Sender;
-        var action = request.Request.Action;
-        var purpose = request.Request.Purpose;
-        
-        var codeResult = await _codeManager.VerifyAsync(user, code, sender, action, purpose, cancellationToken);
+        var codeHash = _hasher.Hash(request.Request.Code);
+        var code = await _codeManager.FindAsync(user, codeHash, cancellationToken);
+        if (code is null) return Results.NotFound("Code not found.");
+
+        var codeResult = await _codeManager.RemoveAsync(code, cancellationToken);
         if (!codeResult.Succeeded) return codeResult;
 
-        var result = await _verificationManager.CreateAsync(user, purpose, action, cancellationToken);
-        return result;
+        return await _verificationManager.CreateAsync(user, code.Purpose, code.Action, cancellationToken);
     }
 }

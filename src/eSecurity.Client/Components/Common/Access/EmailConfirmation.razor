@@ -128,10 +128,7 @@
             var request = new VerifyCodeRequest
             {
                 UserId = UserState.UserId,
-                Code = CodeModel.Code,
-                Purpose = Context.Purpose,
-                Action = Context.Action,
-                Sender = SenderType.Email
+                Code = CodeModel.Code
             };
 
             var result = await VerificationService.VerifyCodeAsync(request);

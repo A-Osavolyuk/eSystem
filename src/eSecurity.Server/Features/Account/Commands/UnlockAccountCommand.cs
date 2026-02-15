@@ -3,6 +3,7 @@ using eSecurity.Core.Security.Authorization.Access;
 using eSecurity.Server.Security.Authentication.Lockout;
 using eSecurity.Server.Security.Authorization.Access.Codes;
 using eSecurity.Server.Security.Authorization.Devices;
+using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Common.Messaging;
@@ -19,6 +20,7 @@ public class UnlockAccountCommandHandler(
     ICodeManager codeManager,
     ILockoutManager lockoutManager,
     IHttpContextAccessor httpContextAccessor,
+    IHasherProvider hasherProvider,
     IDeviceManager deviceManager) : IRequestHandler<UnlockAccountCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
@@ -26,6 +28,7 @@ public class UnlockAccountCommandHandler(
     private readonly ILockoutManager _lockoutManager = lockoutManager;
     private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
     private readonly IDeviceManager _deviceManager = deviceManager;
+    private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Pbkdf2);
 
     public async Task<Result> Handle(UnlockAccountCommand request, CancellationToken cancellationToken)
     {
@@ -44,11 +47,13 @@ public class UnlockAccountCommandHandler(
             });
 
         }
-        var code = request.Request.Code;
-        var verificationResult = await _codeManager.VerifyAsync(user, code, SenderType.Email, 
-            ActionType.Unlock, PurposeType.Account, cancellationToken);
+        
+        var codeHash = _hasher.Hash(request.Request.Code);
+        var code = await _codeManager.FindAsync(user, codeHash, cancellationToken);
+        if (code is null) return Results.NotFound("Code not found");
 
-        if (!verificationResult.Succeeded) return verificationResult;
+        var codeResult = await _codeManager.RemoveAsync(code, cancellationToken);
+        if (!codeResult.Succeeded) return codeResult;
 
         user.FailedLoginAttempts = 0;
         var updateResult = await _userManager.UpdateAsync(user, cancellationToken);
