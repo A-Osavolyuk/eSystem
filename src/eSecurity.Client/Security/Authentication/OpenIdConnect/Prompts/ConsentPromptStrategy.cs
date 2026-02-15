@@ -43,7 +43,7 @@ public sealed class ConsentPromptStrategy(
         var result = await _consentService.CheckAsync(request);
         if (result.Succeeded && result.TryGetValue<CheckConsentResponse>(out var response))
         {
-            if (response is { Granted: true, RemainingScopes.Count: 0 })
+            if (response is { IsGranted: true, RemainingScopes.Count: 0 })
             {
                 var currentPrompt = context.Prompts.First();
                 context.Prompts = context.Prompts.Except([currentPrompt]).ToList();

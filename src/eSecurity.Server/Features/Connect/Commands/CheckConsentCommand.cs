@@ -38,7 +38,8 @@ public class CheckConsentCommandHandler(
         {
             return Results.Ok(new CheckConsentResponse
             {
-                Granted = false,
+                IsGranted = false,
+                UserHint = user.Username,
                 RemainingScopes = request.Request.Scopes
             });
         }
@@ -47,11 +48,16 @@ public class CheckConsentCommandHandler(
         {
             return Results.Ok(new CheckConsentResponse
             {
-                Granted = false,
+                IsGranted = false,
+                UserHint = user.Username,
                 RemainingScopes = remainingScopes.ToList()
             });
         }
         
-        return Results.Ok(new CheckConsentResponse { Granted = true });
+        return Results.Ok(new CheckConsentResponse
+        {
+            IsGranted = true, 
+            UserHint = user.Username,
+        });
     }
 }

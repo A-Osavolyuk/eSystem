@@ -16,7 +16,6 @@
 
 @inject IConnectService ConnectService
 @inject IConsentService ConsentService
-@inject IUserService UserService
 @inject ISessionAccessor SessionAccessor
 
 <Title Text="Grant consents"></Title>
@@ -161,7 +160,7 @@
     public string State { get; set; } = string.Empty;
 
     private ClientInfo _clientInfo = new();
-    private string _username = string.Empty;
+    private string? _username;
     private List<string> _scopes = [];
     private string _clientId = string.Empty;
     private string _redirectUri = string.Empty;
@@ -197,15 +196,16 @@
         };
 
         var result = await ConsentService.CheckAsync(request);
-        if (result.Succeeded && result.TryGetValue<CheckConsentResponse>(out var response))
+        if (result.Succeeded && result.TryGetValue<CheckConsentResponse>(out var response) && response is not null)
         {
-            if (response is { Granted: true, RemainingScopes.Count: 0 })
+            _username = response.UserHint;
+            if (response is { IsGranted: true, RemainingScopes.Count: 0 })
             {
                 NavigationManager.NavigateTo(_returnUrl);
             }
             else
             {
-                _scopes = response!.RemainingScopes;
+                _scopes = response.RemainingScopes;
                 await InitializeAsync();
             }
 
@@ -227,25 +227,6 @@
         if (result.Succeeded && result.TryGetValue<ClientInfo>(out var clientInfo))
         {
             _clientInfo = clientInfo!;
-            await LoadUserAsync();
-        }
-        else
-        {
-            var error = result.GetError();
-            NavigationManager.NavigateTo(QueryBuilder.Create()
-                .WithUri(_redirectUri)
-                .WithQueryParam("error", error.Code)
-                .WithQueryParam("error_description", error.Description)
-                .Build());
-        }
-    }
-
-    private async Task LoadUserAsync()
-    {
-        var result = await UserService.GetUserAsync(UserState.UserId);
-        if (result.Succeeded && result.TryGetValue<UserDto>(out var user))
-        {
-            _username = user!.Username;
         }
         else
         {
