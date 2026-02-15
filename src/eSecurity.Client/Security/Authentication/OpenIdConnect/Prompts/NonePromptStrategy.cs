@@ -2,6 +2,7 @@
 using eSecurity.Client.Common.JS.Fetch;
 using eSecurity.Client.Common.State.States;
 using eSecurity.Client.Security.Authentication.OpenIdConnect.Authorization;
+using eSecurity.Client.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Client.Security.Cookies;
 using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Common.Responses;
@@ -12,12 +13,12 @@ using Microsoft.AspNetCore.Components;
 namespace eSecurity.Client.Security.Authentication.OpenIdConnect.Prompts;
 
 public sealed class NonePromptStrategy(
-    UserState userState,
     NavigationManager navigationManager,
+    ISessionAccessor sessionAccessor,
     IConnectService connectService) : IPromptStrategy
 {
-    private readonly UserState _userState = userState;
     private readonly NavigationManager _navigationManager = navigationManager;
+    private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
     private readonly IConnectService _connectService = connectService;
 
     public bool CanHandle(string? prompt) => prompt == PromptTypes.None || string.IsNullOrEmpty(prompt);
@@ -27,8 +28,9 @@ public sealed class NonePromptStrategy(
         var decodedRedirectUri = HttpUtility.UrlDecode(context.RedirectUri);
         var decodedScope = HttpUtility.UrlDecode(context.Scope);
         var scopes = decodedScope.Split(" ").ToList();
-        
-        if (!_userState.IsAuthenticated)
+
+        var session = _sessionAccessor.Get();
+        if (session is null)
         {
             return AuthorizationResult.Redirect(QueryBuilder.Create()
                 .WithUri(decodedRedirectUri)
@@ -39,7 +41,7 @@ public sealed class NonePromptStrategy(
         
         var request = new AuthorizeRequest
         {
-            UserId = _userState.UserId,
+            SessionId = session.Id,
             ResponseType = context.ResponseType,
             ClientId = context.ClientId,
             RedirectUri = decodedRedirectUri,
