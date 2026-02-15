@@ -23,6 +23,63 @@ namespace eSecurity.Server.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.AuthenticationSessionEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.PrimitiveCollection<string[]>("AllowedMfaMethods")
+                        .HasColumnType("text[]");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("ExpiredAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("IdentityProvider")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("OAuthFlow")
+                        .HasColumnType("text");
+
+                    b.PrimitiveCollection<string[]>("PassedAuthenticationMethods")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.PrimitiveCollection<string[]>("RequiredAuthenticationMethods")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.Property<DateTimeOffset?>("RevokedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("SessionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SessionId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AuthenticationSessions", "public");
+                });
+
             modelBuilder.Entity("eSecurity.Server.Data.Entities.AuthorizationCodeEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -601,46 +658,6 @@ namespace eSecurity.Server.Migrations
                     b.HasIndex("ConsentId");
 
                     b.ToTable("GrantedScopes", "public");
-                });
-
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.OAuthSessionEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.PrimitiveCollection<string[]>("AuthenticationMethods")
-                        .IsRequired()
-                        .HasColumnType("text[]");
-
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTimeOffset>("ExpiredAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Flow")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Provider")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("character varying(32)");
-
-                    b.Property<bool?>("RequireTwoFactor")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTimeOffset?>("UpdateDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("OAuthSessions", "public");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.OpaqueTokenAudienceEntity", b =>
@@ -1503,6 +1520,23 @@ namespace eSecurity.Server.Migrations
                     b.ToTable("Verifications", "public");
                 });
 
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.AuthenticationSessionEntity", b =>
+                {
+                    b.HasOne("eSecurity.Server.Data.Entities.SessionEntity", "Session")
+                        .WithMany()
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Session");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("eSecurity.Server.Data.Entities.AuthorizationCodeEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
@@ -1737,16 +1771,6 @@ namespace eSecurity.Server.Migrations
                     b.Navigation("ClientScope");
 
                     b.Navigation("Consent");
-                });
-
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.OAuthSessionEntity", b =>
-                {
-                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.OpaqueTokenAudienceEntity", b =>

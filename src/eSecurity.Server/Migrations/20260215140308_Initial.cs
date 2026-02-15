@@ -57,6 +57,7 @@ namespace eSecurity.Server.Migrations
                     SubjectType = table.Column<string>(type: "text", nullable: false),
                     SectorIdentifierUri = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     NotificationDeliveryMode = table.Column<string>(type: "text", nullable: false),
+                    RequireUserCode = table.Column<bool>(type: "boolean", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
@@ -444,33 +445,6 @@ namespace eSecurity.Server.Migrations
                     table.PrimaryKey("PK_LockoutStates", x => x.Id);
                     table.ForeignKey(
                         name: "FK_LockoutStates_Users_UserId",
-                        column: x => x.UserId,
-                        principalSchema: "public",
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "OAuthSessions",
-                schema: "public",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Provider = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
-                    AuthenticationMethods = table.Column<string[]>(type: "text[]", nullable: false),
-                    ExpiredAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    RequireTwoFactor = table.Column<bool>(type: "boolean", nullable: true),
-                    Flow = table.Column<string>(type: "text", nullable: true),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
-                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OAuthSessions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_OAuthSessions_Users_UserId",
                         column: x => x.UserId,
                         principalSchema: "public",
                         principalTable: "Users",
@@ -881,6 +855,45 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AuthenticationSessions",
+                schema: "public",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    IdentityProvider = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
+                    OAuthFlow = table.Column<string>(type: "text", nullable: true),
+                    PassedAuthenticationMethods = table.Column<string[]>(type: "text[]", nullable: false),
+                    RequiredAuthenticationMethods = table.Column<string[]>(type: "text[]", nullable: false),
+                    AllowedMfaMethods = table.Column<string[]>(type: "text[]", nullable: true),
+                    IsRevoked = table.Column<bool>(type: "boolean", nullable: false),
+                    RevokedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    ExpiredAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
+                    SessionId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AuthenticationSessions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AuthenticationSessions_Sessions_SessionId",
+                        column: x => x.SessionId,
+                        principalSchema: "public",
+                        principalTable: "Sessions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AuthenticationSessions_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "public",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CibaRequests",
                 schema: "public",
                 columns: table => new
@@ -1145,6 +1158,18 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_AuthenticationSessions_SessionId",
+                schema: "public",
+                table: "AuthenticationSessions",
+                column: "SessionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuthenticationSessions_UserId",
+                schema: "public",
+                table: "AuthenticationSessions",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AuthorizationCodes_ClientId",
                 schema: "public",
                 table: "AuthorizationCodes",
@@ -1276,12 +1301,6 @@ namespace eSecurity.Server.Migrations
                 table: "LockoutStates",
                 column: "UserId",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_OAuthSessions_UserId",
-                schema: "public",
-                table: "OAuthSessions",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OpaqueTokenAudiences_AudienceId",
@@ -1431,6 +1450,10 @@ namespace eSecurity.Server.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "AuthenticationSessions",
+                schema: "public");
+
+            migrationBuilder.DropTable(
                 name: "AuthorizationCodes",
                 schema: "public");
 
@@ -1476,10 +1499,6 @@ namespace eSecurity.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "LockoutStates",
-                schema: "public");
-
-            migrationBuilder.DropTable(
-                name: "OAuthSessions",
                 schema: "public");
 
             migrationBuilder.DropTable(
