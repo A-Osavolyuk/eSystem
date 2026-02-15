@@ -9,7 +9,7 @@ public sealed class PairwiseSubjectConfiguration : IEntityTypeConfiguration<Pair
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.SectorIdentifier).HasMaxLength(100);
-        builder.Property(x => x.SubjectIdentifier).HasMaxLength(256);
+        builder.Property(x => x.Subject).HasMaxLength(256);
             
         builder.HasOne(x => x.Client)
             .WithMany(x => x.PairwiseSubjects)

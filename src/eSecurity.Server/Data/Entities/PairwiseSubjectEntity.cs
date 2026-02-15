@@ -9,7 +9,7 @@ public class PairwiseSubjectEntity : Entity
     public Guid ClientId { get; set; }
     
     public required string SectorIdentifier { get; set; }
-    public required string SubjectIdentifier { get; set; }
+    public required string Subject { get; set; }
     
     public UserEntity User { get; set; } = null!;
     public ClientEntity Client { get; set; } = null!;
