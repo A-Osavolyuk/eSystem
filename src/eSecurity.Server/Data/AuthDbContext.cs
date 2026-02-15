@@ -45,6 +45,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<OpaqueTokenAudienceEntity> OpaqueTokenAudiences { get; set; }
     public DbSet<OAuthSessionEntity> OAuthSessions { get; set; }
     public DbSet<CibaRequestEntity> CibaRequests { get; set; }
+    public DbSet<AuthenticationSessionEntity> AuthenticationSessions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
