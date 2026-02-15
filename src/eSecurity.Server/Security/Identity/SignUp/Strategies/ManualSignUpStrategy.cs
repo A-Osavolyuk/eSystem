@@ -1,13 +1,18 @@
 using eSecurity.Core.Common.Responses;
+using eSecurity.Core.Security.Authorization.Access;
 using eSecurity.Core.Security.Identity;
+using eSecurity.Server.Common.Messaging;
+using eSecurity.Server.Common.Messaging.Messages.Email;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Password;
+using eSecurity.Server.Security.Authorization.Access.Codes;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Authorization.Roles;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
 using eSecurity.Server.Security.Identity.User.Username;
+using eSystem.Core.Common.Messaging;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Http.Results;
@@ -29,6 +34,8 @@ public sealed class ManualSignUpStrategy(
     IDeviceManager deviceManager,
     IEmailManager emailManager,
     IHttpContextAccessor httpContextAccessor,
+    IMessageService messageService,
+    ICodeManager codeManager,
     IOptions<AccountOptions> options) : ISignUpStrategy
 {
     private readonly IUserManager _userManager = userManager;
@@ -37,6 +44,8 @@ public sealed class ManualSignUpStrategy(
     private readonly IRoleManager _roleManager = roleManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly IEmailManager _emailManager = emailManager;
+    private readonly IMessageService _messageService = messageService;
+    private readonly ICodeManager _codeManager = codeManager;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly AccountOptions _options = options.Value;
 
@@ -111,6 +120,24 @@ public sealed class ManualSignUpStrategy(
 
         var deviceResult = await _deviceManager.CreateAsync(newDevice, cancellationToken);
         if (!deviceResult.Succeeded) return deviceResult;
+
+        var code = await _codeManager.GenerateAsync(user, SenderType.Email,
+            ActionType.Verify, PurposeType.Email, cancellationToken);
+        
+        var message = new SignUpEmailMessage()
+        {
+            Credentials = new Dictionary<string, string>
+            {
+                { "To", manualPayload.Email },
+                { "Subject", "Sign Up" },
+            },
+            Payload = new()
+            {
+                { "Code", code }
+            }
+        };
+
+        await _messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
 
         var response = new SignUpResponse
         {

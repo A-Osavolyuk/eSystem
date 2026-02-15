@@ -58,7 +58,6 @@
 }
 
 @code {
-
     [SupplyParameterFromQuery(Name = "state")]
     private string? State { get; set; }
     
@@ -101,23 +100,6 @@
                     { "To", _email! }
                 }
             };
-        }
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            var request = _context!.ToSendCodeRequest();
-            var result = await VerificationService.SendCodeAsync(request);
-
-            if (!result.Succeeded)
-            {
-                var error = result.GetError();
-                Snackbar.Add(error.Description, Severity.Error);
-            }
-
-            StateHasChanged();
         }
     }
 
