@@ -43,9 +43,26 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
     {
         var normalizedValue = login.ToUpper();
         return await _context.Users
-            .Where(user => user.NormalizedUsername == normalizedValue || user.Emails.Any(
-                x => x.NormalizedEmail == normalizedValue && 
-                     x.Type == EmailType.Primary))
+            .Where(user => user.NormalizedUsername == normalizedValue || user.Emails.Any(x =>
+                x.NormalizedEmail == normalizedValue &&
+                x.Type == EmailType.Primary))
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async ValueTask<UserEntity?> FindBySubjectAsync(string subject,
+        CancellationToken cancellationToken = default)
+    {
+        var user = await _context.PublicSubjects
+            .Where(x => x.Subject == subject)
+            .Select(x => x.User)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (user is not null)
+            return user;
+        
+        return await _context.PairwiseSubjects
+            .Where(x => x.Subject == subject)
+            .Select(x => x.User)
             .FirstOrDefaultAsync(cancellationToken);
     }
 
