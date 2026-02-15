@@ -5,6 +5,7 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
 using eSecurity.Server.Security.Authentication.Password;
 using eSecurity.Server.Security.Authentication.Session;
 using eSecurity.Server.Security.Authentication.SignIn;
+using eSecurity.Server.Security.Authentication.Subject;
 using eSecurity.Server.Security.Authentication.TwoFactor;
 using eSecurity.Server.Security.Authorization.Constants;
 using eSecurity.Server.Security.Cookies;
@@ -24,6 +25,11 @@ public static class AuthenticationExtensions
         var configuration = builder.Configuration;
 
         builder.Services.AddScoped<IAuthenticationSessionManager, AuthenticationSessionManager>();
+
+        builder.Services.AddSingleton<ISubjectFactoryProvider, SubjectFactoryProvider>();
+        builder.Services.AddTransient<ISubjectFactory<PublicSubjectContext>, PublicSubjectFactory>();
+        builder.Services.AddTransient<ISubjectFactory<PairwiseSubjectContext>, PairwiseSubjectFactory>();
+        builder.Services.AddScoped<ISubjectManager, SubjectManager>();
         
         builder.Services.AddPasswordManagement();
         builder.Services.AddSignInStrategies();
