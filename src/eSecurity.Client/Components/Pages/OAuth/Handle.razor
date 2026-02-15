@@ -1,15 +1,16 @@
 ﻿@page "/oauth/handle"
 
-@using eSecurity.Client.Security.Authorization.OAuth
+@using eSecurity.Client.Security
 @using eSecurity.Core.Common.DTOs
 @using eSecurity.Core.Security.Authorization.OAuth
+@using eSystem.Core.Security.Authentication.OpenIdConnect.Constants
 @using eSystem.Core.Utilities.State
 
 @inherits PageBase
 
 @layout AuthenticationLayout
 
-@inject OAuthService OAuthService
+@inject ISecurityService SecurityService
 
 <Title Text="Handling OAuth session..."/>
 
@@ -39,22 +40,20 @@
             return;
         }
 
-        var result = await OAuthService.GetSessionAsync(SessionId);
-        if (result.Succeeded && result.TryGetValue<OAuthSessionDto>(out var session) && session is not null)
+        var result = await SecurityService.GetAuthenticationSessionAsync(SessionId);
+        if (result.Succeeded && result.TryGetValue<AuthenticationSessionDto>(out var session) && session is not null)
         {
-            UserState.UserId = session.UserId;
             var oauthState = JsonSerializer.Deserialize<OAuthState>(State)!;
             var authorizationState = StateBuilder.Create()
                 .WithData("return_url", GetRedirectUri(oauthState))
                 .Build();
                 
-            if (session.Flow == OAuthFlow.SignIn)
+            if (session.OAuthFlow == OAuthFlow.SignIn)
             {
-                if (session.RequireTwoFactor)
+                if (session.NextMethod == AuthenticationMethods.MultiFactorAuthentication)
                 {
                     var state = StateBuilder.Create()
-                        .WithData("userId", session.UserId.ToString())
-                        .WithData("amr", JsonSerializer.Serialize(session.AuthenticationMethods))
+                        .WithData("transactionId", SessionId.ToString())
                         .WithData("state", authorizationState)
                         .Build();
                         
@@ -70,16 +69,19 @@
             }
             else
             {
-                var state = StateBuilder.Create()
-                    .WithData("userId", session.UserId.ToString())
-                    .WithData("provider", session.Provider)
-                    .WithData("state", authorizationState)
-                    .Build();
+                if (!string.IsNullOrEmpty(session.IdentityProvider) && session.SessionId.HasValue)
+                {
+                    var state = StateBuilder.Create()
+                        .WithData("sid", session.SessionId.Value.ToString())
+                        .WithData("provider", session.IdentityProvider)
+                        .WithData("state", authorizationState)
+                        .Build();
                         
-                NavigationManager.NavigateTo(QueryBuilder.Create()
-                    .WithUri(Links.Session.TwoFactor)
-                    .WithQueryParam("state", state)
-                    .Build());
+                    NavigationManager.NavigateTo(QueryBuilder.Create()
+                        .WithUri(Links.Session.TwoFactor)
+                        .WithQueryParam("state", state)
+                        .Build());
+                }
             }
         }
         else

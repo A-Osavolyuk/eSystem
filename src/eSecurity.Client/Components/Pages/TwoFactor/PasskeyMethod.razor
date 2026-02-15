@@ -4,6 +4,7 @@
 @using eSecurity.Core.Common.DTOs
 @using eSecurity.Core.Security.Authentication.TwoFactor
 @using eSecurity.Core.Security.Credentials.PublicKey
+@using eSystem.Core.Security.Authentication.OpenIdConnect.Constants
 
 @inject UserState UserState
 @inject WebAuthNManager WebAuthNManager
@@ -69,7 +70,7 @@
 @code {
     [Parameter] public EventCallback<TwoFactorMethod> OnChangeMethod { get; set; }
 
-    [Parameter] public EventCallback OnSignIn { get; set; }
+    [Parameter] public EventCallback<string> OnSignIn { get; set; }
 
     [Parameter] public List<UserTwoFactorMethod> Methods { get; set; } = [];
 
@@ -101,7 +102,7 @@
         };
 
         var result = await VerificationService.VerifyPasskeyAsync(request);
-        if (result.Succeeded) await OnSignIn.InvokeAsync();
+        if (result.Succeeded) await OnSignIn.InvokeAsync(AuthenticationMethods.SoftwareKey);
         else
         {
             var error = result.GetError();

@@ -14,13 +14,11 @@ namespace eSecurity.Client.Security.Authentication.OpenIdConnect.Prompts;
 public sealed class NonePromptStrategy(
     UserState userState,
     NavigationManager navigationManager,
-    IConnectService connectService,
-    IFetchClient fetchClient) : IPromptStrategy
+    IConnectService connectService) : IPromptStrategy
 {
     private readonly UserState _userState = userState;
     private readonly NavigationManager _navigationManager = navigationManager;
     private readonly IConnectService _connectService = connectService;
-    private readonly IFetchClient _fetchClient = fetchClient;
 
     public bool CanHandle(string? prompt) => prompt == PromptTypes.None || string.IsNullOrEmpty(prompt);
 
@@ -61,26 +59,6 @@ public sealed class NonePromptStrategy(
                 .WithQueryParam("error", error.Code)
                 .WithQueryParam("error_description", error.Description)
                 .Build());
-        }
-
-        if (scopes.Contains(ScopeTypes.OpenId))
-        {
-            var session = new SessionCookie
-            {
-                Id = response.SessionId,
-                UserId = request.UserId,
-                IssuedAt = DateTimeOffset.UtcNow,
-                ExpiresAt = DateTimeOffset.UtcNow.AddDays(30)
-            };
-
-            var fetchOptions = new FetchOptions
-            {
-                Url = $"{_navigationManager.BaseUri}api/authentication/authorize",
-                Method = HttpMethod.Post,
-                Body = session
-            };
-            
-            await _fetchClient.FetchAsync(fetchOptions);
         }
         
         var builder = QueryBuilder.Create()

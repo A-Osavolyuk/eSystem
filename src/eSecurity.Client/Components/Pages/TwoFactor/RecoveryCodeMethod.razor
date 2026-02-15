@@ -2,6 +2,7 @@
 @using eSecurity.Client.Security.Authorization.Access.Verification
 @using eSecurity.Core.Common.DTOs
 @using eSecurity.Core.Security.Authentication.TwoFactor
+@using eSystem.Core.Security.Authentication.OpenIdConnect.Constants
 
 @inject UserState UserState
 @inject ISnackbar Snackbar
@@ -79,7 +80,7 @@
 
 @code {
     [Parameter] public EventCallback<TwoFactorMethod> OnChangeMethod { get; set; }
-    [Parameter] public EventCallback OnSignIn { get; set; }
+    [Parameter] public EventCallback<string> OnSignIn { get; set; }
     [Parameter] public List<UserTwoFactorMethod> Methods { get; set; } = [];
 
     private CodeModel _model = new();
@@ -100,7 +101,7 @@
             };
 
             var result = await VerificationService.VerifyRecoveryCodeAsync(request);
-            if (result.Succeeded) await OnSignIn.InvokeAsync();
+            if (result.Succeeded) await OnSignIn.InvokeAsync(AuthenticationMethods.OneTimePassword);
             else
             {
                 var error = result.GetError();

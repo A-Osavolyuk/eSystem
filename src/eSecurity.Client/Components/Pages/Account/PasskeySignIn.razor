@@ -11,7 +11,6 @@
 @inject NavigationManager NavigationManager
 @inject WebAuthNManager WebAuthNManager
 @inject AuthenticationManager AuthenticationManager
-@inject UserState UserState
 @inject IPasskeyService PasskeyService
 @inject ISecurityService SecurityService
 @inject ISnackbar Snackbar
@@ -111,7 +110,7 @@ else
             var result = await SecurityService.SignInAsync(request);
             if (result.Succeeded && result.TryGetValue<SignInResponse>(out var response) && response is not null)
             {
-                UserState.UserId = response.UserId;
+                await AuthenticationManager.SignInAsync(response.SessionId!.Value);
                 var queryParams = QueryParser.GetQueryParameters(NavigationManager.Uri);
                 if (queryParams.TryGetValue("state", out var  state) && !string.IsNullOrEmpty(state))
                 {
@@ -119,7 +118,6 @@ else
                     if (stateData.TryGetValue("return_url", out var returnUrl))
                     {
                         NavigationManager.NavigateTo(returnUrl);
-                        return;
                     }
                 }
                 else

@@ -1,4 +1,5 @@
 using eSecurity.Client.Common.JS.Fetch;
+using eSecurity.Client.Security.Cookies;
 using eSecurity.Core.Common.Routing;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
@@ -75,5 +76,24 @@ public sealed class AuthenticationManager(
     public async Task RefreshAsync()
     {
         await (_authenticationStateProvider as ClaimAuthenticationStateProvider)!.NotifyAsync();
+    }
+
+    public async Task SignInAsync(Guid sessionId)
+    {
+        var session = new SessionCookie
+        {
+            Id = sessionId,
+            IssuedAt = DateTimeOffset.UtcNow,
+            ExpiresAt = DateTimeOffset.UtcNow.AddDays(30)
+        };
+
+        var fetchOptions = new FetchOptions
+        {
+            Url = $"{_navigationManager.BaseUri}api/authentication/authorize",
+            Method = HttpMethod.Post,
+            Body = session
+        };
+            
+        await _fetchClient.FetchAsync(fetchOptions);
     }
 }

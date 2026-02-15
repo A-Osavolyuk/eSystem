@@ -8,11 +8,9 @@ using Microsoft.AspNetCore.DataProtection;
 namespace eSecurity.Client.Security.Authentication.OpenIdConnect.Session;
 
 public class SessionAccessor(
-    UserState userState,
     IHttpContextAccessor httpContextAccessor,
     IDataProtectionProvider protectionProvider) : ISessionAccessor
 {
-    private readonly UserState _userState = userState;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly IDataProtector _protector = protectionProvider.CreateProtector(ProtectionPurposes.Session);
 
@@ -25,11 +23,6 @@ public class SessionAccessor(
             return null;
         
         var json = _protector.Unprotect(value);
-        var session = JsonSerializer.Deserialize<SessionCookie>(json);
-        if (session is null) 
-            return null;
-
-        _userState.UserId = session.UserId;
-        return session;
+        return JsonSerializer.Deserialize<SessionCookie>(json);
     }
 }

@@ -43,7 +43,7 @@
                         {
                             <AuthenticatorMethod
                                 Methods="_methods"
-                                OnSignIn="@(async () => await OnSignInAsync())"
+                                OnSignIn="@(async method => await OnSignInAsync(method))"
                                 OnChangeMethod="@((TwoFactorMethod method) => _preferredMethod = method)"/>
                             break;
                         }
@@ -51,7 +51,7 @@
                         {
                             <PasskeyMethod
                                 Methods="_methods"
-                                OnSignIn="@(async () => await OnSignInAsync())"
+                                OnSignIn="@(async method => await OnSignInAsync(method))"
                                 OnChangeMethod="@((TwoFactorMethod method) => _preferredMethod = method)"/>
                             break;
                         }
@@ -59,7 +59,7 @@
                         {
                             <RecoveryCodeMethod
                                 Methods="_methods"
-                                OnSignIn="@(async () => await OnSignInAsync())"
+                                OnSignIn="@(async method => await OnSignInAsync(method))"
                                 OnChangeMethod="@((TwoFactorMethod method) => _preferredMethod = method)"/>
                             break;
                         }
@@ -81,19 +81,19 @@
     private List<UserTwoFactorMethod> _methods = [];
     private TwoFactorMethod _preferredMethod;
     private string? _state;
-    private string[] _authenticationMethods = [];
-    private Guid _userId;
+    private Guid _transactionId;
 
     protected override async Task OnInitializedAsync()
     {
         if (!string.IsNullOrEmpty(State))
         {
             var stateData = StateParser.Parse(State);
-            if (stateData.TryGetValue("userId", out var userId))
+            if (stateData.TryGetValue("transactionId", out var userId))
             {
-                _userId = Guid.Parse(userId);
-                UserState.UserId = _userId;
-                var result = await UserService.GetUserTwoFactorMethodsAsync(_userId);
+                _transactionId = Guid.Parse(userId);
+                
+                //TODO: Load 2FA methods
+                var result = await UserService.GetUserTwoFactorMethodsAsync(Guid.Empty);
                 if (result.Succeeded && result.TryGetValue<List<UserTwoFactorMethod>>(out var methods))
                 {
                     _methods = methods!;
@@ -108,20 +108,17 @@
 
             if (stateData.TryGetValue("state", out var state))
                 _state = state;
-
-            if (stateData.TryGetValue("amr", out var amrJson) && !string.IsNullOrEmpty(amrJson))
-                _authenticationMethods = JsonSerializer.Deserialize<string[]>(amrJson) ?? [];
         }
     }
 
-    private async Task OnSignInAsync()
+    private async Task OnSignInAsync(string method)
     {
         var request = new SignInRequest
         {
             Payload = new TwoFactorSignInPayload
             {
-                UserId = _userId,
-                AuthenticationMethods = _authenticationMethods
+                TransactionId = _transactionId,
+                AuthenticationMethod = method
             }
         };
 
