@@ -5,13 +5,13 @@
 @using eSecurity.Core.Common.DTOs
 @using eSecurity.Core.Security.Authentication.SignIn
 @using eSecurity.Core.Security.Authentication.TwoFactor
+@using eSystem.Core.Security.Authentication.OpenIdConnect.Constants
 @using eSystem.Core.Utilities.State
 
 @inherits PageBase
 
 @layout AuthenticationLayout
 
-@inject IUserService UserService
 @inject ISecurityService SecurityService
 
 <Title Text="Two-factor authentication"/>
@@ -74,11 +74,11 @@
 
     [SupplyParameterFromQuery(Name = "state")]
     public string? State { get; set; }
-    
+
     [SupplyParameterFromQuery(Name = "return_url")]
     public string? ReturnUrl { get; set; } = string.Empty;
 
-    private List<UserTwoFactorMethod> _methods = [];
+    private List<TwoFactorMethod> _methods = [];
     private TwoFactorMethod _preferredMethod;
     private string? _state;
     private Guid _transactionId;
@@ -92,12 +92,27 @@
             {
                 _transactionId = Guid.Parse(userId);
                 
-                //TODO: Load 2FA methods
-                var result = await UserService.GetUserTwoFactorMethodsAsync(Guid.Empty);
-                if (result.Succeeded && result.TryGetValue<List<UserTwoFactorMethod>>(out var methods))
+                var result = await SecurityService.GetAuthenticationSessionAsync(_transactionId);
+                if (result.Succeeded && result.TryGetValue<AuthenticationSessionDto>(out var session) && 
+                    session?.AllowedMfaMethods != null)
                 {
-                    _methods = methods!;
-                    _preferredMethod = _methods.Single(x => x.Preferred).Method;
+                    if (session.AllowedMfaMethods.Contains(AuthenticationMethods.SoftwareKey))
+                    {
+                        _preferredMethod = TwoFactorMethod.Passkey;
+                        _methods = [
+                            TwoFactorMethod.Passkey, 
+                            TwoFactorMethod.AuthenticatorApp, 
+                            TwoFactorMethod.RecoveryCode
+                        ];
+                    }
+                    else
+                    {
+                        _preferredMethod = TwoFactorMethod.AuthenticatorApp;
+                        _methods = [
+                            TwoFactorMethod.AuthenticatorApp, 
+                            TwoFactorMethod.RecoveryCode
+                        ];
+                    }
                 }
                 else
                 {

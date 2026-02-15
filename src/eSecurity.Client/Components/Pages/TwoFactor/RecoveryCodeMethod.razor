@@ -42,7 +42,7 @@
         <MudDivider Style="max-width: 45%"/>
     </MudStack>
     <MudStack Spacing="2">
-        @if (Methods.Any(x => x.Method == TwoFactorMethod.Passkey))
+        @if (Methods.Any(x => x == TwoFactorMethod.Passkey))
         {
             <MudButton
                 Color="Color.Primary"
@@ -53,7 +53,7 @@
                 Passkey
             </MudButton>
         }
-        @if (Methods.Any(x => x.Method == TwoFactorMethod.AuthenticatorApp))
+        @if (Methods.Any(x => x == TwoFactorMethod.AuthenticatorApp))
         {
             <MudButton
                 Color="Color.Primary"
@@ -64,7 +64,7 @@
                 Authenticator app
             </MudButton>
         }
-        @if (Methods.Any(x => x.Method == TwoFactorMethod.Sms))
+        @if (Methods.Any(x => x == TwoFactorMethod.Sms))
         {
             <MudButton
                 Color="Color.Primary"
@@ -81,7 +81,7 @@
 @code {
     [Parameter] public EventCallback<TwoFactorMethod> OnChangeMethod { get; set; }
     [Parameter] public EventCallback<string> OnSignIn { get; set; }
-    [Parameter] public List<UserTwoFactorMethod> Methods { get; set; } = [];
+    [Parameter] public List<TwoFactorMethod> Methods { get; set; } = [];
 
     private CodeModel _model = new();
     private MudForm _form = new();

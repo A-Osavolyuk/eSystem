@@ -44,7 +44,7 @@
             OnClick="@(async () => await OnChangeMethod.InvokeAsync(TwoFactorMethod.AuthenticatorApp))">
             Authenticator app
         </MudButton>
-        @if (Methods.Any(x => x.Method == TwoFactorMethod.Sms))
+        @if (Methods.Any(x => x == TwoFactorMethod.Sms))
         {
             <MudButton
                 Color="Color.Primary"
@@ -72,7 +72,7 @@
 
     [Parameter] public EventCallback<string> OnSignIn { get; set; }
 
-    [Parameter] public List<UserTwoFactorMethod> Methods { get; set; } = [];
+    [Parameter] public List<TwoFactorMethod> Methods { get; set; } = [];
 
     private async Task OnSignInAsync()
     {

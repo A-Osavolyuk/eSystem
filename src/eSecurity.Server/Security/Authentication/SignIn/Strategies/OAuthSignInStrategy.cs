@@ -6,6 +6,7 @@ using eSecurity.Server.Security.Authentication.Session;
 using eSecurity.Server.Security.Authentication.TwoFactor;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
+using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
@@ -23,6 +24,7 @@ public sealed class OAuthSignInStrategy(
     ILinkedAccountManager linkedAccountManager,
     ITwoFactorManager twoFactorManager,
     ISessionManager sessionManager,
+    IPasskeyManager passkeyManager,
     IAuthenticationSessionManager authenticationSessionManager,
     IOptions<SessionOptions> options) : ISignInStrategy
 {
@@ -32,6 +34,7 @@ public sealed class OAuthSignInStrategy(
     private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly ISessionManager _sessionManager = sessionManager;
+    private readonly IPasskeyManager _passkeyManager = passkeyManager;
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly SessionOptions _options = options.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
@@ -114,7 +117,13 @@ public sealed class OAuthSignInStrategy(
         authenticationSession.UserId = user.Id;
         if (await _twoFactorManager.IsEnabledAsync(user, cancellationToken))
         {
+            var hasPasskey = await _passkeyManager.HasAsync(user, cancellationToken);
+            string[] allowedMfaMethods = hasPasskey
+                ? [AuthenticationMethods.SoftwareKey, AuthenticationMethods.OneTimePassword]
+                : [AuthenticationMethods.OneTimePassword];
+            
             authenticationSession.RequiredAuthenticationMethods = [AuthenticationMethods.MultiFactorAuthentication];
+            authenticationSession.AllowedMfaMethods = allowedMfaMethods;
             
             var sessionResult = await _authenticationSessionManager.UpdateAsync(authenticationSession, cancellationToken);
             if (!sessionResult.Succeeded) return sessionResult;

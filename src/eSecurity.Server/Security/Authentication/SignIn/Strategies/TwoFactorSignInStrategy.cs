@@ -52,12 +52,21 @@ public class TwoFactorSignInStrategy(
         var authenticationSession = await _authenticationSessionManager.FindByIdAsync(
             twoFactorPayload.TransactionId, cancellationToken);
 
-        if (authenticationSession?.UserId is null)
+        if (authenticationSession?.UserId is null || authenticationSession.AllowedMfaMethods is null)
         {
             return Results.BadRequest(new Error()
             {
                 Code = ErrorTypes.Common.InvalidSession,
                 Description = "Invalid session"
+            });
+        }
+
+        if (!authenticationSession.AllowedMfaMethods.Contains(twoFactorPayload.AuthenticationMethod))
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = ErrorTypes.OAuth.InvalidRequest,
+                Description = $"{twoFactorPayload.AuthenticationMethod} is not allowed MFA method"
             });
         }
 
@@ -136,6 +145,7 @@ public class TwoFactorSignInStrategy(
         
         authenticationSession.SessionId = session.Id;
         authenticationSession.PassedAuthenticationMethods = authenticationMethods;
+        authenticationSession.RequiredAuthenticationMethods = [];
         
         var sessionResult = await _authenticationSessionManager.UpdateAsync(authenticationSession, cancellationToken);
         if (!sessionResult.Succeeded) return sessionResult;
