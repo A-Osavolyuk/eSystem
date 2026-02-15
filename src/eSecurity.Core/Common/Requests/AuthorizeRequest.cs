@@ -2,7 +2,7 @@ namespace eSecurity.Core.Common.Requests;
 
 public class AuthorizeRequest
 {
-    public required Guid UserId { get; set; }
+    public required Guid SessionId { get; set; }
     public required string ResponseType { get; set; }
     public required string ClientId { get; set; }
     public required string RedirectUri { get; set; }

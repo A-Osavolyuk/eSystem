@@ -119,8 +119,18 @@ public class AuthorizeCommandHandler(
                     Description = "code_challenge_method is required"
                 });
         }
+        
+        var session = await _sessionManager.FindByIdAsync(request.Request.SessionId, cancellationToken);
+        if (session is null)
+        {
+            return Results.InternalServerError(new Error
+            {
+                Code = ErrorTypes.OAuth.ServerError,
+                Description = "Invalid authorization session."
+            });
+        }
 
-        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindByIdAsync(session.UserId, cancellationToken);
         if (user is null)
         {
             return Results.InternalServerError(new Error
@@ -137,16 +147,6 @@ public class AuthorizeCommandHandler(
             {
                 Code = ErrorTypes.OAuth.ConsentRequired,
                 Description = "User consent is required."
-            });
-        }
-
-        var session = await _sessionManager.FindAsync(user, cancellationToken);
-        if (session is null)
-        {
-            return Results.InternalServerError(new Error
-            {
-                Code = ErrorTypes.OAuth.ServerError,
-                Description = "Invalid authorization session."
             });
         }
 
