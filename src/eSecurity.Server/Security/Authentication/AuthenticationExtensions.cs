@@ -3,6 +3,7 @@ using eSecurity.Server.Security.Authentication.Lockout;
 using eSecurity.Server.Security.Authentication.OpenIdConnect;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
 using eSecurity.Server.Security.Authentication.Password;
+using eSecurity.Server.Security.Authentication.Session;
 using eSecurity.Server.Security.Authentication.SignIn;
 using eSecurity.Server.Security.Authentication.TwoFactor;
 using eSecurity.Server.Security.Authorization.Constants;
@@ -22,6 +23,8 @@ public static class AuthenticationExtensions
     {
         var configuration = builder.Configuration;
 
+        builder.Services.AddScoped<IAuthenticationSessionManager, AuthenticationSessionManager>();
+        
         builder.Services.AddPasswordManagement();
         builder.Services.AddSignInStrategies();
         builder.Services.Add2Fa();
