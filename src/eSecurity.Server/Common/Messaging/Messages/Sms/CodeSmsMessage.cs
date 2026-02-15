@@ -2,7 +2,7 @@
 
 namespace eSecurity.Server.Common.Messaging.Messages.Sms;
 
-public class VerificationSmsMessage : Message
+public class CodeSmsMessage : Message
 {
     public override string Build()
     {

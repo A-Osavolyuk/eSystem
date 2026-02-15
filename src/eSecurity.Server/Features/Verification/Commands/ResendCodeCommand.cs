@@ -65,8 +65,8 @@ public class ResendCodeCommandHandler(
 
         Message? message = sender switch
         {
-            SenderType.Email => new VerificationEmailMessage(),
-            SenderType.Sms => new VerificationSmsMessage(),
+            SenderType.Email => new CodeEmailMessage(),
+            SenderType.Sms => new CodeSmsMessage(),
             _ => null
         };
         

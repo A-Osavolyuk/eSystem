@@ -123,17 +123,16 @@ public sealed class OAuthSignUpStrategy(
         var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
         if (email is null) return Results.NotFound("Email not found");
         
-        var message = new OAuthSignUpMessage
+        var message = new EmailMessage
         {
             Credentials = new Dictionary<string, string>
             {
                 { "To", email.Email },
-                { "Subject", $"Account registered with {oauthPayload.Provider.ToString()}" },
+                { "Subject", $"Sign Up with {oauthPayload.Provider.ToString()}" },
             },
             Payload = new()
             {
-                { "UserName", user.Username },
-                { "ProviderName", oauthPayload.Provider.ToString() }
+                { "Content", $"Your account was successfully signed-up with {oauthPayload.Provider.ToString()}" }
             }
         };
 

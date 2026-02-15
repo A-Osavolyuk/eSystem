@@ -124,7 +124,7 @@ public sealed class ManualSignUpStrategy(
         var code = await _codeManager.GenerateAsync(user, SenderType.Email,
             ActionType.Verify, PurposeType.Email, cancellationToken);
         
-        var message = new SignUpEmailMessage()
+        var message = new CodeEmailMessage()
         {
             Credentials = new Dictionary<string, string>
             {
