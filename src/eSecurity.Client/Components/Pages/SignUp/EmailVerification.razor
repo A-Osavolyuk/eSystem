@@ -50,7 +50,12 @@
                         OnClick="@(async () => await OnVerifyEmailAsync())">
                         Verify
                     </MudLoadingButton>
-                    <CodeResend Context="_context"/>
+                    <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
+                        Didn't received an email?
+                        <MudLink Typo="Typo.body2" OnClick="@(async () => await OnResendAsync())">
+                            Resend
+                        </MudLink>
+                    </MudTextM3>
                 </MudStack>
             </MudPaper>
         </MudItem>
@@ -69,8 +74,6 @@
     private MudForm _form = new();
     private readonly PatternMask _mask = new("000000");
 
-    private MessageContext? _context;
-
     private Guid _userId;
     private string? _email;
     private string? _state;
@@ -88,18 +91,6 @@
 
             if (stateData.TryGetValue("state", out var state))
                 _state = state;
-
-            _context = new MessageContext
-            {
-                UserId = _userId,
-                Sender = SenderType.Email,
-                Purpose = PurposeType.Email,
-                Action = ActionType.Verify,
-                Payload = new()
-                {
-                    { "To", _email! }
-                }
-            };
         }
     }
 
@@ -109,7 +100,14 @@
 
         if (_form.IsValid)
         {
-            var request = _context!.ToVerifyCodeRequest(_model.Code);
+            var request = new VerifyCodeRequest()
+            {
+                UserId = _userId,
+                Sender = SenderType.Email,
+                Purpose = PurposeType.Email,
+                Action = ActionType.Verify,
+                Code = _model.Code
+            };
             var result = await VerificationService.VerifyCodeAsync(request);
 
             if (result.Succeeded) await VerifyAsync();
@@ -147,5 +145,22 @@
         }
     }
 
+    private async Task OnResendAsync()
+    {
+        var request = new ResendCodeRequest
+        {
+            UserId = _userId,
+            Sender = SenderType.Email,
+            Purpose = PurposeType.Email,
+            Action = ActionType.Verify,
+            Payload = new()
+            {
+                { "To", _email! }
+            }
+        };
+
+        var result = await VerificationService.ResendCodeAsync(request);
+        if (!result.Succeeded) Snackbar.Add(result.GetError().Description, Severity.Error);
+    }
 }
 
