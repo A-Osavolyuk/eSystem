@@ -1,4 +1,5 @@
 ﻿using eSecurity.Server.Data.Entities;
+using eSecurity.Server.Security.Authentication.Subject;
 using eSecurity.Server.Security.Authorization.OAuth.Token;
 using eSystem.Core.Http.Constants;
 
@@ -6,10 +7,12 @@ namespace eSecurity.Server.Security.Cryptography.Tokens;
 
 public sealed class LoginTokenFactory(
     IOptions<TokenConfigurations> options,
-    ITokenBuilderProvider tokenBuilderProvider) : ITokenFactory
+    ITokenBuilderProvider tokenBuilderProvider,
+    ISubjectProvider subjectProvider) : ITokenFactory
 {
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
     private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
+    private readonly ISubjectProvider _subjectProvider = subjectProvider;
 
     public async ValueTask<TypedResult<string>> CreateAsync(
         ClientEntity client, 
@@ -27,6 +30,16 @@ public sealed class LoginTokenFactory(
             });
         }
         
+        var subjectResult = await _subjectProvider.GetSubjectAsync(user, client, cancellationToken);
+        if (!subjectResult.Succeeded || !subjectResult.TryGetValue(out var subject))
+        {
+            return TypedResult<string>.Fail(new Error()
+            {
+                Code = ErrorTypes.OAuth.ServerError,
+                Description = "Server error"
+            });
+        }
+        
         var lifetime = client.LoginTokenLifetime ?? _tokenConfigurations.DefaultLoginTokenLifetime;
         var tokenContext = new OpaqueTokenBuildContext
         {
@@ -35,7 +48,7 @@ public sealed class LoginTokenFactory(
             Sid = session?.Id,
             ClientId = client.Id,
             ExpiredAt = DateTimeOffset.UtcNow.Add(lifetime),
-            Subject = user.Id.ToString(),
+            Subject = subject,
         };
             
         var tokenFactory = _tokenBuilderProvider.GetFactory<OpaqueTokenBuildContext, string>();

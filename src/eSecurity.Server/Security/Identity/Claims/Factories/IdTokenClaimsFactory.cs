@@ -13,8 +13,8 @@ namespace eSecurity.Server.Security.Identity.Claims.Factories;
 
 public sealed class IdTokenClaimsContext : TokenClaimsContext
 {
-    public required string Aud { get; set; }
-    public required string Sid { get; set; }
+    public required string Audience { get; set; }
+    public required string SessionId { get; set; }
     public string[]? AuthenticationMethods { get; set; }
     public string? Nonce { get; set; }
     public DateTimeOffset? AuthTime { get; set; }
@@ -34,11 +34,11 @@ public sealed class IdTokenClaimsFactory(
     public async ValueTask<List<Claim>> GetClaimsAsync(UserEntity user,
         IdTokenClaimsContext context, CancellationToken cancellationToken)
     {
-        var iat = context.Iat.HasValue 
-            ? context.Iat.Value.ToUnixTimeSeconds().ToString() 
+        var iat = context.IssuedAt.HasValue 
+            ? context.IssuedAt.Value.ToUnixTimeSeconds().ToString() 
             : DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
         
-        var exp = context.Exp.ToUnixTimeSeconds().ToString();
+        var exp = context.Expiration.ToUnixTimeSeconds().ToString();
         var authTime = context.AuthTime.HasValue
             ? context.AuthTime.Value.ToUnixTimeSeconds().ToString()
             : DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
@@ -47,17 +47,17 @@ public sealed class IdTokenClaimsFactory(
         {
             new(AppClaimTypes.Jti, Guid.NewGuid().ToString()),
             new(AppClaimTypes.Iss, _configurations.Issuer),
-            new(AppClaimTypes.Aud, context.Aud),
-            new(AppClaimTypes.Sub, user.Id.ToString()),
-            new(AppClaimTypes.Sid, context.Sid),
+            new(AppClaimTypes.Aud, context.Audience),
+            new(AppClaimTypes.Sub, context.Subject),
+            new(AppClaimTypes.Sid, context.SessionId),
             new(AppClaimTypes.Exp, exp, ClaimValueTypes.Integer64),
             new(AppClaimTypes.Iat, iat, ClaimValueTypes.Integer64),
             new(AppClaimTypes.AuthTime, authTime, ClaimValueTypes.Integer64),
         };
 
-        if (context.Nbf.HasValue)
+        if (context.NotBefore.HasValue)
         {
-            var nbf = context.Nbf.Value.ToUnixTimeSeconds().ToString();
+            var nbf = context.NotBefore.Value.ToUnixTimeSeconds().ToString();
             claims.Add(new Claim(AppClaimTypes.Nbf, nbf, ClaimValueTypes.Integer64));
         }
 

@@ -9,8 +9,8 @@ namespace eSecurity.Server.Security.Identity.Claims.Factories;
 
 public sealed class LogoutTokenClaimsContext : TokenClaimsContext
 {
-    public required string Sid { get; set; }
-    public required string Aud { get; set; }
+    public required string SessionId { get; set; }
+    public required string Audience { get; set; }
 }
 
 public sealed class LogoutTokenClaimsFactory(
@@ -18,7 +18,7 @@ public sealed class LogoutTokenClaimsFactory(
 {
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
 
-    public ValueTask<List<Claim>> GetClaimsAsync(UserEntity source, LogoutTokenClaimsContext context, 
+    public ValueTask<List<Claim>> GetClaimsAsync(UserEntity user, LogoutTokenClaimsContext context, 
         CancellationToken cancellationToken)
     {
         var eventsJson = JsonSerializer.Serialize(new Dictionary<string, object>
@@ -26,26 +26,26 @@ public sealed class LogoutTokenClaimsFactory(
             { LogoutEvents.BackChannelLogout, new object() }
         });
         
-        var iat = context.Iat.HasValue 
-            ? context.Iat.Value.ToUnixTimeSeconds().ToString() 
+        var iat = context.IssuedAt.HasValue 
+            ? context.IssuedAt.Value.ToUnixTimeSeconds().ToString() 
             : DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
         
-        var exp = context.Exp.ToUnixTimeSeconds().ToString();
+        var exp = context.Expiration.ToUnixTimeSeconds().ToString();
         var claims = new List<Claim>
         {
             new(AppClaimTypes.Jti, Guid.NewGuid().ToString()),
             new(AppClaimTypes.Iss, _tokenConfigurations.Issuer),
-            new(AppClaimTypes.Aud, JsonSerializer.Serialize(context.Aud)),
-            new(AppClaimTypes.Sub, source.Id.ToString()),
-            new(AppClaimTypes.Sid, context.Sid),
+            new(AppClaimTypes.Aud, JsonSerializer.Serialize(context.Audience)),
+            new(AppClaimTypes.Sub, context.Subject),
+            new(AppClaimTypes.Sid, context.SessionId),
             new(AppClaimTypes.Events, eventsJson),
             new(AppClaimTypes.Iat, iat, ClaimValueTypes.Integer64),
             new(AppClaimTypes.Exp, exp, ClaimValueTypes.Integer64),
         };
         
-        if (context.Nbf.HasValue)
+        if (context.NotBefore.HasValue)
         {
-            var nbf = context.Nbf.Value.ToUnixTimeSeconds().ToString();
+            var nbf = context.NotBefore.Value.ToUnixTimeSeconds().ToString();
             claims.Add(new Claim(AppClaimTypes.Nbf, nbf, ClaimValueTypes.Integer64));
         }
 

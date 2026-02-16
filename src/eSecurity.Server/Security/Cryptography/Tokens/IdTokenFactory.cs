@@ -1,4 +1,5 @@
 ﻿using eSecurity.Server.Data.Entities;
+using eSecurity.Server.Security.Authentication.Subject;
 using eSecurity.Server.Security.Identity.Claims;
 using eSecurity.Server.Security.Identity.Claims.Factories;
 using eSystem.Core.Http.Constants;
@@ -9,11 +10,13 @@ namespace eSecurity.Server.Security.Cryptography.Tokens;
 public sealed class IdTokenFactory(
     IOptions<TokenConfigurations> options,
     IClaimFactoryProvider claimFactoryProvider,
-    ITokenBuilderProvider tokenBuilderProvider) : ITokenFactory
+    ITokenBuilderProvider tokenBuilderProvider,
+    ISubjectProvider subjectProvider) : ITokenFactory
 {
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
     private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
     private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
+    private readonly ISubjectProvider _subjectProvider = subjectProvider;
 
     public async ValueTask<TypedResult<string>> CreateAsync(
         ClientEntity client, 
@@ -43,16 +46,27 @@ public sealed class IdTokenFactory(
                 .Select(x => x.Scope.Value);
         }
         
+        var subjectResult = await _subjectProvider.GetSubjectAsync(user, client, cancellationToken);
+        if (!subjectResult.Succeeded || !subjectResult.TryGetValue(out var subject))
+        {
+            return TypedResult<string>.Fail(new Error()
+            {
+                Code = ErrorTypes.OAuth.ServerError,
+                Description = "Server error"
+            });
+        }
+        
         var tokenLifetime = client.IdTokenLifetime ?? _tokenConfigurations.DefaultIdTokenLifetime;
         var claimsFactory = _claimFactoryProvider.GetClaimFactory<IdTokenClaimsContext, UserEntity>();
         var claims = await claimsFactory.GetClaimsAsync(user, new IdTokenClaimsContext
         {
-            Aud = client.Id.ToString(),
+            Subject = subject,
+            Audience = client.Id.ToString(),
             Scopes = scopes,
-            Sid = session.Id.ToString(),
+            SessionId = session.Id.ToString(),
             AuthenticationMethods = session.AuthenticationMethods,
             AuthTime = DateTimeOffset.UtcNow,
-            Exp = DateTimeOffset.UtcNow.Add(tokenLifetime)
+            Expiration = DateTimeOffset.UtcNow.Add(tokenLifetime)
         }, cancellationToken);
 
         var tokenContext = new JwtTokenBuildContext { Claims = claims, Type = JwtTokenTypes.IdToken };

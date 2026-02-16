@@ -1,4 +1,5 @@
 ﻿using eSecurity.Server.Data.Entities;
+using eSecurity.Server.Security.Authentication.Subject;
 using eSecurity.Server.Security.Identity.Claims;
 using eSecurity.Server.Security.Identity.Claims.Factories;
 using eSystem.Core.Http.Constants;
@@ -9,10 +10,12 @@ namespace eSecurity.Server.Security.Cryptography.Tokens;
 public sealed class LogoutTokenFactory(
     IOptions<TokenConfigurations> options,
     IClaimFactoryProvider claimFactoryProvider,
-    ITokenBuilderProvider tokenBuilderProvider) : ITokenFactory
+    ITokenBuilderProvider tokenBuilderProvider,
+    ISubjectProvider subjectProvider) : ITokenFactory
 {
     private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
     private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
+    private readonly ISubjectProvider _subjectProvider = subjectProvider;
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
 
     public async ValueTask<TypedResult<string>> CreateAsync(
@@ -32,11 +35,22 @@ public sealed class LogoutTokenFactory(
         }
         
         var lifetime = client.LogoutTokenLifetime ?? _tokenConfigurations.DefaultLogoutTokenLifetime;
+        var subjectResult = await _subjectProvider.GetSubjectAsync(user, client, cancellationToken);
+        if (!subjectResult.Succeeded || !subjectResult.TryGetValue(out var subject))
+        {
+            return TypedResult<string>.Fail(new Error()
+            {
+                Code = ErrorTypes.OAuth.ServerError,
+                Description = "Server error"
+            });
+        }
+        
         var claimsContext = new LogoutTokenClaimsContext()
         {
-            Aud = client.Id.ToString(),
-            Sid = session.Id.ToString(),
-            Exp = DateTimeOffset.UtcNow.Add(lifetime)
+            Subject = subject,
+            Audience = client.Id.ToString(),
+            SessionId = session.Id.ToString(),
+            Expiration = DateTimeOffset.UtcNow.Add(lifetime)
         };
 
         var claimsFactory = _claimFactoryProvider.GetClaimFactory<LogoutTokenClaimsContext, UserEntity>();

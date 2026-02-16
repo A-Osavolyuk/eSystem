@@ -1,14 +1,18 @@
 ﻿using eSecurity.Server.Data.Entities;
+using eSecurity.Server.Security.Authentication.Subject;
 using eSecurity.Server.Security.Authorization.OAuth.Token;
+using eSystem.Core.Http.Constants;
 
 namespace eSecurity.Server.Security.Cryptography.Tokens;
 
 public sealed class RefreshTokenFactory(
     IOptions<TokenConfigurations> options,
-    ITokenBuilderProvider tokenBuilderProvider) : ITokenFactory
+    ITokenBuilderProvider tokenBuilderProvider,
+    ISubjectProvider subjectProvider) : ITokenFactory
 {
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
     private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
+    private readonly ISubjectProvider _subjectProvider = subjectProvider;
 
     public async ValueTask<TypedResult<string>> CreateAsync(
         ClientEntity client, 
@@ -30,17 +34,45 @@ public sealed class RefreshTokenFactory(
         }
         
         var lifetime = client.RefreshTokenLifetime ?? _tokenConfigurations.DefaultRefreshTokenLifetime;
-        var tokenContext = new OpaqueTokenBuildContext
+        OpaqueTokenBuildContext tokenContext;
+        if (user is null)
         {
-            TokenLength = _tokenConfigurations.OpaqueTokenLength,
-            TokenType = OpaqueTokenType.RefreshToken,
-            ClientId = client.Id,
-            Audiences = client.Audiences.Select(x => x.Audience).ToList(),
-            Scopes = scopes.ToList(),
-            ExpiredAt = DateTimeOffset.UtcNow.Add(lifetime),
-            Subject = user?.Id.ToString() ?? client.Id.ToString(),
-            Sid = session?.Id
-        };
+            tokenContext = new OpaqueTokenBuildContext
+            {
+                TokenLength = _tokenConfigurations.OpaqueTokenLength,
+                TokenType = OpaqueTokenType.RefreshToken,
+                ClientId = client.Id,
+                Audiences = client.Audiences.Select(x => x.Audience).ToList(),
+                Scopes = scopes.ToList(),
+                ExpiredAt = DateTimeOffset.UtcNow.Add(lifetime),
+                Subject = client.Id.ToString()
+            };
+        }
+        else
+        {
+            var subjectResult = await _subjectProvider.GetSubjectAsync(user, client, cancellationToken);
+            if (!subjectResult.Succeeded || !subjectResult.TryGetValue(out var subject))
+            {
+                return TypedResult<string>.Fail(new Error()
+                {
+                    Code = ErrorTypes.OAuth.ServerError,
+                    Description = "Server error"
+                });
+            }
+            
+            tokenContext = new OpaqueTokenBuildContext
+            {
+                TokenLength = _tokenConfigurations.OpaqueTokenLength,
+                TokenType = OpaqueTokenType.RefreshToken,
+                ClientId = client.Id,
+                Audiences = client.Audiences.Select(x => x.Audience).ToList(),
+                Scopes = scopes.ToList(),
+                ExpiredAt = DateTimeOffset.UtcNow.Add(lifetime),
+                Subject = subject,
+                Sid = session?.Id
+            };
+        }
+
         var tokenFactory = _tokenBuilderProvider.GetFactory<OpaqueTokenBuildContext, string>();
         var token = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
 
