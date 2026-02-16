@@ -32,7 +32,7 @@ public sealed class GetAuthenticationSessionQueryHandler(
             SessionId = authenticationSession.SessionId,
             OAuthFlow =  authenticationSession.OAuthFlow,
             IsCompleted = authenticationSession.RequiredAuthenticationMethods.Length == 0,
-            NextMethod = authenticationSession.RequiredAuthenticationMethods.First(),
+            NextMethod = authenticationSession.RequiredAuthenticationMethods.FirstOrDefault(),
             AllowedMfaMethods = authenticationSession.AllowedMfaMethods
         };
         
