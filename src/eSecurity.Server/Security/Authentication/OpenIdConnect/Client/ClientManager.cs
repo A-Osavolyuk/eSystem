@@ -17,6 +17,7 @@ public class ClientManager(AuthDbContext context) : IClientManager
             .Include(x => x.Client.AllowedScopes)
             .ThenInclude(x => x.Scope)
             .Include(x => x.Client.GrantTypes)
+            .ThenInclude(x => x.Grant)
             .Include(x => x.Client.PairwiseSubjects)
             .Include(x => x.Client.Audiences)
             .Select(x => x.Client)
@@ -32,6 +33,8 @@ public class ClientManager(AuthDbContext context) : IClientManager
             .Include(x => x.AllowedScopes)
             .ThenInclude(x => x.Scope)
             .Include(x => x.GrantTypes)
+            .ThenInclude(x => x.Grant)
+            .Include(x => x.PairwiseSubjects)
             .Include(x => x.Audiences)
             .FirstOrDefaultAsync(cancellationToken);
     }
@@ -45,6 +48,8 @@ public class ClientManager(AuthDbContext context) : IClientManager
             .Include(x => x.AllowedScopes)
             .ThenInclude(x => x.Scope)
             .Include(x => x.GrantTypes)
+            .ThenInclude(x => x.Grant)
+            .Include(x => x.PairwiseSubjects)
             .Include(x => x.Audiences)
             .FirstOrDefaultAsync(cancellationToken);
     }
