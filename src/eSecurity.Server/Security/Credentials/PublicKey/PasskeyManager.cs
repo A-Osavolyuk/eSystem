@@ -3,7 +3,6 @@ using eSecurity.Core.Security.Credentials.PublicKey.Constants;
 using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Credentials.PublicKey.Credentials;
-using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Security.Credentials.PublicKey;
 

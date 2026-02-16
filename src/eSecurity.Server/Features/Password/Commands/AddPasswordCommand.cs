@@ -2,7 +2,6 @@
 using eSecurity.Server.Security.Authentication.Password;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Constants;
-using eSystem.Core.Http.Results;
 using eSystem.Core.Mediator;
 
 namespace eSecurity.Server.Features.Password.Commands;

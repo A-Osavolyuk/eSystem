@@ -4,7 +4,6 @@ using eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
 using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Constants;
-using eSystem.Core.Http.Results;
 using eSystem.Core.Mediator;
 
 namespace eSecurity.Server.Features.Password.Commands;

@@ -3,7 +3,6 @@ using eSecurity.Server.Security.Authorization.Access.Codes;
 using eSecurity.Server.Security.Authorization.Access.Verification;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Http.Results;
 using eSystem.Core.Mediator;
 
 namespace eSecurity.Server.Features.Verification.Commands;

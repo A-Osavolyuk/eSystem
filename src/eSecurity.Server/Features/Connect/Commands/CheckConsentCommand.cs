@@ -4,7 +4,6 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authorization.OAuth.Consents;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Http.Results;
 using eSystem.Core.Mediator;
 
 namespace eSecurity.Server.Features.Connect.Commands;

@@ -3,7 +3,6 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Identity.User;
 using eSecurity.Server.Security.Identity.User.Username;
 using eSystem.Core.Http.Constants;
-using eSystem.Core.Http.Results;
 using eSystem.Core.Mediator;
 
 namespace eSecurity.Server.Features.Username.Commands;

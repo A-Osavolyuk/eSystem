@@ -8,7 +8,6 @@ using eSecurity.Server.Security.Authorization.OAuth.Protocol;
 using eSecurity.Server.Security.Authorization.OAuth.Token.AuthorizationCode;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Constants;
-using eSystem.Core.Http.Results;
 using eSystem.Core.Mediator;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;

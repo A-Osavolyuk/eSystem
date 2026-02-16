@@ -3,7 +3,6 @@ using System.Security.Cryptography;
 using System.Text.Encodings.Web;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Http.Constants;
-using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Security.Authentication.Schemes;
 using eSystem.Core.Security.Identity.Claims;

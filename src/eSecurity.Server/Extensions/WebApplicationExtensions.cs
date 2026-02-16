@@ -2,7 +2,6 @@ using eSecurity.Server.Common.Middlewares;
 using eSecurity.Server.Data;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Data;
-using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Extensions;
 

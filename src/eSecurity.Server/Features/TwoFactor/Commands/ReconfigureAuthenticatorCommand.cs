@@ -4,7 +4,6 @@ using eSecurity.Server.Security.Authentication.TwoFactor.Secret;
 using eSecurity.Server.Security.Authorization.Access.Verification;
 using eSecurity.Server.Security.Cryptography.Protection.Constants;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Http.Results;
 using eSystem.Core.Mediator;
 using Microsoft.AspNetCore.DataProtection;
 

@@ -1,5 +1,4 @@
 ﻿using eSystem.Core.Http.Constants;
-using eSystem.Core.Http.Results;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace eSecurity.Server.Common.Filters;

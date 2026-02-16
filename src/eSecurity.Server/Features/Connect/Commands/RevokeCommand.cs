@@ -1,7 +1,6 @@
 using eSecurity.Server.Security.Authorization.OAuth.Token;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSystem.Core.Http.Constants;
-using eSystem.Core.Http.Results;
 using eSystem.Core.Mediator;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Revocation;

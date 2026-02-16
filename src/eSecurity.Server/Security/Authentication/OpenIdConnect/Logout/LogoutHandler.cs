@@ -2,7 +2,6 @@
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSystem.Core.Http.Constants;
-using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
 
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Logout;

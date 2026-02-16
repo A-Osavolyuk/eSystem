@@ -1,4 +1,5 @@
 ﻿global using System.Text;
+global using eSystem.Core.Http.Results;
 global using eSystem.ServiceDefaults;
 global using Microsoft.AspNetCore.Authentication.JwtBearer;
 global using Microsoft.AspNetCore.Authorization;

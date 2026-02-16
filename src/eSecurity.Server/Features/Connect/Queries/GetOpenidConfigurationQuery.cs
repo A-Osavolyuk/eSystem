@@ -1,4 +1,3 @@
-using eSystem.Core.Http.Results;
 using eSystem.Core.Mediator;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
 

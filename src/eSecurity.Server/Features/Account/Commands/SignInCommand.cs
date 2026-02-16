@@ -1,7 +1,6 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Security.Authentication.SignIn;
 using eSecurity.Server.Security.Authentication.SignIn;
-using eSystem.Core.Http.Results;
 using eSystem.Core.Mediator;
 
 namespace eSecurity.Server.Features.Account.Commands;

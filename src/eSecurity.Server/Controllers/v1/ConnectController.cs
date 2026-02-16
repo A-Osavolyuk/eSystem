@@ -4,7 +4,6 @@ using eSecurity.Server.Features.Connect.Queries;
 using eSecurity.Server.Security.Authorization.Constants;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
-using eSystem.Core.Http.Results;
 using eSystem.Core.Mediator;
 using eSystem.Core.Security.Authentication.OpenIdConnect.User;
 using eSystem.Core.Security.Authorization.OAuth.DeviceAuthorization;

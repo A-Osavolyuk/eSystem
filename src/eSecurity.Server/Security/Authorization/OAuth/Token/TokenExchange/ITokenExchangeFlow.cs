@@ -1,6 +1,4 @@
-﻿using eSystem.Core.Http.Results;
-
-namespace eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange;
+﻿namespace eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange;
 
 public interface ITokenExchangeFlow
 {

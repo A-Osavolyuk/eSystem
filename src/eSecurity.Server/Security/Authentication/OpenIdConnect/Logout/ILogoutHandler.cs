@@ -1,6 +1,4 @@
-﻿using eSystem.Core.Http.Results;
-
-namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Logout;
+﻿namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Logout;
 
 public interface ILogoutHandler
 {

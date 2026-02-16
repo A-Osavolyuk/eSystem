@@ -3,7 +3,6 @@ using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Session;
 using eSecurity.Server.Security.Identity.Options;
 using eSystem.Core.Http.Constants;
-using eSystem.Core.Http.Results;
 using eSystem.Core.Mediator;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Utilities.Query;

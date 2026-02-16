@@ -1,7 +1,6 @@
 ﻿using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authorization.OAuth.Token;
 using eSystem.Core.Http.Constants;
-using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Security.Cryptography.Tokens;
 

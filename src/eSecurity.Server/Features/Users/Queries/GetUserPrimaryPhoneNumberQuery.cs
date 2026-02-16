@@ -2,7 +2,6 @@
 using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Security.Identity.Phone;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Http.Results;
 using eSystem.Core.Mediator;
 
 namespace eSecurity.Server.Features.Users.Queries;

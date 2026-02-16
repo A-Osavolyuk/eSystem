@@ -1,6 +1,4 @@
-﻿using eSystem.Core.Http.Results;
-
-namespace eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Delegation;
+﻿namespace eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Delegation;
 
 public interface ITokenDelegationHandler
 {

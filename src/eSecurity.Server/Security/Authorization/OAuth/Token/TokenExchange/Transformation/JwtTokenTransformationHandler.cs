@@ -4,7 +4,6 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
 using eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Delegation;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSystem.Core.Http.Constants;
-using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Token.TokenExchange;
 using eSystem.Core.Security.Identity.Claims;

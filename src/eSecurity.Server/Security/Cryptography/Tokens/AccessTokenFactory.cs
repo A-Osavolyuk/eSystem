@@ -4,7 +4,6 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authorization.OAuth.Token;
 using eSecurity.Server.Security.Identity.Claims;
 using eSecurity.Server.Security.Identity.Claims.Factories;
-using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 
 namespace eSecurity.Server.Security.Cryptography.Tokens;

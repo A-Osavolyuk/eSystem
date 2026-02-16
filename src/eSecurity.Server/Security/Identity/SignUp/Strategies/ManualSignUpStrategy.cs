@@ -15,7 +15,6 @@ using eSecurity.Server.Security.Identity.User.Username;
 using eSystem.Core.Common.Messaging;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
-using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Security.Identity.SignUp.Strategies;
 
