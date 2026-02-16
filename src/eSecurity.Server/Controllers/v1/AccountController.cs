@@ -20,7 +20,7 @@ public class AccountController(ISender sender) : ControllerBase
     [EndpointSummary("Get authentication session")]
     [EndpointDescription("Get authentication session")]
     [ProducesResponseType(200)]
-    [HttpPost("session/{sid:guid}")]
+    [HttpGet("session/{sid:guid}")]
     public async ValueTask<IActionResult> GetAuthenticationSessionAsync(Guid sid)
     {
         var result = await _sender.Send(new GetAuthenticationSessionQuery(sid));
