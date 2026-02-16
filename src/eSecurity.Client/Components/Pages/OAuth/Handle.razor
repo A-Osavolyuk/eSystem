@@ -15,9 +15,10 @@
 <Title Text="Handling OAuth session..."/>
 
 @code {
+
     [SupplyParameterFromQuery(Name = "state")]
     public string State { get; set; } = string.Empty;
-    
+
     [SupplyParameterFromQuery(Name = "sid")]
     public Guid SessionId { get; set; }
 
@@ -43,11 +44,12 @@
         var result = await SecurityService.GetAuthenticationSessionAsync(SessionId);
         if (result.Succeeded && result.TryGetValue<AuthenticationSessionDto>(out var session) && session is not null)
         {
-            var oauthState = JsonSerializer.Deserialize<OAuthState>(State)!;
+            var stateJson = WebEncoders.Base64UrlDecode(State);
+            var oauthState = JsonSerializer.Deserialize<OAuthState>(stateJson)!;
             var authorizationState = StateBuilder.Create()
                 .WithData("return_url", GetRedirectUri(oauthState))
                 .Build();
-                
+
             if (session.OAuthFlow == OAuthFlow.SignIn)
             {
                 if (session.NextMethod == AuthenticationMethods.MultiFactorAuthentication)
@@ -56,15 +58,16 @@
                         .WithData("transactionId", SessionId.ToString())
                         .WithData("state", authorizationState)
                         .Build();
-                        
+
                     NavigationManager.NavigateTo(QueryBuilder.Create()
                         .WithUri(Links.Session.TwoFactor)
                         .WithQueryParam("state", state)
                         .Build());
                 }
-                else
+                else if (session.SessionId.HasValue)
                 {
-                    NavigationManager.NavigateTo(GetRedirectUri(oauthState));
+                    await AuthenticationManager.SignInAsync(session.SessionId.Value);
+                    NavigationManager.NavigateTo(GetRedirectUri(oauthState), true);
                 }
             }
             else
@@ -73,10 +76,10 @@
                 {
                     var state = StateBuilder.Create()
                         .WithData("sid", session.SessionId.Value.ToString())
-                        .WithData("provider", session.IdentityProvider)
+                        .WithData("identityProvider", session.IdentityProvider)
                         .WithData("state", authorizationState)
                         .Build();
-                        
+
                     NavigationManager.NavigateTo(QueryBuilder.Create()
                         .WithUri(Links.Session.TwoFactor)
                         .WithQueryParam("state", state)
@@ -94,7 +97,7 @@
                 .Build());
         }
     }
-    
+
     private string GetRedirectUri(OAuthState state)
     {
         var builder = QueryBuilder.Create().WithUri(Links.Connect.Authorize);
@@ -107,7 +110,7 @@
 
         if (!string.IsNullOrEmpty(state.RedirectUri))
             builder.WithQueryParam("redirect_uri", state.RedirectUri);
-        
+
         if (!string.IsNullOrEmpty(state.ReturnUrl))
             builder.WithQueryParam("return_url", state.ReturnUrl);
 
