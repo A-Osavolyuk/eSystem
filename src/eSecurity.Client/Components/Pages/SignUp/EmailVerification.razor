@@ -63,11 +63,9 @@
 }
 
 @code {
+
     [SupplyParameterFromQuery(Name = "state")]
     private string? State { get; set; }
-    
-    [SupplyParameterFromQuery(Name = "return_url")]
-    public string? ReturnUrl { get; set; } = string.Empty;
 
     private readonly VerifyEmailModel _model = new();
 
@@ -123,17 +121,13 @@
         var result = await EmailService.VerifyEmailAsync(request);
         if (result.Succeeded)
         {
-            if (!string.IsNullOrEmpty(_state))
-            {
-                var stateData = StateParser.Parse(_state);
-                if (stateData.TryGetValue("return_url", out var returnUrl))
-                {
-                    NavigationManager.NavigateTo(returnUrl);
-                    return;
-                }
-            }
+            var state = string.IsNullOrEmpty(_state)
+                ? AuthenticationManager.GetAuthorizationState()
+                : _state;
 
-            NavigationManager.NavigateTo(AuthenticationManager.GetAuthorizationState(ReturnUrl));
+            NavigationManager.NavigateTo(QueryBuilder.Create()
+                .WithUri(Links.Common.Login)
+                .WithQueryParam("state", state).Build());
         }
         else
         {
@@ -159,5 +153,6 @@
         var result = await VerificationService.ResendCodeAsync(request);
         if (!result.Succeeded) Snackbar.Add(result.GetError().Description, Severity.Error);
     }
+
 }
 
