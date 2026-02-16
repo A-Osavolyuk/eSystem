@@ -63,10 +63,10 @@
     private MudForm _form = new();
     private readonly SetUsernameModel _model = new();
 
-    private string _provider = string.Empty;
+    private string? _provider;
     private string? _authorizationState;
-    private Guid _userId;
-    
+    private Guid _sid;
+
     private string? _error;
     private bool _showError;
 
@@ -75,11 +75,14 @@
         if (!string.IsNullOrEmpty(State))
         {
             var stateData = StateParser.Parse(State);
-            _userId = Guid.Parse(stateData["userId"]);
-            _provider = stateData["provider"];
-            _authorizationState = stateData["state"];
-            
-            UserState.UserId = _userId;
+            if (stateData.TryGetValue("sid", out var sid))
+                _sid = Guid.Parse(sid);
+
+            if (stateData.TryGetValue("identityProvider", out var identityProvider))
+                _provider = identityProvider;
+
+            if (stateData.TryGetValue("state", out var state))
+                _authorizationState = state;
         }
     }
 
@@ -91,7 +94,7 @@
         {
             var request = new SetUsernameRequest
             {
-                UserId = _userId,
+                Sid = _sid,
                 Username = _model.Username
             };
 
@@ -100,6 +103,7 @@
             {
                 if (!string.IsNullOrEmpty(_authorizationState))
                 {
+                    await AuthenticationManager.SignInAsync(_sid);
                     var stateData = StateParser.Parse(_authorizationState);
                     NavigationManager.NavigateTo(stateData["return_url"]);
                 }
