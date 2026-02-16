@@ -26,11 +26,7 @@ public static class AuthenticationExtensions
 
         builder.Services.AddScoped<IAuthenticationSessionManager, AuthenticationSessionManager>();
 
-        builder.Services.AddSingleton<ISubjectFactoryProvider, SubjectFactoryProvider>();
-        builder.Services.AddTransient<ISubjectFactory<PublicSubjectContext>, PublicSubjectFactory>();
-        builder.Services.AddTransient<ISubjectFactory<PairwiseSubjectContext>, PairwiseSubjectFactory>();
-        builder.Services.AddScoped<ISubjectManager, SubjectManager>();
-        
+        builder.Services.AddSubjects();
         builder.Services.AddPasswordManagement();
         builder.Services.AddSignInStrategies();
         builder.Services.Add2Fa();

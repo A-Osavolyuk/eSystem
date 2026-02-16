@@ -3,5 +3,5 @@
 public interface ISubjectFactoryProvider
 {
     public ISubjectFactory<TContext> GetFactory<TContext>() 
-        where TContext : SubjectContext;
+        where TContext : SubjectFactoryContext;
 }

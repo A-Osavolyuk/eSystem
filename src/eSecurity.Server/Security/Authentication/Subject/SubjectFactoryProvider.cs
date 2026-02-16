@@ -5,6 +5,6 @@ public sealed class SubjectFactoryProvider(
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
 
-    public ISubjectFactory<TContext> GetFactory<TContext>() where TContext : SubjectContext
+    public ISubjectFactory<TContext> GetFactory<TContext>() where TContext : SubjectFactoryContext
     => _serviceProvider.GetRequiredService<ISubjectFactory<TContext>>();
 }
