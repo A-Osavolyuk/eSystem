@@ -130,6 +130,7 @@ public sealed class OAuthSignInStrategy(
             
             return Results.Found(QueryBuilder.Create()
                 .WithUri(oauthPayload.ReturnUri)
+                .WithQueryParam("sid", authenticationSession.Id.ToString())
                 .WithQueryParam("state", oauthPayload.State)
                 .Build());
         }
