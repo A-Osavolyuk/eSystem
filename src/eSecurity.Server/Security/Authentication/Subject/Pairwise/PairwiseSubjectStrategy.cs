@@ -10,19 +10,19 @@ public sealed class PairwiseSubjectStrategyContext : SubjectStrategyContext
 
 public sealed class PairwiseSubjectStrategy(
     IPairwiseSubjectManager subjectManager,
-    ISubjectFactoryProvider subjectFactoryProvider) : ISubjectStrategy<PairwiseSubjectStrategyContext>
+    ISubjectFactoryProvider subjectFactoryProvider,
+    IOptions<SubjectOptions> options) : ISubjectStrategy<PairwiseSubjectStrategyContext>
 {
     private readonly IPairwiseSubjectManager _subjectManager = subjectManager;
     private readonly ISubjectFactoryProvider _subjectFactoryProvider = subjectFactoryProvider;
+    private readonly SubjectOptions _options = options.Value;
 
     public async ValueTask<TypedResult<string>> ExecuteAsync(PairwiseSubjectStrategyContext context, 
         CancellationToken cancellationToken = default)
     {
         var subject = await _subjectManager.FindAsync(context.User, context.Client, cancellationToken);
         if (subject is not null) return TypedResult<string>.Success(subject.Subject);
-
-        //TODO: Refactor salt
-        const string salt = "1234567890";
+        
         var sectorIdentifier = string.IsNullOrEmpty(context.Client.SectorIdentifierUri) 
             ? context.Client.Id.ToString() 
             : new Uri(context.Client.SectorIdentifierUri).Host;
@@ -32,7 +32,7 @@ public sealed class PairwiseSubjectStrategy(
         {
             UserId = context.User.Id, 
             SectorIdentifier = sectorIdentifier, 
-            Salt =  salt
+            Salt = _options.PairwiseSubjectSalt
         };
         
         subject = new PairwiseSubjectEntity()

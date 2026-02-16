@@ -9,10 +9,12 @@ public sealed class PublicSubjectStrategyContext : SubjectStrategyContext
 
 public sealed class PublicSubjectStrategy(
     IPublicSubjectManager subjectManager,
-    ISubjectFactoryProvider subjectFactoryProvider) : ISubjectStrategy<PublicSubjectStrategyContext>
+    ISubjectFactoryProvider subjectFactoryProvider,
+    IOptions<SubjectOptions> options) : ISubjectStrategy<PublicSubjectStrategyContext>
 {
     private readonly IPublicSubjectManager _subjectManager = subjectManager;
     private readonly ISubjectFactoryProvider _subjectFactoryProvider = subjectFactoryProvider;
+    private readonly SubjectOptions _options = options.Value;
 
     public async ValueTask<TypedResult<string>> ExecuteAsync(PublicSubjectStrategyContext context, 
         CancellationToken cancellationToken = default)
@@ -21,7 +23,7 @@ public sealed class PublicSubjectStrategy(
         if (subject is not null) return TypedResult<string>.Success(subject.Subject);
 
         var subjectFactory = _subjectFactoryProvider.GetFactory<PublicSubjectFactoryContext>();
-        var factoryContext = new PublicSubjectFactoryContext() { Length = 36 };
+        var factoryContext = new PublicSubjectFactoryContext() { Length = _options.PublicSubjectLength };
 
         subject = new PublicSubjectEntity()
         {

@@ -26,7 +26,12 @@ public static class AuthenticationExtensions
 
         builder.Services.AddScoped<IAuthenticationSessionManager, AuthenticationSessionManager>();
 
-        builder.Services.AddSubjects();
+        builder.Services.AddSubjects(options =>
+        {
+            options.PublicSubjectLength = 36;
+            options.PairwiseSubjectSalt = "mGz6W3q5K7YwL0rVb3nA0zWQY9uHc2pQ8FJxT4eRkUs=";
+        });
+        
         builder.Services.AddPasswordManagement();
         builder.Services.AddSignInStrategies();
         builder.Services.Add2Fa();

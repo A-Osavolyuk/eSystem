@@ -5,8 +5,9 @@ namespace eSecurity.Server.Security.Authentication.Subject;
 
 public static class SubjectExtensions
 {
-    public static void AddSubjects(this IServiceCollection services)
+    public static void AddSubjects(this IServiceCollection services, Action<SubjectOptions> configureOptions)
     {
+        services.Configure(configureOptions);
         services.AddSingleton<ISubjectFactoryProvider, SubjectFactoryProvider>();
         services.AddTransient<ISubjectFactory<PublicSubjectFactoryContext>, PublicSubjectFactory>();
         services.AddTransient<ISubjectFactory<PairwiseSubjectFactoryContext>, PairwiseSubjectFactory>();
