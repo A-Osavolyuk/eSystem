@@ -10,12 +10,12 @@ public sealed class LoginHintUserResolver(IUserManager userManager) : IUserResol
 {
     private readonly IUserManager _userManager = userManager;
     
-    public async Task<UserResolveResult> ResolveAsync(BackchannelAuthenticationRequest request,
+    public async Task<TypedResult<UserEntity>> ResolveAsync(BackchannelAuthenticationRequest request,
         CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrEmpty(request.LoginHint))
         {
-            return UserResolveResult.Fail(new Error()
+            return TypedResult<UserEntity>.Fail(new Error()
             {
                 Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "login_hint is invalid"
@@ -25,13 +25,13 @@ public sealed class LoginHintUserResolver(IUserManager userManager) : IUserResol
         var user = await _userManager.FindByLoginAsync(request.LoginHint, cancellationToken);
         if (user is null)
         {
-            return UserResolveResult.Fail(new Error()
+            return TypedResult<UserEntity>.Fail(new Error()
             {
                 Code = ErrorTypes.OAuth.UnknownUserId,
                 Description = "Unknown user"
             });
         }
         
-        return UserResolveResult.Success(user);
+        return TypedResult<UserEntity>.Success(user);
     }
 }

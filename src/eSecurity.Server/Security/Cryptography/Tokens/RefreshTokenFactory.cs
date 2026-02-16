@@ -1,5 +1,6 @@
 ﻿using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authorization.OAuth.Token;
+using eSystem.Core.Http.Results;
 
 namespace eSecurity.Server.Security.Cryptography.Tokens;
 
@@ -10,7 +11,7 @@ public sealed class RefreshTokenFactory(
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
     private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
 
-    public async ValueTask<TokenResult> CreateAsync(
+    public async ValueTask<TypedResult<string>> CreateAsync(
         ClientEntity client, 
         UserEntity? user = null, 
         SessionEntity? session = null,
@@ -44,6 +45,6 @@ public sealed class RefreshTokenFactory(
         var tokenFactory = _tokenBuilderProvider.GetFactory<OpaqueTokenBuildContext, string>();
         var token = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
 
-        return TokenResult.Success(token);
+        return TypedResult<string>.Success(token);
     }
 }

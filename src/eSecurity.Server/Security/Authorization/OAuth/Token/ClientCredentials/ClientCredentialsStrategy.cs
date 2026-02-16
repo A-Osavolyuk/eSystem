@@ -94,10 +94,22 @@ public sealed class ClientCredentialsStrategy(
         var accessTokenResult = await accessTokenFactory.CreateAsync(client, 
             factoryOptions: factoryOptions, cancellationToken: cancellationToken);
         
-        if (!accessTokenResult.IsSucceeded) 
-            return Results.InternalServerError(accessTokenResult.Error!);
+        if (!accessTokenResult.Succeeded)
+        {
+            var error = accessTokenResult.GetError();
+            return Results.InternalServerError(error);
+        }
 
-        response.AccessToken = accessTokenResult.Token;
+        if (!accessTokenResult.TryGetValue(out var accessToken))
+        {
+            return Results.InternalServerError(new Error()
+            {
+                Code = ErrorTypes.OAuth.ServerError,
+                Description = "Server error"
+            });
+        }
+            
+        response.AccessToken = accessToken;
 
         return Results.Ok(response);
     }

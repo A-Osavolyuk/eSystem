@@ -26,7 +26,7 @@ public sealed class JwtTokenTransformationHandler(
         CancellationToken cancellationToken = default)
     {
         var extractionResult = await _claimsExtractor.ExtractAsync(context.SubjectToken, cancellationToken);
-        if (!extractionResult.IsSucceeded || extractionResult.Value is null)
+        if (!extractionResult.Succeeded || !extractionResult.TryGetValue(out var value))
         {
             return Results.BadRequest(new Error()
             {
@@ -35,7 +35,7 @@ public sealed class JwtTokenTransformationHandler(
             });
         }
 
-        var claims = extractionResult.Value.ToList();
+        var claims = value.ToList();
         var client = await _clientManager.FindByIdAsync(context.ClientId, cancellationToken);
         if (client is null)
         {

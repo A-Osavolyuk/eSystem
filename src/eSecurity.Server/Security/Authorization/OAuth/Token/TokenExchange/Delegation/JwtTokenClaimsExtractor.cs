@@ -2,6 +2,8 @@
 using System.Security.Claims;
 using eSecurity.Server.Security.Authorization.OAuth.Token.Validation;
 using eSecurity.Server.Security.Cryptography.Tokens;
+using eSystem.Core.Http.Constants;
+using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Identity.Claims;
 
@@ -15,22 +17,39 @@ public sealed class JwtTokenClaimsExtractor(
     private readonly TokenConfigurations _configurations = options.Value;
     private readonly JwtSecurityTokenHandler _handler = new();
 
-    public async ValueTask<ClaimExtractionResult> ExtractAsync(string subjectToken, CancellationToken cancellationToken)
+    public async ValueTask<TypedResult<IEnumerable<Claim>>> ExtractAsync(string subjectToken, CancellationToken cancellationToken)
     {
         if (!_handler.CanReadToken(subjectToken))
-            return ClaimExtractionResult.Fail();
+        {
+            return TypedResult<IEnumerable<Claim>>.Fail(new Error()
+            {
+                Code = ErrorTypes.OAuth.InvalidToken,
+                Description = "Invalid subject token"
+            });
+        }
         
         var securityToken = _handler.ReadJwtToken(subjectToken);
         if (securityToken is null ||
             !securityToken.Header.Typ.Equals(JwtTokenTypes.AccessToken, StringComparison.OrdinalIgnoreCase))
         {
-            return ClaimExtractionResult.Fail();
+            return TypedResult<IEnumerable<Claim>>.Fail(new Error()
+            {
+                Code = ErrorTypes.OAuth.InvalidToken,
+                Description = "Invalid subject token"
+            });
         }
 
         var validator = _validationProvider.CreateValidator(securityToken.Header.Typ);
         var validationResult = await validator.ValidateAsync(subjectToken, cancellationToken);
-        if (!validationResult.IsValid || validationResult.ClaimsPrincipal is null) 
-            return ClaimExtractionResult.Fail();
+        if (!validationResult.IsValid || validationResult.ClaimsPrincipal is null)
+        {
+            
+            return TypedResult<IEnumerable<Claim>>.Fail(new Error()
+            {
+                Code = ErrorTypes.OAuth.InvalidToken,
+                Description = "Invalid subject token"
+            });
+        }
 
         var tokenClaims = validationResult.ClaimsPrincipal.Claims.ToList();
         var extractedClaims = new List<Claim>
@@ -67,6 +86,6 @@ public sealed class JwtTokenClaimsExtractor(
         if (delegatedClaim is not null)
             extractedClaims.Add(delegatedClaim);
         
-        return ClaimExtractionResult.Success(extractedClaims);
+        return TypedResult<IEnumerable<Claim>>.Success(extractedClaims);
     }
 }

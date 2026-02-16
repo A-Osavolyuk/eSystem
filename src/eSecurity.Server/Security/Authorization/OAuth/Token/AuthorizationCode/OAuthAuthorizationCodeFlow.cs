@@ -103,19 +103,43 @@ public class OAuthAuthorizationCodeFlow(
 
         var accessTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.AccessToken);
         var accessTokenResult = await accessTokenFactory.CreateAsync(client, user, cancellationToken: cancellationToken);
-        if (!accessTokenResult.IsSucceeded) 
-            return Results.InternalServerError(accessTokenResult.Error!);
+        if (!accessTokenResult.Succeeded)
+        {
+            var error = accessTokenResult.GetError();
+            return Results.InternalServerError(error);
+        }
         
-        response.AccessToken = accessTokenResult.Token;
+        if (!accessTokenResult.TryGetValue(out var accessToken))
+        {
+            return Results.InternalServerError(new Error()
+            {
+                Code = ErrorTypes.OAuth.ServerError,
+                Description = "Server error"
+            });
+        }
+        
+        response.AccessToken = accessToken;
 
         if (client.AllowOfflineAccess)
         {
             var refreshTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.RefreshToken);
             var refreshTokenResult = await refreshTokenFactory.CreateAsync(client, user, cancellationToken: cancellationToken);
-            if (!refreshTokenResult.IsSucceeded) 
-                return Results.InternalServerError(refreshTokenResult.Error!);
+            if (!refreshTokenResult.Succeeded)
+            {
+                var error = refreshTokenResult.GetError();
+                return Results.InternalServerError(error);
+            }
             
-            response.RefreshToken = refreshTokenResult.Token;
+            if (!refreshTokenResult.TryGetValue(out var refreshToken))
+            {
+                return Results.InternalServerError(new Error()
+                {
+                    Code = ErrorTypes.OAuth.ServerError,
+                    Description = "Server error"
+                });
+            }
+            
+            response.RefreshToken = refreshToken;
         }
 
         return Results.Ok(response);

@@ -16,12 +16,12 @@ public sealed class IdTokenHintUserResolver(
     private readonly IJwtTokenValidationProvider _validationProvider = validationProvider;
     private readonly IUserManager _userManager = userManager;
 
-    public async Task<UserResolveResult> ResolveAsync(BackchannelAuthenticationRequest request,
+    public async Task<TypedResult<UserEntity>> ResolveAsync(BackchannelAuthenticationRequest request,
         CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrEmpty(request.IdTokenHint))
         {
-            return UserResolveResult.Fail(new Error()
+            return TypedResult<UserEntity>.Fail(new Error()
             {
                 Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "id_token_hind is invalid"
@@ -33,7 +33,7 @@ public sealed class IdTokenHintUserResolver(
         if (!validationResult.IsValid || validationResult.ClaimsPrincipal is null)
         {
             {
-                return UserResolveResult.Fail(new Error()
+                return TypedResult<UserEntity>.Fail(new Error()
                 {
                     Code = ErrorTypes.OAuth.InvalidRequest,
                     Description = "id_token_hind is invalid"
@@ -45,7 +45,7 @@ public sealed class IdTokenHintUserResolver(
         if (subClaim is null)
         {
             {
-                return UserResolveResult.Fail(new Error()
+                return TypedResult<UserEntity>.Fail(new Error()
                 {
                     Code = ErrorTypes.OAuth.InvalidRequest,
                     Description = "id_token_hind is invalid"
@@ -56,13 +56,13 @@ public sealed class IdTokenHintUserResolver(
         var user = await _userManager.FindByIdAsync(Guid.Parse(subClaim.Value), cancellationToken);
         if (user is null)
         {
-            return UserResolveResult.Fail(new Error()
+            return TypedResult<UserEntity>.Fail(new Error()
             {
                 Code = ErrorTypes.OAuth.UnknownUserId,
                 Description = "Unknown user"
             });
         }
         
-        return UserResolveResult.Success(user);
+        return TypedResult<UserEntity>.Success(user);
     }
 }

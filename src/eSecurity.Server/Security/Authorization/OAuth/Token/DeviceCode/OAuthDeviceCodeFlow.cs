@@ -62,29 +62,65 @@ public sealed class OAuthDeviceCodeFlow(
 
         var accessTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.AccessToken);
         var accessTokenResult = await accessTokenFactory.CreateAsync(client, user, cancellationToken: cancellationToken);
-        if (!accessTokenResult.IsSucceeded) 
-            return Results.InternalServerError(accessTokenResult.Error!);
-        
-        response.AccessToken = accessTokenResult.Token;
+        if (!accessTokenResult.Succeeded)
+        {
+            var error = accessTokenResult.GetError();
+            return Results.InternalServerError(error);
+        }
+
+        if (!accessTokenResult.TryGetValue(out var accessToken))
+        {
+            return Results.InternalServerError(new Error()
+            {
+                Code = ErrorTypes.OAuth.ServerError,
+                Description = "Server error"
+            });
+        }
+            
+        response.AccessToken = accessToken;
         
         if (client.AllowOfflineAccess && client.HasScope(ScopeTypes.OfflineAccess))
         {
             var refreshTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.RefreshToken);
             var refreshTokenResult = await refreshTokenFactory.CreateAsync(client, user, cancellationToken: cancellationToken);
-            if (!refreshTokenResult.IsSucceeded) 
-                return Results.InternalServerError(refreshTokenResult.Error!);
-        
-            response.RefreshToken = refreshTokenResult.Token;
+            if (!refreshTokenResult.Succeeded)
+            {
+                var error = refreshTokenResult.GetError();
+                return Results.InternalServerError(error);
+            }
+
+            if (!refreshTokenResult.TryGetValue(out var refreshToken))
+            {
+                return Results.InternalServerError(new Error()
+                {
+                    Code = ErrorTypes.OAuth.ServerError,
+                    Description = "Server error"
+                });
+            }
+            
+            response.RefreshToken = refreshToken;
         }
 
         if (client.HasGrantType(GrantTypes.Ciba))
         {
             var loginTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.LoginToken);
             var loginTokenResult = await loginTokenFactory.CreateAsync(client, user, cancellationToken: cancellationToken);
-            if (!loginTokenResult.IsSucceeded) 
-                return Results.InternalServerError(loginTokenResult.Error!);
-        
-            response.LoginTokenHint = loginTokenResult.Token;
+            if (!loginTokenResult.Succeeded)
+            {
+                var error = loginTokenResult.GetError();
+                return Results.InternalServerError(error);
+            }
+
+            if (!loginTokenResult.TryGetValue(out var loginToken))
+            {
+                return Results.InternalServerError(new Error()
+                {
+                    Code = ErrorTypes.OAuth.ServerError,
+                    Description = "Server error"
+                });
+            }
+            
+            response.LoginTokenHint = loginToken;
         }
         
         return Results.Ok(response);

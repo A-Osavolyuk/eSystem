@@ -151,7 +151,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
             return Results.BadRequest(resolveResult.GetError());
         }
 
-        if (resolveResult.User is null)
+        if (!resolveResult.TryGetValue(out var user))
         {
             return Results.BadRequest(new Error()
             {
@@ -211,7 +211,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
             Id = Guid.CreateVersion7(),
             AuthReqId = _keyFactory.Create(_options.AuthReqIdLength),
             ClientId = client.Id,
-            UserId = resolveResult.User.Id,
+            UserId = user.Id,
             State = CibaRequestState.Pending,
             Interval = _options.Interval,
             Scope = request.Request.Scope,

@@ -44,7 +44,7 @@ public sealed class JwtTokenDelegationHandler(
         }
 
         var actorTokenExtractionResult = await _claimsExtractor.ExtractAsync(context.ActorToken, cancellationToken);
-        if (!actorTokenExtractionResult.IsSucceeded || actorTokenExtractionResult.Value is null)
+        if (!actorTokenExtractionResult.Succeeded || actorTokenExtractionResult.TryGetValue(out var actorClaims))
         {
             return Results.BadRequest(new Error()
             {
@@ -54,7 +54,7 @@ public sealed class JwtTokenDelegationHandler(
         }
 
         var subjectTokenExtractionResult = await _claimsExtractor.ExtractAsync(context.SubjectToken, cancellationToken);
-        if (!subjectTokenExtractionResult.IsSucceeded || subjectTokenExtractionResult.Value is null)
+        if (!subjectTokenExtractionResult.Succeeded || !subjectTokenExtractionResult.TryGetValue(out var subjectClaims))
         {
             return Results.BadRequest(new Error()
             {
@@ -63,8 +63,8 @@ public sealed class JwtTokenDelegationHandler(
             });
         }
 
-        var actorTokenClaims = actorTokenExtractionResult.Value.ToList();
-        var subjectTokenClaims = subjectTokenExtractionResult.Value.ToList();
+        var actorTokenClaims = actorClaims.ToList();
+        var subjectTokenClaims = subjectClaims.ToList();
         if (actorTokenClaims.Any(x => x.Type == AppClaimTypes.Delegated) ||
             subjectTokenClaims.Any(x => x.Type == AppClaimTypes.Delegated))
         {

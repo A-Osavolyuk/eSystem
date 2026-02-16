@@ -2,6 +2,7 @@
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Logout;
 using eSystem.Core.Security.Cryptography.Encoding;
@@ -35,11 +36,22 @@ public class BackchannelLogoutStrategy(
             var accessTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.LogoutToken);
             var accessTokenResult = await accessTokenFactory.CreateAsync(client, user, 
                 session, cancellationToken: cancellationToken);
-        
-            if (!accessTokenResult.IsSucceeded) 
-                return Results.InternalServerError(accessTokenResult.Error!);
-        
-            var token = accessTokenResult.Token!;
+
+            if (!accessTokenResult.Succeeded)
+            {
+                var error = accessTokenResult.GetError();
+                return Results.InternalServerError(error);
+            }
+
+            if (!accessTokenResult.TryGetValue(out var token))
+            {
+                return Results.InternalServerError(new Error()
+                {
+                    Code = ErrorTypes.OAuth.ServerError,
+                    Description = "Server error"
+                });
+            }
+            
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, backchannelLogoutUri.Uri)
             {
                 Content = new FormUrlEncodedContent(FormUrl.Encode(

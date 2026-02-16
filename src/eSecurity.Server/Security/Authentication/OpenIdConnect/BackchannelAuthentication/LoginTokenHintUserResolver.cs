@@ -17,12 +17,12 @@ public sealed class LoginTokenHintUserResolver(
     private readonly IUserManager _userManager = userManager;
     private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
 
-    public async Task<UserResolveResult> ResolveAsync(BackchannelAuthenticationRequest request,
+    public async Task<TypedResult<UserEntity>> ResolveAsync(BackchannelAuthenticationRequest request,
         CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrEmpty(request.LoginTokenHint))
         {
-            return UserResolveResult.Fail(new Error()
+            return TypedResult<UserEntity>.Fail(new Error()
             {
                 Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "login_token_hint is invalid"
@@ -33,7 +33,7 @@ public sealed class LoginTokenHintUserResolver(
         var token = await _tokenManager.FindByHashAsync(hash, cancellationToken);
         if (token?.TokenType is not OpaqueTokenType.LoginToken)
         {
-            return UserResolveResult.Fail(new Error()
+            return TypedResult<UserEntity>.Fail(new Error()
             {
                 Code = ErrorTypes.OAuth.InvalidRequest,
                 Description = "login_token_hint is invalid"
@@ -42,7 +42,7 @@ public sealed class LoginTokenHintUserResolver(
 
         if (token.ExpiredAt < DateTimeOffset.UtcNow)
         {
-            return UserResolveResult.Fail(new Error()
+            return TypedResult<UserEntity>.Fail(new Error()
             {
                 Code = ErrorTypes.OAuth.ExpiredLoginTokenHint,
                 Description = "login_token_hint is expired"
@@ -52,13 +52,13 @@ public sealed class LoginTokenHintUserResolver(
         var user = await _userManager.FindByIdAsync(Guid.Parse(token.Subject), cancellationToken);
         if (user is null)
         {
-            return UserResolveResult.Fail(new Error()
+            return TypedResult<UserEntity>.Fail(new Error()
             {
                 Code = ErrorTypes.OAuth.UnknownUserId,
                 Description = "Unknown user"
             });
         }
         
-        return UserResolveResult.Success(user);
+        return TypedResult<UserEntity>.Success(user);
     }
 }

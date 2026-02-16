@@ -115,11 +115,23 @@ public class OidcAuthorizationCodeFlow(
         var accessTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.AccessToken);
         var accessTokenResult = await accessTokenFactory.CreateAsync(client, user, 
             session, cancellationToken: cancellationToken);
-        
-        if (!accessTokenResult.IsSucceeded) 
-            return Results.InternalServerError(accessTokenResult.Error!);
-        
-        response.AccessToken = accessTokenResult.Token;
+
+        if (!accessTokenResult.Succeeded)
+        {
+            var error = accessTokenResult.GetError();
+            return Results.InternalServerError(error);
+        }
+
+        if (!accessTokenResult.TryGetValue(out var accessToken))
+        {
+            return Results.InternalServerError(new Error()
+            {
+                Code = ErrorTypes.OAuth.ServerError,
+                Description = "Server error"
+            });
+        }
+            
+        response.AccessToken = accessToken;
 
         var clientResult = await _clientManager.RelateAsync(client, session, cancellationToken);
         if (!clientResult.Succeeded) return clientResult;
@@ -129,19 +141,37 @@ public class OidcAuthorizationCodeFlow(
             var refreshTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.RefreshToken);
             var refreshTokenResult = await refreshTokenFactory.CreateAsync(client, user, 
                 session, cancellationToken: cancellationToken);
-        
-            if (!refreshTokenResult.IsSucceeded) 
-                return Results.InternalServerError(refreshTokenResult.Error!);
+
+            if (!refreshTokenResult.TryGetValue(out var refreshToken))
+            {
+                return Results.InternalServerError(new Error()
+                {
+                    Code = ErrorTypes.OAuth.ServerError,
+                    Description = "Server error"
+                });
+            }
             
-            response.RefreshToken = refreshTokenResult.Token;
+            response.RefreshToken = refreshToken;
         }
 
         var idTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.IdToken);
         var idTokenResult = await idTokenFactory.CreateAsync(client, user, session, cancellationToken: cancellationToken);
-        if (!idTokenResult.IsSucceeded) 
-            return Results.InternalServerError(idTokenResult.Error!);
+        if (!idTokenResult.Succeeded)
+        {
+            var error = idTokenResult.GetError();
+            return Results.InternalServerError(error);
+        }
+
+        if (!idTokenResult.TryGetValue(out var idToken))
+        {
+            return Results.InternalServerError(new Error()
+            {
+                Code = ErrorTypes.OAuth.ServerError,
+                Description = "Server error"
+            });
+        }
             
-        response.IdToken = idTokenResult.Token;
+        response.IdToken = idToken;
         
         return Results.Ok(response);
     }

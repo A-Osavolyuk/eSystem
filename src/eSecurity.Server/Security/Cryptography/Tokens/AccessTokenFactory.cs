@@ -4,6 +4,7 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authorization.OAuth.Token;
 using eSecurity.Server.Security.Identity.Claims;
 using eSecurity.Server.Security.Identity.Claims.Factories;
+using eSystem.Core.Http.Results;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 
 namespace eSecurity.Server.Security.Cryptography.Tokens;
@@ -17,7 +18,7 @@ public sealed class AccessTokenFactory(
     private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
     
-    public async ValueTask<TokenResult> CreateAsync(
+    public async ValueTask<TypedResult<string>> CreateAsync(
         ClientEntity client, 
         UserEntity? user = null, 
         SessionEntity? session = null, 
@@ -66,7 +67,7 @@ public sealed class AccessTokenFactory(
             var tokenFactory = _tokenBuilderProvider.GetFactory<JwtTokenBuildContext, string>();
 
             var token = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
-            return TokenResult.Success(token);
+            return TypedResult<string>.Success(token);
         }
         else
         {
@@ -85,7 +86,7 @@ public sealed class AccessTokenFactory(
             
             var tokenFactory = _tokenBuilderProvider.GetFactory<OpaqueTokenBuildContext, string>();
             var token = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
-            return TokenResult.Success(token);
+            return TypedResult<string>.Success(token);
         }
     }
 }

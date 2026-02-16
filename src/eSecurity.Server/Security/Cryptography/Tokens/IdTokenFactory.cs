@@ -16,7 +16,7 @@ public sealed class IdTokenFactory(
     private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
     private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
 
-    public async ValueTask<TokenResult> CreateAsync(
+    public async ValueTask<TypedResult<string>> CreateAsync(
         ClientEntity client, 
         UserEntity? user = null, 
         SessionEntity? session = null, 
@@ -25,7 +25,7 @@ public sealed class IdTokenFactory(
     {
         if (user is null || session is null)
         {
-            return TokenResult.Fail(new Error()
+            return TypedResult<string>.Fail(new Error()
             {
                 Code = ErrorTypes.OAuth.ServerError,
                 Description = "Server error"
@@ -60,6 +60,6 @@ public sealed class IdTokenFactory(
         var tokenFactory = _tokenBuilderProvider.GetFactory<JwtTokenBuildContext, string>();
         var token = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
         
-        return TokenResult.Success(token);
+        return TypedResult<string>.Success(token);
     }
 }
