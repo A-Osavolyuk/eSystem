@@ -68,11 +68,14 @@
 </MudStack>
 
 @code {
-    [Parameter] public EventCallback<TwoFactorMethod> OnChangeMethod { get; set; }
+    [Parameter] 
+    public EventCallback<TwoFactorMethod> OnChangeMethod { get; set; }
 
-    [Parameter] public EventCallback<string> OnSignIn { get; set; }
+    [Parameter] 
+    public EventCallback<TwoFactorPayload> OnSignIn { get; set; }
 
-    [Parameter] public List<TwoFactorMethod> Methods { get; set; } = [];
+    [Parameter] 
+    public List<TwoFactorMethod> Methods { get; set; } = [];
 
     private async Task OnSignInAsync()
     {
@@ -93,21 +96,10 @@
 
     private async Task SignInAsync(PublicKeyCredential credential)
     {
-        var request = new VerifyPasskeyRequest
+        await OnSignIn.InvokeAsync(new PasskeyTwoFactorPayload()
         {
-            Subject = UserState.Subject!,
-            Credential = credential,
-            Action = ActionType.SignIn,
-            Purpose = PurposeType.TwoFactor
-        };
-
-        var result = await VerificationService.VerifyPasskeyAsync(request);
-        if (result.Succeeded) await OnSignIn.InvokeAsync(AuthenticationMethods.SoftwareKey);
-        else
-        {
-            var error = result.GetError();
-            Snackbar.Add(error.Description, Severity.Error);
-        }
+            Credential = credential
+        });
     }
 
 }

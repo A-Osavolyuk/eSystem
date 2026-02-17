@@ -3,7 +3,7 @@ using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Cryptography.Protection.Constants;
 using Microsoft.AspNetCore.DataProtection;
 
-namespace eSecurity.Server.Security.Authentication.TwoFactor.Recovery;
+namespace eSecurity.Server.Security.Authentication.TwoFactor.RecoveryCode;
 
 public sealed class RecoverManager(
     AuthDbContext context,

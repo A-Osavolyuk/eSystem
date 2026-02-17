@@ -1,5 +1,6 @@
 using eSecurity.Server.Security.Authentication.TwoFactor.Authenticator;
-using eSecurity.Server.Security.Authentication.TwoFactor.Recovery;
+using eSecurity.Server.Security.Authentication.TwoFactor.Passkey;
+using eSecurity.Server.Security.Authentication.TwoFactor.RecoveryCode;
 using eSecurity.Server.Security.Authentication.TwoFactor.Secret;
 
 namespace eSecurity.Server.Security.Authentication.TwoFactor;
@@ -15,6 +16,11 @@ public static class TwoFactorExtensions
             services.AddScoped<IRecoverManager, RecoverManager>();
             services.AddScoped<ISecretManager, SecretManager>();
             services.AddScoped<ITwoFactorManager, TwoFactorManager>();
+            services.AddScoped<ITwoFactorContextMapper, TwoFactorContextMapper>();
+            services.AddScoped<ITwoFactorStrategyResolver, TwoFactorStrategyResolver>();
+            services.AddScoped<ITwoFactorStrategy<AuthenticatorTwoFactorContext>, AuthenticatorTwoFactorStrategy>();
+            services.AddScoped<ITwoFactorStrategy<PasskeyTwoFactorContext>, PasskeyTwoFactorStrategy>();
+            services.AddScoped<ITwoFactorStrategy<RecoveryCodeTwoFactorContext>, RecoveryCodeTwoFactorStrategy>();
         }
     }
 }

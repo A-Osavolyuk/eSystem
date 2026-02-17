@@ -1,6 +1,6 @@
 ﻿using OtpNet;
 
-namespace eSecurity.Server.Security.Authentication.TwoFactor.Recovery;
+namespace eSecurity.Server.Security.Authentication.TwoFactor.RecoveryCode;
 
 public class RecoveryCodeFactory : IRecoveryCodeFactory
 {

@@ -4,11 +4,6 @@
 @using eSecurity.Core.Security.Authentication.TwoFactor
 @using eSystem.Core.Security.Authentication.OpenIdConnect.Constants
 
-@inject UserState UserState
-@inject ISnackbar Snackbar
-@inject ISecurityService SecurityService
-@inject IVerificationService VerificationService
-
 <MudStack Spacing="3">
     <MudStack Spacing="4">
         <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Align="Align.Center">
@@ -80,7 +75,7 @@
 
 @code {
     [Parameter] public EventCallback<TwoFactorMethod> OnChangeMethod { get; set; }
-    [Parameter] public EventCallback<string> OnSignIn { get; set; }
+    [Parameter] public EventCallback<TwoFactorPayload> OnSignIn { get; set; }
     [Parameter] public List<TwoFactorMethod> Methods { get; set; } = [];
 
     private CodeModel _model = new();
@@ -92,21 +87,10 @@
 
         if (_form.IsValid)
         {
-            var request = new VerifyRecoveryCodeRequest
+            await OnSignIn.InvokeAsync(new RecoveryCodeTwoFactorPayload()
             {
-                Subject = UserState.Subject!,
-                Code = _model.Code,
-                Purpose = PurposeType.TwoFactor,
-                Action = ActionType.SignIn
-            };
-
-            var result = await VerificationService.VerifyRecoveryCodeAsync(request);
-            if (result.Succeeded) await OnSignIn.InvokeAsync(AuthenticationMethods.OneTimePassword);
-            else
-            {
-                var error = result.GetError();
-                Snackbar.Add(error.Description, Severity.Error);
-            }
+                Code = _model.Code
+            });
         }
     }
 

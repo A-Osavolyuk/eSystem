@@ -43,7 +43,7 @@
                         {
                             <AuthenticatorMethod
                                 Methods="_methods"
-                                OnSignIn="@(async method => await OnSignInAsync(method))"
+                                OnSignIn="@(async payload => await OnSignInAsync(payload))"
                                 OnChangeMethod="@((TwoFactorMethod method) => _preferredMethod = method)"/>
                             break;
                         }
@@ -51,7 +51,7 @@
                         {
                             <PasskeyMethod
                                 Methods="_methods"
-                                OnSignIn="@(async method => await OnSignInAsync(method))"
+                                OnSignIn="@(async payload => await OnSignInAsync(payload))"
                                 OnChangeMethod="@((TwoFactorMethod method) => _preferredMethod = method)"/>
                             break;
                         }
@@ -59,7 +59,7 @@
                         {
                             <RecoveryCodeMethod
                                 Methods="_methods"
-                                OnSignIn="@(async method => await OnSignInAsync(method))"
+                                OnSignIn="@(async payload => await OnSignInAsync(payload))"
                                 OnChangeMethod="@((TwoFactorMethod method) => _preferredMethod = method)"/>
                             break;
                         }
@@ -126,14 +126,14 @@
         }
     }
 
-    private async Task OnSignInAsync(string method)
+    private async Task OnSignInAsync(TwoFactorPayload payload)
     {
         var request = new SignInRequest
         {
             Payload = new TwoFactorSignInPayload
             {
                 TransactionId = _transactionId,
-                AuthenticationMethod = method
+                Payload = payload
             }
         };
 

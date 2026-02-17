@@ -1,4 +1,4 @@
-﻿namespace eSecurity.Server.Security.Authentication.TwoFactor.Recovery;
+﻿namespace eSecurity.Server.Security.Authentication.TwoFactor.RecoveryCode;
 
 public interface IRecoveryCodeFactory
 {
