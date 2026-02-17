@@ -117,13 +117,13 @@ else
                     var stateData = StateParser.Parse(state);
                     if (stateData.TryGetValue("return_url", out var returnUrl))
                     {
-                        NavigationManager.NavigateTo(returnUrl);
+                        NavigationManager.NavigateTo(returnUrl, true);
                     }
                 }
                 else
                 {
                     var returnUrl = queryParams.GetValueOrDefault("return_url");
-                    NavigationManager.NavigateTo(AuthenticationManager.GetAuthorizationUri(returnUrl));
+                    NavigationManager.NavigateTo(AuthenticationManager.GetAuthorizationUri(returnUrl), true);
                 }
             }
             else
