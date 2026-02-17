@@ -12,8 +12,8 @@ public static class Links
         public const string Login = "/login";
         public const string PasswordSignIn = "/login/password";
         public const string SignUp = "/sign-up";
-        public const string CompleteSignUp = "/sign-up/complete";
-        public const string VerifySignUp = "/sign-up/verification";
+        public const string AccountRegistration = "/sign-up/account-registration";
+        public const string EmailVerification = "/sign-up/email-verification";
     }
 
     public static class Device

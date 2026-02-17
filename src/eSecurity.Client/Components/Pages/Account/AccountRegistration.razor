@@ -1,4 +1,4 @@
-﻿@page "/sign-up/complete"
+﻿@page "/sign-up/account-registration"
 
 @using eSystem.Core.Utilities.State
 @using eSecurity.Core.Common.Responses
@@ -19,7 +19,7 @@
                 <MudStack Spacing="3" AlignItems="AlignItems.Center">
                     <MudIcon Style="font-size: 5rem" Icon="@Icons.Material.Filled.Lock"/>
                     <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline" Size="Size.Small">
-                        Completion Sign Up
+                        Account registration
                     </MudTextM3>
                 </MudStack>
                 <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Align="Align.Center">
@@ -139,7 +139,7 @@
                     .Build();
                 
                 NavigationManager.NavigateTo(QueryBuilder.Create()
-                    .WithUri(Links.Common.VerifySignUp)
+                    .WithUri(Links.Common.EmailVerification)
                     .WithQueryParam("state", state)
                     .Build());
             }
