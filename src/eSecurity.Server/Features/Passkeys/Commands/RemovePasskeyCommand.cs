@@ -34,7 +34,7 @@ public class RemovePasskeyCommandHandler(
 
     public async Task<Result> Handle(RemovePasskeyCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindBySubjectAsync(request.Request.Subject, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
         var passkey = await _passkeyManager.FindByIdAsync(request.Request.PasskeyId, cancellationToken);

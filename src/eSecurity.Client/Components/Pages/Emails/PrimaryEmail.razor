@@ -155,7 +155,7 @@
         {
             var request = new DisconnectLinkedAccountRequest
             {
-                UserId = UserState.UserId,
+                Subject = UserState.Subject!,
                 Type = type
             };
 

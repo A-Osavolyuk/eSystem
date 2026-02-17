@@ -94,7 +94,7 @@
         {
             var request = new VerifyRecoveryCodeRequest
             {
-                UserId = UserState.UserId,
+                Subject = UserState.Subject!,
                 Code = _model.Code,
                 Purpose = PurposeType.TwoFactor,
                 Action = ActionType.SignIn

@@ -20,7 +20,7 @@ public class DisconnectLinkedAccountCommandHandler(
 
     public async Task<Result> Handle(DisconnectLinkedAccountCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindBySubjectAsync(request.Request.Subject, cancellationToken);
         if (user is null) return Results.NotFound("User not found");
 
         var verificationResult = await _verificationManager.VerifyAsync(user,

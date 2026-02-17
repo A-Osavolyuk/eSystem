@@ -23,7 +23,7 @@ public class ManageEmailCommandHandler(
         var type = request.Request.Type;
         var email = request.Request.Email;
         
-        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindBySubjectAsync(request.Request.Subject, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
         var verificationResult = await _verificationManager.VerifyAsync(user,

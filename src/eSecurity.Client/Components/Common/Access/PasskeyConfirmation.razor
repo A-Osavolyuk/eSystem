@@ -104,7 +104,7 @@
     {
         _isLoading = true;
         _showError = false;
-        var request = new GenerateRequestOptionsRequest { UserId = UserState.UserId! };
+        var request = new GenerateRequestOptionsRequest { Subject = UserState.Subject! };
         var result = await PasskeyService.GenerateRequestOptionsAsync(request);
 
         if (result.Succeeded && result.TryGetValue<PublicKeyCredentialRequestOptions>(out var value))
@@ -127,7 +127,7 @@
             var credential = authenticateResult.Get<PublicKeyCredential>();
             var request = new VerifyPasskeyRequest
             {
-                UserId = UserState.UserId,
+                Subject = UserState.Subject!,
                 Purpose = Context.Purpose,
                 Action = Context.Action,
                 Credential = credential

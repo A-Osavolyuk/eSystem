@@ -126,7 +126,12 @@
                                                     </MudButton>
                                                 </MudStack>
                                             </MudPaper>
-                                            <CodeResend Context="_messageContext"></CodeResend>
+                                            <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
+                                                Didn't received an email?
+                                                <MudLink Typo="Typo.body2" OnClick="@(async () => await OnResendAsync())">
+                                                    Resend
+                                                </MudLink>
+                                            </MudTextM3>
                                         </MudStack>
                                     </MudItem>
                                 </MudGrid>
@@ -151,7 +156,6 @@
     private MudStepperExtended _stepper = new();
     private MudForm _resetForm = new();
     private MudForm _confirmForm = new();
-    private MessageContext? _messageContext;
     private ConfirmationContext? _confirmationContext;
 
     protected override void OnInitialized()
@@ -163,30 +167,35 @@
         };
     }
 
+    private async Task OnResendAsync()
+    {
+        var request = new ResendCodeRequest()
+        {
+            Subject = UserState.Subject!,
+            Sender = SenderType.Email,
+            Purpose = PurposeType.Email,
+            Action = ActionType.Verify,
+            Payload = new()
+            {
+                { "To", _resetModel.NewEmail }
+            }
+        };
+        
+        var result = await VerificationService.ResendCodeAsync(request);
+        if (!result.Succeeded)
+        {
+            var error = result.GetError();
+            Snackbar.Add(error.Description, Severity.Error);
+        }
+    }
+
     private async Task OnSendCodeAsync()
     {
         await _resetForm.Validate();
 
         if (_resetForm.IsValid)
         {
-            _messageContext = new MessageContext
-            {
-                UserId = UserState.UserId,
-                Sender = SenderType.Email,
-                Purpose = PurposeType.Email,
-                Action = ActionType.Verify,
-                Payload = new()
-                {
-                    { "To", _resetModel.NewEmail }
-                }
-            };
-
-            var request = new CheckEmailRequest
-            {
-                UserId = UserState.UserId,
-                Email = _resetModel.NewEmail
-            };
-
+            var request = new CheckEmailRequest { Email = _resetModel.NewEmail };
             var result = await EmailService.CheckEmailAsync(request);
 
             if (result.Succeeded) await SendCodeAsync();
@@ -196,7 +205,18 @@
 
     private async Task SendCodeAsync()
     {
-        var request = _messageContext!.ToSendCodeRequest();
+        var request = new SendCodeRequest()
+        {
+            Subject = UserState.Subject!,
+            Sender = SenderType.Email,
+            Purpose = PurposeType.Email,
+            Action = ActionType.Verify,
+            Payload = new()
+            {
+                { "To", _resetModel.NewEmail }
+            }
+        };
+        
         var result = await VerificationService.SendCodeAsync(request);
 
         if (result.Succeeded) await _stepper.StepNextAsync();
@@ -209,7 +229,12 @@
 
         if (_confirmForm.IsValid)
         {
-            var request = _messageContext!.ToVerifyCodeRequest(_confirmModel.Code);
+            var request = new VerifyCodeRequest()
+            {
+                Subject = UserState.Subject!,
+                Code = _confirmModel.Code
+            };
+            
             var result = await VerificationService.VerifyCodeAsync(request);
 
             if (result.Succeeded) await VerifyAsync();
@@ -221,7 +246,7 @@
     {
         var request = new ResetEmailRequest
         {
-            UserId = UserState.UserId,
+            Subject = UserState.Subject!,
             NewEmail = _resetModel.NewEmail,
         };
 

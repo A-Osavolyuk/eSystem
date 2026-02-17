@@ -310,7 +310,7 @@
 
     private async Task OnGenerateQrCodeAsync()
     {
-        var request = new GenerateQrCodeRequest { UserId = UserState.UserId };
+        var request = new GenerateQrCodeRequest { Subject = UserState.Subject };
         var result = await TwoFactorService.GenerateQrCodeAsync(request);
 
         if (result.Succeeded && result.TryGetValue<QrCode>(out var qrCode))
@@ -325,7 +325,7 @@
         _showError = false;
         var request = new VerifyAuthenticatorCodeRequest
         {
-            UserId = UserState.UserId,
+            Subject = UserState.Subject!,
             Purpose = PurposeType.AuthenticatorApp,
             Action = ActionType.Subscribe,
             Code = _model.Code
@@ -339,7 +339,7 @@
 
     private async Task GenerateRecoveryCodesAsync()
     {
-        var request = new GenerateRecoveryCodesRequest { UserId = UserState.UserId };
+        var request = new GenerateRecoveryCodesRequest { Subject = UserState.Subject! };
         var result = await TwoFactorService.GenerateRecoveryCodesAsync(request);
         if (result.Succeeded && result.TryGetValue<List<string>>(out var recoveryCodes))
         {
@@ -375,7 +375,7 @@
 
     private async Task OnEnableAsync()
     {
-        var request = new EnableTwoFactorRequest { UserId = UserState.UserId };
+        var request = new EnableTwoFactorRequest { Subject = UserState.Subject! };
         var result = await TwoFactorService.EnableAsync(request);
 
         if (result.Succeeded)
@@ -388,7 +388,7 @@
 
     private async Task LoadMethodsAsync()
     {
-        var result = await UserService.GetUserTwoFactorMethodsAsync(UserState.UserId);
+        var result = await UserService.GetUserTwoFactorMethodsAsync(UserState.Subject!);
 
         if (result.Succeeded && result.TryGetValue<List<UserTwoFactorMethod>>(out var methods))
         {

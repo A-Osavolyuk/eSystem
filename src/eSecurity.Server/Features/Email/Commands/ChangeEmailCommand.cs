@@ -29,7 +29,7 @@ public sealed class RequestChangeEmailCommandHandler(
     public async Task<Result> Handle(ChangeEmailCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindBySubjectAsync(request.Request.Subject, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
         if (request.Request.Type is EmailType.Secondary)

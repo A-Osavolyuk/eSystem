@@ -6,7 +6,7 @@ using eSystem.Core.Mediator;
 
 namespace eSecurity.Server.Features.Users.Queries;
 
-public record GetUserLinkedAccountDataQuery(Guid UserId) : IRequest<Result>;
+public record GetUserLinkedAccountDataQuery(string Subject) : IRequest<Result>;
 
 public class GetUserLinkedAccountDataQueryHandler(
     IUserManager userManager,
@@ -17,7 +17,7 @@ public class GetUserLinkedAccountDataQueryHandler(
 
     public async Task<Result> Handle(GetUserLinkedAccountDataQuery request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByIdAsync(request.UserId, cancellationToken);
+        var user = await _userManager.FindBySubjectAsync(request.Subject, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
         var linkedAccounts = await _linkedAccountManager.GetAllAsync(user, cancellationToken);

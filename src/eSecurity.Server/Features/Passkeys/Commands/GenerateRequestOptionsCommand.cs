@@ -43,9 +43,9 @@ public class GenerateRequestOptionsCommandHandler(
             UserVerification = UserVerifications.Required,
         };
 
-        if (request.Request.UserId.HasValue)
+        if (!string.IsNullOrEmpty(request.Request.Subject))
         {
-            var user = await _userManager.FindByIdAsync(request.Request.UserId.Value, cancellationToken);
+            var user = await _userManager.FindBySubjectAsync(request.Request.Subject, cancellationToken);
             if (user is null) return Results.NotFound("User not found.");
 
             var userAgent = _httpContext.GetUserAgent();

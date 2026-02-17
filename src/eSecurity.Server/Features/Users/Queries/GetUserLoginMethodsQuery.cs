@@ -12,7 +12,7 @@ using eSystem.Core.Mediator;
 
 namespace eSecurity.Server.Features.Users.Queries;
 
-public record GetUserLoginMethodsQuery(Guid UserId) : IRequest<Result>;
+public record GetUserLoginMethodsQuery(string Subject) : IRequest<Result>;
 
 public class GetUserLoginMethodsQueryHandler(
     IUserManager userManager,
@@ -33,7 +33,7 @@ public class GetUserLoginMethodsQueryHandler(
 
     public async Task<Result> Handle(GetUserLoginMethodsQuery request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByIdAsync(request.UserId, cancellationToken);
+        var user = await _userManager.FindBySubjectAsync(request.Subject, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
         var userAgent = _httpContext.GetUserAgent();

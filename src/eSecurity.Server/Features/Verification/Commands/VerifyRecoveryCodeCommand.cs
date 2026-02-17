@@ -19,7 +19,7 @@ public class VerifyRecoveryCodeCommandHandler(
 
     public async Task<Result> Handle(VerifyAuthenticatorCodeCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindBySubjectAsync(request.Request.Subject, cancellationToken);
         if (user is null) return Results.NotFound("User was not found");
 
         var codeResult = await _recoverManager.VerifyAsync(user, request.Request.Code, cancellationToken);

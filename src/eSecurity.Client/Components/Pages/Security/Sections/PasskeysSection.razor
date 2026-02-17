@@ -127,7 +127,7 @@
     {
         var request = new ChangePasskeyNameRequest
         {
-            UserId = UserState.UserId,
+            Subject = UserState.Subject!,
             PasskeyId = passkey.Id,
             DisplayName = passkey.DisplayName
         };
@@ -145,7 +145,7 @@
         {
             var request = new RemovePasskeyRequest
             {
-                UserId = UserState.UserId,
+                Subject = UserState.Subject!,
                 PasskeyId = passkey.Id
             };
 

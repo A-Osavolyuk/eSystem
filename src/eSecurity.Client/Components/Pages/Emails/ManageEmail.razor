@@ -31,7 +31,7 @@
                     </MudText>
                     <MudForm
                         @ref="_form"
-                        Model="Model"
+                        Model="_model"
                         Validation="Validator.ValidateValue">
                         <MudCodeInput
                             Class="d-flex align-items-center"
@@ -39,20 +39,25 @@
                             Spacing="2"
                             Margin="Margin.None"
                             Count="6"
-                            @bind-Value="Model.Code"/>
+                            @bind-Value="_model.Code"/>
                     </MudForm>
                     <MudLoadingButton
                         ButtonType="ButtonType.Button"
                         Variant="Variant.Filled"
                         Color="Color.Primary"
                         FullWidth
-                        Disabled="@(Model.Code.Length <= 5)"
+                        Disabled="@(_model.Code.Length <= 5)"
                         OnClick="@(async () => await OnVerifyAsync())">
                         Verify
                     </MudLoadingButton>
                 </MudStack>
             </MudPaper>
-            <CodeResend Context="_context"></CodeResend>
+            <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
+                Didn't received an email?
+                <MudLink Typo="Typo.body2" OnClick="@(async () => await OnResendAsync())">
+                    Resend
+                </MudLink>
+            </MudTextM3>
         </MudStack>
     </MudItem>
 </MudGrid>
@@ -64,22 +69,20 @@
 
     [SupplyParameterFromQuery(Name = "type")]
     public string Type { get; set; } = string.Empty;
-    
+
     [SupplyParameterFromQuery(Name = "return_url")]
     public string ReturnUrl { get; set; } = string.Empty;
 
-    public CodeModel Model = new();
-
+    private CodeModel _model = new();
     private MudForm _form = new();
-    private MessageContext? _context;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _context = new()
+            var request = new SendCodeRequest()
             {
-                UserId = UserState.UserId,
+                Subject = UserState.Subject!,
                 Purpose = PurposeType.Email,
                 Action = ActionType.Manage,
                 Sender = SenderType.Email,
@@ -88,18 +91,44 @@
                     { "To", UserState.Credentials?.Email! }
                 }
             };
-
-            var request = _context.ToSendCodeRequest();
+            
             var result = await VerificationService.SendCodeAsync(request);
             if (!result.Succeeded) Snackbar.Add(result.GetError().Description, Severity.Error);
-            
+
             StateHasChanged();
+        }
+    }
+
+    private async Task OnResendAsync()
+    {
+        var request = new ResendCodeRequest()
+        {
+            Subject = UserState.Subject!,
+            Purpose = PurposeType.Email,
+            Action = ActionType.Manage,
+            Sender = SenderType.Email,
+            Payload = new()
+            {
+                { "To", UserState.Credentials?.Email! }
+            }
+        };
+        
+        var result = await VerificationService.ResendCodeAsync(request);
+        if (!result.Succeeded)
+        {
+            var error = result.GetError();
+            Snackbar.Add(error.Description, Severity.Error);
         }
     }
 
     private async Task OnVerifyAsync()
     {
-        var request = _context!.ToVerifyCodeRequest(Model.Code);
+        var request = new VerifyCodeRequest
+        {
+            Subject = UserState.Subject!,
+            Code = _model.Code
+        };
+        
         var result = await VerificationService.VerifyCodeAsync(request);
 
         if (result.Succeeded) await ManageAsync();
@@ -117,7 +146,7 @@
 
         var request = new ManageEmailRequest
         {
-            UserId = UserState.UserId,
+            Subject = UserState.Subject!,
             Email = Email,
             Type = type
         };

@@ -5,7 +5,7 @@ using eSystem.Core.Mediator;
 
 namespace eSecurity.Server.Features.Users.Queries;
 
-public record GetUserEmailsQuery(Guid UserId) : IRequest<Result>;
+public record GetUserEmailsQuery(string Subject) : IRequest<Result>;
 
 public class GetUserEmailsQueryHandler(
     IUserManager userManager,
@@ -16,7 +16,7 @@ public class GetUserEmailsQueryHandler(
 
     public async Task<Result> Handle(GetUserEmailsQuery request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByIdAsync(request.UserId, cancellationToken);
+        var user = await _userManager.FindBySubjectAsync(request.Subject, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
         
         var emails = await _emailManager.GetAllAsync(user, cancellationToken);

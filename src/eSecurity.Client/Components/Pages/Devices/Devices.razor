@@ -40,7 +40,7 @@
     
     private async Task LoadAsync()
     {
-        var result = await UserService.GetUserDevicesAsync(UserState.UserId);
+        var result = await UserService.GetUserDevicesAsync(UserState.Subject!);
         if (result.Succeeded && result.TryGetValue<List<UserDeviceDto>>(out var devices))
         {
             _model = new UserDevicesModel { Devices = devices! };

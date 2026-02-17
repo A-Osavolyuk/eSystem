@@ -17,7 +17,7 @@ public class AddPasswordCommandHandler(
 
     public async Task<Result> Handle(AddPasswordCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindBySubjectAsync(request.Request.Subject, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
         
         if (await _passwordManager.HasAsync(user, cancellationToken)) 

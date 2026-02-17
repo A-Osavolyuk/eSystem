@@ -27,7 +27,7 @@ public class ResendCodeCommandHandler(
     {
         ResendCodeResponse? response;
 
-        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindBySubjectAsync(request.Request.Subject, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
         if (user.CodeResendAttempts >= _options.MaxCodeResendAttempts)

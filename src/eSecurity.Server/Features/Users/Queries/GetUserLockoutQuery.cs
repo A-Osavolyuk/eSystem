@@ -5,7 +5,7 @@ using eSystem.Core.Mediator;
 
 namespace eSecurity.Server.Features.Users.Queries;
 
-public record GetUserLockoutQuery(Guid Id) : IRequest<Result>;
+public record GetUserLockoutQuery(string Subject) : IRequest<Result>;
 
 public class GetLockoutStateQueryHandler(
     IUserManager userManager,
@@ -16,7 +16,7 @@ public class GetLockoutStateQueryHandler(
 
     public async Task<Result> Handle(GetUserLockoutQuery request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByIdAsync(request.Id, cancellationToken);
+        var user = await _userManager.FindBySubjectAsync(request.Subject, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
         var lockoutState = await _lockoutManager.GetAsync(user, cancellationToken);

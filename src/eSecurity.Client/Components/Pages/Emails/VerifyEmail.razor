@@ -110,7 +110,12 @@
                     </MudButton>
                 </MudStack>
             </MudPaper>
-            <CodeResend Context="_context"></CodeResend>
+            <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
+                Didn't received an email?
+                <MudLink Typo="Typo.body2" OnClick="@(async () => await OnResendAsync())">
+                    Resend
+                </MudLink>
+            </MudTextM3>
         </MudStack>
     </MudItem>
 </MudGrid>
@@ -129,41 +134,60 @@
 
     private readonly PatternMask _mask = new("000000");
     private MudForm _form = new();
-    private MessageContext? _context;
+    private string _to = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        _to = Type switch
+        {
+            EmailTypes.Primary => UserState.Credentials?.Email!,
+            EmailTypes.Recovery => Email,
+            EmailTypes.Secondary => Email,
+            _ => throw new NotSupportedException("Unsupported email type")
+        };
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            var to = Type switch
+            var request = new SendCodeRequest()
             {
-                EmailTypes.Primary => UserState.Credentials?.Email!,
-                EmailTypes.Recovery => Email,
-                EmailTypes.Secondary => Email,
-                _ => throw new NotSupportedException("Unsupported email type")
-            };
-
-            _context = new MessageContext
-            {
-                UserId = UserState.UserId,
+                Subject = UserState.Subject!,
                 Sender = SenderType.Email,
                 Purpose = PurposeType.Email,
                 Action = ActionType.Verify,
                 Payload = new()
                 {
-                    { "To", to }
+                    { "To", _to }
                 }
             };
-
-            await SendCodeAsync();
+            
+            var response = await VerificationService.SendCodeAsync(request);
+            Snackbar.Add(response.GetError().Description, response.Succeeded ? Severity.Success : Severity.Error);
         }
     }
 
-    private async Task SendCodeAsync()
+    private async Task OnResendAsync()
     {
-        var request = _context!.ToSendCodeRequest();
-        var response = await VerificationService.SendCodeAsync(request);
-        Snackbar.Add(response.GetError().Description, response.Succeeded ? Severity.Success : Severity.Error);
+        var request = new ResendCodeRequest()
+        {
+            Subject = UserState.Subject!,
+            Sender = SenderType.Email,
+            Purpose = PurposeType.Email,
+            Action = ActionType.Verify,
+            Payload = new()
+            {
+                { "To", _to }
+            }
+        };
+
+        var result = await VerificationService.ResendCodeAsync(request);
+        if (!result.Succeeded)
+        {
+            var error = result.GetError();
+            Snackbar.Add(error.Description, Severity.Error);
+        }
     }
 
     private async Task OnVerifyEmailAsync()
@@ -172,7 +196,12 @@
 
         if (_form.IsValid)
         {
-            var request = _context!.ToVerifyCodeRequest(_model.Code);
+            var request = new VerifyCodeRequest()
+            {
+                Subject = UserState.Subject!,
+                Code = _model.Code
+            };
+            
             var result = await VerificationService.VerifyCodeAsync(request);
 
             if (result.Succeeded) await VerifyAsync();
@@ -192,7 +221,7 @@
 
         var request = new VerifyEmailRequest
         {
-            UserId = UserState.UserId,
+            Subject = UserState.Subject!,
             Email = email
         };
 

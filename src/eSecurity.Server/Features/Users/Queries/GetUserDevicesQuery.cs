@@ -5,7 +5,7 @@ using eSystem.Core.Mediator;
 
 namespace eSecurity.Server.Features.Users.Queries;
 
-public record GetUserDevicesQuery(Guid UserId) : IRequest<Result>;
+public record GetUserDevicesQuery(string Subject) : IRequest<Result>;
 
 public class GetUserDevicesQueryHandler(
     IUserManager userManager,
@@ -16,7 +16,7 @@ public class GetUserDevicesQueryHandler(
 
     public async Task<Result> Handle(GetUserDevicesQuery request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByIdAsync(request.UserId, cancellationToken);
+        var user = await _userManager.FindBySubjectAsync(request.Subject, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
         var devices = await _deviceManager.GetAllAsync(user, cancellationToken);

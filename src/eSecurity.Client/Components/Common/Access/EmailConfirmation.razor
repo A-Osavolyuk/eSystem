@@ -95,7 +95,7 @@
 
     private CodeModel CodeModel { get; set; } = new();
 
-    private readonly PatternMask _mask = new PatternMask("000000");
+    private readonly PatternMask _mask = new ("000000");
     private MudForm _form = new();
     private bool _sendStage = true;
 
@@ -103,7 +103,7 @@
     {
         var request = new SendCodeRequest
         {
-            UserId = UserState.UserId,
+            Subject = UserState.Subject!,
             Sender = SenderType.Email,
             Purpose = Context.Purpose,
             Action = Context.Action,
@@ -127,7 +127,7 @@
         {
             var request = new VerifyCodeRequest
             {
-                UserId = UserState.UserId,
+                Subject = UserState.Subject!,
                 Code = CodeModel.Code
             };
 

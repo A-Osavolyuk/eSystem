@@ -16,7 +16,7 @@ public class GenerateRecoveryCodesCommandHandler(
 
     public async Task<Result> Handle(GenerateRecoveryCodesCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindBySubjectAsync(request.Request.Subject, cancellationToken);
         if (user is null) return Results.NotFound("User not found");
 
         var response = await _recoverManager.GenerateAsync(user, cancellationToken);

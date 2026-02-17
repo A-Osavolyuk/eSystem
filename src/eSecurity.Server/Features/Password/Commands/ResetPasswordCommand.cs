@@ -21,7 +21,7 @@ public sealed class ResetPasswordCommandHandler(
 
     public async Task<Result> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindBySubjectAsync(request.Request.Subject, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
         
         if (!await _passwordManager.HasAsync(user, cancellationToken)) 

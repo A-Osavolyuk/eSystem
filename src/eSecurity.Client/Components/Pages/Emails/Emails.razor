@@ -89,7 +89,7 @@
 
     private async Task LoadEmailsAsync()
     {
-        var result = await UserService.GetUserEmailsAsync(UserState.UserId);
+        var result = await UserService.GetUserEmailsAsync(UserState.Subject!);
         if (result.Succeeded && result.TryGetValue<List<UserEmailDto>>(out var emails))
         {
             _model = new()
@@ -104,7 +104,7 @@
 
     private async Task LoadLinkedAccountsAsync()
     {
-        var result = await UserService.GetUserLinkedAccountsAsync(UserState.UserId);
+        var result = await UserService.GetUserLinkedAccountsAsync(UserState.Subject!);
         if (result.Succeeded && result.TryGetValue<UserLinkedAccountData>(out var data))
         {
             _linkedAccountsData = data;

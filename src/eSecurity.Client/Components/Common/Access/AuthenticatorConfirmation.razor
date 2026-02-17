@@ -72,7 +72,7 @@
     {
         var request = new VerifyAuthenticatorCodeRequest
         {
-            UserId = UserState.UserId,
+            Subject = UserState.Subject!,
             Code = CodeModel.Code,
             Action = Context.Action,
             Purpose = Context.Purpose

@@ -59,14 +59,8 @@
 
         if (_form is { IsValid: true, IsTouched: true })
         {
-            var request = new CheckEmailRequest
-            {
-                UserId = UserState.UserId,
-                Email = Model.Email!
-            };
-
+            var request = new CheckEmailRequest { Email = Model.Email! };
             var result = await EmailService.CheckEmailAsync(request);
-
             if (result.Succeeded)
             {
                 _showError = false;
@@ -86,7 +80,7 @@
     {
         var request = new AddEmailRequest
         {
-            UserId = UserState.UserId,
+            Subject = UserState.Subject!,
             Email = Model.Email!,
         };
 

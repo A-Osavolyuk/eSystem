@@ -12,7 +12,7 @@ using eSystem.Core.Mediator;
 
 namespace eSecurity.Server.Features.Users.Queries;
 
-public record GetUserVerificationDataQuery(Guid UserId) : IRequest<Result>;
+public record GetUserVerificationDataQuery(string Subject) : IRequest<Result>;
 
 public class GetUserVerificationMethodsQueryHandler(
     IUserManager userManager,
@@ -31,7 +31,7 @@ public class GetUserVerificationMethodsQueryHandler(
 
     public async Task<Result> Handle(GetUserVerificationDataQuery request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByIdAsync(request.UserId, cancellationToken);
+        var user = await _userManager.FindBySubjectAsync(request.Subject, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
         var userAgent = _httpContext.GetUserAgent();

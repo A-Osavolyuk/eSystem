@@ -87,12 +87,12 @@
                                                     }
                                                     <MudForm
                                                         @ref="_changeForm"
-                                                        Model="ChangeModel"
+                                                        Model="_changeModel"
                                                         Validation="ChangeEmailValidator.ValidateValue">
                                                         <MudTextFieldExtended
                                                             Margin="Margin.Dense"
-                                                            @bind-Value="ChangeModel.NewEmail"
-                                                            For="() => ChangeModel.NewEmail"
+                                                            @bind-Value="_changeModel.NewEmail"
+                                                            For="() => _changeModel.NewEmail"
                                                             Label="New email"
                                                             Variant="Variant.Outlined"
                                                             Immediate="true"
@@ -136,14 +136,14 @@
                                                 <MudStack Spacing="2">
                                                     <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
                                                         Enter 6-digit code from letter we sent you
-                                                        to: @ChangeModel.NewEmail
+                                                        to: @_changeModel.NewEmail
                                                     </MudTextM3>
                                                     <MudForm
                                                         @ref="_confirmForm"
-                                                        Model="ConfirmModel"
+                                                        Model="_confirmModel"
                                                         Validation="Validator.ValidateValue">
                                                         <MudTextFieldExtended
-                                                            @bind-Value="ConfirmModel.Code"
+                                                            @bind-Value="_confirmModel.Code"
                                                             Variant="Variant.Outlined"
                                                             Margin="Margin.Dense"
                                                             Placeholder="XXXXXX"
@@ -156,7 +156,7 @@
                                                         Variant="Variant.Filled"
                                                         Color="Color.Success"
                                                         ButtonType="ButtonType.Button"
-                                                        Disabled="@(ConfirmModel.Code.Length <= 5)"
+                                                        Disabled="@(_confirmModel.Code.Length <= 5)"
                                                         OnClick="@(async () => await OnChangeAsync())">
                                                         Verify
                                                     </MudLoadingButton>
@@ -171,7 +171,12 @@
                                                     </MudButton>
                                                 </MudStack>
                                             </MudPaper>
-                                            <CodeResend Context="_messageContext"></CodeResend>
+                                            <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
+                                                Didn't received an email?
+                                                <MudLink Typo="Typo.body2" OnClick="@(async () => await OnResendAsync())">
+                                                    Resend
+                                                </MudLink>
+                                            </MudTextM3>
                                         </MudStack>
                                     </MudItem>
                                 </MudGrid>
@@ -192,14 +197,13 @@
     [SupplyParameterFromQuery(Name = "return_url")]
     public string ReturnUrl { get; set; } = null!;
     
-    private ChangeEmailModel ChangeModel { get; set; } = new();
-    private CodeModel ConfirmModel { get; set; } = new();
+    private ChangeEmailModel _changeModel = new();
+    private CodeModel _confirmModel = new();
 
     private readonly PatternMask _mask = new("000000");
     private MudStepperExtended _stepper = new();
     private MudForm _changeForm = new();
     private MudForm _confirmForm = new();
-    private MessageContext _messageContext = new();
     private ConfirmationContext? _confirmationContext;
 
     protected override void OnInitialized()
@@ -211,25 +215,46 @@
         };
     }
 
+    private async Task OnResendAsync()
+    {
+        var request = new ResendCodeRequest()
+        {
+            Subject = UserState.Subject!,
+            Sender = SenderType.Email,
+            Purpose = PurposeType.Email,
+            Action = ActionType.Verify,
+            Payload = new()
+            {
+                { "To", _changeModel.NewEmail }
+            }
+        };
+
+        var result = await VerificationService.ResendCodeAsync(request);
+        if (!result.Succeeded)
+        {
+            var error = result.GetError();
+            Snackbar.Add(error.Description, Severity.Error);
+        }
+    }
+
     private async Task OnSendCode()
     {
         await _changeForm.Validate();
 
         if (_changeForm.IsValid)
         {
-            _messageContext = new MessageContext
+            var request = new SendCodeRequest()
             {
-                UserId = UserState.UserId,
+                Subject = UserState.Subject!,
                 Sender = SenderType.Email,
                 Purpose = PurposeType.Email,
                 Action = ActionType.Verify,
                 Payload = new()
                 {
-                    { "To", ChangeModel.NewEmail }
+                    { "To", _changeModel.NewEmail }
                 }
             };
-
-            var request = _messageContext!.ToSendCodeRequest();
+            
             var result = await VerificationService.SendCodeAsync(request);
             if (result.Succeeded) await _stepper.StepNextAsync();
             else Snackbar.Add(result.GetError().Description, Severity.Error);
@@ -247,8 +272,8 @@
 
         var request = new ChangeEmailRequest
         {
-            UserId = UserState.UserId,
-            NewEmail = ChangeModel.NewEmail,
+            Subject = UserState.Subject!,
+            NewEmail = _changeModel.NewEmail,
             Type = type,
         };
 
@@ -271,7 +296,12 @@
 
         if (_confirmForm.IsValid)
         {
-            var request = _messageContext!.ToVerifyCodeRequest(ConfirmModel.Code);
+            var request = new VerifyCodeRequest()
+            {
+                Code = _confirmModel.Code,
+                Subject = UserState.Subject!
+            };
+            
             var result = await VerificationService.VerifyCodeAsync(request);
 
             if (result.Succeeded) await ChangeAsync();

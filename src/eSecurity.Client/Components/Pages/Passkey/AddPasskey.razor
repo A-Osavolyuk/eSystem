@@ -179,7 +179,7 @@
         {
             var request = new GenerateCreationOptionsRequest
             {
-                UserId = UserState.UserId,
+                Subject = UserState.Subject!,
                 DisplayName = _model.DisplayName
             };
 
@@ -200,7 +200,7 @@
             var assertResponse = assertResult.Get<PublicKeyCredentialCreationResponse>();
             var request = new CreatePasskeyRequest
             {
-                UserId = UserState.UserId,
+                Subject = UserState.Subject!,
                 DisplayName = _model.DisplayName,
                 Response = assertResponse
             };

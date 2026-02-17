@@ -5,7 +5,7 @@ using eSystem.Core.Mediator;
 
 namespace eSecurity.Server.Features.Users.Queries;
 
-public record GetUserPhoneNumbersQuery(Guid UserId) : IRequest<Result>;
+public record GetUserPhoneNumbersQuery(string Subject) : IRequest<Result>;
 
 public class GetUserPhoneNumbersQueryHandler(
     IUserManager userManager,
@@ -16,7 +16,7 @@ public class GetUserPhoneNumbersQueryHandler(
 
     public async Task<Result> Handle(GetUserPhoneNumbersQuery request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByIdAsync(request.UserId, cancellationToken);
+        var user = await _userManager.FindBySubjectAsync(request.Subject, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
         var phoneNumbers = await _phoneManager.GetAllAsync(user, cancellationToken);

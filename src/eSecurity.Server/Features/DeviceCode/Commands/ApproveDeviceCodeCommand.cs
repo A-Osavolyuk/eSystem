@@ -56,7 +56,7 @@ public sealed class ApproveDeviceCodeCommandHandler(
             deviceCode.SessionId = session.Id;
         }
         
-        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindBySubjectAsync(request.Request.Subject, cancellationToken);
         if (user is null) return Results.NotFound("User was not found");
         
         var client = await _clientManager.FindByIdAsync(deviceCode.ClientId, cancellationToken);

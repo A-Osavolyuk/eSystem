@@ -4,16 +4,15 @@ namespace eSecurity.Client.Common.State.States;
 
 public class UserState : State
 {
-    public Guid UserId { get; set; }
     public string? Subject { get; set; }
     public UserCredentials? Credentials { get; set; }
     public UserIdentity? Identity { get; set; }
 
-    public bool IsAuthenticated => UserId != Guid.Empty;
+    public bool IsAuthenticated => !string.IsNullOrEmpty(Subject);
 
     public void Clear()
     {
-        UserId = Guid.Empty;
+        Subject = null;
         Credentials = null;
         Identity = null;
     }

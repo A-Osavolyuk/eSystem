@@ -49,7 +49,7 @@ public sealed class DenyDeviceCodeCommandHandler(
             deviceCode.SessionId = session.Id;
         }
         
-        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindBySubjectAsync(request.Request.Subject, cancellationToken);
         if (user is null) return Results.NotFound("Uses was not found");
 
         deviceCode.UserId = user.Id;

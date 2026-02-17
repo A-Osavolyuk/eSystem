@@ -74,7 +74,7 @@ else
     {
         _isLoading = true;
         _showError = false;
-
+        
         var request = new GenerateRequestOptionsRequest();
         var result = await PasskeyService.GenerateRequestOptionsAsync(request);
         if (result.Succeeded && result.TryGetValue<PublicKeyCredentialRequestOptions>(out var value))

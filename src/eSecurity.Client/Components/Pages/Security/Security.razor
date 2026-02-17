@@ -63,7 +63,7 @@ else
 
     private async Task LoadAsync()
     {
-        var result = await UserService.GetUserLoginMethodsAsync(UserState.UserId);
+        var result = await UserService.GetUserLoginMethodsAsync(UserState.Subject!);
         if (result.Succeeded && result.TryGetValue<UserLoginMethodsDto>(out var value))
         {
             _model = value;

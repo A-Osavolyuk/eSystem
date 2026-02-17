@@ -20,7 +20,7 @@ public class VerifyCodeCommandHandler(
 
     public async Task<Result> Handle(VerifyCodeCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindBySubjectAsync(request.Request.Subject, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
         
         var code = await _codeManager.FindAsync(user, request.Request.Code, cancellationToken);

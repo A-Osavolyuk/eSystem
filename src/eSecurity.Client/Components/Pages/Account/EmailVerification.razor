@@ -51,12 +51,6 @@
                         OnClick="@(async () => await OnVerifyEmailAsync())">
                         Verify
                     </MudLoadingButton>
-                    <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
-                        Didn't received an email?
-                        <MudLink Typo="Typo.body2" OnClick="@(async () => await OnResendAsync())">
-                            Resend
-                        </MudLink>
-                    </MudTextM3>
                 </MudStack>
             </MudPaper>
         </MudItem>
@@ -128,24 +122,5 @@
             }
         }
     }
-
-    private async Task OnResendAsync()
-    {
-        var request = new ResendCodeRequest
-        {
-            UserId = _transactionId,
-            Sender = SenderType.Email,
-            Purpose = PurposeType.Email,
-            Action = ActionType.Verify,
-            Payload = new()
-            {
-                { "To", _email! }
-            }
-        };
-
-        var result = await VerificationService.ResendCodeAsync(request);
-        if (!result.Succeeded) Snackbar.Add(result.GetError().Description, Severity.Error);
-    }
-
 }
 

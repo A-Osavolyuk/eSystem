@@ -4,6 +4,6 @@ namespace eSecurity.Core.Common.Requests;
 
 public class PreferTwoFactorMethodRequest
 {
-    public Guid UserId { get; set; }
+    public required string Subject { get; set; }
     public TwoFactorMethod PreferredMethod { get; set; }
 }

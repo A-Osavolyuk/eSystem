@@ -83,7 +83,7 @@
 
         var request = new PreferTwoFactorMethodRequest
         {
-            UserId = UserState.UserId,
+            Subject = UserState.Subject!,
             PreferredMethod = method
         };
 

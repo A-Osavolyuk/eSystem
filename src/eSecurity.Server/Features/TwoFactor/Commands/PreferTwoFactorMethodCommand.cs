@@ -16,7 +16,7 @@ public class PreferMethodCommandHandler(
 
     public async Task<Result> Handle(PreferTwoFactorMethodCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
+        var user = await _userManager.FindBySubjectAsync(request.Request.Subject, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
         
         var result = await _twoFactorManager.PreferAsync(user, request.Request.PreferredMethod, cancellationToken);

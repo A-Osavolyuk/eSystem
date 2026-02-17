@@ -8,7 +8,7 @@ namespace eSecurity.Server.Controllers.v1;
 [ApiController]
 [ApiVersion("1.0")]
 [Produces(ContentTypes.Application.Json)]
-[Route("v{version:apiVersion}/[controller]")]
+[Route("v{version:apiVersion}/[controller]/{subject}")]
 public class UserController(ISender sender) : ControllerBase
 {
     private readonly ISender _sender = sender;
@@ -16,99 +16,99 @@ public class UserController(ISender sender) : ControllerBase
     [EndpointSummary("Get user's 2FA methods")]
     [EndpointDescription("Get user's 2FA methods")]
     [ProducesResponseType(200)]
-    [HttpGet("{userId:guid}/2fa/methods")]
+    [HttpGet("2fa/methods")]
     [AllowAnonymous]
-    public async ValueTask<IActionResult> GetUserTwoFactorMethodsAsync(Guid userId)
+    public async ValueTask<IActionResult> GetUserTwoFactorMethodsAsync(string subject)
     {
-        var result = await _sender.Send(new GetUserTwoFactorMethodsQuery(userId));
+        var result = await _sender.Send(new GetUserTwoFactorMethodsQuery(subject));
         return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Get user's verification methods")]
     [EndpointDescription("Get user's verification methods")]
     [ProducesResponseType(200)]
-    [HttpGet("{userId:guid}/verification/methods")]
+    [HttpGet("verification/methods")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> GetUserVerificationMethodsAsync(Guid userId)
+    public async ValueTask<IActionResult> GetUserVerificationMethodsAsync(string subject)
     {
-        var result = await _sender.Send(new GetUserVerificationDataQuery(userId));
+        var result = await _sender.Send(new GetUserVerificationDataQuery(subject));
         return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Get user's personal data")]
     [EndpointDescription("Get user's personal data")]
     [ProducesResponseType(200)]
-    [HttpGet("{userId:guid}/privacy")]
+    [HttpGet("privacy")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> GetUserPersonalDataAsync(Guid userId)
+    public async ValueTask<IActionResult> GetUserPersonalDataAsync(string subject)
     {
-        var result = await _sender.Send(new GetUserPersonalQuery(userId));
+        var result = await _sender.Send(new GetUserPersonalQuery(subject));
         return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Get user's lockout state")]
     [EndpointDescription("Get user's lockout state")]
     [ProducesResponseType(200)]
-    [HttpGet("{userId:guid}/lockout")]
+    [HttpGet("lockout")]
     [AllowAnonymous]
-    public async ValueTask<IActionResult> GetUserLogoutStateAsync(Guid userId)
+    public async ValueTask<IActionResult> GetUserLogoutStateAsync(string subject)
     {
-        var result = await _sender.Send(new GetUserLockoutQuery(userId));
+        var result = await _sender.Send(new GetUserLockoutQuery(subject));
         return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Get user's linked accounts")]
     [EndpointDescription("Get user's linked accounts")]
     [ProducesResponseType(200)]
-    [HttpGet("{userId:guid}/linked-accounts")]
+    [HttpGet("linked-accounts")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> GetUserLinkedAccountsAsync(Guid userId)
+    public async ValueTask<IActionResult> GetUserLinkedAccountsAsync(string subject)
     {
-        var result = await _sender.Send(new GetUserLinkedAccountDataQuery(userId));
+        var result = await _sender.Send(new GetUserLinkedAccountDataQuery(subject));
         return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Get user's login methods")]
     [EndpointDescription("Get user's login methods")]
     [ProducesResponseType(200)]
-    [HttpGet("{userId:guid}/login-methods")]
+    [HttpGet("login-methods")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> GetUserLoginMethodsAsync(Guid userId)
+    public async ValueTask<IActionResult> GetUserLoginMethodsAsync(string subject)
     {
-        var result = await _sender.Send(new GetUserLoginMethodsQuery(userId));
+        var result = await _sender.Send(new GetUserLoginMethodsQuery(subject));
         return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Get user's devices")]
     [EndpointDescription("Get user's devices")]
     [ProducesResponseType(200)]
-    [HttpGet("{userId:guid}/devices")]
+    [HttpGet("devices")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> GetUserDevicesAsync(Guid userId)
+    public async ValueTask<IActionResult> GetUserDevicesAsync(string subject)
     {
-        var result = await _sender.Send(new GetUserDevicesQuery(userId));
+        var result = await _sender.Send(new GetUserDevicesQuery(subject));
         return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Get user's emails")]
     [EndpointDescription("Get user's emails")]
     [ProducesResponseType(200)]
-    [HttpGet("{userId:guid}/emails")]
+    [HttpGet("emails")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> GetUserEmailsAsync(Guid userId)
+    public async ValueTask<IActionResult> GetUserEmailsAsync(string subject)
     {
-        var result = await _sender.Send(new GetUserEmailsQuery(userId));
+        var result = await _sender.Send(new GetUserEmailsQuery(subject));
         return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Get user's phone numbers")]
     [EndpointDescription("Get user's phone numbers")]
     [ProducesResponseType(200)]
-    [HttpGet("{userId:guid}/phone-numbers")]
+    [HttpGet("phone-numbers")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> GetUserPhoneNumbersAsync(Guid userId)
+    public async ValueTask<IActionResult> GetUserPhoneNumbersAsync(string subject)
     {
-        var result = await _sender.Send(new GetUserPhoneNumbersQuery(userId));
+        var result = await _sender.Send(new GetUserPhoneNumbersQuery(subject));
         return HttpContext.HandleResult(result);
     }
 }

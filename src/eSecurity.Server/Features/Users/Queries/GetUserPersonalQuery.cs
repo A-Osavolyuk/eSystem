@@ -5,7 +5,7 @@ using eSystem.Core.Mediator;
 
 namespace eSecurity.Server.Features.Users.Queries;
 
-public record GetUserPersonalQuery(Guid UserId) : IRequest<Result>;
+public record GetUserPersonalQuery(string Subject) : IRequest<Result>;
 
 public class GetUserPersonalQueryHandler(
     IUserManager userManager,
@@ -16,7 +16,7 @@ public class GetUserPersonalQueryHandler(
 
     public async Task<Result> Handle(GetUserPersonalQuery request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByIdAsync(request.UserId, cancellationToken);
+        var user = await _userManager.FindBySubjectAsync(request.Subject, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
         var personalData = await _personalDataManager.GetAsync(user, cancellationToken);
