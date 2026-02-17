@@ -133,7 +133,7 @@
                     : _authorizationState;
 
                 var state = StateBuilder.Create()
-                    .WithData("userId", response.UserId.ToString())
+                    .WithData("transactionId", response.TransactionId.ToString())
                     .WithData("email", _model.Email)
                     .WithData("state", authorizationState)
                     .Build();

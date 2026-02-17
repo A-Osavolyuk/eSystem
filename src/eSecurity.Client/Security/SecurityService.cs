@@ -36,6 +36,19 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 WithTimezone = true
             });
 
+    public async ValueTask<ApiResponse> CompleteSignUpAsync(CompleteSignUpRequest request)
+        => await _apiClient.SendAsync(
+            new ApiRequest
+            {
+                Method = HttpMethod.Post,
+                Data = request,
+                Url = "/api/v1/Account/sign-up/complete"
+            }, new ApiOptions
+            {
+                ContentType = ContentTypes.Application.Json,
+                Authentication = AuthenticationType.None
+            });
+
     public async ValueTask<ApiResponse> GetAuthenticationSessionAsync(Guid sid)
         => await _apiClient.SendAsync(
             new ApiRequest

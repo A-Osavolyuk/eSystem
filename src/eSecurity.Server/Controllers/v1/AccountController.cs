@@ -48,6 +48,16 @@ public class AccountController(ISender sender) : ControllerBase
         return HttpContext.HandleResult(result);
     }
     
+    [EndpointSummary("Complete sign up")]
+    [EndpointDescription("Complete sign up")]
+    [ProducesResponseType(200)]
+    [HttpPost("sign-up/complete")]
+    public async ValueTask<IActionResult> CompleteSignUpAsync([FromBody] CompleteSignUpRequest request)
+    {
+        var result = await _sender.Send(new CompleteSignUpCommand(request));
+        return HttpContext.HandleResult(result);
+    }
+    
     [EndpointSummary("Check")]
     [EndpointDescription("Check")]
     [ProducesResponseType(200)]

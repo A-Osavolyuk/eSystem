@@ -1,7 +1,8 @@
 ﻿@page "/sign-up/verification"
 
+@using eSecurity.Client.Security
 @using eSecurity.Client.Security.Authorization.Access.Verification
-@using eSecurity.Client.Security.Identity
+@using eSecurity.Core.Common.Responses
 @using eSystem.Core.Utilities.State
 
 @inherits PageBase
@@ -10,7 +11,7 @@
 
 @inject VerifyEmailValidator Validator
 @inject IVerificationService VerificationService
-@inject IEmailService EmailService
+@inject ISecurityService SecurityService
 
 <Title Text="Registration completion"></Title>
 
@@ -72,7 +73,7 @@
     private MudForm _form = new();
     private readonly PatternMask _mask = new("000000");
 
-    private Guid _userId;
+    private Guid _transactionId;
     private string? _email;
     private string? _state;
 
@@ -81,8 +82,8 @@
         if (!string.IsNullOrEmpty(State))
         {
             var stateData = StateParser.Parse(State);
-            if (stateData.TryGetValue("userId", out var userId))
-                _userId = Guid.Parse(userId);
+            if (stateData.TryGetValue("transactionId", out var transactionId))
+                _transactionId = Guid.Parse(transactionId);
 
             if (stateData.TryGetValue("email", out var email))
                 _email = email;
@@ -98,41 +99,33 @@
 
         if (_form.IsValid)
         {
-            var request = new VerifyCodeRequest()
+            var request = new CompleteSignUpRequest()
             {
-                UserId = _userId,
+                TransactionId = _transactionId,
                 Code = _model.Code
             };
-            var result = await VerificationService.VerifyCodeAsync(request);
 
-            if (result.Succeeded) await VerifyAsync();
-            else Snackbar.Add(result.GetError().Description, Severity.Error);
-        }
-    }
-
-    private async Task VerifyAsync()
-    {
-        var request = new VerifyEmailRequest
-        {
-            UserId = _userId,
-            Email = _email!
-        };
-
-        var result = await EmailService.VerifyEmailAsync(request);
-        if (result.Succeeded)
-        {
-            var state = string.IsNullOrEmpty(_state)
-                ? AuthenticationManager.GetAuthorizationState()
-                : _state;
-
-            NavigationManager.NavigateTo(QueryBuilder.Create()
-                .WithUri(Links.Common.Login)
-                .WithQueryParam("state", state).Build());
-        }
-        else
-        {
-            var error = result.GetError();
-            Snackbar.Add(error.Description, Severity.Error);
+            var result = await SecurityService.CompleteSignUpAsync(request);
+            if (result.Succeeded && result.TryGetValue<CompleteSignUpResponse>(out var response) && response is not null)
+            {
+                await AuthenticationManager.SignInAsync(response.SessionId);
+                if (!string.IsNullOrEmpty(_state))
+                {
+                    var stateData = StateParser.Parse(_state);
+                    if (stateData.TryGetValue("return_url", out var url))
+                    {
+                        NavigationManager.NavigateTo(url, true);
+                        return;
+                    }
+                }
+            
+                NavigationManager.NavigateTo(AuthenticationManager.GetAuthorizationUri(), true);
+            }
+            else
+            {
+                var error = result.GetError();
+                Snackbar.Add(error.Description, Severity.Error);
+            }
         }
     }
 
@@ -140,7 +133,7 @@
     {
         var request = new ResendCodeRequest
         {
-            UserId = _userId,
+            UserId = _transactionId,
             Sender = SenderType.Email,
             Purpose = PurposeType.Email,
             Action = ActionType.Verify,

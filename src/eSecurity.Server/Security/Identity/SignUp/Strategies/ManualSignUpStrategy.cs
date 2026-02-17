@@ -4,7 +4,9 @@ using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Common.Messaging;
 using eSecurity.Server.Common.Messaging.Messages.Email;
 using eSecurity.Server.Data.Entities;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authentication.Password;
+using eSecurity.Server.Security.Authentication.Session;
 using eSecurity.Server.Security.Authorization.Access.Codes;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Authorization.Roles;
@@ -15,6 +17,7 @@ using eSecurity.Server.Security.Identity.User.Username;
 using eSystem.Core.Common.Messaging;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 
 namespace eSecurity.Server.Security.Identity.SignUp.Strategies;
 
@@ -35,6 +38,7 @@ public sealed class ManualSignUpStrategy(
     IHttpContextAccessor httpContextAccessor,
     IMessageService messageService,
     ICodeManager codeManager,
+    IAuthenticationSessionManager sessionManager,
     IOptions<AccountOptions> options) : ISignUpStrategy
 {
     private readonly IUserManager _userManager = userManager;
@@ -45,6 +49,7 @@ public sealed class ManualSignUpStrategy(
     private readonly IEmailManager _emailManager = emailManager;
     private readonly IMessageService _messageService = messageService;
     private readonly ICodeManager _codeManager = codeManager;
+    private readonly IAuthenticationSessionManager _sessionManager = sessionManager;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly AccountOptions _options = options.Value;
 
@@ -138,11 +143,21 @@ public sealed class ManualSignUpStrategy(
 
         await _messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
 
-        var response = new SignUpResponse
+        var session = new AuthenticationSessionEntity()
         {
+            Id = Guid.CreateVersion7(),
             UserId = user.Id,
+            CreatedAt = DateTimeOffset.UtcNow,
+            ExpiredAt = DateTimeOffset.UtcNow.AddMinutes(10),
+            RequiredAuthenticationMethods = [AuthenticationMethods.EmailVerification],
         };
+        
+        var sessionResult = await _sessionManager.CreateAsync(session, cancellationToken);
+        if (!sessionResult.Succeeded) return sessionResult;
 
-        return Results.Ok(response);
+        return Results.Ok(new SignUpResponse
+        {
+            TransactionId = session.Id
+        });
     }
 }

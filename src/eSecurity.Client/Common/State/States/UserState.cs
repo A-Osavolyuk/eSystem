@@ -5,6 +5,7 @@ namespace eSecurity.Client.Common.State.States;
 public class UserState : State
 {
     public Guid UserId { get; set; }
+    public string? Subject { get; set; }
     public UserCredentials? Credentials { get; set; }
     public UserIdentity? Identity { get; set; }
 

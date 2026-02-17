@@ -15,4 +15,5 @@ public static class AuthenticationMethods
     public const string IrisScan = "eye";
     public const string Federated = "federated";
     public const string Social = "social";
+    public const string EmailVerification = "email";
 }

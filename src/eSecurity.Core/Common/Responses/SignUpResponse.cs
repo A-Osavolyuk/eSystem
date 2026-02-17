@@ -1,6 +1,6 @@
 ﻿namespace eSecurity.Core.Common.Responses;
 
-public class SignUpResponse
+public sealed class SignUpResponse
 {
-    public Guid UserId { get; set; }
+    public Guid TransactionId { get; set; }
 }

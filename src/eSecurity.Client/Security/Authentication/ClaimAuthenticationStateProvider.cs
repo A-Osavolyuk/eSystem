@@ -42,26 +42,26 @@ public class ClaimAuthenticationStateProvider(
         
         if (principal.HasClaim(x => x.Type == AppClaimTypes.Sub))
         {
-            var userId = principal.Claims.Single(x => x.Type == AppClaimTypes.Sub).Value;
-            _userState.UserId = Guid.Parse(userId);
+            var subjectClaim = principal.Claims.First(x => x.Type == AppClaimTypes.Sub);
+            _userState.Subject = subjectClaim.Value;
         }
 
         if (principal.HasClaim(x => x.Type == AppClaimTypes.PreferredUsername))
         {
-            var username = principal.Claims.Single(x => x.Type == AppClaimTypes.PreferredUsername).Value;
-            _userState.Credentials.Username = username;
+            var usernameClaim = principal.Claims.Single(x => x.Type == AppClaimTypes.PreferredUsername);
+            _userState.Credentials.Username = usernameClaim.Value;
         }
 
         if (principal.HasClaim(x => x.Type == AppClaimTypes.Email))
         {
-            var email = principal.Claims.Single(x => x.Type == AppClaimTypes.Email).Value;
-            _userState.Credentials.Email = email;
+            var emailClaim = principal.Claims.Single(x => x.Type == AppClaimTypes.Email);
+            _userState.Credentials.Email = emailClaim.Value;
         }
 
         if (principal.HasClaim(x => x.Type == AppClaimTypes.PhoneNumber))
         {
-            var phoneNumber = principal.Claims.Single(x => x.Type == AppClaimTypes.PhoneNumber).Value;
-            _userState.Credentials.PhoneNumber = phoneNumber;
+            var phoneNumberClaim = principal.Claims.Single(x => x.Type == AppClaimTypes.PhoneNumber);
+            _userState.Credentials.PhoneNumber = phoneNumberClaim.Value;
         }
     }
 }
