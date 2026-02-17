@@ -11,7 +11,7 @@ public sealed class PublicSubjectManager(AuthDbContext context) : IPublicSubject
         CancellationToken cancellationToken = default)
     {
         return await _context.PublicSubjects.FirstOrDefaultAsync(
-            p => p.Id == user.Id, cancellationToken);
+            p => p.UserId == user.Id, cancellationToken);
     }
 
     public async ValueTask<Result> CreateAsync(PublicSubjectEntity subject,
