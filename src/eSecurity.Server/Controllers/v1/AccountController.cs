@@ -67,24 +67,4 @@ public class AccountController(ISender sender) : ControllerBase
         var result = await _sender.Send(new CheckAccountCommand(request));
         return HttpContext.HandleResult(result);
     }
-    
-    [EndpointSummary("Recover")]
-    [EndpointDescription("Recover")]
-    [ProducesResponseType(200)]
-    [HttpPost("recover")]
-    public async ValueTask<IActionResult> RecoverAsync([FromBody] RecoverAccountRequest request)
-    {
-        var result = await _sender.Send(new RecoverAccountCommand(request));
-        return HttpContext.HandleResult(result);
-    }
-    
-    [EndpointSummary("Unlock")]
-    [EndpointDescription("Unlock")]
-    [ProducesResponseType(200)]
-    [HttpPost("unlock")]
-    public async ValueTask<IActionResult> UnlockAsync([FromBody] UnlockAccountRequest request)
-    {
-        var result = await _sender.Send(new UnlockAccountCommand(request));
-        return HttpContext.HandleResult(result);
-    }
 }

@@ -74,30 +74,4 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.None
             });
-
-    public async ValueTask<ApiResponse> RecoverAccountAsync(RecoverAccountRequest request)
-        => await _apiClient.SendAsync(
-            new ApiRequest
-            {
-                Method = HttpMethod.Post,
-                Data = request,
-                Url = "/api/v1/Account/recover"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.None
-            });
-
-    public async ValueTask<ApiResponse> UnlockAccountAsync(UnlockAccountRequest request)
-        => await _apiClient.SendAsync(
-            new ApiRequest
-            {
-                Method = HttpMethod.Post,
-                Data = request,
-                Url = "/api/v1/Account/unlock"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.None
-            });
 }

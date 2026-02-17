@@ -4,8 +4,6 @@ public static class Links
 {
     public static class Common
     {
-        public const string UnlockAccount = "/unlock-account";
-        public const string RecoverAccount = "/recover-account";
         public const string ForgotPassword = "/forgot-password";
         public const string AccountLocked = "/account-locked";
         public const string Profile = "/profile";

@@ -10,6 +10,4 @@ public interface ISecurityService
     public ValueTask<ApiResponse> GetAuthenticationSessionAsync(Guid sid);
     
     public ValueTask<ApiResponse> CheckAccountAsync(CheckAccountRequest request);
-    public ValueTask<ApiResponse> RecoverAccountAsync(RecoverAccountRequest request);
-    public ValueTask<ApiResponse> UnlockAccountAsync(UnlockAccountRequest request);
 }
