@@ -19,7 +19,6 @@ public class UnlockAccountCommandHandler(
     ICodeManager codeManager,
     ILockoutManager lockoutManager,
     IHttpContextAccessor httpContextAccessor,
-    IHasherProvider hasherProvider,
     IDeviceManager deviceManager) : IRequestHandler<UnlockAccountCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
@@ -27,7 +26,6 @@ public class UnlockAccountCommandHandler(
     private readonly ILockoutManager _lockoutManager = lockoutManager;
     private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
     private readonly IDeviceManager _deviceManager = deviceManager;
-    private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Pbkdf2);
 
     public async Task<Result> Handle(UnlockAccountCommand request, CancellationToken cancellationToken)
     {
@@ -47,8 +45,7 @@ public class UnlockAccountCommandHandler(
 
         }
         
-        var codeHash = _hasher.Hash(request.Request.Code);
-        var code = await _codeManager.FindAsync(user, codeHash, cancellationToken);
+        var code = await _codeManager.FindAsync(user, request.Request.Code, cancellationToken);
         if (code is null) return Results.NotFound("Code not found");
 
         var codeResult = await _codeManager.RemoveAsync(code, cancellationToken);

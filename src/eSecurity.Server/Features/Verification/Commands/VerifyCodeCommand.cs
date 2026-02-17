@@ -12,21 +12,18 @@ public record VerifyCodeCommand(VerifyCodeRequest Request) : IRequest<Result>;
 public class VerifyCodeCommandHandler(
     IUserManager userManager,
     ICodeManager codeManager,
-    IVerificationManager verificationManager,
-    IHasherProvider hasherProvider) : IRequestHandler<VerifyCodeCommand, Result>
+    IVerificationManager verificationManager) : IRequestHandler<VerifyCodeCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly ICodeManager _codeManager = codeManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
-    private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Pbkdf2);
 
     public async Task<Result> Handle(VerifyCodeCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.Request.UserId, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
-
-        var codeHash = _hasher.Hash(request.Request.Code);
-        var code = await _codeManager.FindAsync(user, codeHash, cancellationToken);
+        
+        var code = await _codeManager.FindAsync(user, request.Request.Code, cancellationToken);
         if (code is null) return Results.NotFound("Code not found.");
 
         var codeResult = await _codeManager.RemoveAsync(code, cancellationToken);

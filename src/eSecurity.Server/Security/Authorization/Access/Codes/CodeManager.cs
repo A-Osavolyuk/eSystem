@@ -17,10 +17,13 @@ public sealed class CodeManager(
     private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Pbkdf2);
 
     public async ValueTask<CodeEntity?> FindAsync(UserEntity user, 
-        string codeHash, CancellationToken cancellationToken = default)
+        string code, CancellationToken cancellationToken = default)
     {
-        return await _context.Codes.FirstOrDefaultAsync(
-            x => x.UserId == user.Id && x.CodeHash == codeHash, cancellationToken);
+        var codes = await _context.Codes
+            .Where(c => c.UserId == user.Id)
+            .ToListAsync(cancellationToken);
+
+        return codes.FirstOrDefault(c => _hasher.VerifyHash(code, c.CodeHash));
     }
 
     public async ValueTask<string> GenerateAsync(UserEntity user, SenderType sender, 

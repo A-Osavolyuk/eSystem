@@ -7,7 +7,7 @@ namespace eSecurity.Server.Security.Authorization.Access.Codes;
 public interface ICodeManager
 {
     public ValueTask<CodeEntity?> FindAsync(UserEntity user, 
-        string codeHash, CancellationToken cancellationToken = default);
+        string code, CancellationToken cancellationToken = default);
     
     public ValueTask<string> GenerateAsync(UserEntity user, SenderType sender, ActionType action, 
         PurposeType purpose, CancellationToken cancellationToken = default);
