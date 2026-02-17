@@ -13,17 +13,6 @@ public class UserController(ISender sender) : ControllerBase
 {
     private readonly ISender _sender = sender;
     
-    [EndpointSummary("Get user")]
-    [EndpointDescription("Get user")]
-    [ProducesResponseType(200)]
-    [HttpGet("{userId:guid}")]
-    [AllowAnonymous]
-    public async ValueTask<IActionResult> GetUserAsync(Guid userId)
-    {
-        var result = await _sender.Send(new GetUserQuery(userId));
-        return HttpContext.HandleResult(result);
-    }
-    
     [EndpointSummary("Get user's 2FA methods")]
     [EndpointDescription("Get user's 2FA methods")]
     [ProducesResponseType(200)]
@@ -101,17 +90,6 @@ public class UserController(ISender sender) : ControllerBase
         return HttpContext.HandleResult(result);
     }
     
-    [EndpointSummary("Get user's device")]
-    [EndpointDescription("Get user's device")]
-    [ProducesResponseType(200)]
-    [HttpGet("{userId:guid}/devices/{deviceId:guid}")]
-    [AllowAnonymous]
-    public async ValueTask<IActionResult> GetUserDevicesAsync(Guid userId, Guid deviceId)
-    {
-        var result = await _sender.Send(new GetUserDeviceQuery(userId, deviceId));
-        return HttpContext.HandleResult(result);
-    }
-    
     [EndpointSummary("Get user's emails")]
     [EndpointDescription("Get user's emails")]
     [ProducesResponseType(200)]
@@ -123,17 +101,6 @@ public class UserController(ISender sender) : ControllerBase
         return HttpContext.HandleResult(result);
     }
     
-    [EndpointSummary("Get user's primary email")]
-    [EndpointDescription("Get user's primary email")]
-    [ProducesResponseType(200)]
-    [HttpGet("{userId:guid}/emails/primary")]
-    [AllowAnonymous]
-    public async ValueTask<IActionResult> GetUserPrimaryEmailAsync(Guid userId)
-    {
-        var result = await _sender.Send(new GetUserPrimaryEmailQuery(userId));
-        return HttpContext.HandleResult(result);
-    }
-    
     [EndpointSummary("Get user's phone numbers")]
     [EndpointDescription("Get user's phone numbers")]
     [ProducesResponseType(200)]
@@ -142,17 +109,6 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserPhoneNumbersAsync(Guid userId)
     {
         var result = await _sender.Send(new GetUserPhoneNumbersQuery(userId));
-        return HttpContext.HandleResult(result);
-    }
-    
-    [EndpointSummary("Get user's primary phone number")]
-    [EndpointDescription("Get user's primary phone number")]
-    [ProducesResponseType(200)]
-    [HttpGet("{userId:guid}/phone-numbers/primary")]
-    [AllowAnonymous]
-    public async ValueTask<IActionResult> GetUserPrimaryPhoneNumberAsync(Guid userId)
-    {
-        var result = await _sender.Send(new GetUserPrimaryPhoneNumberQuery(userId));
         return HttpContext.HandleResult(result);
     }
 }

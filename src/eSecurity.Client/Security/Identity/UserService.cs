@@ -15,19 +15,7 @@ public class UserService(IApiClient apiClient) : IUserService
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
-
-
-    public async ValueTask<ApiResponse> GetUserPrimaryEmailAsync(Guid id)
-        => await _apiClient.SendAsync(
-            new ApiRequest
-            {
-                Method = HttpMethod.Get,
-                Url = $"/api/v1/User/{id}/emails/primary"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.None
-            });
+    
 
     public async ValueTask<ApiResponse> GetUserEmailsAsync(Guid id)
         => await _apiClient.SendAsync(
@@ -39,18 +27,6 @@ public class UserService(IApiClient apiClient) : IUserService
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
-            });
-
-    public async ValueTask<ApiResponse> GetUserDeviceAsync(Guid id, Guid deviceId)
-        => await _apiClient.SendAsync(
-            new ApiRequest
-            {
-                Method = HttpMethod.Get,
-                Url = $"/api/v1/User/{id}/devices/{deviceId}"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.None
             });
 
     public async ValueTask<ApiResponse> GetUserDevicesAsync(Guid id)
@@ -99,17 +75,5 @@ public class UserService(IApiClient apiClient) : IUserService
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
-            });
-
-    public async ValueTask<ApiResponse> GetUserAsync(Guid id)
-        => await _apiClient.SendAsync(
-            new ApiRequest
-            {
-                Method = HttpMethod.Get,
-                Url = $"/api/v1/User/{id}"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.None
             });
 }
