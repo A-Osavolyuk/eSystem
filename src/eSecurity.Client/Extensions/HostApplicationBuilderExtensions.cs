@@ -11,7 +11,6 @@ using eSystem.ServiceDefaults;
 using MudBlazor;
 using MudBlazor.Services;
 using MudExtensions.Services;
-using NavigationContext = eSecurity.Core.Common.Routing.NavigationContext;
 
 namespace eSecurity.Client.Extensions;
 
@@ -32,7 +31,6 @@ public static class HostApplicationBuilderExtensions
                 client.BaseAddress = new Uri(gatewayUrl ?? throw new NullReferenceException("Gateway URI is empty."));
             });
             
-            builder.Services.AddScoped<NavigationContext>();
             builder.Services.AddScoped<ICacheService, CacheService>();
             builder.Services.AddSecurity();
             builder.Services.AddConfirmation();
