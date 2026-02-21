@@ -44,6 +44,5 @@ public static class TokenExtensions
         services.AddKeyedScoped<ITokenStrategy, AuthorizationCodeStrategy>(GrantTypes.AuthorizationCode);
         services.AddKeyedScoped<ITokenStrategy, RefreshTokenStrategy>(GrantTypes.RefreshToken);
         services.AddKeyedScoped<ITokenStrategy, ClientCredentialsStrategy>(GrantTypes.ClientCredentials);
-        services.AddScoped<ITokenRequestMapper, TokenRequestMapper>();
     }
 }

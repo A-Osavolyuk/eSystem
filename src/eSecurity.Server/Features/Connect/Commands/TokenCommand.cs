@@ -1,24 +1,26 @@
 ﻿using eSecurity.Server.Security.Authorization.OAuth.Token;
+using eSystem.Core.Binding;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives.Constants;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
+using eSystem.Core.Security.Authorization.OAuth.Token;
 
 namespace eSecurity.Server.Features.Connect.Commands;
 
-public record TokenCommand(Dictionary<string, string> Request) : IRequest<Result>;
+public record TokenCommand(IFormCollection Form) : IRequest<Result>;
 
 public class TokenCommandHandler(
     ITokenStrategyResolver tokenStrategyResolver,
-    ITokenRequestMapper tokenRequestMapper,
+    IFormBindingProvider bindingProvider,
     IOptions<OpenIdConfiguration> options) : IRequestHandler<TokenCommand, Result>
 {
     private readonly ITokenStrategyResolver _tokenStrategyResolver = tokenStrategyResolver;
-    private readonly ITokenRequestMapper _tokenRequestMapper = tokenRequestMapper;
+    private readonly IFormBindingProvider _bindingProvider = bindingProvider;
     private readonly OpenIdConfiguration _configuration = options.Value;
 
     public async Task<Result> Handle(TokenCommand request, CancellationToken cancellationToken)
     {
-        if (!request.Request.TryGetValue("grant_type", out var grantType) || string.IsNullOrEmpty(grantType))
+        if (!request.Form.TryGetValue("grant_type", out var grantType) || string.IsNullOrEmpty(grantType))
         {
             return Results.BadRequest(new Error
             {
@@ -27,7 +29,7 @@ public class TokenCommandHandler(
             });
         }
         
-        if (!_configuration.GrantTypesSupported.Contains(grantType))
+        if (!_configuration.GrantTypesSupported.Contains(grantType.ToString()))
         {
             return Results.BadRequest(new Error
             {
@@ -36,7 +38,7 @@ public class TokenCommandHandler(
             });
         }
 
-        if (!request.Request.TryGetValue("client_id", out var clientId) || string.IsNullOrEmpty(clientId))
+        if (!request.Form.TryGetValue("client_id", out var clientId) || string.IsNullOrEmpty(clientId))
         {
             return Results.BadRequest(new Error
             {
@@ -45,8 +47,9 @@ public class TokenCommandHandler(
             });
         }
 
-        var tokenRequest = _tokenRequestMapper.Map(request.Request);
-        if (tokenRequest is null)
+        var binder = _bindingProvider.GetRequiredBinder<TokenRequest>();
+        var tokenResult = await binder.BindAsync(request.Form, cancellationToken);
+        if (!tokenResult.Succeeded || !tokenResult.TryGetValue(out var tokenRequest))
         {
             return Results.BadRequest(new Error
             {
@@ -55,7 +58,7 @@ public class TokenCommandHandler(
             });
         }
 
-        var strategy = _tokenStrategyResolver.Resolve(grantType);
+        var strategy = _tokenStrategyResolver.Resolve(grantType.ToString());
         return await strategy.ExecuteAsync(tokenRequest, cancellationToken);
     }
 }

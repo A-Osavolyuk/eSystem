@@ -36,4 +36,8 @@
       <Folder Include="Security\Cookies\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\eSystem.Core.Primitives\eSystem.Core.Primitives.csproj" />
+    </ItemGroup>
+
 </Project>

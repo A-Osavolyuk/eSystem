@@ -103,9 +103,9 @@ public class ConnectController(ISender sender) : ControllerBase
     [HttpPost("token")]
     [Authorize(Policy = AuthorizationPolicies.TokenAuthorization)]
     [Consumes(ContentTypes.Application.XwwwFormUrlEncoded)]
-    public async ValueTask<IActionResult> TokenAsync([FromForm] Dictionary<string, string> request)
+    public async ValueTask<IActionResult> TokenAsync([FromForm] IFormCollection form)
     {
-        var result = await _sender.Send(new TokenCommand(request));
+        var result = await _sender.Send(new TokenCommand(form));
         return HttpContext.HandleResult(result);
     }
 
