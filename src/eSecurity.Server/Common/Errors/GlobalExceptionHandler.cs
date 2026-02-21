@@ -1,4 +1,4 @@
-﻿using eSystem.Core.Http.Constants;
+﻿using eSystem.Core.Primitives.Constants;
 using Microsoft.AspNetCore.Diagnostics;
 
 namespace eSecurity.Server.Common.Errors;

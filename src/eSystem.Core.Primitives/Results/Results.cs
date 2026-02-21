@@ -1,7 +1,7 @@
 ﻿using System.Net;
-using eSystem.Core.Http.Constants;
+using eSystem.Core.Primitives.Constants;
 
-namespace eSystem.Core.Http.Results;
+namespace eSystem.Core.Primitives.Results;
 
 public static class Results
 {

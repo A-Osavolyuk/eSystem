@@ -4,7 +4,7 @@ using eSecurity.Client.Common.JS.Localization;
 using eSecurity.Client.Security.Authentication;
 using eSecurity.Client.Security.Authentication.OpenIdConnect.Token;
 using eSystem.Core.Http.Extensions;
-using eSystem.Core.Http.Results;
+using eSystem.Core.Primitives.Constants;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Token.RefreshToken;

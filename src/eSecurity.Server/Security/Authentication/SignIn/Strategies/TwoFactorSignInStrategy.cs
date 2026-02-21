@@ -1,19 +1,6 @@
-﻿using eSecurity.Core.Common.Responses;
-using eSecurity.Core.Security.Authentication.Lockout;
-using eSecurity.Core.Security.Authentication.SignIn;
-using eSecurity.Core.Security.Authorization.Access;
-using eSecurity.Server.Data.Entities;
-using eSecurity.Server.Security.Authentication.Lockout;
-using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
-using eSecurity.Server.Security.Authentication.Session;
+﻿using eSecurity.Core.Security.Authentication.SignIn;
 using eSecurity.Server.Security.Authentication.TwoFactor;
-using eSecurity.Server.Security.Authorization.Access.Verification;
-using eSecurity.Server.Security.Authorization.Devices;
-using eSecurity.Server.Security.Identity.Options;
-using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Http.Constants;
-using eSystem.Core.Http.Extensions;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
+using eSystem.Core.Primitives.Constants;
 
 namespace eSecurity.Server.Security.Authentication.SignIn.Strategies;
 

@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using eSecurity.Server.Security.Authorization.OAuth.Token.Validation;
 using eSecurity.Server.Security.Cryptography.Tokens;
-using eSystem.Core.Http.Constants;
+using eSystem.Core.Primitives.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Identity.Claims;
 

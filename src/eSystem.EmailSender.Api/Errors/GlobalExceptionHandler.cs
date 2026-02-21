@@ -1,5 +1,5 @@
-﻿using eSystem.Core.Http.Constants;
-using eSystem.Core.Http.Results;
+﻿using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives.Results;
 using Microsoft.AspNetCore.Diagnostics;
 
 namespace eSystem.EmailSender.Api.Errors;

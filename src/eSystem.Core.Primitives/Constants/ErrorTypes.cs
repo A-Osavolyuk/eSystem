@@ -1,4 +1,4 @@
-namespace eSystem.Core.Http.Constants;
+namespace eSystem.Core.Primitives.Constants;
 
 public static class ErrorTypes
 {

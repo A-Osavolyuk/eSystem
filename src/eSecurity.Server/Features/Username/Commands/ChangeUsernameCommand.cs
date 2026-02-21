@@ -2,8 +2,8 @@
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
 using eSecurity.Server.Security.Identity.User.Username;
-using eSystem.Core.Http.Constants;
 using eSystem.Core.Mediator;
+using eSystem.Core.Primitives.Constants;
 
 namespace eSecurity.Server.Features.Username.Commands;
 

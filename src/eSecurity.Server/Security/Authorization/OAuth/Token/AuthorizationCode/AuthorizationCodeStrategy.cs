@@ -1,4 +1,4 @@
-using eSystem.Core.Http.Constants;
+using eSystem.Core.Primitives.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Token;
 using eSystem.Core.Security.Authorization.OAuth.Token.AuthorizationCode;
 

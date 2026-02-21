@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
 using eSecurity.Server.Data.Entities;
-using eSecurity.Server.Security.Authentication.Subject;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSystem.Core.Security.Identity.Claims;
 

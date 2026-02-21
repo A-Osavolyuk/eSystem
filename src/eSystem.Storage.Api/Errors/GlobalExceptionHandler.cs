@@ -1,5 +1,4 @@
-﻿using eSystem.Core.Http.Constants;
-using eSystem.Core.Http.Results;
+﻿using eSystem.Core.Primitives.Constants;
 using Microsoft.AspNetCore.Diagnostics;
 
 namespace eSystem.Storage.Api.Errors;

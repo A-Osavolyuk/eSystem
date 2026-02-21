@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.Http.Results;
+﻿namespace eSystem.Core.Primitives.Results;
 
 public sealed class TypedResult<TValue>
 {

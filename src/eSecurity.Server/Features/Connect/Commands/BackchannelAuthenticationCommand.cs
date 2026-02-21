@@ -3,8 +3,8 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.BackchannelAuthenti
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Ciba;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Cryptography.Keys;
-using eSystem.Core.Http.Constants;
 using eSystem.Core.Mediator;
+using eSystem.Core.Primitives.Constants;
 using eSystem.Core.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Constants;

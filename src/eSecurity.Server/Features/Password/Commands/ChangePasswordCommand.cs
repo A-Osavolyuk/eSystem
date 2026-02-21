@@ -1,8 +1,8 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Security.Authentication.Password;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Http.Constants;
 using eSystem.Core.Mediator;
+using eSystem.Core.Primitives.Constants;
 
 namespace eSecurity.Server.Features.Password.Commands;
 

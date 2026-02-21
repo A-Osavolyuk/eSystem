@@ -1,8 +1,7 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Security.Identity.Email;
-using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Http.Constants;
 using eSystem.Core.Mediator;
+using eSystem.Core.Primitives.Constants;
 
 namespace eSecurity.Server.Features.Email.Commands;
 

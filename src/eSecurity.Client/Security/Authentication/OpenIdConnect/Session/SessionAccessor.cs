@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using eSecurity.Client.Common.State.States;
 using eSecurity.Client.Security.Cookies;
 using eSecurity.Client.Security.Cookies.Constants;
 using eSecurity.Client.Security.Cryptography.Protection.Constants;

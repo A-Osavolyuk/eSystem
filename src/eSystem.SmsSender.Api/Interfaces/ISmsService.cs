@@ -1,6 +1,4 @@
-﻿using eSystem.Core.Http.Results;
-
-namespace eSystem.SmsSender.Api.Interfaces;
+﻿namespace eSystem.SmsSender.Api.Interfaces;
 
 public interface ISmsService
 {

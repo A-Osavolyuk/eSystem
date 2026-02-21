@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using eSecurity.Server.Common.Binding;
 using eSecurity.Server.Common.Errors;
 using eSecurity.Server.Common.Mapping;
 using eSecurity.Server.Common.Messaging;
@@ -34,6 +35,7 @@ public static class HostApplicationBuilderExtensions
             builder.AddStorage();
             builder.AddExceptionHandling<GlobalExceptionHandler>();
 
+            builder.Services.AddDataBinding();
             builder.Services.AddTransient<RequestBufferingMiddleware>();
             builder.Services.AddMediator<IAssemblyMarker>();
             builder.Services.AddHttpContextAccessor();

@@ -6,32 +6,24 @@ using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.Claims;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Http.Constants;
+using eSystem.Core.Primitives.Constants;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Token.RefreshToken;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.RefreshToken;
 
 public sealed class OidcRefreshTokenFlow(
-    ITokenBuilderProvider tokenBuilderProvider,
     IClientManager clientManager,
-    ITokenManager tokenManager,
     IUserManager userManager,
-    IHasherProvider hasherProvider,
     ISessionManager sessionManager,
-    IClaimFactoryProvider claimFactoryProvider,
     ITokenFactoryProvider tokenFactoryProvider,
     IOptions<TokenConfigurations> options) : IRefreshTokenFlow
 {
-    private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
     private readonly IClientManager _clientManager = clientManager;
-    private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IUserManager _userManager = userManager;
     private readonly ISessionManager _sessionManager = sessionManager;
-    private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
-    private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
 
     public async ValueTask<Result> ExecuteAsync(OpaqueTokenEntity token, RefreshTokenFlowContext flowContext,
         CancellationToken cancellationToken = default)
