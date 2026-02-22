@@ -9,10 +9,10 @@ public class ResetPasswordValidator : Validator<ResetPasswordModel>
 {
     public ResetPasswordValidator()
     {
-        RuleFor(p => p.NewPassword).SetValidator(new PasswordValidator());
+        RuleFor(p => p.Password).SetValidator(new PasswordValidator());
 
-        RuleFor(p => p.ConfirmNewPassword)
+        RuleFor(p => p.ConfirmPassword)
             .NotEmpty().WithMessage("You must confirm your new password.")
-            .Equal(x => x.NewPassword).WithMessage("Must be the same with new password.");
+            .Equal(x => x.Password).WithMessage("Must be the same with new password.");
     }
 }

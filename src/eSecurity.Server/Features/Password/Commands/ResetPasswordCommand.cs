@@ -22,22 +22,24 @@ public sealed class ResetPasswordCommandHandler(
 
     public async Task<Result> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindBySubjectAsync(request.Request.Subject, cancellationToken);
+        var user = await _userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
-        
-        if (!await _passwordManager.HasAsync(user, cancellationToken)) 
+
+        if (!await _passwordManager.HasAsync(user, cancellationToken))
+        {
             return Results.BadRequest(new Error
             {
                 Code = ErrorTypes.Common.InvalidPassword,
                 Description = "User does not have a password."
             });
-        
-        var verificationResult = await _verificationManager.VerifyAsync(user, 
+        }
+
+        var verificationResult = await _verificationManager.VerifyAsync(user,
             PurposeType.Password, ActionType.Reset, cancellationToken);
-        
-        if(!verificationResult.Succeeded)  return verificationResult;
-        
-        var result = await _passwordManager.ResetAsync(user, request.Request.NewPassword, cancellationToken);
+
+        if (!verificationResult.Succeeded) return verificationResult;
+
+        var result = await _passwordManager.ResetAsync(user, request.Request.Password, cancellationToken);
         return result;
     }
 }

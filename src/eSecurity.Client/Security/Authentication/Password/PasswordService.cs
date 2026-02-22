@@ -45,6 +45,19 @@ public class PasswordService(IApiClient apiClient) : IPasswordService
                 Authentication = AuthenticationType.None
             });
 
+    public async ValueTask<ApiResponse> SetPasswordAsync(SetPasswordRequest request)
+        => await _apiClient.SendAsync(
+            new ApiRequest
+            {
+                Method = HttpMethod.Post,
+                Data = request,
+                Url = "/api/v1/Password/set"
+            }, new ApiOptions
+            {
+                ContentType = ContentTypes.Application.Json,
+                Authentication = AuthenticationType.Bearer
+            });
+
     public async ValueTask<ApiResponse> ChangePasswordAsync(ChangePasswordRequest request)
         => await _apiClient.SendAsync(
             new ApiRequest
