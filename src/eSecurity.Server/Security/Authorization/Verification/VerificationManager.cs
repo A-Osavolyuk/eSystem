@@ -2,7 +2,7 @@
 using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 
-namespace eSecurity.Server.Security.Authorization.Access.Verification;
+namespace eSecurity.Server.Security.Authorization.Verification;
 
 public class VerificationManager(AuthDbContext context) : IVerificationManager
 {

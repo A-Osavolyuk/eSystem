@@ -1,5 +1,5 @@
 ﻿using eSecurity.Server.Security.Authentication.OpenIdConnect.Ciba;
-using eSecurity.Server.Security.Authorization.Access;
+using eSecurity.Server.Security.Authorization.Codes;
 using eSecurity.Server.Security.Authorization.Constants;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Authorization.OAuth.Consents;
@@ -8,6 +8,7 @@ using eSecurity.Server.Security.Authorization.OAuth.Token;
 using eSecurity.Server.Security.Authorization.OAuth.Token.DeviceCode;
 using eSecurity.Server.Security.Authorization.OAuth.Token.Validation;
 using eSecurity.Server.Security.Authorization.Roles;
+using eSecurity.Server.Security.Authorization.Verification;
 using eSystem.Core.Security.Authentication.Schemes;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Token.Validation;
@@ -20,7 +21,6 @@ public static class AuthorizationExtensions
     {
         builder.Services.AddTokenFlow();
         builder.Services.AddRoleManagement();
-        builder.Services.AddAccessManagement();
         builder.Services.AddDeviceManagement();
         builder.Services.AddDeviceAuthorization(options =>
         {
@@ -31,6 +31,8 @@ public static class AuthorizationExtensions
             options.VerificationUri = "https://localhost:6501/device/activate";
         });
 
+        builder.Services.AddScoped<ICodeManager, CodeManager>();
+        builder.Services.AddScoped<IVerificationManager, VerificationManager>();
         builder.Services.AddScoped<ICibaRequestManager, CibaRequestManager>();
         builder.Services.AddScoped<IConsentManager, ConsentManager>();
         builder.Services.AddScoped<ILinkedAccountManager, LinkedAccountManager>();

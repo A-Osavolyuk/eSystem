@@ -2,7 +2,7 @@
 using eSecurity.Server.Data.Entities;
 using eSystem.Core.Common.Messaging;
 
-namespace eSecurity.Server.Security.Authorization.Access.Codes;
+namespace eSecurity.Server.Security.Authorization.Codes;
 
 public interface ICodeManager
 {

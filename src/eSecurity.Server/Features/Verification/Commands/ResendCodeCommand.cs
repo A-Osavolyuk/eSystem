@@ -3,7 +3,7 @@ using eSecurity.Core.Common.Responses;
 using eSecurity.Server.Common.Messaging;
 using eSecurity.Server.Common.Messaging.Messages.Email;
 using eSecurity.Server.Common.Messaging.Messages.Sms;
-using eSecurity.Server.Security.Authorization.Access.Codes;
+using eSecurity.Server.Security.Authorization.Codes;
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Common.Messaging;

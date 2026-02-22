@@ -1,7 +1,8 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Security.Authentication.TwoFactor.Authenticator;
 using eSecurity.Server.Security.Authentication.TwoFactor.Secret;
-using eSecurity.Server.Security.Authorization.Access.Verification;
+using eSecurity.Server.Security.Authorization;
+using eSecurity.Server.Security.Authorization.Verification;
 using eSecurity.Server.Security.Cryptography.Protection.Constants;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;

@@ -4,7 +4,7 @@ using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Server.Common.Messaging;
 using eSecurity.Server.Common.Messaging.Messages.Email;
 using eSecurity.Server.Security.Authentication.Password;
-using eSecurity.Server.Security.Authorization.Access.Codes;
+using eSecurity.Server.Security.Authorization.Codes;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Common.Messaging;
 using eSystem.Core.Mediator;

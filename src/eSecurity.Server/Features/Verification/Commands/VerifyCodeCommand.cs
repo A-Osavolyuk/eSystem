@@ -1,6 +1,7 @@
 ﻿using eSecurity.Core.Common.Requests;
-using eSecurity.Server.Security.Authorization.Access.Codes;
-using eSecurity.Server.Security.Authorization.Access.Verification;
+using eSecurity.Server.Security.Authorization;
+using eSecurity.Server.Security.Authorization.Codes;
+using eSecurity.Server.Security.Authorization.Verification;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
 

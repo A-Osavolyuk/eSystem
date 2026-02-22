@@ -6,7 +6,7 @@ using eSecurity.Server.Common.Messaging.Messages.Email;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Password;
 using eSecurity.Server.Security.Authentication.Session;
-using eSecurity.Server.Security.Authorization.Access.Codes;
+using eSecurity.Server.Security.Authorization.Codes;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Authorization.Roles;
 using eSecurity.Server.Security.Identity.Email;

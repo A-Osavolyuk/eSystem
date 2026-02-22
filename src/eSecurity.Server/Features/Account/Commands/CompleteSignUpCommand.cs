@@ -4,7 +4,7 @@ using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authentication.Session;
-using eSecurity.Server.Security.Authorization.Access.Codes;
+using eSecurity.Server.Security.Authorization.Codes;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;

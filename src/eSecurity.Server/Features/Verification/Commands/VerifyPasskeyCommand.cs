@@ -1,6 +1,7 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Security.Credentials.PublicKey.Constants;
-using eSecurity.Server.Security.Authorization.Access.Verification;
+using eSecurity.Server.Security.Authorization;
+using eSecurity.Server.Security.Authorization.Verification;
 using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Server.Security.Identity.User;
