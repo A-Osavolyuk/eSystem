@@ -36,6 +36,17 @@ public class PasswordController(ISender sender) : ControllerBase
         return HttpContext.HandleResult(result);
     }
     
+    [EndpointSummary("Set password")]
+    [EndpointDescription("Set password")]
+    [ProducesResponseType(200)]
+    [HttpPost("set")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async ValueTask<IActionResult> SetAsync([FromBody] SetPasswordRequest request)
+    {
+        var result = await _sender.Send(new SetPasswordCommand(request));
+        return HttpContext.HandleResult(result);
+    }
+    
     [EndpointSummary("Reset password")]
     [EndpointDescription("Reset password")]
     [ProducesResponseType(200)]
