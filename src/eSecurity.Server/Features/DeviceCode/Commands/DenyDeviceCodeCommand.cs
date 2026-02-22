@@ -4,6 +4,7 @@ using eSecurity.Server.Security.Authorization.OAuth.Token.DeviceCode;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.DeviceCode.Commands;
 
@@ -12,10 +13,12 @@ public sealed record DenyDeviceCodeCommand(DenyDeviceCodeRequest Request) : IReq
 public sealed class DenyDeviceCodeCommandHandler(
     IDeviceCodeManager deviceCodeManager,
     IUserManager userManager,
+    IHttpContextAccessor httpContextAccessor,
     ISessionManager sessionManager) : IRequestHandler<DenyDeviceCodeCommand, Result>
 {
     private readonly IDeviceCodeManager _deviceCodeManager = deviceCodeManager;
     private readonly IUserManager _userManager = userManager;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly ISessionManager _sessionManager = sessionManager;
 
     public async Task<Result> Handle(DenyDeviceCodeCommand request, CancellationToken cancellationToken)
@@ -49,7 +52,10 @@ public sealed class DenyDeviceCodeCommandHandler(
             deviceCode.SessionId = session.Id;
         }
         
-        var user = await _userManager.FindBySubjectAsync(request.Request.Subject, cancellationToken);
+        var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
+        if (subjectClaim is null) return Results.BadRequest("Invalid request");
+        
+        var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
         if (user is null) return Results.NotFound("Uses was not found");
 
         deviceCode.UserId = user.Id;

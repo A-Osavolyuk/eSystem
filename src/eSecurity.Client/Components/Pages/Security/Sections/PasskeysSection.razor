@@ -128,7 +128,6 @@
     {
         var request = new ChangePasskeyNameRequest
         {
-            Subject = UserState.Subject!,
             PasskeyId = passkey.Id,
             DisplayName = passkey.DisplayName
         };
@@ -144,12 +143,7 @@
         var confirmationResult = await ConfirmationManager.InitiateAsync(PurposeType.Passkey, ActionType.Remove);
         if (!confirmationResult!.Canceled)
         {
-            var request = new RemovePasskeyRequest
-            {
-                Subject = UserState.Subject!,
-                PasskeyId = passkey.Id
-            };
-
+            var request = new RemovePasskeyRequest { PasskeyId = passkey.Id };
             var result = await PasskeyService.RemoveAsync(request);
             if (result.Succeeded) await OnRefresh.InvokeAsync();
             else Snackbar.Add(result.GetError().Description, Severity.Error);

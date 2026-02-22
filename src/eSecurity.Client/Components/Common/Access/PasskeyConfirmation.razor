@@ -128,7 +128,6 @@
             var credential = authenticateResult.Get<PublicKeyCredential>();
             var request = new VerifyPasskeyRequest
             {
-                Subject = UserState.Subject!,
                 Purpose = Context.Purpose,
                 Action = Context.Action,
                 Credential = credential

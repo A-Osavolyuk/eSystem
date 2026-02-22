@@ -19,8 +19,7 @@ public class PasskeyController(ISender sender) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("options/creation")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> GenerateCreationOptionsAsync(
-        [FromBody] GenerateCreationOptionsRequest request)
+    public async ValueTask<IActionResult> GenerateCreationOptionsAsync([FromBody] GenerateCreationOptionsRequest request)
     {
         var result = await _sender.Send(new GenerateCreationOptionsCommand(request));
         return HttpContext.HandleResult(result);

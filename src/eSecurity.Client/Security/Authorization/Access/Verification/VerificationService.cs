@@ -16,7 +16,7 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
             }, new ApiOptions
             {
                 ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.None
+                Authentication = AuthenticationType.Bearer
             });
 
     public async ValueTask<ApiResponse> ResendCodeAsync(ResendCodeRequest request)
@@ -29,7 +29,7 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
             }, new ApiOptions
             {
                 ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.None
+                Authentication = AuthenticationType.Bearer
             });
 
 
@@ -46,20 +46,6 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
                 Authentication = AuthenticationType.None
             });
 
-    public async ValueTask<ApiResponse> VerifyRecoveryCodeAsync(VerifyRecoveryCodeRequest request)
-        => await _apiClient.SendAsync(
-            new ApiRequest
-            {
-                Method = HttpMethod.Post,
-                Data = request,
-                Url = "/api/v1/Verification/recovery-code/verify"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.None
-            });
-
-
     public async ValueTask<ApiResponse> VerifyAuthenticatorCodeAsync(VerifyAuthenticatorCodeRequest request)
         => await _apiClient.SendAsync(
             new ApiRequest
@@ -70,7 +56,7 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
             }, new ApiOptions
             {
                 ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.None
+                Authentication = AuthenticationType.Bearer
             });
 
 
@@ -84,6 +70,6 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
             }, new ApiOptions
             {
                 ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.None
+                Authentication = AuthenticationType.Bearer
             });
 }

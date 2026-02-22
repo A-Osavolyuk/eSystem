@@ -133,7 +133,6 @@
         var request = new ApproveDeviceCodeRequest()
         {
             UserCode = _userCode!,
-            Subject = UserState.Subject!,
             SessionId = session?.Id
         };
         
@@ -156,7 +155,6 @@
         var request = new DenyDeviceCodeRequest()
         {
             UserCode = _userCode!,
-            Subject = UserState.Subject!,
             SessionId = session?.Id
         };
         

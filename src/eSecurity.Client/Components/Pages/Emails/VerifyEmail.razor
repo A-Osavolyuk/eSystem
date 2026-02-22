@@ -220,12 +220,7 @@
             _ => throw new NotSupportedException("Unsupported email type")
         };
 
-        var request = new VerifyEmailRequest
-        {
-            Subject = UserState.Subject!,
-            Email = email
-        };
-
+        var request = new VerifyEmailRequest { Email = email };
         var result = await EmailService.VerifyEmailAsync(request);
 
         if (result.Succeeded)

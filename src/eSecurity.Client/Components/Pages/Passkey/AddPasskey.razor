@@ -178,12 +178,7 @@
 
         if (_form.IsValid)
         {
-            var request = new GenerateCreationOptionsRequest
-            {
-                Subject = UserState.Subject!,
-                DisplayName = _model.DisplayName
-            };
-
+            var request = new GenerateCreationOptionsRequest { DisplayName = _model.DisplayName };
             var result = await PasskeyService.GenerateCreationOptionsAsync(request);
             if (result.Succeeded && result.TryGetValue<PublicKeyCredentialCreationOptions>(out var options))
             {
@@ -201,7 +196,6 @@
             var assertResponse = assertResult.Get<PublicKeyCredentialCreationResponse>();
             var request = new CreatePasskeyRequest
             {
-                Subject = UserState.Subject!,
                 DisplayName = _model.DisplayName,
                 Response = assertResponse
             };

@@ -11,6 +11,7 @@ using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
+using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.Passkeys.Commands;
 
@@ -23,6 +24,7 @@ public class RemovePasskeyCommandHandler(
     IEmailManager emailManager,
     IVerificationManager verificationManager,
     ITwoFactorManager twoFactorManager,
+    IHttpContextAccessor httpContextAccessor,
     IOptions<SignInOptions> options) : IRequestHandler<RemovePasskeyCommand, Result>
 {
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
@@ -31,11 +33,15 @@ public class RemovePasskeyCommandHandler(
     private readonly IEmailManager _emailManager = emailManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly SignInOptions _options = options.Value;
 
     public async Task<Result> Handle(RemovePasskeyCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindBySubjectAsync(request.Request.Subject, cancellationToken);
+        var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
+        if (subjectClaim is null) return Results.BadRequest("Invalid request");
+        
+        var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
         var passkey = await _passkeyManager.FindByIdAsync(request.Request.PasskeyId, cancellationToken);

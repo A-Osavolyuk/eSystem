@@ -15,6 +15,7 @@ using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.Passkeys.Commands;
 
@@ -42,7 +43,10 @@ public class CreatePasskeyCommandHandler(
     public async Task<Result> Handle(CreatePasskeyCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindBySubjectAsync(request.Request.Subject, cancellationToken);
+        var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
+        if (subjectClaim is null) return Results.BadRequest("Invalid request");
+        
+        var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
         var userAgent = _httpContext.GetUserAgent();

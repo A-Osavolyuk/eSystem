@@ -5,24 +5,30 @@ using eSecurity.Server.Security.Authentication.TwoFactor.Secret;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
+using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.TwoFactor.Commands;
 
-public record RegenerateQrCodeCommand(RegenerateQrCodeRequest Request) : IRequest<Result>;
+public record RegenerateQrCodeCommand : IRequest<Result>;
 public class RegenerateQrCodeCommandHandler(
     IUserManager userManager,
     IQrCodeFactory qrCodeFactory,
     IEmailManager emailManager,
-    ISecretManager secretManager) : IRequestHandler<RegenerateQrCodeCommand, Result>
+    ISecretManager secretManager,
+    IHttpContextAccessor httpContextAccessor) : IRequestHandler<RegenerateQrCodeCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IQrCodeFactory _qrCodeFactory = qrCodeFactory;
     private readonly IEmailManager _emailManager = emailManager;
     private readonly ISecretManager _secretManager = secretManager;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(RegenerateQrCodeCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindBySubjectAsync(request.Request.Subject, cancellationToken);
+        var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
+        if (subjectClaim is null) return Results.BadRequest("Invalid request");
+        
+        var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
         var secret = _secretManager.Generate();

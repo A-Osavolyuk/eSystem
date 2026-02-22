@@ -4,16 +4,16 @@ namespace eSecurity.Client.Security.Authentication.TwoFactor;
 
 public interface ITwoFactorService
 {
-    public ValueTask<ApiResponse> EnableAsync(EnableTwoFactorRequest request);
-    public ValueTask<ApiResponse> DisableAsync(DisableTwoFactorRequest request);
+    public ValueTask<ApiResponse> EnableAsync();
+    public ValueTask<ApiResponse> DisableAsync();
     public ValueTask<ApiResponse> PreferAsync(PreferTwoFactorMethodRequest request);
     
-    public ValueTask<ApiResponse> GenerateQrCodeAsync(GenerateQrCodeRequest request);
-    public ValueTask<ApiResponse> RegenerateQrCodeAsync(RegenerateQrCodeRequest request);
+    public ValueTask<ApiResponse> GenerateQrCodeAsync();
+    public ValueTask<ApiResponse> RegenerateQrCodeAsync();
     
     public ValueTask<ApiResponse> ReconfigureAuthenticatorAsync(ReconfigureAuthenticatorRequest request);
     public ValueTask<ApiResponse> VerifyAuthenticatorAsync(VerifyAuthenticatorRequest request);
     
-    public ValueTask<ApiResponse> GenerateRecoveryCodesAsync(GenerateRecoveryCodesRequest request);
-    public ValueTask<ApiResponse> LoadRecoveryCodesAsync(LoadRecoveryCodesRequest request);
+    public ValueTask<ApiResponse> GenerateRecoveryCodesAsync();
+    public ValueTask<ApiResponse> LoadRecoveryCodesAsync();
 }

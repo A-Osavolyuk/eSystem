@@ -7,6 +7,7 @@ using eSecurity.Server.Security.Authorization.OAuth.Token.DeviceCode;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.DeviceCode.Commands;
 
@@ -17,12 +18,14 @@ public sealed class ApproveDeviceCodeCommandHandler(
     IUserManager userManager,
     ISessionManager sessionManager,
     IConsentManager consentManager,
+    IHttpContextAccessor httpContextAccessor,
     IClientManager clientManager) : IRequestHandler<ApproveDeviceCodeCommand, Result>
 {
     private readonly IDeviceCodeManager _deviceCodeManager = deviceCodeManager;
     private readonly IUserManager _userManager = userManager;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IConsentManager _consentManager = consentManager;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly IClientManager _clientManager = clientManager;
 
     public async Task<Result> Handle(ApproveDeviceCodeCommand request, CancellationToken cancellationToken)
@@ -55,8 +58,11 @@ public sealed class ApproveDeviceCodeCommandHandler(
 
             deviceCode.SessionId = session.Id;
         }
+
+        var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
+        if (subjectClaim is null) return Results.BadRequest("Invalid request");
         
-        var user = await _userManager.FindBySubjectAsync(request.Request.Subject, cancellationToken);
+        var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
         if (user is null) return Results.NotFound("User was not found");
         
         var client = await _clientManager.FindByIdAsync(deviceCode.ClientId, cancellationToken);

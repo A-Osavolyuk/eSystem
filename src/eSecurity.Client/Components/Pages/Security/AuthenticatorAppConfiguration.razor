@@ -170,8 +170,7 @@
 
     private async Task OnGenerateQrCodeAsync()
     {
-        var request = new RegenerateQrCodeRequest { Subject = UserState.Subject! };
-        var result = await TwoFactorService.RegenerateQrCodeAsync(request);
+        var result = await TwoFactorService.RegenerateQrCodeAsync();
         if (result.Succeeded && result.TryGetValue<QrCode>(out var qrCode))
         {
             _qrCode = qrCode!;
@@ -202,7 +201,6 @@
         _showError = false;
         var request = new VerifyAuthenticatorRequest
         {
-            Subject = UserState.Subject!,
             Code = _model.Code,
             Secret = _qrCode.Secret
         };
@@ -215,12 +213,7 @@
 
     private async Task OnSaveAsync()
     {
-        var request = new ReconfigureAuthenticatorRequest
-        {
-            Subject = UserState.Subject!,
-            Secret = _qrCode.Secret
-        };
-
+        var request = new ReconfigureAuthenticatorRequest { Secret = _qrCode.Secret };
         var result = await TwoFactorService.ReconfigureAuthenticatorAsync(request);
 
         if (result.Succeeded)

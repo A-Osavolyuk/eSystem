@@ -42,7 +42,7 @@ public class DeviceService(IApiClient apiClient) : IDeviceService
             Data = request
         }, new ApiOptions()
         {
-            Authentication = AuthenticationType.None,
+            Authentication = AuthenticationType.Bearer,
             ContentType = ContentTypes.Application.Json
         });
     }
@@ -56,7 +56,7 @@ public class DeviceService(IApiClient apiClient) : IDeviceService
             Data = request
         }, new ApiOptions()
         {
-            Authentication = AuthenticationType.None,
+            Authentication = AuthenticationType.Bearer,
             ContentType = ContentTypes.Application.Json
         });
     }

@@ -9,6 +9,7 @@ using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.Email.Commands;
 
@@ -19,17 +20,22 @@ public class RemoveEmailCommandHandler(
     IEmailManager emailManager,
     IPasskeyManager passkeyManager,
     ILinkedAccountManager linkedAccountManager,
-    IVerificationManager verificationManager) : IRequestHandler<RemoveEmailCommand, Result>
+    IVerificationManager verificationManager,
+    IHttpContextAccessor httpContextAccessor) : IRequestHandler<RemoveEmailCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IEmailManager _emailManager = emailManager;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
     private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(RemoveEmailCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindBySubjectAsync(request.Request.Subject, cancellationToken);
+        var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
+        if (subjectClaim is null) return Results.BadRequest("Invalid request");
+        
+        var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
         var email = await _emailManager.FindByEmailAsync(user, request.Request.Email, cancellationToken);

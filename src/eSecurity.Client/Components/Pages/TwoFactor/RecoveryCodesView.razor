@@ -229,9 +229,7 @@
     {
         if (firstRender)
         {
-            var request = new LoadRecoveryCodesRequest { Subject = UserState.Subject! };
-            var result = await TwoFactorService.LoadRecoveryCodesAsync(request);
-
+            var result = await TwoFactorService.LoadRecoveryCodesAsync();
             if (result.Succeeded && result.TryGetValue<List<string>>(out var recoveryCodes))
             {
                 _codes = recoveryCodes!;
@@ -252,9 +250,7 @@
 
     private async Task OnGenerateAsync()
     {
-        var request = new GenerateRecoveryCodesRequest { Subject = UserState.Subject! };
-        var result = await TwoFactorService.GenerateRecoveryCodesAsync(request);
-
+        var result = await TwoFactorService.GenerateRecoveryCodesAsync();
         if (result.Succeeded && result.TryGetValue<List<string>>(out var recoveryCodes))
         {
             _codes = recoveryCodes!;

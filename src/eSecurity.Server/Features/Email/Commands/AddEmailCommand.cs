@@ -5,6 +5,7 @@ using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.Email.Commands;
 
@@ -13,15 +14,20 @@ public record AddEmailCommand(AddEmailRequest Request) : IRequest<Result>;
 public class AddEmailCommandHandler(
     IUserManager userManager,
     IEmailManager emailManager,
+    IHttpContextAccessor httpContextAccessor,
     IOptions<AccountOptions> options) : IRequestHandler<AddEmailCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IEmailManager _emailManager = emailManager;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly AccountOptions _options = options.Value;
 
     public async Task<Result> Handle(AddEmailCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindBySubjectAsync(request.Request.Subject, cancellationToken);
+        var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
+        if (subjectClaim is null) return Results.BadRequest("Invalid request");
+        
+        var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
         if (user is null) return Results.NotFound("User not found");
 
         var secondaryEmails = await _emailManager.GetAllAsync(user, EmailType.Secondary, cancellationToken);

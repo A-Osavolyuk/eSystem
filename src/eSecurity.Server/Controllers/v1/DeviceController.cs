@@ -39,6 +39,7 @@ public class DeviceController(ISender sender) : ControllerBase
     [EndpointDescription("Approve device code")]
     [ProducesResponseType(200)]
     [HttpPost("device-code/approve")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> ApproveDeviceCode([FromBody] ApproveDeviceCodeRequest request)
     {
         var result = await _sender.Send(new ApproveDeviceCodeCommand(request));
@@ -49,6 +50,7 @@ public class DeviceController(ISender sender) : ControllerBase
     [EndpointDescription("Deny device code")]
     [ProducesResponseType(200)]
     [HttpPost("device-code/deny")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> DenyDeviceCode([FromBody] DenyDeviceCodeRequest request)
     {
         var result = await _sender.Send(new DenyDeviceCodeCommand(request));

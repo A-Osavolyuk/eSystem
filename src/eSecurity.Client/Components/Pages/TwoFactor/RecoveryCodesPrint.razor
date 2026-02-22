@@ -38,8 +38,7 @@
 
     private async Task LoadAsync()
     {
-        var request = new LoadRecoveryCodesRequest { Subject = UserState.Subject! };
-        var result = await TwoFactorService.LoadRecoveryCodesAsync(request);
+        var result = await TwoFactorService.LoadRecoveryCodesAsync();
 
         if (result.Succeeded && result.TryGetValue<List<string>>(out var codes))
         {

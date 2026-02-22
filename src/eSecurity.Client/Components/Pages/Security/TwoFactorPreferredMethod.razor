@@ -81,12 +81,7 @@
             _ => throw new NotSupportedException("Unsupported 2FA type")
         };
 
-        var request = new PreferTwoFactorMethodRequest
-        {
-            Subject = UserState.Subject!,
-            PreferredMethod = method
-        };
-
+        var request = new PreferTwoFactorMethodRequest { PreferredMethod = method };
         var result = await TwoFactorService.PreferAsync(request);
 
         if (result.Succeeded)

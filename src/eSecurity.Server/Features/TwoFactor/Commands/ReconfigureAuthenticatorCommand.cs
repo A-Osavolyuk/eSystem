@@ -6,6 +6,7 @@ using eSecurity.Server.Security.Authorization.Verification;
 using eSecurity.Server.Security.Cryptography.Protection.Constants;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
+using eSystem.Core.Security.Identity.Claims;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Server.Features.TwoFactor.Commands;
@@ -16,16 +17,21 @@ public class ReconfigureAuthenticatorCommandHandler(
     IUserManager userManager,
     ISecretManager secretManager,
     IVerificationManager verificationManager,
-    IDataProtectionProvider protectionProvider) : IRequestHandler<ReconfigureAuthenticatorCommand, Result>
+    IDataProtectionProvider protectionProvider,
+    IHttpContextAccessor httpContextAccessor) : IRequestHandler<ReconfigureAuthenticatorCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly ISecretManager _secretManager = secretManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
     private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(ReconfigureAuthenticatorCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindBySubjectAsync(request.Request.Subject, cancellationToken);
+        var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
+        if (subjectClaim is null) return Results.BadRequest("Invalid request");
+        
+        var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
         var verificationResult = await _verificationManager.VerifyAsync(user, PurposeType.AuthenticatorApp,

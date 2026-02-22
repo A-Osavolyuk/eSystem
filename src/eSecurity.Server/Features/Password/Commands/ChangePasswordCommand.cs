@@ -3,6 +3,7 @@ using eSecurity.Server.Security.Authentication.Password;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.Password.Commands;
 
@@ -10,15 +11,20 @@ public sealed record ChangePasswordCommand(ChangePasswordRequest Request) : IReq
 
 public sealed class ChangePasswordCommandHandler(
     IUserManager userManager,
-    IPasswordManager passwordManager) : IRequestHandler<ChangePasswordCommand, Result>
+    IPasswordManager passwordManager,
+    IHttpContextAccessor httpContextAccessor) : IRequestHandler<ChangePasswordCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IPasswordManager _passwordManager = passwordManager;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     async Task<Result> IRequestHandler<ChangePasswordCommand, Result>.Handle(ChangePasswordCommand request,
             CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindBySubjectAsync(request.Request.Subject, cancellationToken);
+        var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
+        if (subjectClaim is null) return Results.BadRequest("Invalid request");
+        
+        var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
         if (!await _passwordManager.HasAsync(user, cancellationToken))

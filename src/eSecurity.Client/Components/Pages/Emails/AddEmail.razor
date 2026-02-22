@@ -78,12 +78,7 @@
 
     private async Task AddEmailAsync()
     {
-        var request = new AddEmailRequest
-        {
-            Subject = UserState.Subject!,
-            Email = Model.Email!,
-        };
-
+        var request = new AddEmailRequest { Email = Model.Email!, };
         var result = await EmailService.AddEmailAsync(request);
 
         if (result.Succeeded)

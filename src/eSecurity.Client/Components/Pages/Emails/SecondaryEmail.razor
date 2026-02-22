@@ -121,12 +121,7 @@
         var confirmationResult = await ConfirmationManager.InitiateAsync(PurposeType.Email, ActionType.Remove);
         if (!confirmationResult!.Canceled)
         {
-            var request = new RemoveEmailRequest
-            {
-                Subject = UserState.Subject!,
-                Email = email
-            };
-
+            var request = new RemoveEmailRequest { Email = email };
             var result = await EmailService.RemoveEmailAsync(request);
 
             if (result.Succeeded)

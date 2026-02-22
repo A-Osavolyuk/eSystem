@@ -154,12 +154,7 @@
 
         if (!confirmationResult.Canceled)
         {
-            var request = new DisconnectLinkedAccountRequest
-            {
-                Subject = UserState.Subject!,
-                Type = type
-            };
-
+            var request = new DisconnectLinkedAccountRequest { Type = type };
             var result = await LinkedAccountService.DisconnectAsync(request);
 
             if (result.Succeeded) await OnRefresh.InvokeAsync();
