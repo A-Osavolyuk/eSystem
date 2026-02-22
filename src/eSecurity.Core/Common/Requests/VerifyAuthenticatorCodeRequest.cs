@@ -2,7 +2,7 @@ using eSecurity.Core.Security.Authorization.Access;
 
 namespace eSecurity.Core.Common.Requests;
 
-public class VerifyAuthenticatorCodeRequest
+public sealed class VerifyAuthenticatorCodeRequest
 {
     public required string Subject { get; set; }
     public required ActionType Action { get; set; }

@@ -1,6 +1,6 @@
 namespace eSecurity.Core.Common.Requests;
 
-public class RegenerateQrCodeRequest
+public sealed class RegenerateQrCodeRequest
 {
     public required string Subject { get; set; }
 }

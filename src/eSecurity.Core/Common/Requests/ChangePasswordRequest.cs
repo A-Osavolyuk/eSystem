@@ -1,6 +1,6 @@
 namespace eSecurity.Core.Common.Requests;
 
-public class ChangePasswordRequest
+public sealed class ChangePasswordRequest
 {
     public required string Subject { get; set; }
     public required string CurrentPassword { get; set; }

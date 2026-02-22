@@ -2,7 +2,7 @@ using eSecurity.Core.Security.Identity;
 
 namespace eSecurity.Core.Common.Requests;
 
-public class ChangeEmailRequest
+public sealed class ChangeEmailRequest
 {
     public required string Subject { get; set; }
     public required string NewEmail { get; set; }

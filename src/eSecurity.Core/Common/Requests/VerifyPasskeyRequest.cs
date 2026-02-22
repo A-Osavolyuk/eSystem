@@ -3,7 +3,7 @@ using eSecurity.Core.Security.Credentials.PublicKey;
 
 namespace eSecurity.Core.Common.Requests;
 
-public class VerifyPasskeyRequest
+public sealed class VerifyPasskeyRequest
 {
     public required string Subject { get; set; }
     public required PublicKeyCredential Credential { get; set; }

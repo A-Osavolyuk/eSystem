@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace eSecurity.Core.Common.Requests;
 
-public class LogoutRequest
+public sealed class LogoutRequest
 {
     [JsonPropertyName("id_token_hint")]
     public required string IdTokenHint { get; set; }

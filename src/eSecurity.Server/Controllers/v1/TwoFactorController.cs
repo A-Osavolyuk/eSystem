@@ -91,17 +91,6 @@ public class TwoFactorController(ISender sender) : ControllerBase
         return HttpContext.HandleResult(result);
     }
     
-    [EndpointSummary("Revoke recovery codes")]
-    [EndpointDescription("Revoke recovery codes")]
-    [ProducesResponseType(200)]
-    [HttpPost("recovery-codes/revoke")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> RevokeRecoveryCodesAsync([FromBody] RevokeRecoveryCodesRequest request)
-    {
-        var result = await _sender.Send(new RevokeRecoveryCodesCommand(request));
-        return HttpContext.HandleResult(result);
-    }
-    
     [EndpointSummary("Verify authenticator")]
     [EndpointDescription("Verify authenticator")]
     [ProducesResponseType(200)]

@@ -3,7 +3,7 @@ using eSystem.Core.Common.Messaging;
 
 namespace eSecurity.Core.Common.Requests;
 
-public class ResendCodeRequest
+public sealed class ResendCodeRequest
 {
     public required string Subject { get; set; }
     public required SenderType Sender { get; set; }

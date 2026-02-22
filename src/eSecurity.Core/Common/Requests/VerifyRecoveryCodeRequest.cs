@@ -2,7 +2,7 @@
 
 namespace eSecurity.Core.Common.Requests;
 
-public class VerifyRecoveryCodeRequest
+public sealed class VerifyRecoveryCodeRequest
 {
     public required string Subject { get; set; }
     public required string Code { get; set; }

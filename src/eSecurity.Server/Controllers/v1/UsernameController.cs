@@ -35,15 +35,4 @@ public class UsernameController(ISender sender) : ControllerBase
         var result = await _sender.Send(new CheckUsernameCommand(request));
         return HttpContext.HandleResult(result);
     }
-    
-    [EndpointSummary("Change username")]
-    [EndpointDescription("Change username")]
-    [ProducesResponseType(200)]
-    [HttpPut("change")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> EnableAsync([FromBody] ChangeUsernameRequest request)
-    {
-        var result = await _sender.Send(new ChangeUsernameCommand(request));
-        return HttpContext.HandleResult(result);
-    }
 }

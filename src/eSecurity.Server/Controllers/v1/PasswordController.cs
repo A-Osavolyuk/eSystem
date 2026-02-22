@@ -47,28 +47,6 @@ public class PasswordController(ISender sender) : ControllerBase
         return HttpContext.HandleResult(result);
     }
     
-    [EndpointSummary("Remove password")]
-    [EndpointDescription("Remove password")]
-    [ProducesResponseType(200)]
-    [HttpPost("remove")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> RemoveAsync([FromBody] RemovePasswordRequest request)
-    {
-        var result = await _sender.Send(new RemovePasswordCommand(request));
-        return HttpContext.HandleResult(result);
-    }
-    
-    [EndpointSummary("Check password")]
-    [EndpointDescription("Check password")]
-    [ProducesResponseType(200)]
-    [HttpPost("check")]
-    [AllowAnonymous]
-    public async ValueTask<IActionResult> CheckAsync([FromBody] CheckPasswordRequest request)
-    {
-        var result = await _sender.Send(new CheckPasswordCommand(request));
-        return HttpContext.HandleResult(result);
-    }
-    
     [EndpointSummary("Forgot password")]
     [EndpointDescription("Forgot password")]
     [ProducesResponseType(200)]

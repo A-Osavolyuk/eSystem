@@ -19,19 +19,6 @@ public class UsernameService(IApiClient apiClient) : IUsernameService
                 Authentication = AuthenticationType.None
             });
 
-    public async ValueTask<ApiResponse> ChangeUsernameAsync(ChangeUsernameRequest request)
-        => await _apiClient.SendAsync(
-            new ApiRequest
-            {
-                Data = request,
-                Method = HttpMethod.Put,
-                Url = "/api/v1/Username/change"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.Bearer
-            });
-
     public async ValueTask<ApiResponse> CheckUsernameAsync(CheckUsernameRequest request)
         => await _apiClient.SendAsync(
             new ApiRequest

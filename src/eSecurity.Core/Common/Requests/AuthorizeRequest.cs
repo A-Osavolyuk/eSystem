@@ -1,6 +1,6 @@
 namespace eSecurity.Core.Common.Requests;
 
-public class AuthorizeRequest
+public sealed class AuthorizeRequest
 {
     public required Guid SessionId { get; set; }
     public required string ResponseType { get; set; }

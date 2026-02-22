@@ -1,6 +1,6 @@
 namespace eSecurity.Core.Common.Requests;
 
-public class VerifyAuthenticatorRequest
+public sealed class VerifyAuthenticatorRequest
 {
     public required string Subject { get; set; }
     public required string Code { get; set; }

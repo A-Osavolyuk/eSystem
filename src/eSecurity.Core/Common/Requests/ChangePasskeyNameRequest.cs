@@ -1,6 +1,6 @@
 namespace eSecurity.Core.Common.Requests;
 
-public class ChangePasskeyNameRequest
+public sealed class ChangePasskeyNameRequest
 {
     public required string Subject { get; set; }
     public required Guid PasskeyId { get; set; }
