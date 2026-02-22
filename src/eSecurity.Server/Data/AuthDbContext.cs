@@ -46,6 +46,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<CibaRequestEntity> CibaRequests { get; set; }
     public DbSet<AuthenticationSessionEntity> AuthenticationSessions { get; set; }
     public DbSet<PublicSubjectEntity> PublicSubjects { get; set; }
+    public DbSet<VerificationRequestEntity> VerificationRequests { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
