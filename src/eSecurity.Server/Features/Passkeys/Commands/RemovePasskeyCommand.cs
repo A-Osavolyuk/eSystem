@@ -1,6 +1,6 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Security.Authentication.TwoFactor;
-using eSecurity.Core.Security.Authorization.Access;
+using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Security.Authentication.Password;
 using eSecurity.Server.Security.Authentication.TwoFactor;

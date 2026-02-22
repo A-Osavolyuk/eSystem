@@ -1,5 +1,5 @@
 ﻿using eSecurity.Core.Common.DTOs;
-using eSecurity.Core.Security.Authorization.Access;
+using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Security.Authentication.TwoFactor;
 using eSecurity.Server.Security.Authorization.Devices;
@@ -72,7 +72,7 @@ public class GetUserVerificationMethodsQueryHandler(
             {
                 (true, null) => VerificationMethod.AuthenticatorApp,
                 (_, not null) => VerificationMethod.Passkey,
-                _ => VerificationMethod.Email
+                _ => VerificationMethod.EmailOtp
             },
         };
 

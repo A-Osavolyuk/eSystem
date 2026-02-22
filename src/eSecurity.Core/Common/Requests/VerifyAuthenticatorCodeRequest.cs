@@ -1,4 +1,4 @@
-using eSecurity.Core.Security.Authorization.Access;
+using eSecurity.Core.Security.Authorization.Verification;
 
 namespace eSecurity.Core.Common.Requests;
 

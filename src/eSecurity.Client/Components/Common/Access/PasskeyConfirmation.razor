@@ -2,6 +2,7 @@
 @using eSecurity.Client.Security.Authorization.Access.Verification
 @using eSecurity.Client.Security.Credentials.PublicKey
 @using eSecurity.Core.Common.DTOs
+@using eSecurity.Core.Security.Authorization.Verification
 @using eSecurity.Core.Security.Credentials.PublicKey
 
 @inject UserState UserState
@@ -72,7 +73,7 @@
             Color="Color.Primary"
             Size="Size.Large"
             Variant="Variant.Filled"
-            OnClick="@(async () => await OnMethodChanged.InvokeAsync(VerificationMethod.Email))">
+            OnClick="@(async () => await OnMethodChanged.InvokeAsync(VerificationMethod.EmailOtp))">
             Continue with email
         </MudButton>
         @if (Model.AuthenticatorEnabled)

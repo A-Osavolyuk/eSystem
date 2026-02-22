@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Security.Authentication.TwoFactor;
-using eSecurity.Core.Security.Authorization.Access;
+using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Core.Security.Credentials.PublicKey.Constants;
 using eSecurity.Server.Common.Storage.Session;
 using eSecurity.Server.Data.Entities;

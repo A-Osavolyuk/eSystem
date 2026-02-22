@@ -1,4 +1,5 @@
 ﻿@using eSecurity.Client.Security.Identity
+@using eSecurity.Core.Security.Authorization.Verification
 @using eSecurity.Core.Common.DTOs
 @inject UserState UserState
 @inject ISnackbar Snackbar
@@ -24,7 +25,7 @@ else
                         </MudTextM3>
                         @switch (_model.PreferredMethod)
                         {
-                            case VerificationMethod.Email:
+                            case VerificationMethod.EmailOtp:
                             {
                                 <EmailConfirmation
                                     Model="_model"

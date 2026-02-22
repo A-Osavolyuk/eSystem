@@ -1,4 +1,4 @@
-using eSecurity.Core.Security.Authorization.Access;
+using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Core.Security.Credentials.PublicKey;
 
 namespace eSecurity.Core.Common.Requests;

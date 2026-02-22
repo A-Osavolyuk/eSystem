@@ -1,4 +1,4 @@
-﻿using eSecurity.Core.Security.Authorization.Access;
+﻿using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Server.Data.Entities;
 
 namespace eSecurity.Server.Security.Authorization.Access.Verification;

@@ -1,4 +1,4 @@
-﻿namespace eSecurity.Core.Security.Authorization.Access;
+﻿namespace eSecurity.Core.Security.Authorization.Verification;
 
 /// <summary>
 /// Defines the types of resources that can be associated with a verification code

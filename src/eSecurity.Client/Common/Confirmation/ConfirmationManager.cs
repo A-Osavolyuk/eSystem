@@ -1,5 +1,5 @@
 ﻿using eSecurity.Client.Components.Common.Access;
-using eSecurity.Core.Security.Authorization.Access;
+using eSecurity.Core.Security.Authorization.Verification;
 using MudBlazor;
 
 namespace eSecurity.Client.Common.Confirmation;

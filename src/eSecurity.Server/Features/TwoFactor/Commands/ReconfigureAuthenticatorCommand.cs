@@ -1,5 +1,5 @@
 ﻿using eSecurity.Core.Common.Requests;
-using eSecurity.Core.Security.Authorization.Access;
+using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Server.Security.Authentication.TwoFactor.Secret;
 using eSecurity.Server.Security.Authorization.Access.Verification;
 using eSecurity.Server.Security.Cryptography.Protection.Constants;
