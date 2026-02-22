@@ -3,21 +3,27 @@ using eSecurity.Core.Security.Authorization.OAuth;
 using eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
+using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.Users.Queries;
 
-public record GetUserLinkedAccountDataQuery(string Subject) : IRequest<Result>;
+public record GetUserLinkedAccountDataQuery : IRequest<Result>;
 
 public class GetUserLinkedAccountDataQueryHandler(
     IUserManager userManager,
-    ILinkedAccountManager linkedAccountManager) : IRequestHandler<GetUserLinkedAccountDataQuery, Result>
+    ILinkedAccountManager linkedAccountManager,
+    IHttpContextAccessor httpContextAccessor) : IRequestHandler<GetUserLinkedAccountDataQuery, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(GetUserLinkedAccountDataQuery request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindBySubjectAsync(request.Subject, cancellationToken);
+        var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
+        if (subjectClaim is null) return Results.BadRequest("Invalid subject.");
+        
+        var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
         var linkedAccounts = await _linkedAccountManager.GetAllAsync(user, cancellationToken);

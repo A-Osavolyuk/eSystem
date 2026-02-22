@@ -4,12 +4,12 @@ public class UserService(IApiClient apiClient) : IUserService
 {
     private readonly IApiClient _apiClient = apiClient;
 
-    public async ValueTask<ApiResponse> GetUserVerificationMethodsAsync(string subject)
+    public async ValueTask<ApiResponse> GetUserVerificationMethodsAsync()
         => await _apiClient.SendAsync(
             new ApiRequest
             {
                 Method = HttpMethod.Get,
-                Url = $"/api/v1/User/{subject}/verification/methods"
+                Url = $"/api/v1/User/verification/methods"
             }, new ApiOptions
             {
                 ContentType = ContentTypes.Application.Json,
@@ -17,60 +17,60 @@ public class UserService(IApiClient apiClient) : IUserService
             });
     
 
-    public async ValueTask<ApiResponse> GetUserEmailsAsync(string subject)
+    public async ValueTask<ApiResponse> GetUserEmailsAsync()
         => await _apiClient.SendAsync(
             new ApiRequest
             {
                 Method = HttpMethod.Get,
-                Url = $"/api/v1/User/{subject}/emails"
+                Url = $"/api/v1/User/emails"
             }, new ApiOptions
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 
-    public async ValueTask<ApiResponse> GetUserDevicesAsync(string subject)
+    public async ValueTask<ApiResponse> GetUserDevicesAsync()
         => await _apiClient.SendAsync(
             new ApiRequest
             {
                 Method = HttpMethod.Get,
-                Url = $"/api/v1/User/{subject}/devices"
+                Url = $"/api/v1/User/devices"
             }, new ApiOptions
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 
-    public async ValueTask<ApiResponse> GetUserLinkedAccountsAsync(string subject)
+    public async ValueTask<ApiResponse> GetUserLinkedAccountsAsync()
         => await _apiClient.SendAsync(
             new ApiRequest
             {
                 Method = HttpMethod.Get,
-                Url = $"/api/v1/User/{subject}/linked-accounts"
+                Url = $"/api/v1/User/linked-accounts"
             }, new ApiOptions
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 
-    public async ValueTask<ApiResponse> GetUserTwoFactorMethodsAsync(string subject)
+    public async ValueTask<ApiResponse> GetUserTwoFactorMethodsAsync()
         => await _apiClient.SendAsync(
             new ApiRequest
             {
                 Method = HttpMethod.Get,
-                Url = $"/api/v1/User/{subject}/2fa/methods"
+                Url = $"/api/v1/User/2fa/methods"
             }, new ApiOptions
             {
                 ContentType = ContentTypes.Application.Json,
                 Authentication = AuthenticationType.Bearer
             });
 
-    public async ValueTask<ApiResponse> GetUserLoginMethodsAsync(string subject)
+    public async ValueTask<ApiResponse> GetUserLoginMethodsAsync()
         => await _apiClient.SendAsync(
             new ApiRequest
             {
                 Method = HttpMethod.Get,
-                Url = $"/api/v1/User/{subject}/login-methods"
+                Url = $"/api/v1/User/login-methods"
             }, new ApiOptions
             {
                 ContentType = ContentTypes.Application.Json,

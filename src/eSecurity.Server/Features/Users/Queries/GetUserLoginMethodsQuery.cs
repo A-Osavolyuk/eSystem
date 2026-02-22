@@ -9,10 +9,11 @@ using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.Users.Queries;
 
-public record GetUserLoginMethodsQuery(string Subject) : IRequest<Result>;
+public record GetUserLoginMethodsQuery() : IRequest<Result>;
 
 public class GetUserLoginMethodsQueryHandler(
     IUserManager userManager,
@@ -33,7 +34,10 @@ public class GetUserLoginMethodsQueryHandler(
 
     public async Task<Result> Handle(GetUserLoginMethodsQuery request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindBySubjectAsync(request.Subject, cancellationToken);
+        var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
+        if (subjectClaim is null) return Results.BadRequest("Invalid subject.");
+        
+        var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
         var userAgent = _httpContext.GetUserAgent();

@@ -2,21 +2,27 @@
 using eSecurity.Server.Security.Authentication.TwoFactor;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
+using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.Users.Queries;
 
-public record GetUserTwoFactorMethodsQuery(string Subject) : IRequest<Result>;
+public record GetUserTwoFactorMethodsQuery : IRequest<Result>;
 
 public class GetUserProvidersQueryHandler(
     IUserManager userManager,
-    ITwoFactorManager twoFactorManager) : IRequestHandler<GetUserTwoFactorMethodsQuery, Result>
+    ITwoFactorManager twoFactorManager,
+    IHttpContextAccessor httpContextAccessor) : IRequestHandler<GetUserTwoFactorMethodsQuery, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(GetUserTwoFactorMethodsQuery request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindBySubjectAsync(request.Subject, cancellationToken);
+        var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
+        if (subjectClaim is null) return Results.BadRequest("Invalid subject.");
+        
+        var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
         var methods = await _twoFactorManager.GetAllAsync(user, cancellationToken);

@@ -2,10 +2,10 @@ namespace eSecurity.Client.Security.Identity;
 
 public interface IUserService
 {
-    public ValueTask<ApiResponse> GetUserVerificationMethodsAsync(string subject);
-    public ValueTask<ApiResponse> GetUserEmailsAsync(string subject);
-    public ValueTask<ApiResponse> GetUserDevicesAsync(string subject);
-    public ValueTask<ApiResponse> GetUserLinkedAccountsAsync(string subject);
-    public ValueTask<ApiResponse> GetUserTwoFactorMethodsAsync(string subject);
-    public ValueTask<ApiResponse> GetUserLoginMethodsAsync(string subject);
+    public ValueTask<ApiResponse> GetUserVerificationMethodsAsync();
+    public ValueTask<ApiResponse> GetUserEmailsAsync();
+    public ValueTask<ApiResponse> GetUserDevicesAsync();
+    public ValueTask<ApiResponse> GetUserLinkedAccountsAsync();
+    public ValueTask<ApiResponse> GetUserTwoFactorMethodsAsync();
+    public ValueTask<ApiResponse> GetUserLoginMethodsAsync();
 }

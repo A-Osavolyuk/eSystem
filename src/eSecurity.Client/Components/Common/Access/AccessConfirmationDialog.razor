@@ -77,7 +77,7 @@
 
     private async Task LoadAsync()
     {
-        var result = await UserService.GetUserVerificationMethodsAsync(UserState.Subject!);
+        var result = await UserService.GetUserVerificationMethodsAsync();
 
         if (result.Succeeded && result.TryGetValue<UserVerificationData>(out var value))
         {

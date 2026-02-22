@@ -388,7 +388,7 @@
 
     private async Task LoadMethodsAsync()
     {
-        var result = await UserService.GetUserTwoFactorMethodsAsync(UserState.Subject!);
+        var result = await UserService.GetUserTwoFactorMethodsAsync();
 
         if (result.Succeeded && result.TryGetValue<List<UserTwoFactorMethod>>(out var methods))
         {
