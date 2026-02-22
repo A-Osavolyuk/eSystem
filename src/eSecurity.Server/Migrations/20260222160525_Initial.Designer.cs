@@ -12,7 +12,7 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20260215194803_Initial")]
+    [Migration("20260222160525_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -1559,6 +1559,56 @@ namespace eSecurity.Server.Migrations
                     b.ToTable("Verifications", "public");
                 });
 
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.VerificationRequestEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("ApprovedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("CancelledAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("ConsumedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("ExpiredAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Method")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Purpose")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("VerificationRequests", "public");
+                });
+
             modelBuilder.Entity("eSecurity.Server.Data.Entities.AuthenticationSessionEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.SessionEntity", "Session")
@@ -2121,6 +2171,17 @@ namespace eSecurity.Server.Migrations
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.VerificationEntity", b =>
+                {
+                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.VerificationRequestEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
                         .WithMany()
