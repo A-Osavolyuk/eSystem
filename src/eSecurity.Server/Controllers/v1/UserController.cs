@@ -17,7 +17,7 @@ public class UserController(ISender sender) : ControllerBase
     [EndpointDescription("Get user's 2FA methods")]
     [ProducesResponseType(200)]
     [HttpGet("2fa/methods")]
-    [AllowAnonymous]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> GetUserTwoFactorMethodsAsync(string subject)
     {
         var result = await _sender.Send(new GetUserTwoFactorMethodsQuery(subject));
@@ -32,28 +32,6 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserVerificationMethodsAsync(string subject)
     {
         var result = await _sender.Send(new GetUserVerificationDataQuery(subject));
-        return HttpContext.HandleResult(result);
-    }
-    
-    [EndpointSummary("Get user's personal data")]
-    [EndpointDescription("Get user's personal data")]
-    [ProducesResponseType(200)]
-    [HttpGet("privacy")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> GetUserPersonalDataAsync(string subject)
-    {
-        var result = await _sender.Send(new GetUserPersonalQuery(subject));
-        return HttpContext.HandleResult(result);
-    }
-    
-    [EndpointSummary("Get user's lockout state")]
-    [EndpointDescription("Get user's lockout state")]
-    [ProducesResponseType(200)]
-    [HttpGet("lockout")]
-    [AllowAnonymous]
-    public async ValueTask<IActionResult> GetUserLogoutStateAsync(string subject)
-    {
-        var result = await _sender.Send(new GetUserLockoutQuery(subject));
         return HttpContext.HandleResult(result);
     }
     
@@ -98,17 +76,6 @@ public class UserController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> GetUserEmailsAsync(string subject)
     {
         var result = await _sender.Send(new GetUserEmailsQuery(subject));
-        return HttpContext.HandleResult(result);
-    }
-    
-    [EndpointSummary("Get user's phone numbers")]
-    [EndpointDescription("Get user's phone numbers")]
-    [ProducesResponseType(200)]
-    [HttpGet("phone-numbers")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> GetUserPhoneNumbersAsync(string subject)
-    {
-        var result = await _sender.Send(new GetUserPhoneNumbersQuery(subject));
         return HttpContext.HandleResult(result);
     }
 }

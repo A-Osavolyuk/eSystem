@@ -62,7 +62,7 @@ public class UserService(IApiClient apiClient) : IUserService
             }, new ApiOptions
             {
                 ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.None
+                Authentication = AuthenticationType.Bearer
             });
 
     public async ValueTask<ApiResponse> GetUserLoginMethodsAsync(string subject)
