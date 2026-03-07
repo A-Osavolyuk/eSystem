@@ -68,4 +68,15 @@ public class VerificationController(ISender sender) : ControllerBase
         var result = await _sender.Send(new VerifyPasskeyCommand(request));
         return HttpContext.HandleResult(result);
     }
+    
+    [EndpointSummary("Verification request")]
+    [EndpointDescription("Verification request")]
+    [ProducesResponseType(200)]
+    [HttpPost("request-verification")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async ValueTask<IActionResult> VerificationRequestAsync([FromBody] VerificationRequest request)
+    {
+        var result = await _sender.Send(new VerificationCommand(request));
+        return HttpContext.HandleResult(result);
+    }
 }

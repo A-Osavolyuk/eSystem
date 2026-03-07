@@ -33,6 +33,15 @@ public class VerificationManager(AuthDbContext context) : IVerificationManager
         return Results.Ok();
     }
 
+    public async ValueTask<Result> CreateAsync(VerificationRequestEntity request, 
+        CancellationToken cancellationToken = default)
+    {
+        await _context.VerificationRequests.AddAsync(request, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+        
+        return Results.Ok();
+    }
+
     public async ValueTask<Result> VerifyAsync(UserEntity user,
         PurposeType resource, ActionType action, CancellationToken cancellationToken = default)
     {
