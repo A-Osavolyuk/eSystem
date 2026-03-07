@@ -8,7 +8,7 @@ public sealed class UserSecretConfiguration : IEntityTypeConfiguration<UserSecre
     public void Configure(EntityTypeBuilder<UserSecretEntity> builder)
     {
         builder.HasKey(x => x.Id);
-        builder.Property(x => x.Secret).HasMaxLength(200);
+        builder.Property(x => x.ProtectedSecret).HasMaxLength(200);
         
         builder.HasOne(x => x.User)
             .WithOne()

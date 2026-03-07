@@ -78,7 +78,7 @@ public sealed class AuthenticatorTwoFactorStrategy(
         if (secret is null) return Results.NotFound("Secret not found.");
 
         var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Secret);
-        var unprotectedSecret = protector.Unprotect(secret.Secret);
+        var unprotectedSecret = protector.Unprotect(secret.ProtectedSecret);
 
         if (!AuthenticatorUtils.VerifyCode(context.Code, unprotectedSecret))
         {

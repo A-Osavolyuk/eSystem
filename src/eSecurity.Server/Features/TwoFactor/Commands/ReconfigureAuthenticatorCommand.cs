@@ -44,7 +44,7 @@ public class ReconfigureAuthenticatorCommandHandler(
         var userSecret = await _secretManager.GetAsync(user, cancellationToken);
         if (userSecret is null) return Results.NotFound("Secret not found");
         
-        userSecret.Secret = protectedSecret;
+        userSecret.ProtectedSecret = protectedSecret;
 
         var result = await _secretManager.UpdateAsync(userSecret, cancellationToken);
         return result;

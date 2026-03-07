@@ -51,14 +51,14 @@ public class GenerateQrCodeCommandHandler(
             {
                 Id = Guid.CreateVersion7(),
                 UserId = user.Id,
-                Secret = protectedSecret
+                ProtectedSecret = protectedSecret
             };
             
             var secretResult = await _secretManager.AddAsync(userSecret, cancellationToken);
             if (!secretResult.Succeeded) return secretResult;
         }
 
-        var unprotectedSecret = protector.Unprotect(userSecret.Secret);
+        var unprotectedSecret = protector.Unprotect(userSecret.ProtectedSecret);
         var qrCode = _qrCodeFactory.Create(unprotectedSecret, email.Email, QrCodeConfiguration.Issuer);
 
         return Results.Ok(qrCode);

@@ -38,7 +38,7 @@ public class VerifyAuthenticatorCodeCommandHandler(
         if (userSecret is null) return Results.NotFound("Not found user secret");
 
         var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Secret);
-        var unprotectedSecret = protector.Unprotect(userSecret.Secret);
+        var unprotectedSecret = protector.Unprotect(userSecret.ProtectedSecret);
         var verified = AuthenticatorUtils.VerifyCode(request.Request.Code, unprotectedSecret);
         if (!verified) return Results.BadRequest("Invalid authenticator code");
         
