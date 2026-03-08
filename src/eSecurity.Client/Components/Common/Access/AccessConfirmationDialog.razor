@@ -70,9 +70,9 @@
         _model?.PreferredMethod = method;
     }
 
-    private async Task ConfirmAccessAsync()
+    private async Task ConfirmAccessAsync(Guid verificationId)
     {
-        Dialog.Close(DialogResult.Ok(true));
+        Dialog.Close(DialogResult.Ok(verificationId));
         await InvokeAsync(StateHasChanged);
     }
 

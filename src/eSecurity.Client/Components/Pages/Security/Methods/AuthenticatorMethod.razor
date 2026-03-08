@@ -47,7 +47,9 @@
         </MudStack>
         @if (_showConfiguration)
         {
-            <AuthenticatorAppConfiguration OnClose="@(() => ToggleConfiguration())"/>
+            <AuthenticatorAppConfiguration 
+                Verification="_verificationId" 
+                OnClose="@(() => ToggleConfiguration())"/>
         }
         else
         {
@@ -74,13 +76,18 @@
     [Parameter] public TwoFactorData Model { get; set; } = new();
 
     private bool _showConfiguration;
+    private Guid _verificationId;
 
     private async Task ShowAsync()
     {
         var confirmationResult = await ConfirmationManager.InitiateAsync(
             PurposeType.AuthenticatorApp, ActionType.Reconfigure);
-        
-        if (!confirmationResult!.Canceled) ToggleConfiguration();
+
+        if (!confirmationResult!.Canceled)
+        {
+            _verificationId = confirmationResult.Data as Guid? ?? Guid.Empty;
+            ToggleConfiguration();
+        }
     }
 
     private void ToggleConfiguration() => _showConfiguration = !_showConfiguration;

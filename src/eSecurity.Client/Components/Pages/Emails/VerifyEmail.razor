@@ -3,6 +3,7 @@
 @using eSecurity.Client.Security
 @using eSecurity.Client.Security.Authorization.Access.Verification
 @using eSecurity.Core.Security.Authorization.Verification
+@using eSecurity.Core.Common.Responses
 @using eSecurity.Client.Security.Identity
 @inherits PageBase
 
@@ -191,15 +192,28 @@
 
         if (_form.IsValid)
         {
-            var request = new VerifyCodeRequest() { Code = _model.Code };
-            var result = await VerificationService.VerifyCodeAsync(request);
+            var request = new VerificationRequest()
+            {
+                Action = ActionType.Verify,
+                Purpose = PurposeType.Email,
+                Method = VerificationMethod.EmailOtp,
+                Payload = new TotpVerificationPayload()
+                {
+                    Code = _model.Code
+                }
+            };
+            
+            var result = await VerificationService.VerifyAsync(request);
 
-            if (result.Succeeded) await VerifyAsync();
+            if (result.Succeeded && result.TryGetValue<VerificationResponse>(out var response) && response is not null)
+            {
+                await VerifyAsync(response.VerificationId);
+            }
             else Snackbar.Add(result.GetError().Description, Severity.Error);
         }
     }
 
-    private async Task VerifyAsync()
+    private async Task VerifyAsync(Guid verificationId)
     {
         var email = Type switch
         {
@@ -209,7 +223,11 @@
             _ => throw new NotSupportedException("Unsupported email type")
         };
 
-        var request = new VerifyEmailRequest { Email = email };
+        var request = new VerifyEmailRequest
+        {
+            VerificationId = verificationId,
+            Email = email
+        };
         var result = await EmailService.VerifyEmailAsync(request);
 
         if (result.Succeeded)

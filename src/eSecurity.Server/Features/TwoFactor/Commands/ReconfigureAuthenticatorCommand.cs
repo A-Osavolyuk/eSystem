@@ -34,9 +34,11 @@ public class ReconfigureAuthenticatorCommandHandler(
         var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
-        var verificationResult = await _verificationManager.VerifyAsync(user, PurposeType.AuthenticatorApp,
-            ActionType.Reconfigure, cancellationToken);
+        var verification = await _verificationManager.FindByIdAsync(request.Request.VerificationId, cancellationToken);
+        if (verification?.Status is not VerificationStatus.Approved) 
+            return Results.BadRequest("Unverified request.");
 
+        var verificationResult = await _verificationManager.ConsumeAsync(verification, cancellationToken);
         if (!verificationResult.Succeeded) return verificationResult;
 
         var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Secret);

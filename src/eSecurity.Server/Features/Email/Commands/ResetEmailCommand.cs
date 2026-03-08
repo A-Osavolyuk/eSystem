@@ -60,15 +60,12 @@ public class ResetEmailCommandHandler(
             }
         }
 
-        var resetVerificationResult = await _verificationManager.VerifyAsync(user,
-            PurposeType.Email, ActionType.Reset, cancellationToken);
+        var verification = await _verificationManager.FindByIdAsync(request.Request.VerificationId, cancellationToken);
+        if (verification?.Status is not VerificationStatus.Approved) 
+            return Results.BadRequest("Unverified request.");
 
-        if (!resetVerificationResult.Succeeded) return resetVerificationResult;
-        
-        var verifyVerificationResult = await _verificationManager.VerifyAsync(user,
-            PurposeType.Email, ActionType.Verify, cancellationToken);
-
-        if (!verifyVerificationResult.Succeeded) return verifyVerificationResult;
+        var verificationResult = await _verificationManager.ConsumeAsync(verification, cancellationToken);
+        if (!verificationResult.Succeeded) return verificationResult;
 
         var result = await _emailManager.ResetAsync(user, userCurrentEmail.Email, newEmail, cancellationToken);
         return result;

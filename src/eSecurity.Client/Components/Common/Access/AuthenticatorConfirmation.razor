@@ -1,5 +1,6 @@
 ﻿@using eSecurity.Client.Security.Authorization.Access.Verification
 @using eSecurity.Core.Security.Authorization.Verification
+@using eSecurity.Core.Common.Responses
 @using eSecurity.Core.Common.DTOs
 
 @inject UserState UserState
@@ -11,13 +12,13 @@
         <MudTextM3 Size="Size.Medium" Typo="TypoM3.Body" Align="Align.Center">
             Enter a 6-digit code from your authenticator app
         </MudTextM3>
-        <MudForm @ref="_form" Model="CodeModel">
+        <MudForm @ref="_form" Model="_codeModel">
             <MudTextFieldExtended
                 Variant="Variant.Outlined"
                 Immediate="true"
                 Mask="@_mask"
                 Placeholder="XXXXXX"
-                @bind-Value="CodeModel.Code"/>
+                @bind-Value="_codeModel.Code"/>
         </MudForm>
         <MudLoadingButton
             ButtonType="ButtonType.Button"
@@ -25,7 +26,7 @@
             Color="Color.Primary"
             Size="Size.Large"
             FullWidth="true"
-            Disabled="@(CodeModel.Code.Length <= 5)"
+            Disabled="@(_codeModel.Code.Length <= 5)"
             OnClick="@(async () => await OnVerifyAsync())">
             Verify code
         </MudLoadingButton>
@@ -57,7 +58,7 @@
 </MudStack>
 
 @code {
-    [Parameter] public EventCallback OnAccessConfirmed { get; set; }
+    [Parameter] public EventCallback<Guid> OnAccessConfirmed { get; set; }
 
     [Parameter] public EventCallback<VerificationMethod> OnMethodChanged { get; set; }
 
@@ -65,22 +66,28 @@
 
     [Parameter] public UserVerificationData Model { get; set; } = new();
 
-    private CodeModel CodeModel { get; set; } = new();
+    private CodeModel _codeModel = new();
     private readonly PatternMask _mask = new("000000");
     private MudForm _form = new();
 
     private async Task OnVerifyAsync()
     {
-        var request = new VerifyAuthenticatorCodeRequest
+        var request = new VerificationRequest()
         {
-            Code = CodeModel.Code,
             Action = Context.Action,
-            Purpose = Context.Purpose
+            Purpose = Context.Purpose,
+            Method = VerificationMethod.AuthenticatorApp,
+            Payload = new AuthenticatorAppVerificationPayload()
+            {
+                Code = _codeModel.Code
+            }
         };
 
-        var result = await VerificationService.VerifyAuthenticatorCodeAsync(request);
-
-        if (result.Succeeded) await OnAccessConfirmed.InvokeAsync();
+        var result = await VerificationService.VerifyAsync(request);
+        if (result.Succeeded && result.TryGetValue<VerificationResponse>(out var response) && response is not null)
+        {
+            await OnAccessConfirmed.InvokeAsync(response.VerificationId);
+        }
         else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 

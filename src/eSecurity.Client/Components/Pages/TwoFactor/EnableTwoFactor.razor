@@ -5,6 +5,7 @@
 @using eSecurity.Client.Security.Authorization.Access.Verification
 @using eSecurity.Client.Security.Identity
 @using eSecurity.Core.Security.Authorization.Verification
+@using eSecurity.Core.Common.Responses
 @using eSecurity.Client.Common.JS.Download
 
 @inherits PageBase
@@ -290,6 +291,7 @@
     private QrCode QrCode { get; set; } = new();
     private List<string> Codes { get; set; } = [];
     private List<UserTwoFactorMethod> Methods { get; set; } = [];
+    private Guid _verificationId;
 
     protected override void OnInitialized()
     {
@@ -322,16 +324,25 @@
     private async Task OnVerifyAsync()
     {
         _showError = false;
-        var request = new VerifyAuthenticatorCodeRequest
+        
+        var request = new VerificationRequest()
         {
-            Purpose = PurposeType.AuthenticatorApp,
-            Action = ActionType.Subscribe,
-            Code = _model.Code
+            Action = ActionType.Enable,
+            Purpose = PurposeType.TwoFactor,
+            Method = VerificationMethod.AuthenticatorApp,
+            Payload = new AuthenticatorAppVerificationPayload()
+            {
+                Code = _model.Code
+            }
         };
+        
+        var result = await VerificationService.VerifyAsync(request);
 
-        var result = await VerificationService.VerifyAuthenticatorCodeAsync(request);
-
-        if (result.Succeeded) await GenerateRecoveryCodesAsync();
+        if (result.Succeeded && result.TryGetValue<VerificationResponse>(out var response) && response is not null)
+        {
+            _verificationId = response.VerificationId;
+            await GenerateRecoveryCodesAsync();
+        }
         else _showError = true;
     }
 
@@ -372,7 +383,8 @@
 
     private async Task OnEnableAsync()
     {
-        var result = await TwoFactorService.EnableAsync();
+        var request = new EnableTwoFactorRequest { VerificationId = _verificationId };
+        var result = await TwoFactorService.EnableAsync(request);
         if (result.Succeeded)
         {
             await LoadMethodsAsync();

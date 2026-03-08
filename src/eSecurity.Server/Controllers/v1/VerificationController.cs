@@ -34,36 +34,6 @@ public class VerificationController(ISender sender) : ControllerBase
         var result = await _sender.Send(new ResendCodeCommand(request));
         return HttpContext.HandleResult(result);
     }
-
-    [EndpointSummary("Verify code")]
-    [EndpointDescription("verify code")]
-    [ProducesResponseType(200)]
-    [HttpPost("code/verify")]
-    public async ValueTask<IActionResult> VerifyCodeAsync([FromBody] VerifyCodeRequest request)
-    {
-        var result = await _sender.Send(new VerifyCodeCommand(request));
-        return HttpContext.HandleResult(result);
-    }
-
-    [EndpointSummary("Verify authenticator code")]
-    [EndpointDescription("verify authenticator code")]
-    [ProducesResponseType(200)]
-    [HttpPost("authenticator/verify")]
-    public async ValueTask<IActionResult> VerifyAuthenticatorCodeAsync([FromBody] VerifyAuthenticatorCodeRequest request)
-    {
-        var result = await _sender.Send(new VerifyAuthenticatorCodeCommand(request));
-        return HttpContext.HandleResult(result);
-    }
-    
-    [EndpointSummary("Verify passkey")]
-    [EndpointDescription("verify passkey")]
-    [ProducesResponseType(200)]
-    [HttpPost("passkey/verify")]
-    public async ValueTask<IActionResult> VerifyPasskeyAsync([FromBody] VerifyPasskeyRequest request)
-    {
-        var result = await _sender.Send(new VerifyPasskeyCommand(request));
-        return HttpContext.HandleResult(result);
-    }
     
     [EndpointSummary("Verification request")]
     [EndpointDescription("Verification request")]

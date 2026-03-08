@@ -154,7 +154,12 @@
 
         if (!confirmationResult.Canceled)
         {
-            var request = new DisconnectLinkedAccountRequest { Type = type };
+            var verificationId = confirmationResult.Data as Guid? ?? Guid.Empty;
+            var request = new DisconnectLinkedAccountRequest
+            {
+                VerificationId = verificationId,
+                Type = type
+            };
             var result = await LinkedAccountService.DisconnectAsync(request);
 
             if (result.Succeeded) await OnRefresh.InvokeAsync();

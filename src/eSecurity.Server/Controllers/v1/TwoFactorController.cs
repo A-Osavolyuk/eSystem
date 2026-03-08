@@ -19,9 +19,9 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointDescription("Enable 2FA")]
     [ProducesResponseType(200)]
     [HttpPost("enable")]
-    public async ValueTask<IActionResult> EnableAsync()
+    public async ValueTask<IActionResult> EnableAsync([FromBody] EnableTwoFactorRequest request)
     {
-        var result = await _sender.Send(new EnableTwoFactorCommand());
+        var result = await _sender.Send(new EnableTwoFactorCommand(request));
         return HttpContext.HandleResult(result);
     }
 
@@ -29,9 +29,9 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [EndpointDescription("Disable 2FA")]
     [ProducesResponseType(200)]
     [HttpPost("disable")]
-    public async ValueTask<IActionResult> DisableAsync()
+    public async ValueTask<IActionResult> DisableAsync([FromBody] DisableTwoFactorRequest request)
     {
-        var result = await _sender.Send(new DisableTwoFactorCommand());
+        var result = await _sender.Send(new DisableTwoFactorCommand(request));
         return HttpContext.HandleResult(result);
     }
 

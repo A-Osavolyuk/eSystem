@@ -5,7 +5,6 @@
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
 @inject ITwoFactorService TwoFactorService
-@inject UserState UserState
 @inject CodeModelValidator Validator
 
 <MudStack Spacing="3">
@@ -149,7 +148,11 @@
 </MudStack>
 
 @code {
-    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] 
+    public EventCallback OnClose { get; set; }
+    
+    [Parameter] 
+    public Guid Verification { get; set; }
 
     private readonly CodeModel _model = new();
     private QrCode _qrCode = new();
@@ -213,7 +216,11 @@
 
     private async Task OnSaveAsync()
     {
-        var request = new ReconfigureAuthenticatorRequest { Secret = _qrCode.Secret };
+        var request = new ReconfigureAuthenticatorRequest
+        {
+            VerificationId = Verification,
+            Secret = _qrCode.Secret
+        };
         var result = await TwoFactorService.ReconfigureAuthenticatorAsync(request);
 
         if (result.Succeeded)

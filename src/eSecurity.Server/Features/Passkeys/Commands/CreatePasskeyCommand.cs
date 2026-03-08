@@ -26,7 +26,6 @@ public class CreatePasskeyCommandHandler(
     IPasskeyManager passkeyManager,
     ITwoFactorManager twoFactorManager,
     IHttpContextAccessor httpContextAccessor,
-    IVerificationManager verificationManager,
     ISessionStorage sessionStorage,
     IDeviceManager deviceManager,
     IOptions<CredentialOptions> options) : IRequestHandler<CreatePasskeyCommand, Result>
@@ -34,7 +33,6 @@ public class CreatePasskeyCommandHandler(
     private readonly IUserManager _userManager = userManager;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
-    private readonly IVerificationManager _verificationManager = verificationManager;
     private readonly ISessionStorage _sessionStorage = sessionStorage;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly CredentialOptions _credentialOptions = options.Value;
@@ -60,11 +58,6 @@ public class CreatePasskeyCommandHandler(
                 Description = "Invalid device."
             });
         }
-
-        var verificationResult = await _verificationManager.VerifyAsync(user,
-            PurposeType.Passkey, ActionType.Create, cancellationToken);
-
-        if (!verificationResult.Succeeded) return verificationResult;
 
         var credentialResponse = request.Request.Response;
         var clientData = ClientData.Parse(credentialResponse.Response.ClientDataJson);

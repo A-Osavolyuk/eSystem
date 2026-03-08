@@ -143,7 +143,13 @@
         var confirmationResult = await ConfirmationManager.InitiateAsync(PurposeType.Passkey, ActionType.Remove);
         if (!confirmationResult!.Canceled)
         {
-            var request = new RemovePasskeyRequest { PasskeyId = passkey.Id };
+            var verificationId = confirmationResult.Data as Guid? ?? Guid.Empty;
+            var request = new RemovePasskeyRequest
+            {
+                VerificationId = verificationId,
+                PasskeyId = passkey.Id
+            };
+            
             var result = await PasskeyService.RemoveAsync(request);
             if (result.Succeeded) await OnRefresh.InvokeAsync();
             else Snackbar.Add(result.GetError().Description, Severity.Error);

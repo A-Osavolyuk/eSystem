@@ -51,9 +51,11 @@ public class RemovePasskeyCommandHandler(
              _options.RequireConfirmedEmail) || !await _passwordManager.HasAsync(user, cancellationToken))
             return Results.BadRequest("You need to enable another authentication method first.");
 
-        var verificationResult = await _verificationManager.VerifyAsync(user,
-            PurposeType.Passkey, ActionType.Remove, cancellationToken);
+        var verification = await _verificationManager.FindByIdAsync(request.Request.VerificationId, cancellationToken);
+        if (verification?.Status is not VerificationStatus.Approved) 
+            return Results.BadRequest("Unverified request.");
 
+        var verificationResult = await _verificationManager.ConsumeAsync(verification, cancellationToken);
         if (!verificationResult.Succeeded) return verificationResult;
 
         var passkeys = await _passkeyManager.GetAllAsync(user, cancellationToken);

@@ -70,9 +70,11 @@ public class RemoveEmailCommandHandler(
             }
         }
 
-        var verificationResult = await _verificationManager.VerifyAsync(user,
-            PurposeType.Email, ActionType.Remove, cancellationToken);
+        var verification = await _verificationManager.FindByIdAsync(request.Request.VerificationId, cancellationToken);
+        if (verification?.Status is not VerificationStatus.Approved) 
+            return Results.BadRequest("Unverified request.");
 
+        var verificationResult = await _verificationManager.ConsumeAsync(verification, cancellationToken);
         if (!verificationResult.Succeeded) return verificationResult;
 
         var result = await _emailManager.RemoveAsync(user, request.Request.Email, cancellationToken);

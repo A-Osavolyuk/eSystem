@@ -2,6 +2,7 @@
 @using eSecurity.Client.Security
 @using eSecurity.Client.Security.Authorization.Access.Verification
 @using eSecurity.Core.Security.Authorization.Verification
+@using eSecurity.Core.Common.Responses
 @using eSecurity.Client.Security.Identity
 @inherits PageBase
 
@@ -224,17 +225,35 @@
 
         if (_confirmForm.IsValid)
         {
-            var request = new VerifyCodeRequest() { Code = _confirmModel.Code };
-            var result = await VerificationService.VerifyCodeAsync(request);
+            var request = new VerificationRequest()
+            {
+                Action = ActionType.Reset,
+                Purpose = PurposeType.Email,
+                Method = VerificationMethod.EmailOtp,
+                Payload = new TotpVerificationPayload()
+                {
+                    Code = _confirmModel.Code
+                }
+            };
+            
+            var result = await VerificationService.VerifyAsync(request);
 
-            if (result.Succeeded) await VerifyAsync();
+            if (result.Succeeded && result.TryGetValue<VerificationResponse>(out var response) && response is not null)
+            {
+                await VerifyAsync(response.VerificationId);
+            }
             else Snackbar.Add(result.GetError().Description, Severity.Error);
         }
     }
 
-    private async Task VerifyAsync()
+    private async Task VerifyAsync(Guid verificationId)
     {
-        var request = new ResetEmailRequest { Email = _resetModel.NewEmail, };
+        var request = new ResetEmailRequest
+        {
+            VerificationId = verificationId,
+            Email = _resetModel.NewEmail,
+        };
+        
         var result = await EmailService.ResetEmailAsync(request);
 
         if (result.Succeeded)

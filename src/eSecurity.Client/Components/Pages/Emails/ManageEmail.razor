@@ -2,6 +2,7 @@
 @using eSecurity.Client.Security
 @using eSecurity.Client.Security.Authorization.Access.Verification
 @using eSecurity.Client.Security.Identity
+@using eSecurity.Core.Common.Responses
 @using eSecurity.Core.Security.Authorization.Verification
 @using eSecurity.Core.Security.Identity
 
@@ -118,14 +119,26 @@
 
     private async Task OnVerifyAsync()
     {
-        var request = new VerifyCodeRequest { Code = _model.Code };
-        var result = await VerificationService.VerifyCodeAsync(request);
-
-        if (result.Succeeded) await ManageAsync();
+        var request = new VerificationRequest()
+        {
+            Action = ActionType.Manage,
+            Purpose = PurposeType.Email,
+            Method = VerificationMethod.EmailOtp,
+            Payload = new TotpVerificationPayload()
+            {
+                Code = _model.Code
+            }
+        };
+        
+        var result = await VerificationService.VerifyAsync(request);
+        if (result.Succeeded && result.TryGetValue<VerificationResponse>(out var response) && response is not null)
+        {
+            await ManageAsync(response.VerificationId);
+        }
         else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 
-    private async Task ManageAsync()
+    private async Task ManageAsync(Guid verificationId)
     {
         var type = Type switch
         {
@@ -136,6 +149,7 @@
 
         var request = new ManageEmailRequest
         {
+            VerificationId = verificationId,
             Email = Email,
             Type = type
         };

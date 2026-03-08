@@ -10,7 +10,7 @@ using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.TwoFactor.Commands;
 
-public record EnableTwoFactorCommand() : IRequest<Result>;
+public record EnableTwoFactorCommand(EnableTwoFactorRequest Request) : IRequest<Result>;
 
 public class EnableTwoFactorCommandHandler(
     IUserManager userManager,
@@ -33,16 +33,13 @@ public class EnableTwoFactorCommandHandler(
         
         if (await _twoFactorManager.IsEnabledAsync(user, cancellationToken)) 
             return Results.BadRequest("2FA already enabled.");
+        
+        var verification = await _verificationManager.FindByIdAsync(request.Request.VerificationId, cancellationToken);
+        if (verification?.Status is not VerificationStatus.Approved) 
+            return Results.BadRequest("Unverified request.");
 
-        var enableVerificationResult = await _verificationManager.VerifyAsync(user,
-            PurposeType.TwoFactor, ActionType.Enable, cancellationToken);
-
-        if (!enableVerificationResult.Succeeded) return enableVerificationResult;
-
-        var subscribeVerificationResult = await _verificationManager.VerifyAsync(user,
-            PurposeType.AuthenticatorApp, ActionType.Subscribe, cancellationToken);
-
-        if (!subscribeVerificationResult.Succeeded) return subscribeVerificationResult;
+        var verificationResult = await _verificationManager.ConsumeAsync(verification, cancellationToken);
+        if (!verificationResult.Succeeded) return verificationResult;
 
         var authenticatorResult = await _twoFactorManager.SubscribeAsync(user,
             TwoFactorMethod.AuthenticatorApp, true, cancellationToken);

@@ -6,12 +6,13 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
 {
     private readonly IApiClient _apiClient = apiClient;
 
-    public async ValueTask<ApiResponse> EnableAsync()
+    public async ValueTask<ApiResponse> EnableAsync(EnableTwoFactorRequest request)
         => await _apiClient.SendAsync(
             new ApiRequest
             {
                 Method = HttpMethod.Post,
-                Url = "/api/v1/TwoFactor/enable"
+                Url = "/api/v1/TwoFactor/enable",
+                Data = request
             }, new ApiOptions
             {
                 ContentType = ContentTypes.Application.Json,

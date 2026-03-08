@@ -4,7 +4,7 @@ namespace eSecurity.Client.Security.Authentication.TwoFactor;
 
 public interface ITwoFactorService
 {
-    public ValueTask<ApiResponse> EnableAsync();
+    public ValueTask<ApiResponse> EnableAsync(EnableTwoFactorRequest request);
     public ValueTask<ApiResponse> DisableAsync();
     public ValueTask<ApiResponse> PreferAsync(PreferTwoFactorMethodRequest request);
     

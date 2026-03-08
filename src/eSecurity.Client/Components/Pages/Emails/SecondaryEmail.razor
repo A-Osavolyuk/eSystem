@@ -121,9 +121,14 @@
         var confirmationResult = await ConfirmationManager.InitiateAsync(PurposeType.Email, ActionType.Remove);
         if (!confirmationResult!.Canceled)
         {
-            var request = new RemoveEmailRequest { Email = email };
+            var verificationId = confirmationResult.Data as Guid? ?? Guid.Empty;
+            var request = new RemoveEmailRequest
+            {
+                VerificationId = verificationId,
+                Email = email
+            };
+            
             var result = await EmailService.RemoveEmailAsync(request);
-
             if (result.Succeeded)
             {
                 Snackbar.Add("Email was successfully removed", Severity.Success);

@@ -9,7 +9,7 @@ using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.TwoFactor.Commands;
 
-public record DisableTwoFactorCommand() : IRequest<Result>;
+public record DisableTwoFactorCommand(DisableTwoFactorRequest Request) : IRequest<Result>;
 
 public class DisableTwoFactorCommandHandler(
     IUserManager userManager,
@@ -33,9 +33,11 @@ public class DisableTwoFactorCommandHandler(
         if (await _twoFactorManager.IsEnabledAsync(user, cancellationToken)) 
             return Results.BadRequest("2FA already disabled.");
         
-        var verificationResult = await _verificationManager.VerifyAsync(user,
-            PurposeType.TwoFactor, ActionType.Disable, cancellationToken);
+        var verification = await _verificationManager.FindByIdAsync(request.Request.VerificationId, cancellationToken);
+        if (verification?.Status is not VerificationStatus.Approved) 
+            return Results.BadRequest("Unverified request.");
 
+        var verificationResult = await _verificationManager.ConsumeAsync(verification, cancellationToken);
         if (!verificationResult.Succeeded) return verificationResult;
         
         var methodResult = await _twoFactorManager.UnsubscribeAsync(user, cancellationToken);

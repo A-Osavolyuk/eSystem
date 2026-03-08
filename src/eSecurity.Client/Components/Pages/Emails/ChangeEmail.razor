@@ -2,6 +2,7 @@
 @using eSecurity.Client.Security
 @using eSecurity.Client.Security.Authorization.Access.Verification
 @using eSecurity.Client.Security.Identity
+@using eSecurity.Core.Common.Responses
 @using eSecurity.Core.Security.Authorization.Verification
 @using eSecurity.Core.Security.Identity
 
@@ -256,7 +257,7 @@
         }
     }
 
-    private async Task ChangeAsync()
+    private async Task ChangeAsync(Guid verificationId)
     {
         var type = Type switch
         {
@@ -267,6 +268,7 @@
 
         var request = new ChangeEmailRequest
         {
+            VerificationId = verificationId,
             Email = _changeModel.NewEmail,
             Type = type,
         };
@@ -290,10 +292,23 @@
 
         if (_confirmForm.IsValid)
         {
-            var request = new VerifyCodeRequest() { Code = _confirmModel.Code, };
-            var result = await VerificationService.VerifyCodeAsync(request);
+            var request = new VerificationRequest()
+            {
+                Action = ActionType.Change,
+                Purpose = PurposeType.Email,
+                Method = VerificationMethod.EmailOtp,
+                Payload = new TotpVerificationPayload()
+                {
+                    Code = _confirmModel.Code
+                }
+            };
+            
+            var result = await VerificationService.VerifyAsync(request);
 
-            if (result.Succeeded) await ChangeAsync();
+            if (result.Succeeded && result.TryGetValue<VerificationResponse>(out var response) && response is not null)
+            {
+                await ChangeAsync(response.VerificationId);
+            }
             else Snackbar.Add(result.GetError().Description, Severity.Error);
         }
     }

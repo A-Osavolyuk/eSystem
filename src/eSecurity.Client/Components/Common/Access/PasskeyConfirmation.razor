@@ -2,6 +2,7 @@
 @using eSecurity.Client.Security.Authorization.Access.Verification
 @using eSecurity.Client.Security.Credentials.PublicKey
 @using eSecurity.Core.Common.DTOs
+@using eSecurity.Core.Common.Responses
 @using eSecurity.Core.Security.Authorization.Verification
 @using eSecurity.Core.Security.Credentials.PublicKey
 
@@ -90,7 +91,7 @@
 </MudStack>
 
 @code {
-    [Parameter] public EventCallback OnAccessConfirmed { get; set; }
+    [Parameter] public EventCallback<Guid> OnAccessConfirmed { get; set; }
 
     [Parameter] public EventCallback<VerificationMethod> OnMethodChanged { get; set; }
 
@@ -126,19 +127,22 @@
         if (authenticateResult.Success)
         {
             var credential = authenticateResult.Get<PublicKeyCredential>();
-            var request = new VerifyPasskeyRequest
+            var request = new VerificationRequest()
             {
-                Purpose = Context.Purpose,
                 Action = Context.Action,
-                Credential = credential
+                Purpose = Context.Purpose,
+                Method = VerificationMethod.Passkey,
+                Payload = new PasskeyVerificationPayload()
+                {
+                    Credential = credential,
+                }
             };
-
-            var result = await VerificationService.VerifyPasskeyAsync(request);
-
-            if (result.Succeeded)
+            
+            var result = await VerificationService.VerifyAsync(request);
+            if (result.Succeeded && result.TryGetValue<VerificationResponse>(out var response) && response is not null)
             {
-                await OnAccessConfirmed.InvokeAsync();
                 _showError = false;
+                await OnAccessConfirmed.InvokeAsync(response.VerificationId);
             }
             else Snackbar.Add(result.GetError().Description, Severity.Error);
         }
