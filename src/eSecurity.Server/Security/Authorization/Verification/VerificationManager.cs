@@ -8,6 +8,13 @@ public class VerificationManager(AuthDbContext context) : IVerificationManager
 {
     private readonly AuthDbContext _context = context;
 
+    public async ValueTask<VerificationRequestEntity?> FindByIdAsync(Guid id, 
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.VerificationRequests
+            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+    }
+
     public async ValueTask<Result> CreateAsync(UserEntity user,
         PurposeType purpose, ActionType action, CancellationToken cancellationToken = default)
     {
@@ -53,6 +60,30 @@ public class VerificationManager(AuthDbContext context) : IVerificationManager
         if (entity is null) return Results.NotFound("Verification not found");
         if (entity.ExpireDate < DateTimeOffset.Now) return Results.BadRequest("Verification is expired");
 
+        return Results.Ok();
+    }
+
+    public async ValueTask<Result> ConsumeAsync(VerificationRequestEntity request, 
+        CancellationToken cancellationToken = default)
+    {
+        request.ConsumedAt = DateTimeOffset.UtcNow;
+        request.Status = VerificationStatus.Consumed;
+        
+        _context.VerificationRequests.Update(request);
+        await _context.SaveChangesAsync(cancellationToken);
+        
+        return Results.Ok();
+    }
+
+    public async ValueTask<Result> CancelAsync(VerificationRequestEntity request, 
+        CancellationToken cancellationToken = default)
+    {
+        request.CancelledAt = DateTimeOffset.UtcNow;
+        request.Status = VerificationStatus.Cancelled;
+        
+        _context.VerificationRequests.Update(request);
+        await _context.SaveChangesAsync(cancellationToken);
+        
         return Results.Ok();
     }
 }
