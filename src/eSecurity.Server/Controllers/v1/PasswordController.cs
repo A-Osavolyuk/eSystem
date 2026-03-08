@@ -58,14 +58,25 @@ public class PasswordController(ISender sender) : ControllerBase
         return HttpContext.HandleResult(result);
     }
     
-    [EndpointSummary("Forgot password")]
-    [EndpointDescription("Forgot password")]
+    [EndpointSummary("Forgot password request")]
+    [EndpointDescription("Forgot password request")]
     [ProducesResponseType(200)]
-    [HttpPost("forgot")]
+    [HttpPost("forgot/request")]
     [AllowAnonymous]
-    public async ValueTask<IActionResult> ForgotAsync([FromBody] ForgotPasswordRequest request)
+    public async ValueTask<IActionResult> RequestForgotAsync([FromBody] ForgotPasswordRequest request)
     {
         var result = await _sender.Send(new ForgotPasswordCommand(request));
+        return HttpContext.HandleResult(result);
+    }
+    
+    [EndpointSummary("Forgot password confirmation")]
+    [EndpointDescription("Forgot password confirmation")]
+    [ProducesResponseType(200)]
+    [HttpPost("forgot/confirm")]
+    [AllowAnonymous]
+    public async ValueTask<IActionResult> ConfirmForgotAsync([FromBody] ConfirmForgotPasswordRequest request)
+    {
+        var result = await _sender.Send(new ConfirmForgotPasswordCommand(request));
         return HttpContext.HandleResult(result);
     }
 }

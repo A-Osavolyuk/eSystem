@@ -19,13 +19,26 @@ public class PasswordService(IApiClient apiClient) : IPasswordService
                 Authentication = AuthenticationType.Bearer
             });
 
-    public async ValueTask<ApiResponse> ForgotPasswordAsync(ForgotPasswordRequest request)
+    public async ValueTask<ApiResponse> RequestForgotPasswordAsync(ForgotPasswordRequest request)
         => await _apiClient.SendAsync(
             new ApiRequest
             {
                 Method = HttpMethod.Post,
                 Data = request,
-                Url = "/api/v1/Password/forgot"
+                Url = "/api/v1/Password/forgot/request"
+            }, new ApiOptions
+            {
+                ContentType = ContentTypes.Application.Json,
+                Authentication = AuthenticationType.None
+            });
+
+    public async ValueTask<ApiResponse> ConfirmForgotPasswordAsync(ConfirmForgotPasswordRequest request)
+        => await _apiClient.SendAsync(
+            new ApiRequest
+            {
+                Method = HttpMethod.Post,
+                Data = request,
+                Url = "/api/v1/Password/forgot/confirm"
             }, new ApiOptions
             {
                 ContentType = ContentTypes.Application.Json,
