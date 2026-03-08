@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using eSecurity.Core.Security.Authentication.SignIn.Session;
+﻿using eSecurity.Core.Security.Authentication.SignIn.Session;
 using eSecurity.Core.Security.Authorization.OAuth;
 
 namespace eSecurity.Core.Common.DTOs;

@@ -2,8 +2,9 @@
 
 public class AuthorizeResponse
 {
-    public required Guid UserId { get; set; }
-    public required Guid SessionId { get; set; }
+    [JsonPropertyName("state")]
     public required string State { get; set; }
+    
+    [JsonPropertyName("code")]
     public required string Code { get; set; }
 }

@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-
 namespace eSecurity.Core.Common.Requests;
 
 public sealed class LogoutRequest

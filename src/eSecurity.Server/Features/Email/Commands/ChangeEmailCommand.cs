@@ -58,7 +58,7 @@ public sealed class RequestChangeEmailCommandHandler(
 
         if (_options.RequireUniqueEmail)
         {
-            var isTaken = await _emailManager.IsTakenAsync(request.Request.NewEmail, cancellationToken);
+            var isTaken = await _emailManager.IsTakenAsync(request.Request.Email, cancellationToken);
             if (isTaken)
             {
                 return Results.BadRequest(new Error
@@ -87,7 +87,7 @@ public sealed class RequestChangeEmailCommandHandler(
         if (!newEmailVerificationResult.Succeeded) return newEmailVerificationResult;
 
         var result = await _emailManager.ChangeAsync(user, currentEmail.Email,
-            request.Request.NewEmail, cancellationToken);
+            request.Request.Email, cancellationToken);
 
         return result;
     }

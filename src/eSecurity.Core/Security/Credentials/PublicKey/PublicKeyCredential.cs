@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace eSecurity.Core.Security.Credentials.PublicKey;
+﻿namespace eSecurity.Core.Security.Credentials.PublicKey;
 
 public class PublicKeyCredential
 {

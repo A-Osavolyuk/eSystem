@@ -2,6 +2,9 @@
 
 public sealed class SetUsernameRequest
 {
-    public required Guid Sid { get; set; }
+    [JsonPropertyName("session_id")]
+    public required Guid SessionId { get; set; }
+    
+    [JsonPropertyName("username")]
     public required string Username { get; set; }
 }

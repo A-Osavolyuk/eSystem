@@ -2,5 +2,6 @@
 
 public sealed class SignUpResponse
 {
+    [JsonPropertyName("transaction_id")]
     public Guid TransactionId { get; set; }
 }

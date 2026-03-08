@@ -173,8 +173,6 @@ public class AuthorizeCommandHandler(
 
         var response = new AuthorizeResponse
         {
-            UserId = user.Id,
-            SessionId = session.Id,
             State = request.Request.State,
             Code = code
         };

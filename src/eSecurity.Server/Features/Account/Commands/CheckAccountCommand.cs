@@ -45,9 +45,7 @@ public class CheckAccountCommandHandler(
         {
             response = new CheckAccountResponse
             {
-                Exists = true,
-                UserId = user.Id,
-                IsLockedOut = lockoutState.Enabled,
+                Exists = true
             };
 
             return Results.Ok(response);
@@ -58,9 +56,7 @@ public class CheckAccountCommandHandler(
         {
             response = new CheckAccountResponse
             {
-                Exists = true,
-                UserId = user.Id,
-                HasRecoveryEmail = false,
+                Exists = true
             };
 
             return Results.Ok(response);
@@ -68,10 +64,7 @@ public class CheckAccountCommandHandler(
 
         response = new CheckAccountResponse
         {
-            Exists = true,
-            UserId = user.Id,
-            HasRecoveryEmail = true,
-            RecoveryEmail = email.Email
+            Exists = true
         };
 
         return Results.Ok(response);

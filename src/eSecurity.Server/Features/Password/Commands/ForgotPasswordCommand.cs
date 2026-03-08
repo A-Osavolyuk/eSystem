@@ -57,8 +57,7 @@ public sealed class ForgotPasswordCommandHandler(
         };
         
         await _messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
-
-        var response = new ForgotPasswordResponse { UserId = user.Id };
-        return Results.Ok(response);
+        
+        return Results.Ok();
     }
 }

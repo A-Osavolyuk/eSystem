@@ -245,7 +245,7 @@
 
     private async Task VerifyAsync()
     {
-        var request = new ResetEmailRequest { NewEmail = _resetModel.NewEmail, };
+        var request = new ResetEmailRequest { Email = _resetModel.NewEmail, };
         var result = await EmailService.ResetEmailAsync(request);
 
         if (result.Succeeded)

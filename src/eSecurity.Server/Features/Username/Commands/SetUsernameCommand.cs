@@ -20,7 +20,7 @@ public sealed class SetUsernameCommandHandler(
 
     public async Task<Result> Handle(SetUsernameCommand request, CancellationToken cancellationToken)
     {
-        var session = await _sessionManager.FindByIdAsync(request.Request.Sid, cancellationToken);
+        var session = await _sessionManager.FindByIdAsync(request.Request.SessionId, cancellationToken);
         if (session is null) return Results.NotFound("Session not found");
         
         var user = await _userManager.FindByIdAsync(session.UserId, cancellationToken);

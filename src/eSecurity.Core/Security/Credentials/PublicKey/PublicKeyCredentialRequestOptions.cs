@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using eSecurity.Core.Security.Credentials.PublicKey.Constants;
+﻿using eSecurity.Core.Security.Credentials.PublicKey.Constants;
 
 namespace eSecurity.Core.Security.Credentials.PublicKey;
 

@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace eSecurity.Core.Security.Authorization.Verification;
+﻿namespace eSecurity.Core.Security.Authorization.Verification;
 
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
 [JsonDerivedType(typeof(TotpVerificationPayload), typeDiscriminator: "totp")]

@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using eSecurity.Core.Security.Authorization.Verification;
+﻿using eSecurity.Core.Security.Authorization.Verification;
 
 namespace eSecurity.Core.Common.Requests;
 

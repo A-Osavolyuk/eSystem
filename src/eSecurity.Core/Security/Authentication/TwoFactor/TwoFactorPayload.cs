@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace eSecurity.Core.Security.Authentication.TwoFactor;
+﻿namespace eSecurity.Core.Security.Authentication.TwoFactor;
 
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
 [JsonDerivedType(typeof(AuthenticatorTwoFactorPayload), typeDiscriminator: "authenticator")]

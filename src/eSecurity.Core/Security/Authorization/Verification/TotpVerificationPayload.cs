@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace eSecurity.Core.Security.Authorization.Verification;
+﻿namespace eSecurity.Core.Security.Authorization.Verification;
 
 public sealed class TotpVerificationPayload : VerificationPayload
 {

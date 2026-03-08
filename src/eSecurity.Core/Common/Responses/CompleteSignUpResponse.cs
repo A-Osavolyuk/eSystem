@@ -2,5 +2,6 @@
 
 public sealed class CompleteSignUpResponse
 {
+    [JsonPropertyName("session_id")]
     public Guid SessionId { get; set; }
 }

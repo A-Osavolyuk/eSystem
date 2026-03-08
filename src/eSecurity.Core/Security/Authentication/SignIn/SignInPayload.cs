@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-
 namespace eSecurity.Core.Security.Authentication.SignIn;
 
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]

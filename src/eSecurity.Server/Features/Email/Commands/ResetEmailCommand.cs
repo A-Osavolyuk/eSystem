@@ -29,7 +29,7 @@ public class ResetEmailCommandHandler(
 
     public async Task<Result> Handle(ResetEmailCommand request, CancellationToken cancellationToken)
     {
-        var newEmail = request.Request.NewEmail;
+        var newEmail = request.Request.Email;
 
         var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
         if (subjectClaim is null) return Results.BadRequest("Invalid request");
@@ -49,7 +49,7 @@ public class ResetEmailCommandHandler(
 
         if (_options.RequireUniqueEmail)
         {
-            var isTaken = await _emailManager.IsTakenAsync(request.Request.NewEmail, cancellationToken);
+            var isTaken = await _emailManager.IsTakenAsync(request.Request.Email, cancellationToken);
             if (isTaken)
             {
                 return Results.BadRequest(new Error
