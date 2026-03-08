@@ -10,7 +10,7 @@ using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Security.Authorization.Verification.Passkey;
 
-public sealed class PasskeyVerificationMethod(
+public sealed class PasskeyVerificationStrategy(
     IHttpContextAccessor httpContextAccessor,
     IUserManager userManager,
     IPasskeyManager passkeyManager,

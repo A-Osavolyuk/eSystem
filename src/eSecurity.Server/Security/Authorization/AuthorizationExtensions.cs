@@ -9,6 +9,9 @@ using eSecurity.Server.Security.Authorization.OAuth.Token.DeviceCode;
 using eSecurity.Server.Security.Authorization.OAuth.Token.Validation;
 using eSecurity.Server.Security.Authorization.Roles;
 using eSecurity.Server.Security.Authorization.Verification;
+using eSecurity.Server.Security.Authorization.Verification.AuthenticationApp;
+using eSecurity.Server.Security.Authorization.Verification.Passkey;
+using eSecurity.Server.Security.Authorization.Verification.Totp;
 using eSystem.Core.Security.Authentication.Schemes;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Token.Validation;
@@ -33,6 +36,11 @@ public static class AuthorizationExtensions
 
         builder.Services.AddScoped<ICodeManager, CodeManager>();
         builder.Services.AddScoped<IVerificationManager, VerificationManager>();
+        builder.Services.AddScoped<IVerificationStrategyResolver, VerificationStrategyResolver>();
+        builder.Services.AddScoped<IVerificationStrategy<TotpVerificationContext>, TotpVerificationStrategy>();
+        builder.Services.AddScoped<IVerificationStrategy<PasskeyVerificationContext>, PasskeyVerificationStrategy>();
+        builder.Services.AddScoped<IVerificationStrategy<AuthenticatorAppVerificationContext>, AuthenticationAppVerificationStrategy>();
+        
         builder.Services.AddScoped<ICibaRequestManager, CibaRequestManager>();
         builder.Services.AddScoped<IConsentManager, ConsentManager>();
         builder.Services.AddScoped<ILinkedAccountManager, LinkedAccountManager>();
