@@ -12,7 +12,7 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20260222160525_Initial")]
+    [Migration("20260308133618_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -474,10 +474,6 @@ namespace eSecurity.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Action")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("CodeHash")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -488,10 +484,6 @@ namespace eSecurity.Server.Migrations
 
                     b.Property<DateTimeOffset>("ExpireDate")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Purpose")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<string>("Sender")
                         .IsRequired()
@@ -1478,7 +1470,7 @@ namespace eSecurity.Server.Migrations
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Secret")
+                    b.Property<string>("ProtectedSecret")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
