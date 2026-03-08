@@ -8,6 +8,7 @@ using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Common.Messaging;
 using eSystem.Core.Mediator;
+using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.Verification.Commands;
 
@@ -17,29 +18,31 @@ public class ResendCodeCommandHandler(
     IUserManager userManager,
     ICodeManager codeManager,
     IMessageService messageService,
-    IOptions<CodeOptions> options) : IRequestHandler<ResendCodeCommand, Result>
+    IOptions<CodeOptions> options,
+    IHttpContextAccessor httpContextAccessor) : IRequestHandler<ResendCodeCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly ICodeManager _codeManager = codeManager;
     private readonly IMessageService _messageService = messageService;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly CodeOptions _options = options.Value;
+    
     public async Task<Result> Handle(ResendCodeCommand request, CancellationToken cancellationToken)
     {
-        ResendCodeResponse? response;
-
-        var user = await _userManager.FindBySubjectAsync(request.Request.Subject, cancellationToken);
+        var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
+        if (subjectClaim is null) return Results.BadRequest("Invalid request.");
+        
+        var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
         if (user.CodeResendAttempts >= _options.MaxCodeResendAttempts)
         {
-            response = new ResendCodeResponse
+            return Results.Ok(new ResendCodeResponse
             {
                 CodeResendAttempts = user.CodeResendAttempts,
                 MaxCodeResendAttempts = _options.MaxCodeResendAttempts,
                 CodeResendAvailableDate = user.CodeResendAvailableDate
-            };
-
-            return Results.Ok(response);
+            });
         }
 
         user.CodeResendAttempts += 1;
@@ -54,11 +57,9 @@ public class ResendCodeCommandHandler(
         if (!userUpdateResult.Succeeded) return userUpdateResult;
 
         var sender = request.Request.Sender;
-        var action = request.Request.Action;
-        var purpose = request.Request.Purpose;
         var payload = request.Request.Payload;
 
-        var code = await _codeManager.GenerateAsync(user, sender, action, purpose, cancellationToken);
+        var code = await _codeManager.GenerateAsync(user, sender, cancellationToken);
         payload["Code"] = code; 
         payload["UserName"] = user.Username;
 
@@ -74,7 +75,7 @@ public class ResendCodeCommandHandler(
         message.Initialize(payload);
         await _messageService.SendMessageAsync(sender, message, cancellationToken);
 
-        response = new ResendCodeResponse
+        var response = new ResendCodeResponse
         {
             CodeResendAttempts = user.CodeResendAttempts,
             MaxCodeResendAttempts = _options.MaxCodeResendAttempts,

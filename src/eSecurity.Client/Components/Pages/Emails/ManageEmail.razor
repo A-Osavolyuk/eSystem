@@ -83,9 +83,6 @@
         {
             var request = new SendCodeRequest()
             {
-                Subject = UserState.Subject!,
-                Purpose = PurposeType.Email,
-                Action = ActionType.Manage,
                 Sender = SenderType.Email,
                 Payload = new()
                 {
@@ -104,9 +101,6 @@
     {
         var request = new ResendCodeRequest()
         {
-            Subject = UserState.Subject!,
-            Purpose = PurposeType.Email,
-            Action = ActionType.Manage,
             Sender = SenderType.Email,
             Payload = new()
             {
@@ -124,12 +118,7 @@
 
     private async Task OnVerifyAsync()
     {
-        var request = new VerifyCodeRequest
-        {
-            Subject = UserState.Subject!,
-            Code = _model.Code
-        };
-        
+        var request = new VerifyCodeRequest { Code = _model.Code };
         var result = await VerificationService.VerifyCodeAsync(request);
 
         if (result.Succeeded) await ManageAsync();

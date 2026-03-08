@@ -104,10 +104,7 @@
     {
         var request = new SendCodeRequest
         {
-            Subject = UserState.Subject!,
             Sender = SenderType.Email,
-            Purpose = Context.Purpose,
-            Action = Context.Action,
             Payload = new()
             {
                 { "To", UserState.Credentials?.Email! }
@@ -126,12 +123,7 @@
 
         if (_form.IsValid)
         {
-            var request = new VerifyCodeRequest
-            {
-                Subject = UserState.Subject!,
-                Code = CodeModel.Code
-            };
-
+            var request = new VerifyCodeRequest { Code = CodeModel.Code };
             var result = await VerificationService.VerifyCodeAsync(request);
 
             if (result.Succeeded) await OnAccessConfirmed.InvokeAsync();

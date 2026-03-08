@@ -6,6 +6,7 @@ using eSecurity.Server.Security.Authorization.Codes;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Common.Messaging;
 using eSystem.Core.Mediator;
+using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.Verification.Commands;
 
@@ -14,23 +15,26 @@ public record SendCodeCommand(SendCodeRequest Request) : IRequest<Result>;
 public class SendCodeCommandHandler(
     IUserManager userManager,
     ICodeManager codeManager,
-    IMessageService messageService) : IRequestHandler<SendCodeCommand, Result>
+    IMessageService messageService,
+    IHttpContextAccessor httpContextAccessor) : IRequestHandler<SendCodeCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly ICodeManager _codeManager = codeManager;
     private readonly IMessageService _messageService = messageService;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(SendCodeCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindBySubjectAsync(request.Request.Subject, cancellationToken);
+        var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
+        if (subjectClaim is null) return Results.BadRequest("Invalid request.");
+        
+        var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
         if (user is null) return Results.NotFound("User not found.");
 
         var sender = request.Request.Sender;
-        var action = request.Request.Action;
-        var purpose = request.Request.Purpose;
         var payload = request.Request.Payload;
 
-        var code = await _codeManager.GenerateAsync(user, sender, action, purpose, cancellationToken);
+        var code = await _codeManager.GenerateAsync(user, sender, cancellationToken);
 
         payload["Code"] = code;
         payload["UserName"] = user.Username;

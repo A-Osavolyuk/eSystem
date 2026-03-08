@@ -26,8 +26,8 @@ public sealed class CodeManager(
         return codes.FirstOrDefault(c => _hasher.VerifyHash(code, c.CodeHash));
     }
 
-    public async ValueTask<string> GenerateAsync(UserEntity user, SenderType sender, 
-        ActionType action, PurposeType purpose, CancellationToken cancellationToken = default)
+    public async ValueTask<string> GenerateAsync(UserEntity user, 
+        SenderType sender, CancellationToken cancellationToken = default)
     {
         var code = _codeFactory.Create();
         var codeHash = _hasher.Hash(code);
@@ -37,9 +37,7 @@ public sealed class CodeManager(
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
             CodeHash = codeHash,
-            Action = action,
             Sender = sender,
-            Purpose = purpose,
             ExpireDate = DateTime.UtcNow.AddMinutes(10)
         }, cancellationToken);
 

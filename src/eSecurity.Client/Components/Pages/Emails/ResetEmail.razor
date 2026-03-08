@@ -172,10 +172,7 @@
     {
         var request = new ResendCodeRequest()
         {
-            Subject = UserState.Subject!,
             Sender = SenderType.Email,
-            Purpose = PurposeType.Email,
-            Action = ActionType.Verify,
             Payload = new()
             {
                 { "To", _resetModel.NewEmail }
@@ -208,10 +205,7 @@
     {
         var request = new SendCodeRequest()
         {
-            Subject = UserState.Subject!,
             Sender = SenderType.Email,
-            Purpose = PurposeType.Email,
-            Action = ActionType.Verify,
             Payload = new()
             {
                 { "To", _resetModel.NewEmail }
@@ -230,12 +224,7 @@
 
         if (_confirmForm.IsValid)
         {
-            var request = new VerifyCodeRequest()
-            {
-                Subject = UserState.Subject!,
-                Code = _confirmModel.Code
-            };
-            
+            var request = new VerifyCodeRequest() { Code = _confirmModel.Code };
             var result = await VerificationService.VerifyCodeAsync(request);
 
             if (result.Succeeded) await VerifyAsync();

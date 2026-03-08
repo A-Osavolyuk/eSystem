@@ -124,8 +124,7 @@ public sealed class ManualSignUpStrategy(
         var deviceResult = await _deviceManager.CreateAsync(newDevice, cancellationToken);
         if (!deviceResult.Succeeded) return deviceResult;
 
-        var code = await _codeManager.GenerateAsync(user, SenderType.Email,
-            ActionType.Verify, PurposeType.Email, cancellationToken);
+        var code = await _codeManager.GenerateAsync(user, SenderType.Email, cancellationToken);
         
         var message = new CodeEmailMessage()
         {

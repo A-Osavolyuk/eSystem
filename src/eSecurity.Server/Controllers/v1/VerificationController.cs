@@ -10,6 +10,7 @@ namespace eSecurity.Server.Controllers.v1;
 [ApiVersion("1.0")]
 [Produces(ContentTypes.Application.Json)]
 [Route("v{version:apiVersion}/[controller]")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class VerificationController(ISender sender) : ControllerBase
 {
     private readonly ISender _sender = sender;
@@ -18,7 +19,6 @@ public class VerificationController(ISender sender) : ControllerBase
     [EndpointDescription("Send code")]
     [ProducesResponseType(200)]
     [HttpPost("code/send")]
-    [AllowAnonymous]
     public async ValueTask<IActionResult> SendCodeAsync([FromBody] SendCodeRequest request)
     {
         var result = await _sender.Send(new SendCodeCommand(request));
@@ -29,7 +29,6 @@ public class VerificationController(ISender sender) : ControllerBase
     [EndpointDescription("Resend code")]
     [ProducesResponseType(200)]
     [HttpPost("code/resend")]
-    [AllowAnonymous]
     public async ValueTask<IActionResult> ResendCodeAsync([FromBody] ResendCodeRequest request)
     {
         var result = await _sender.Send(new ResendCodeCommand(request));
@@ -40,7 +39,6 @@ public class VerificationController(ISender sender) : ControllerBase
     [EndpointDescription("verify code")]
     [ProducesResponseType(200)]
     [HttpPost("code/verify")]
-    [AllowAnonymous]
     public async ValueTask<IActionResult> VerifyCodeAsync([FromBody] VerifyCodeRequest request)
     {
         var result = await _sender.Send(new VerifyCodeCommand(request));
@@ -51,7 +49,6 @@ public class VerificationController(ISender sender) : ControllerBase
     [EndpointDescription("verify authenticator code")]
     [ProducesResponseType(200)]
     [HttpPost("authenticator/verify")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> VerifyAuthenticatorCodeAsync([FromBody] VerifyAuthenticatorCodeRequest request)
     {
         var result = await _sender.Send(new VerifyAuthenticatorCodeCommand(request));
@@ -62,7 +59,6 @@ public class VerificationController(ISender sender) : ControllerBase
     [EndpointDescription("verify passkey")]
     [ProducesResponseType(200)]
     [HttpPost("passkey/verify")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> VerifyPasskeyAsync([FromBody] VerifyPasskeyRequest request)
     {
         var result = await _sender.Send(new VerifyPasskeyCommand(request));
@@ -73,7 +69,6 @@ public class VerificationController(ISender sender) : ControllerBase
     [EndpointDescription("Verification request")]
     [ProducesResponseType(200)]
     [HttpPost("request-verification")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> VerificationRequestAsync([FromBody] VerificationRequest request)
     {
         var result = await _sender.Send(new VerificationCommand(request));
