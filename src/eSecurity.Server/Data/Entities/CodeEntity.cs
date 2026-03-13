@@ -1,12 +1,11 @@
-﻿using eSecurity.Core.Security.Authorization.Verification;
-using eSystem.Core.Common.Messaging;
+﻿using eSystem.Core.Common.Messaging;
 using eSystem.Core.Data.Entities;
 
 namespace eSecurity.Server.Data.Entities;
 
-public class CodeEntity : Entity, IExpirable
+public class CodeEntity : Entity
 {
-    public Guid Id { get; init; } = Guid.CreateVersion7();
+    public Guid Id { get; init; }
     
     public SenderType Sender { get; init; }
     public required string CodeHash { get; init; }
