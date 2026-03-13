@@ -12,7 +12,7 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20260308133618_Initial")]
+    [Migration("20260313213719_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -108,7 +108,7 @@ namespace eSecurity.Server.Migrations
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTimeOffset>("ExpireDate")
+                    b.Property<DateTimeOffset>("ExpiredAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Nonce")
@@ -178,7 +178,7 @@ namespace eSecurity.Server.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
-                    b.Property<DateTimeOffset>("ExpiresAt")
+                    b.Property<DateTimeOffset>("ExpiredAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("Interval")
@@ -474,18 +474,28 @@ namespace eSecurity.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTimeOffset?>("CancelledAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("CodeHash")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
+                    b.Property<DateTimeOffset?>("ConsumedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTimeOffset>("ExpireDate")
+                    b.Property<DateTimeOffset>("ExpiredAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Sender")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("State")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -1086,7 +1096,7 @@ namespace eSecurity.Server.Migrations
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTimeOffset>("ExpireDate")
+                    b.Property<DateTimeOffset>("ExpiredAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsActive")
@@ -1100,7 +1110,7 @@ namespace eSecurity.Server.Migrations
                         .IsRequired()
                         .HasColumnType("bytea");
 
-                    b.Property<DateTimeOffset?>("RotateDate")
+                    b.Property<DateTimeOffset?>("RotatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTimeOffset?>("UpdateDate")
@@ -1160,7 +1170,7 @@ namespace eSecurity.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTimeOffset?>("BlockedDate")
+                    b.Property<DateTimeOffset?>("BlockedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Browser")
@@ -1176,7 +1186,7 @@ namespace eSecurity.Server.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
 
-                    b.Property<DateTimeOffset>("FirstSeen")
+                    b.Property<DateTimeOffset>("FirstSeenAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("IpAddress")
@@ -1187,7 +1197,7 @@ namespace eSecurity.Server.Migrations
                     b.Property<bool>("IsBlocked")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTimeOffset?>("LastSeen")
+                    b.Property<DateTimeOffset?>("LastSeenAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Location")
@@ -1249,7 +1259,7 @@ namespace eSecurity.Server.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTimeOffset?>("VerifiedDate")
+                    b.Property<DateTimeOffset?>("VerifiedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
@@ -1350,13 +1360,13 @@ namespace eSecurity.Server.Migrations
                         .HasMaxLength(3000)
                         .HasColumnType("character varying(3000)");
 
-                    b.Property<DateTimeOffset?>("EndDate")
+                    b.Property<DateTimeOffset?>("EndedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("Permanent")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTimeOffset?>("StartDate")
+                    b.Property<DateTimeOffset?>("StartedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("Type")
@@ -1403,7 +1413,7 @@ namespace eSecurity.Server.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTimeOffset?>("VerifiedDate")
+                    b.Property<DateTimeOffset?>("VerifiedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
@@ -1531,7 +1541,7 @@ namespace eSecurity.Server.Migrations
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTimeOffset>("ExpireDate")
+                    b.Property<DateTimeOffset>("ExpiredAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Purpose")

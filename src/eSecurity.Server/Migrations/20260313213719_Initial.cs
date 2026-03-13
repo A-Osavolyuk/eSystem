@@ -23,8 +23,8 @@ namespace eSecurity.Server.Migrations
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     ProtectedCertificate = table.Column<byte[]>(type: "bytea", nullable: false),
                     ProtectedPassword = table.Column<byte[]>(type: "bytea", nullable: false),
-                    ExpireDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    RotateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    ExpiredAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    RotatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
@@ -195,9 +195,9 @@ namespace eSecurity.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
                     Type = table.Column<string>(type: "text", nullable: false),
                     Uri = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: false),
+                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
@@ -336,8 +336,6 @@ namespace eSecurity.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     Protocol = table.Column<string>(type: "text", nullable: false),
                     Code = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     Nonce = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
@@ -345,7 +343,9 @@ namespace eSecurity.Server.Migrations
                     CodeChallenge = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     CodeChallengeMethod = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: true),
                     Used = table.Column<bool>(type: "boolean", nullable: false),
-                    ExpireDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    ExpiredAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
@@ -376,7 +376,10 @@ namespace eSecurity.Server.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Sender = table.Column<string>(type: "text", nullable: false),
                     CodeHash = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    ExpireDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    State = table.Column<string>(type: "text", nullable: false),
+                    ExpiredAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    ConsumedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    CancelledAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
@@ -429,12 +432,12 @@ namespace eSecurity.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),
                     Description = table.Column<string>(type: "character varying(3000)", maxLength: 3000, nullable: true),
                     Permanent = table.Column<bool>(type: "boolean", nullable: false),
-                    StartDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    EndDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    StartedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    EndedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
@@ -456,10 +459,10 @@ namespace eSecurity.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
                     SectorIdentifier = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Subject = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
@@ -488,8 +491,8 @@ namespace eSecurity.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     Hash = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
@@ -511,7 +514,6 @@ namespace eSecurity.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     FirstName = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
                     LastName = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
                     MiddleName = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
@@ -522,6 +524,7 @@ namespace eSecurity.Server.Migrations
                     Region = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     PostalCode = table.Column<string>(type: "character varying(5)", maxLength: 5, nullable: true),
                     Country = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
@@ -566,9 +569,9 @@ namespace eSecurity.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     ExpireDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     AuthenticationMethods = table.Column<string[]>(type: "text[]", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
@@ -619,7 +622,6 @@ namespace eSecurity.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     IsBlocked = table.Column<bool>(type: "boolean", nullable: false),
                     UserAgent = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
                     IpAddress = table.Column<string>(type: "character varying(15)", maxLength: 15, nullable: false),
@@ -627,9 +629,10 @@ namespace eSecurity.Server.Migrations
                     Device = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
                     Os = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
                     Location = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
-                    FirstSeen = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    LastSeen = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    BlockedDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    FirstSeenAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    LastSeenAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    BlockedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
@@ -651,12 +654,12 @@ namespace eSecurity.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     Email = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
                     NormalizedEmail = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
                     Type = table.Column<string>(type: "text", nullable: false),
                     IsVerified = table.Column<bool>(type: "boolean", nullable: false),
-                    VerifiedDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    VerifiedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
@@ -678,8 +681,8 @@ namespace eSecurity.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     Type = table.Column<string>(type: "text", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
@@ -701,11 +704,11 @@ namespace eSecurity.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     PhoneNumber = table.Column<string>(type: "character varying(18)", maxLength: 18, nullable: false),
                     Type = table.Column<string>(type: "text", nullable: false),
                     IsVerified = table.Column<bool>(type: "boolean", nullable: false),
-                    VerifiedDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    VerifiedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
@@ -727,8 +730,8 @@ namespace eSecurity.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     ProtectedCode = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
@@ -802,9 +805,9 @@ namespace eSecurity.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     Preferred = table.Column<bool>(type: "boolean", nullable: false),
                     Method = table.Column<string>(type: "text", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
@@ -856,10 +859,10 @@ namespace eSecurity.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     Purpose = table.Column<string>(type: "text", nullable: false),
                     Action = table.Column<string>(type: "text", nullable: false),
-                    ExpireDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    ExpiredAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
@@ -954,7 +957,7 @@ namespace eSecurity.Server.Migrations
                     Scope = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Interval = table.Column<int>(type: "integer", nullable: false),
                     State = table.Column<string>(type: "text", nullable: false),
-                    ExpiresAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    ExpiredAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     ConsumedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UserCode = table.Column<string>(type: "character varying(12)", maxLength: 12, nullable: true),
@@ -1125,7 +1128,6 @@ namespace eSecurity.Server.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     AuthenticatorId = table.Column<Guid>(type: "uuid", nullable: false),
-                    DeviceId = table.Column<Guid>(type: "uuid", nullable: false),
                     CredentialId = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
                     DisplayName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     PublicKey = table.Column<byte[]>(type: "bytea", nullable: false),
@@ -1133,6 +1135,7 @@ namespace eSecurity.Server.Migrations
                     SignCount = table.Column<long>(type: "bigint", nullable: false),
                     Type = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
                     LastSeenDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    DeviceId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
