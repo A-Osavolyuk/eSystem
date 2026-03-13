@@ -33,7 +33,7 @@ public class GetUserEmailsQueryHandler(
             NormalizedEmail = email.NormalizedEmail,
             Type = email.Type,
             IsVerified = email.IsVerified,
-            VerifiedDate = email.VerifiedDate,
+            VerifiedDate = email.VerifiedAt,
             UpdateDate = email.UpdateDate
         });
 

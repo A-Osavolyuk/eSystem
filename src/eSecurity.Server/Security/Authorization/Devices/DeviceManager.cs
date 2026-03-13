@@ -44,7 +44,7 @@ public class DeviceManager(AuthDbContext context) : IDeviceManager
     public async ValueTask<Result> BlockAsync(UserDeviceEntity device, CancellationToken cancellationToken = default)
     {
         device.IsBlocked = true;
-        device.BlockedDate = DateTimeOffset.UtcNow;
+        device.BlockedAt = DateTimeOffset.UtcNow;
 
         _context.UserDevices.Update(device);
         await _context.SaveChangesAsync(cancellationToken);
@@ -55,7 +55,7 @@ public class DeviceManager(AuthDbContext context) : IDeviceManager
     public async ValueTask<Result> UnblockAsync(UserDeviceEntity device, CancellationToken cancellationToken = default)
     {
         device.IsBlocked = false;
-        device.BlockedDate = null;
+        device.BlockedAt = null;
 
         _context.UserDevices.Update(device);
         await _context.SaveChangesAsync(cancellationToken);

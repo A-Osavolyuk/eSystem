@@ -24,7 +24,7 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
         state.Permanent = true;
         state.Type = type;
         state.Description = description;
-        state.StartDate = DateTimeOffset.UtcNow;
+        state.StartedAt = DateTimeOffset.UtcNow;
 
         _context.LockoutStates.Update(state);
         await _context.SaveChangesAsync(cancellationToken);
@@ -51,8 +51,8 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
         state.Permanent = false;
         state.Type = type;
         state.Description = description;
-        state.EndDate = DateTimeOffset.UtcNow.Add(duration);
-        state.StartDate = DateTimeOffset.UtcNow;
+        state.EndedAt = DateTimeOffset.UtcNow.Add(duration);
+        state.StartedAt = DateTimeOffset.UtcNow;
 
         _context.LockoutStates.Update(state);
         await _context.SaveChangesAsync(cancellationToken);
@@ -69,8 +69,8 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
         state.Permanent = false;
         state.Type = type;
         state.Description = description;
-        state.EndDate = DateTimeOffset.UtcNow.Add(duration);
-        state.StartDate = DateTimeOffset.UtcNow;
+        state.EndedAt = DateTimeOffset.UtcNow.Add(duration);
+        state.StartedAt = DateTimeOffset.UtcNow;
 
         _context.LockoutStates.Update(state);
         await _context.SaveChangesAsync(cancellationToken);
@@ -85,8 +85,8 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
 
         state.Permanent = false;
         state.Type = LockoutType.None;
-        state.StartDate = DateTimeOffset.UtcNow;
-        state.EndDate = DateTimeOffset.UtcNow;
+        state.StartedAt = DateTimeOffset.UtcNow;
+        state.EndedAt = DateTimeOffset.UtcNow;
         state.Description = null;
 
         _context.LockoutStates.Update(state);

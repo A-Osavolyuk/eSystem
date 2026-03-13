@@ -5,7 +5,6 @@ namespace eSecurity.Server.Data.Entities;
 public class UserDeviceEntity : Entity
 {
     public Guid Id { get; set; }
-    public Guid UserId { get; set; }
     
     public bool IsBlocked { get; set; }
     
@@ -16,9 +15,10 @@ public class UserDeviceEntity : Entity
     public required string Os { get; set; }
     public string? Location { get; set; }
 
-    public DateTimeOffset FirstSeen { get; set; }
-    public DateTimeOffset? LastSeen { get; set; }
-    public DateTimeOffset? BlockedDate { get; set; }
+    public DateTimeOffset FirstSeenAt { get; set; }
+    public DateTimeOffset? LastSeenAt { get; set; }
+    public DateTimeOffset? BlockedAt { get; set; }
 
+    public Guid UserId { get; set; }
     public UserEntity User { get; set; } = null!;
 }

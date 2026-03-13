@@ -6,10 +6,10 @@ namespace eSecurity.Server.Data.Entities;
 public class ClientUriEntity : Entity
 {
     public Guid Id { get; set; }
-    public Guid ClientId { get; set; }
 
     public required UriType Type { get; set; }
     public required string Uri { get; set; }
 
+    public Guid ClientId { get; set; }
     public ClientEntity Client { get; set; } = null!;
 }

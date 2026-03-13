@@ -29,7 +29,7 @@ public class AuthorizationCodeStrategy(
         var authorizationCode = await _authorizationCodeManager.FindByCodeAsync(code, cancellationToken);
 
         if (authorizationCode is null || authorizationCode.Used ||
-            authorizationCode.ExpireDate < DateTimeOffset.UtcNow ||
+            authorizationCode.ExpiredAt < DateTimeOffset.UtcNow ||
             !authorizationCode.RedirectUri.Equals(redirectUri))
         {
             return Results.BadRequest(new Error

@@ -118,7 +118,7 @@ public sealed class ManualSignUpStrategy(
             Os = clientInfo.OS.ToString(),
             Device = clientInfo.Device.ToString(),
             IsBlocked = false,
-            FirstSeen = DateTimeOffset.UtcNow
+            FirstSeenAt = DateTimeOffset.UtcNow
         };
 
         var deviceResult = await _deviceManager.CreateAsync(newDevice, cancellationToken);

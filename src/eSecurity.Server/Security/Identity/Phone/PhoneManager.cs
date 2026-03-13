@@ -51,7 +51,7 @@ public class PhoneManager(AuthDbContext context) : IPhoneManager
             PhoneNumber = phoneNumber,
             Type = type,
             IsVerified = true,
-            VerifiedDate = DateTimeOffset.UtcNow
+            VerifiedAt = DateTimeOffset.UtcNow
         };
 
         await _context.UserPhoneNumbers.AddAsync(userPhoneNumber, cancellationToken);
@@ -69,7 +69,7 @@ public class PhoneManager(AuthDbContext context) : IPhoneManager
         if (userPhoneNumber == null) return Results.NotFound("Phone number not found");
 
         userPhoneNumber.IsVerified = true;
-        userPhoneNumber.VerifiedDate = DateTimeOffset.UtcNow;
+        userPhoneNumber.VerifiedAt = DateTimeOffset.UtcNow;
 
         _context.UserPhoneNumbers.Update(userPhoneNumber);
         await _context.SaveChangesAsync(cancellationToken);
@@ -87,7 +87,7 @@ public class PhoneManager(AuthDbContext context) : IPhoneManager
 
         userPhoneNumber.PhoneNumber = newPhoneNumber;
         userPhoneNumber.IsVerified = true;
-        userPhoneNumber.VerifiedDate = DateTimeOffset.UtcNow;
+        userPhoneNumber.VerifiedAt = DateTimeOffset.UtcNow;
 
         _context.UserPhoneNumbers.Update(userPhoneNumber);
         await _context.SaveChangesAsync(cancellationToken);
@@ -120,7 +120,7 @@ public class PhoneManager(AuthDbContext context) : IPhoneManager
 
         userPhoneNumber.PhoneNumber = newPhoneNumber;
         userPhoneNumber.IsVerified = true;
-        userPhoneNumber.VerifiedDate = DateTimeOffset.UtcNow;
+        userPhoneNumber.VerifiedAt = DateTimeOffset.UtcNow;
 
         _context.UserPhoneNumbers.Update(userPhoneNumber);
         await _context.SaveChangesAsync(cancellationToken);

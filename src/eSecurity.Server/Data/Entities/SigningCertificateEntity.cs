@@ -10,6 +10,6 @@ public class SigningCertificateEntity : Entity
     public byte[] ProtectedCertificate { get; set; } = null!;
     public byte[] ProtectedPassword { get; set; } = null!;
 
-    public DateTimeOffset ExpireDate { get; set; }
-    public DateTimeOffset? RotateDate { get; set; }
+    public DateTimeOffset ExpiredAt { get; set; }
+    public DateTimeOffset? RotatedAt { get; set; }
 }

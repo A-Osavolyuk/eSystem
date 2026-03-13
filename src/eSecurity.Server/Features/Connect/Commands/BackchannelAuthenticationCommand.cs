@@ -218,7 +218,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
             AcrValues = request.Request.AcrValues,
             BindingMessage = request.Request.BindingMessage,
             CreatedAt = DateTimeOffset.UtcNow,
-            ExpiresAt = DateTimeOffset.UtcNow.Add(requestedExpiry),
+            ExpiredAt = DateTimeOffset.UtcNow.Add(requestedExpiry),
         };
 
         var result = await _cibaRequestManager.CreateAsync(cibaRequest, cancellationToken);

@@ -6,7 +6,6 @@ namespace eSecurity.Server.Data.Entities;
 public class PersonalDataEntity : Entity
 {
     public required Guid Id { get; init; }
-    public required Guid UserId { get; set; }
     public required string FirstName { get; set; }
     public required string LastName { get; set; }
     public string? MiddleName { get; set; }
@@ -14,6 +13,7 @@ public class PersonalDataEntity : Entity
     public required DateTime BirthDate { get; set; }
     public Address? Address { get; set; }
     
+    public required Guid UserId { get; set; }
     public UserEntity User { get; set; } = null!;
 
     public string Fullname => string.IsNullOrEmpty(MiddleName)

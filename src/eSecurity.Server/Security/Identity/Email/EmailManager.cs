@@ -48,7 +48,7 @@ public class EmailManager(AuthDbContext context) : IEmailManager
             NormalizedEmail = email.ToUpperInvariant(),
             Type = type,
             IsVerified = true,
-            VerifiedDate = DateTimeOffset.UtcNow
+            VerifiedAt = DateTimeOffset.UtcNow
         };
 
         await _context.UserEmails.AddAsync(userEmail, cancellationToken);
@@ -68,7 +68,7 @@ public class EmailManager(AuthDbContext context) : IEmailManager
         userEmail.Email = newEmail;
         userEmail.NormalizedEmail = newEmail.ToUpperInvariant();
         userEmail.IsVerified = true;
-        userEmail.VerifiedDate = DateTimeOffset.UtcNow;
+        userEmail.VerifiedAt = DateTimeOffset.UtcNow;
 
         _context.UserEmails.Update(userEmail);
         await _context.SaveChangesAsync(cancellationToken);
@@ -110,7 +110,7 @@ public class EmailManager(AuthDbContext context) : IEmailManager
         if (userEmail == null) return Results.NotFound($"User doesn't have email {email}");
 
         userEmail.IsVerified = true;
-        userEmail.VerifiedDate = DateTimeOffset.UtcNow;
+        userEmail.VerifiedAt = DateTimeOffset.UtcNow;
 
         _context.UserEmails.Update(userEmail);
         await _context.SaveChangesAsync(cancellationToken);
@@ -129,7 +129,7 @@ public class EmailManager(AuthDbContext context) : IEmailManager
         userEmail.Email = newEmail;
         userEmail.NormalizedEmail = newEmail.ToUpperInvariant();
         userEmail.IsVerified = true;
-        userEmail.VerifiedDate = DateTimeOffset.UtcNow;
+        userEmail.VerifiedAt = DateTimeOffset.UtcNow;
 
         _context.UserEmails.Update(userEmail);
         await _context.SaveChangesAsync(cancellationToken);

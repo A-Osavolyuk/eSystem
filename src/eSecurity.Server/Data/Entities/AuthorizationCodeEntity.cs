@@ -6,9 +6,7 @@ namespace eSecurity.Server.Data.Entities;
 public class AuthorizationCodeEntity : Entity
 {
     public Guid Id { get; set; }
-    public Guid ClientId { get; set; }
-    public Guid UserId { get; set; }
-
+    
     public required AuthorizationProtocol Protocol { get; set; }
     
     public required string Code { get; set; }
@@ -19,8 +17,11 @@ public class AuthorizationCodeEntity : Entity
     public string? CodeChallengeMethod { get; set; }
     
     public bool Used { get; set; }
-    public DateTimeOffset ExpireDate { get; set; }
+    public DateTimeOffset ExpiredAt { get; set; }
 
+    public Guid ClientId { get; set; }
     public ClientEntity Client { get; set; } = null!;
+    
+    public Guid UserId { get; set; }
     public UserEntity User { get; set; } = null!;
 }

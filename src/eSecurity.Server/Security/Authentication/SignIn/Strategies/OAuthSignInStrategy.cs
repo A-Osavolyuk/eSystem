@@ -79,7 +79,7 @@ public sealed class OAuthSignInStrategy(
                 Os = clientInfo.OS.ToString(),
                 Device = clientInfo.Device.ToString(),
                 IsBlocked = false,
-                FirstSeen = DateTimeOffset.UtcNow
+                FirstSeenAt = DateTimeOffset.UtcNow
             };
 
             var result = await _deviceManager.CreateAsync(device, cancellationToken);

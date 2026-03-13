@@ -6,7 +6,6 @@ public class PasskeyEntity : Entity
 {
     public Guid Id { get; set; }
     public Guid AuthenticatorId { get; set; }
-    public Guid DeviceId { get; set; }
     
     public string CredentialId { get; set; } = string.Empty;
     public string DisplayName { get; set; } = string.Empty;
@@ -17,5 +16,6 @@ public class PasskeyEntity : Entity
     
     public DateTimeOffset? LastSeenDate { get; set; }
     
+    public Guid DeviceId { get; set; }
     public UserDeviceEntity Device { get; set; } = null!;
 }
