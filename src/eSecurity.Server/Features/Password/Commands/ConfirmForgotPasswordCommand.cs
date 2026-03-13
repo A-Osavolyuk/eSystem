@@ -26,10 +26,10 @@ public sealed class ConfirmForgotPasswordCommandHandler(
         if (user is null) return Results.NotFound("User not found.");
 
         var code = await _codeManager.FindAsync(user, request.Request.Code, cancellationToken);
-        if (code is null || code.ExpireDate < DateTimeOffset.UtcNow) 
+        if (code is null || code.ExpiredAt < DateTimeOffset.UtcNow) 
             return Results.NotFound("Invalid code.");
 
-        var codeResult = await _codeManager.RemoveAsync(code, cancellationToken);
+        var codeResult = await _codeManager.ConsumeAsync(code, cancellationToken);
         if (codeResult.Succeeded) return codeResult;
 
         var requestEntity = new VerificationRequestEntity()

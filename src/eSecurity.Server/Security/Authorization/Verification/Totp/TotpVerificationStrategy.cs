@@ -30,9 +30,8 @@ public sealed class TotpVerificationStrategy(
 
         var code = await _codeManager.FindAsync(user, context.Code, cancellationToken);
         if (code is null) return Results.BadRequest("Invalid code");
-
-        //TODO: Implement code verification flow, without of removing
-        var codeResult = await _codeManager.RemoveAsync(code, cancellationToken);
+        
+        var codeResult = await _codeManager.ConsumeAsync(code, cancellationToken);
         if (!codeResult.Succeeded) return codeResult;
 
         var method = code.Sender switch

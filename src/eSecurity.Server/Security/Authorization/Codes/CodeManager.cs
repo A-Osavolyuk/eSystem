@@ -1,5 +1,4 @@
-﻿using eSecurity.Core.Security.Authorization.Verification;
-using eSecurity.Server.Data;
+﻿using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Cryptography.Codes;
 using eSecurity.Server.Security.Cryptography.Hashing;
@@ -26,7 +25,7 @@ public sealed class CodeManager(
         return codes.FirstOrDefault(c => _hasher.VerifyHash(code, c.CodeHash));
     }
 
-    public async ValueTask<string> GenerateAsync(UserEntity user, 
+    public async ValueTask<string> CreateAsync(UserEntity user, 
         SenderType sender, CancellationToken cancellationToken = default)
     {
         var code = _codeFactory.Create();
@@ -38,15 +37,30 @@ public sealed class CodeManager(
             UserId = user.Id,
             CodeHash = codeHash,
             Sender = sender,
-            ExpireDate = DateTime.UtcNow.AddMinutes(10)
+            State = CodeState.Pending,
+            ExpiredAt = DateTime.UtcNow.AddMinutes(10)
         }, cancellationToken);
 
         await _context.SaveChangesAsync(cancellationToken);
         return code;
     }
 
-    public async ValueTask<Result> RemoveAsync(CodeEntity code, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> ConsumeAsync(CodeEntity code, CancellationToken cancellationToken = default)
     {
+        code.ConsumedAt = DateTimeOffset.UtcNow;
+        code.State = CodeState.Consumed;
+        
+        _context.Codes.Remove(code);
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return Results.Ok();
+    }
+
+    public async ValueTask<Result> CancelAsync(CodeEntity code, CancellationToken cancellationToken = default)
+    {
+        code.CancelledAt = DateTimeOffset.UtcNow;
+        code.State = CodeState.Cancelled;
+        
         _context.Codes.Remove(code);
         await _context.SaveChangesAsync(cancellationToken);
 

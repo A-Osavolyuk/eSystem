@@ -40,7 +40,7 @@ public sealed class ForgotPasswordCommandHandler(
             });
         }
 
-        var code = await _codeManager.GenerateAsync(user, SenderType.Email, cancellationToken);
+        var code = await _codeManager.CreateAsync(user, SenderType.Email, cancellationToken);
         var message = new CodeEmailMessage()
         {
             Credentials = new Dictionary<string, string>

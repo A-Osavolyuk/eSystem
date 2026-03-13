@@ -59,7 +59,7 @@ public class ResendCodeCommandHandler(
         var sender = request.Request.Sender;
         var payload = request.Request.Payload;
 
-        var code = await _codeManager.GenerateAsync(user, sender, cancellationToken);
+        var code = await _codeManager.CreateAsync(user, sender, cancellationToken);
         payload["Code"] = code; 
         payload["UserName"] = user.Username;
 

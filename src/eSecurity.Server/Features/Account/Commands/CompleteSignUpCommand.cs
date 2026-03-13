@@ -50,7 +50,7 @@ public sealed class CompleteSignUpCommandHandler(
         var code = await _codeManager.FindAsync(user, request.Request.Code, cancellationToken);
         if (code is null) return Results.NotFound("Code not found");
 
-        var codeResult = await _codeManager.RemoveAsync(code, cancellationToken);
+        var codeResult = await _codeManager.ConsumeAsync(code, cancellationToken);
         if (!codeResult.Succeeded) return codeResult;
 
         var primaryEmail = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
