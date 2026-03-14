@@ -1,112 +1,69 @@
-﻿namespace eSecurity.Core.Security.Authorization.Verification;
+﻿using eSystem.Core.Enums;
 
-/// <summary>
-/// Defines the various states or actions related to the verification process.
-/// </summary>
+namespace eSecurity.Core.Security.Authorization.Verification;
+
 public enum ActionType
 {
-    /// <summary>
-    /// Generic verification of a resource or process, e.g. email or phone confirmation.
-    /// </summary>
+    [EnumValue("verify")]
     Verify,
-
-    /// <summary>
-    /// Verification for resetting a resource, such as a password or other account-related data.
-    /// </summary>
+    
+    [EnumValue("reset")]
     Reset,
-
-    /// <summary>
-    /// Recovery code used to regain access to an account (e.g., after losing credentials).
-    /// </summary>
+    
+    [EnumValue("unlock")]
     Unlock,
 
-    /// <summary>
-    /// Trusting a user device, marking it as recognized for future sign-ins.
-    /// </summary>
+    [EnumValue("trust")]
     Trust,
 
-    /// <summary>
-    /// Blocking a user device, preventing it from being used for sign-in.
-    /// </summary>
+    [EnumValue("block")]
     Block,
 
-    /// <summary>
-    /// Unblocking a previously blocked device, allowing it to be used again.
-    /// </summary>
+    [EnumValue("unblock")]
     Unblock,
 
-    /// <summary>
-    /// Disconnecting a linked external account (e.g., Google, Facebook, etc.).
-    /// </summary>
+    [EnumValue("disconnect")]
     Disconnect,
 
-    /// <summary>
-    /// Allowing sign-in via a linked external account.
-    /// </summary>
+    [EnumValue("allow")]
     Allow,
 
-    /// <summary>
-    /// Disallowing sign-in via a linked external account (opposite of <see cref="Allow"/>).
-    /// </summary>
+    [EnumValue("disallow")]
     Disallow,
     
-    /// <summary>
-    /// Verification of remove action.
-    /// </summary>
+    [EnumValue("remove")]
     Remove,
     
-    /// <summary>
-    /// Represents sign-in with 2FA (Two-Factor Authentication)
-    /// </summary>
+    [EnumValue("sign_in")]
     SignIn,
     
-    /// <summary>
-    /// Represents subscription to (Two-Factor Authentication) 2FA provider
-    /// </summary>
+    [EnumValue("subscribe")]
     Subscribe,
     
-    /// <summary>
-    /// Represents unsubscription to (Two-Factor Authentication) 2FA provider
-    /// </summary>
+    [EnumValue("unsubscribe")]
     Unsubscribe,
     
-    /// <summary>
-    /// Represents user's account access recovery
-    /// </summary>
+    [EnumValue("recover")]
     Recover,
     
-    /// <summary>
-    /// Represents user's login method enable
-    /// </summary>
+    [EnumValue("enable")]
     Enable,
     
-    /// <summary>
-    /// Represents user's login method disable
-    /// </summary>
+    [EnumValue("disable")]
     Disable,
     
-    /// <summary>
-    /// Represents user's emails role management
-    /// </summary>
+    [EnumValue("manage")]
     Manage,
     
-    /// <summary>
-    /// Represents user's passkey creation
-    /// </summary>
+    [EnumValue("create")]
     Create,
     
-    /// <summary>
-    /// Represents user's credential change
-    /// </summary>
+    [EnumValue("change")]
     Change,
     
-    /// <summary>
-    /// Represents user's recovery codes display
-    /// </summary>
+    [EnumValue("show")]
     Show,
     
-    /// <summary>
-    /// Represents user's 2FA authenticator app re-configuration
-    /// </summary>
+    [EnumValue("reconfigure")]
     Reconfigure
 }

@@ -1,62 +1,39 @@
-﻿namespace eSecurity.Core.Security.Authorization.Verification;
+﻿using eSystem.Core.Enums;
 
-/// <summary>
-/// Defines the types of resources that can be associated with a verification code
-/// </summary>
+namespace eSecurity.Core.Security.Authorization.Verification;
+
 public enum PurposeType
 {
-    /// <summary>
-    /// The user's primary email address.
-    /// </summary>
+    [EnumValue("email")]
     Email,
-
-    /// <summary>
-    /// The user's phone number.
-    /// </summary>
+    
+    [EnumValue("phone_number")]
     PhoneNumber,
 
-    /// <summary>
-    /// The entire user account.
-    /// </summary>
+    [EnumValue("account")]
     Account,
 
-    /// <summary>
-    /// The user's account password.
-    /// </summary>
+    [EnumValue("password")]
     Password,
-
-    /// <summary>
-    /// A specific user device (e.g., computer, phone, tablet).
-    /// </summary>
+    
+    [EnumValue("device")]
     Device,
 
-    /// <summary>
-    /// An external linked account (e.g., Google, Facebook, GitHub).
-    /// </summary>
+    [EnumValue("linked_account")]
     LinkedAccount,
     
-    /// <summary>
-    /// User's passkey
-    /// </summary>
+    [EnumValue("passkey")]
     Passkey,
     
-    /// <summary>
-    /// The user's authenticator app
-    /// </summary>
+    [EnumValue("authenticator_app")]
     AuthenticatorApp,
     
-    /// <summary>
-    /// The user's two-factor authentication
-    /// </summary>
+    [EnumValue("two_factor")]
     TwoFactor,
     
-    /// <summary>
-    /// The user's login method
-    /// </summary>
+    [EnumValue("login_method")]
     LoginMethod,
     
-    /// <summary>
-    /// The user's 2FA recovery codes
-    /// </summary>
+    [EnumValue("recovery_codes")]
     RecoveryCodes
 }

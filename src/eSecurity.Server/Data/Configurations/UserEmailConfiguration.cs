@@ -1,4 +1,6 @@
-﻿using eSecurity.Server.Data.Entities;
+﻿using eSecurity.Core.Security.Identity;
+using eSecurity.Server.Data.Conversion;
+using eSecurity.Server.Data.Entities;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace eSecurity.Server.Data.Configurations;
@@ -10,7 +12,7 @@ public sealed class UserEmailConfiguration : IEntityTypeConfiguration<UserEmailE
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Email).HasMaxLength(64);
         builder.Property(x => x.NormalizedEmail).HasMaxLength(64);
-        builder.Property(x => x.Type).HasConversion<string>();
+        builder.Property(x => x.Type).HasConversion<EnumValueConverter<EmailType>>();
         
         builder.HasOne(u => u.User)
             .WithMany(x => x.Emails)

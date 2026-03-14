@@ -60,7 +60,7 @@ public class ClientSeed : Seed<ClientEntity>
                 IdTokenLifetime = TimeSpan.FromMinutes(15),
                 LoginTokenLifetime = TimeSpan.FromDays(14),
                 LogoutTokenLifetime = TimeSpan.FromMinutes(2),
-                ClientType = ClientType.Lid,
+                ClientType = ClientType.Confidential,
                 AccessTokenType = AccessTokenType.Jwt,
                 SubjectType = SubjectType.Public,
             },

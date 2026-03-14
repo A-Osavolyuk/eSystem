@@ -1,4 +1,5 @@
-﻿using eSecurity.Server.Data.Entities;
+﻿using eSecurity.Server.Data.Conversion;
+using eSecurity.Server.Data.Entities;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace eSecurity.Server.Data.Configurations;
@@ -9,7 +10,7 @@ public sealed class AuthenticationSessionConfiguration : IEntityTypeConfiguratio
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.IdentityProvider).HasMaxLength(32);
-        builder.Property(x => x.OAuthFlow).HasConversion<string>();
+        builder.Property(x => x.OAuthFlow).HasConversion<EnumValueConverter<OAuthFlow>>();
         
         builder.HasOne(x => x.User)
             .WithMany()

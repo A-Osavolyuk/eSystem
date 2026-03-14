@@ -1,12 +1,12 @@
-﻿namespace eSystem.Core.Security.Authentication.OpenIdConnect.Client;
+﻿using eSystem.Core.Enums;
+
+namespace eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 
 public enum ClientType
 {
+    [EnumValue("confidential")]
     Confidential,
-    Public,
-    Desktop,
-    Embedded,
-    IoT,
-    Cli,
-    Lid,
+    
+    [EnumValue("public")]
+    Public
 }

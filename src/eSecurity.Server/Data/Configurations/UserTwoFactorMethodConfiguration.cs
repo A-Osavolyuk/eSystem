@@ -1,4 +1,6 @@
-﻿using eSecurity.Server.Data.Entities;
+﻿using eSecurity.Core.Security.Authentication.TwoFactor;
+using eSecurity.Server.Data.Conversion;
+using eSecurity.Server.Data.Entities;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace eSecurity.Server.Data.Configurations;
@@ -8,7 +10,7 @@ public sealed class UserTwoFactorMethodConfiguration : IEntityTypeConfiguration<
     public void Configure(EntityTypeBuilder<UserTwoFactorMethodEntity> builder)
     {
         builder.HasKey(x => x.Id);
-        builder.Property(x => x.Method).HasConversion<string>();
+        builder.Property(x => x.Method).HasConversion<EnumValueConverter<TwoFactorMethod>>();
         
         builder.HasOne(x => x.User)
             .WithMany()

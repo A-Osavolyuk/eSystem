@@ -1,8 +1,15 @@
-﻿namespace eSecurity.Core.Security.Identity;
+﻿using eSystem.Core.Enums;
+
+namespace eSecurity.Core.Security.Identity;
 
 public enum PhoneNumberType
 {
+    [EnumValue("primary")]
     Primary,
+    
+    [EnumValue("secondary")]
     Secondary,
+    
+    [EnumValue("recovery")]
     Recovery
 }

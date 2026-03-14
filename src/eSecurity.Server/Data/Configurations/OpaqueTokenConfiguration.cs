@@ -1,4 +1,6 @@
-﻿using eSecurity.Server.Data.Entities;
+﻿using eSecurity.Server.Data.Conversion;
+using eSecurity.Server.Data.Entities;
+using eSecurity.Server.Security.Authorization.OAuth.Token;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace eSecurity.Server.Data.Configurations;
@@ -10,7 +12,7 @@ public sealed class OpaqueTokenConfiguration : IEntityTypeConfiguration<OpaqueTo
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Subject).HasMaxLength(100);
         builder.Property(x => x.TokenHash).HasMaxLength(500);
-        builder.Property(x => x.TokenType).HasConversion<string>();
+        builder.Property(x => x.TokenType).HasConversion<EnumValueConverter<OpaqueTokenType>>();
             
         builder.HasOne(x => x.Client)
             .WithMany()

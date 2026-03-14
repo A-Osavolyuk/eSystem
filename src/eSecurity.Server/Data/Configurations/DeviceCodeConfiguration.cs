@@ -1,4 +1,6 @@
-﻿using eSecurity.Server.Data.Entities;
+﻿using eSecurity.Server.Data.Conversion;
+using eSecurity.Server.Data.Entities;
+using eSecurity.Server.Security.Authorization.OAuth.Token.DeviceCode;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace eSecurity.Server.Data.Configurations;
@@ -13,7 +15,7 @@ public sealed class DeviceCodeConfiguration : IEntityTypeConfiguration<DeviceCod
         builder.Property(x => x.Scope).HasMaxLength(200);
         builder.Property(x => x.DeviceName).HasMaxLength(50);
         builder.Property(x => x.DeviceModel).HasMaxLength(100);
-        builder.Property(x => x.State).HasConversion<string>();
+        builder.Property(x => x.State).HasConversion<EnumValueConverter<DeviceCodeState>>();
 
         builder.HasOne(x => x.Client)
             .WithMany()
