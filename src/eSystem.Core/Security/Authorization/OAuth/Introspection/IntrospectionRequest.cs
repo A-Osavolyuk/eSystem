@@ -8,5 +8,5 @@ public class IntrospectionRequest
     public required string Token { get; set; }
     
     [FromForm(Name = "token_type_hint")]
-    public string? TokenTypeHint { get; set; }
+    public TokenTypeHint? TokenTypeHint { get; set; }
 }

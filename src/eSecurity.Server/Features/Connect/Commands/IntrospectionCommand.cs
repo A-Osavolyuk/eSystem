@@ -4,48 +4,51 @@ using eSecurity.Server.Security.Authorization.OAuth.Token;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Binding;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Introspection;
 
 namespace eSecurity.Server.Features.Connect.Commands;
 
-public record IntrospectionCommand(IntrospectionRequest Request) : IRequest<Result>;
+public record IntrospectionCommand(IFormCollection Form) : IRequest<Result>;
 
 public class IntrospectionCommandHandler(
     ITokenManager tokenManager,
     IUserManager userManager,
     IHasherProvider hasherProvider,
     ISessionManager sessionManager,
-    IOptions<TokenConfigurations> options) : IRequestHandler<IntrospectionCommand, Result>
+    IOptions<TokenConfigurations> options,
+    IFormBindingProvider bindingProvider) : IRequestHandler<IntrospectionCommand, Result>
 {
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IUserManager _userManager = userManager;
     private readonly IHasherProvider _hasherProvider = hasherProvider;
     private readonly ISessionManager _sessionManager = sessionManager;
+    private readonly IFormBindingProvider _bindingProvider = bindingProvider;
     private readonly TokenConfigurations _configurations = options.Value;
 
     public async Task<Result> Handle(IntrospectionCommand request, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrEmpty(request.Request.Token))
+        var binder = _bindingProvider.GetRequiredBinder<IntrospectionRequest>();
+        var bindingResult = await binder.BindAsync(request.Form, cancellationToken);
+        if (!bindingResult.Succeeded || !bindingResult.TryGetValue(out var introspectionRequest))
         {
-            return Results.BadRequest(new Error
-            {
-                Code = ErrorTypes.OAuth.InvalidRequest,
-                Description = "token is required"
-            });
+            var error = bindingResult.GetError();
+            return Results.BadRequest(error);
         }
 
-        OpaqueTokenType? opaqueTokenType = request.Request.TokenTypeHint switch
+        OpaqueTokenType? opaqueTokenType = introspectionRequest.TokenTypeHint switch
         {
-            TokenTypes.Full.AccessToken or TokenTypes.Short.AccessToken => OpaqueTokenType.AccessToken,
-            TokenTypes.Full.RefreshToken or TokenTypes.Short.RefreshToken => OpaqueTokenType.RefreshToken,
+            TokenTypeHint.AccessToken => OpaqueTokenType.AccessToken,
+            TokenTypeHint.RefreshToken => OpaqueTokenType.RefreshToken,
             _ => null
         };
 
         var hasher = _hasherProvider.GetHasher(HashAlgorithm.Sha512);
-        var incomingHash = hasher.Hash(request.Request.Token);
+        var incomingHash = hasher.Hash(introspectionRequest.Token);
 
         var token = opaqueTokenType.HasValue
             ? await _tokenManager.FindByHashAsync(incomingHash, opaqueTokenType.Value, cancellationToken)

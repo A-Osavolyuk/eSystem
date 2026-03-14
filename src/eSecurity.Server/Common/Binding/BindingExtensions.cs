@@ -1,5 +1,7 @@
 ﻿using eSecurity.Server.Common.Binding.Binders;
 using eSystem.Core.Binding;
+using eSystem.Core.Security.Authorization.OAuth.Introspection;
+using eSystem.Core.Security.Authorization.OAuth.Revocation;
 using eSystem.Core.Security.Authorization.OAuth.Token;
 using eSystem.Core.Security.Authorization.OAuth.Token.AuthorizationCode;
 using eSystem.Core.Security.Authorization.OAuth.Token.Ciba;
@@ -22,5 +24,7 @@ public static class BindingExtensions
         services.AddTransient<IFormBinder<DeviceCodeRequest>, DeviceCodeRequestBinder>();
         services.AddTransient<IFormBinder<TokenExchangeRequest>, TokenExchangeRequestBinder>();
         services.AddTransient<IFormBinder<CibaRequest>, CibaRequestBinder>();
+        services.AddTransient<IFormBinder<RevocationRequest>, RevocationRequestBinder>();
+        services.AddTransient<IFormBinder<IntrospectionRequest>, IntrospectionRequestBinder>();
     }
 }

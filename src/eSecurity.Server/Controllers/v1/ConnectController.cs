@@ -115,7 +115,7 @@ public class ConnectController(ISender sender) : ControllerBase
     [HttpPost("revocation")]
     [Authorize(Policy = AuthorizationPolicies.BasicAuthorization)]
     [Consumes(ContentTypes.Application.XwwwFormUrlEncoded)]
-    public async ValueTask<IActionResult> RevokeAsync([FromForm] RevocationRequest request)
+    public async ValueTask<IActionResult> RevokeAsync([FromForm] IFormCollection request)
     {
         var result = await _sender.Send(new RevokeCommand(request));
         return HttpContext.HandleResult(result);
@@ -127,7 +127,7 @@ public class ConnectController(ISender sender) : ControllerBase
     [HttpPost("introspection")]
     [Authorize(Policy = AuthorizationPolicies.BasicAuthorization)]
     [Consumes(ContentTypes.Application.XwwwFormUrlEncoded)]
-    public async ValueTask<IActionResult> IntrospectionAsync([FromForm] IntrospectionRequest request)
+    public async ValueTask<IActionResult> IntrospectionAsync([FromForm] IFormCollection request)
     {
         var result = await _sender.Send(new IntrospectionCommand(request));
         return HttpContext.HandleResult(result);
