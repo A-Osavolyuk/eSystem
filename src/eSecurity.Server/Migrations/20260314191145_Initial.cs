@@ -854,31 +854,6 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Verifications",
-                schema: "public",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Purpose = table.Column<string>(type: "text", nullable: false),
-                    Action = table.Column<string>(type: "text", nullable: false),
-                    ExpiredAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Verifications", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Verifications_Users_UserId",
-                        column: x => x.UserId,
-                        principalSchema: "public",
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "GrantedScopes",
                 schema: "public",
                 columns: table => new
@@ -1519,12 +1494,6 @@ namespace eSecurity.Server.Migrations
                 schema: "public",
                 table: "VerificationRequests",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Verifications_UserId",
-                schema: "public",
-                table: "Verifications",
-                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -1644,10 +1613,6 @@ namespace eSecurity.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "VerificationRequests",
-                schema: "public");
-
-            migrationBuilder.DropTable(
-                name: "Verifications",
                 schema: "public");
 
             migrationBuilder.DropTable(

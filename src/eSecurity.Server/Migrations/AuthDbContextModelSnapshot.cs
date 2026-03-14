@@ -1525,39 +1525,6 @@ namespace eSecurity.Server.Migrations
                     b.ToTable("UserTwoFactorMethods", "public");
                 });
 
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.VerificationEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Action")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTimeOffset?>("CreateDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTimeOffset>("ExpiredAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Purpose")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTimeOffset?>("UpdateDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Verifications", "public");
-                });
-
             modelBuilder.Entity("eSecurity.Server.Data.Entities.VerificationRequestEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2159,17 +2126,6 @@ namespace eSecurity.Server.Migrations
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.UserTwoFactorMethodEntity", b =>
-                {
-                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.VerificationEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
                         .WithMany()
