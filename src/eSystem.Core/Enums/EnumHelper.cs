@@ -1,18 +1,20 @@
 ﻿using System.Reflection;
-using System.Runtime.Serialization;
 
 namespace eSystem.Core.Enums;
 
 public static class EnumHelper
 {
-    public static string? GetString<TEnum>(TEnum value) where TEnum : struct, Enum
+    public static string GetString<TEnum>(TEnum value) where TEnum : struct, Enum
     {
         var field = typeof(TEnum).GetField(value.ToString());
         if (field is null)
-            return null;
-
-        var attribute = field.GetCustomAttribute<EnumMemberAttribute>();
-        return string.IsNullOrEmpty(attribute?.Value) ? null : attribute.Value;
+            return value.ToString();
+        
+        var attribute = field.GetCustomAttribute<EnumValueAttribute>();
+        if (attribute is null || string.IsNullOrEmpty(attribute.Value)) 
+            return field.Name;
+        
+        return attribute.Value;
     }
 
     public static TEnum? FromString<TEnum>(string value) where TEnum : struct, Enum
@@ -20,8 +22,8 @@ public static class EnumHelper
         var fields = typeof(TEnum).GetFields(BindingFlags.Public | BindingFlags.Static);
         foreach (var field in fields)
         {
-            var attribute = field.GetCustomAttribute<EnumMemberAttribute>();
-            if (string.IsNullOrEmpty(attribute?.Value))
+            var attribute = field.GetCustomAttribute<EnumValueAttribute>();
+            if (attribute is null || string.IsNullOrEmpty(attribute.Value))
                 continue;
             
             if (!string.Equals(attribute.Value, value, StringComparison.Ordinal))
