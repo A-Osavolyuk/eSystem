@@ -14,12 +14,14 @@ public sealed class PasskeyVerificationStrategy(
     IHttpContextAccessor httpContextAccessor,
     IUserManager userManager,
     IPasskeyManager passkeyManager,
-    IVerificationManager verificationManager) : IVerificationStrategy<PasskeyVerificationContext>
+    IVerificationManager verificationManager,
+    IOptions<VerificationConfiguration> options) : IVerificationStrategy<PasskeyVerificationContext>
 {
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly IUserManager _userManager = userManager;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
+    private readonly VerificationConfiguration _configuration = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(PasskeyVerificationContext context, 
         CancellationToken cancellationToken = default)
@@ -65,7 +67,7 @@ public sealed class PasskeyVerificationStrategy(
             Status = VerificationStatus.Approved,
             Method = VerificationMethod.Passkey,
             ApprovedAt = DateTimeOffset.UtcNow,
-            ExpiredAt = DateTimeOffset.UtcNow.AddMinutes(15),
+            ExpiredAt = DateTimeOffset.UtcNow.Add(_configuration.Timestamp),
         };
         
         var verificationResult = await _verificationManager.CreateAsync(requestEntity, cancellationToken);

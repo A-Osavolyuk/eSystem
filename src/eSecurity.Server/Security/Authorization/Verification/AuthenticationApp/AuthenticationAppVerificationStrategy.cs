@@ -15,13 +15,15 @@ public sealed class AuthenticationAppVerificationStrategy(
     IUserManager userManager,
     IVerificationManager verificationManager,
     ISecretManager secretManager,
-    IDataProtectionProvider protectionProvider) : IVerificationStrategy<AuthenticatorAppVerificationContext>
+    IDataProtectionProvider protectionProvider,
+    IOptions<VerificationConfiguration> options) : IVerificationStrategy<AuthenticatorAppVerificationContext>
 {
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly IUserManager _userManager = userManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
     private readonly ISecretManager _secretManager = secretManager;
     private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
+    private readonly VerificationConfiguration _configuration = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(AuthenticatorAppVerificationContext context, 
         CancellationToken cancellationToken = default)
@@ -49,7 +51,7 @@ public sealed class AuthenticationAppVerificationStrategy(
             Method = VerificationMethod.AuthenticatorApp,
             Status = VerificationStatus.Approved,
             ApprovedAt = DateTimeOffset.UtcNow,
-            ConsumedAt = DateTimeOffset.UtcNow
+            ExpiredAt = DateTimeOffset.UtcNow.Add(_configuration.Timestamp)
         };
         
         var verificationResult = await _verificationManager.CreateAsync(requestEntity, cancellationToken);

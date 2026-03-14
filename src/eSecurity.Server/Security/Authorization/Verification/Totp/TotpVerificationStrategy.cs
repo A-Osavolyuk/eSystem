@@ -12,12 +12,14 @@ public sealed class TotpVerificationStrategy(
     IHttpContextAccessor httpContextAccessor,
     IUserManager userManager,
     ICodeManager codeManager,
-    IVerificationManager verificationManager) : IVerificationStrategy<TotpVerificationContext>
+    IVerificationManager verificationManager,
+    IOptions<VerificationConfiguration> options) : IVerificationStrategy<TotpVerificationContext>
 {
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly IUserManager _userManager = userManager;
     private readonly ICodeManager _codeManager = codeManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
+    private readonly VerificationConfiguration _configuration = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(TotpVerificationContext context, 
         CancellationToken cancellationToken = default)
@@ -50,8 +52,7 @@ public sealed class TotpVerificationStrategy(
             Method = method,
             Status = VerificationStatus.Approved,
             ApprovedAt = DateTimeOffset.UtcNow,
-            //TODO: Implement verification configurations
-            ExpiredAt = DateTimeOffset.UtcNow.AddMinutes(15)
+            ExpiredAt = DateTimeOffset.UtcNow.Add(_configuration.Timestamp)
         };
 
         var verificationResult = await _verificationManager.CreateAsync(requestEntity, cancellationToken);
