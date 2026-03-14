@@ -19,7 +19,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<CodeEntity> Codes { get; set; }
     public DbSet<UserLockoutStateEntity> LockoutStates { get; set; }
     public DbSet<UserRecoveryCodeEntity> UserRecoveryCodes { get; set; }
-    public DbSet<VerificationEntity> Verifications { get; set; }
     public DbSet<ClientEntity> Clients { get; set; }
     public DbSet<UserClientEntity> UserClients { get; set; }
     public DbSet<ClientAllowedScopeEntity> ClientAllowedScopes { get; set; }
