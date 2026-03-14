@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using eSecurity.Server.Common.Binding;
 using eSecurity.Server.Common.Errors;
@@ -40,15 +41,25 @@ public static class HostApplicationBuilderExtensions
             builder.Services.AddMediator<IAssemblyMarker>();
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddDistributedMemoryCache();
+            builder.Services.ConfigureHttpJsonOptions(options =>
+            {
+                options.SerializerOptions.WriteIndented = true;
+                options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
+                options.SerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.SnakeCaseLower;
+            });
+            
             builder.Services
                 .AddControllers(options =>
                 {
                     options.Conventions.Add(new RoutePrefixConvention("api"));
                 })
-                .AddJsonOptions(cfg =>
+                .AddJsonOptions(options =>
                 {
-                    cfg.JsonSerializerOptions.WriteIndented = true;
-                    cfg.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                    options.JsonSerializerOptions.WriteIndented = true;
+                    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
+                    options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.SnakeCaseLower;
                 });
         }
     }
