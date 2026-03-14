@@ -1,6 +1,6 @@
-﻿using eSecurity.Server.Data.Conversion;
-using eSecurity.Server.Data.Entities;
+﻿using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
+using eSystem.Core.Data.Conversion;
 using eSystem.Core.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
