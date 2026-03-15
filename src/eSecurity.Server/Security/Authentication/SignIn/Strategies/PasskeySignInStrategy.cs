@@ -96,10 +96,11 @@ public sealed class PasskeySignInStrategy(
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
             SessionId = session.Id,
-            PassedAuthenticationMethods = [AuthenticationMethods.SoftwareKey],
             CreatedAt = DateTimeOffset.UtcNow,
             ExpiredAt = DateTimeOffset.UtcNow.AddMinutes(15)
         };
+        
+        authenticationSession.Pass(AuthenticationMethod.SoftwareKey);
         
         var sessionResult = await _authenticationSessionManager.CreateAsync(authenticationSession, cancellationToken);
         if (!sessionResult.Succeeded) return sessionResult;

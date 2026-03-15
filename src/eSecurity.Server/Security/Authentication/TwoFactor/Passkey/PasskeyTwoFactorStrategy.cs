@@ -11,6 +11,7 @@ using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Enums;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives.Constants;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
@@ -135,26 +136,27 @@ public sealed class PasskeyTwoFactorStrategy(
             if (!userUpdateResult.Succeeded) return userUpdateResult;
         }
 
-        string[] authenticationMethods =
+        AuthenticationMethod[] authenticationMethods =
         [
-            ..authenticationSession.PassedAuthenticationMethods,
-            AuthenticationMethods.MultiFactorAuthentication,
-            AuthenticationMethods.SoftwareKey
+            ..authenticationSession.PassedMethods.Select(x => x.Method),
+            AuthenticationMethod.MultiFactorAuthentication,
+            AuthenticationMethod.SoftwareKey
         ];
 
         var session = new SessionEntity
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            AuthenticationMethods = authenticationMethods,
             ExpireDate = DateTimeOffset.UtcNow.Add(_sessionOptions.Timestamp),
+            AuthenticationMethods = authenticationMethods
+                .Select(x => EnumHelper.GetString(x))
+                .ToArray(),
         };
 
         await _sessionManager.CreateAsync(session, cancellationToken);
 
         authenticationSession.SessionId = session.Id;
-        authenticationSession.PassedAuthenticationMethods = authenticationMethods;
-        authenticationSession.RequiredAuthenticationMethods = [];
+        authenticationSession.Pass(authenticationMethods);
 
         var sessionResult = await _authenticationSessionManager.UpdateAsync(authenticationSession, cancellationToken);
         if (!sessionResult.Succeeded) return sessionResult;

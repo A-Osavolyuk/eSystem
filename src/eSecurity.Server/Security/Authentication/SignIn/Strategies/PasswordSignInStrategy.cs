@@ -176,20 +176,21 @@ public sealed class PasswordSignInStrategy(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            PassedAuthenticationMethods = [AuthenticationMethods.Password],
             CreatedAt = DateTimeOffset.UtcNow,
             ExpiredAt = DateTimeOffset.UtcNow.AddMinutes(15),
         };
 
+        authenticationSession.Pass(AuthenticationMethod.Password);
+        
         if (await _twoFactorManager.IsEnabledAsync(user, cancellationToken))
         {
             var hasPasskey = await _passkeyManager.HasAsync(user, cancellationToken);
-            string[] allowedMfaMethods = hasPasskey
-                ? [AuthenticationMethods.SoftwareKey, AuthenticationMethods.OneTimePassword]
-                : [AuthenticationMethods.OneTimePassword];
+            AuthenticationMethod[] authenticationMethods = hasPasskey
+                ? [AuthenticationMethod.SoftwareKey, AuthenticationMethod.OneTimePassword]
+                : [AuthenticationMethod.OneTimePassword];
             
-            authenticationSession.RequiredAuthenticationMethods = [AuthenticationMethods.MultiFactorAuthentication];
-            authenticationSession.AllowedMfaMethods = allowedMfaMethods;
+            authenticationSession.Require(AuthenticationMethod.MultiFactorAuthentication);
+            authenticationSession.AllowMfa(authenticationMethods);
             
             var sessionResult = await _authenticationSessionManager.CreateAsync(authenticationSession, cancellationToken);
             if (!sessionResult.Succeeded) return sessionResult;

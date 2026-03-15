@@ -7,6 +7,8 @@ public class SessionEntity : Entity
     public Guid Id { get; set; }
 
     public DateTimeOffset? ExpireDate { get; set; }
+    
+    //TODO: Refactor
     public required string[] AuthenticationMethods { get; set; }
 
     public Guid UserId { get; set; }

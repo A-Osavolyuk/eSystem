@@ -146,9 +146,10 @@ public sealed class ManualSignUpStrategy(
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
             CreatedAt = DateTimeOffset.UtcNow,
-            ExpiredAt = DateTimeOffset.UtcNow.AddMinutes(10),
-            RequiredAuthenticationMethods = [AuthenticationMethods.EmailVerification],
+            ExpiredAt = DateTimeOffset.UtcNow.AddMinutes(10)
         };
+        
+        session.Require(AuthenticationMethod.EmailVerification);
         
         var sessionResult = await _sessionManager.CreateAsync(session, cancellationToken);
         if (!sessionResult.Succeeded) return sessionResult;

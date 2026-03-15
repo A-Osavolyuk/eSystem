@@ -39,9 +39,10 @@ public sealed class OAuthLoginCommandHandler(
         {
             Id = Guid.CreateVersion7(),
             IdentityProvider = request.Provider,
-            PassedAuthenticationMethods = [AuthenticationMethods.Federated, AuthenticationMethods.Social],
             ExpiredAt = DateTimeOffset.UtcNow.AddMinutes(10)
         };
+        
+        session.Pass([AuthenticationMethod.Federated, AuthenticationMethod.Social]);
         
         var result = await _authenticationSessionManager.CreateAsync(session, cancellationToken);
         if (!result.Succeeded) return result;

@@ -1,5 +1,6 @@
 ﻿using eSecurity.Core.Common.DTOs;
 using eSecurity.Server.Security.Authentication.Session;
+using eSystem.Core.Enums;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives.Constants;
 
@@ -26,13 +27,18 @@ public sealed class GetAuthenticationSessionQueryHandler(
             });
         }
 
+        var nextMethod = authenticationSession.RequiredMethods.FirstOrDefault();
+        var allowedMfaMethods = authenticationSession.AllowedMfaMethods
+            .Select(x => EnumHelper.GetString(x.Method))
+            .ToArray();
+        
         var response = new AuthenticationSessionDto()
         {
             SessionId = authenticationSession.SessionId,
             OAuthFlow =  authenticationSession.OAuthFlow,
-            IsCompleted = authenticationSession.RequiredAuthenticationMethods.Length == 0,
-            NextMethod = authenticationSession.RequiredAuthenticationMethods.FirstOrDefault(),
-            AllowedMfaMethods = authenticationSession.AllowedMfaMethods
+            IsCompleted = authenticationSession.RequiredMethods.Count == 0,
+            NextMethod = nextMethod?.Method,
+            AllowedMfaMethods = authenticationSession.AllowedMfaMethods.Select(x => x.Method)
         };
         
         return Results.Ok(response);

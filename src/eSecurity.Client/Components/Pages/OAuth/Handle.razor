@@ -54,7 +54,7 @@
 
             if (session.OAuthFlow == OAuthFlow.SignIn)
             {
-                if (session.NextMethod == AuthenticationMethods.MultiFactorAuthentication)
+                if (session.NextMethod == AuthenticationMethod.MultiFactorAuthentication)
                 {
                     var state = StateBuilder.Create()
                         .WithData("transactionId", SessionId.ToString())

@@ -70,8 +70,7 @@ public sealed class CompleteSignUpCommandHandler(
         await _sessionManager.CreateAsync(session, cancellationToken);
 
         authenticationSession.SessionId = session.Id;
-        authenticationSession.RequiredAuthenticationMethods = [];
-        authenticationSession.PassedAuthenticationMethods = [AuthenticationMethods.EmailVerification];
+        authenticationSession.Pass(AuthenticationMethod.EmailVerification);
 
         var authenticationSessionResult = await _authenticationSessionManager.UpdateAsync(
             authenticationSession, cancellationToken);

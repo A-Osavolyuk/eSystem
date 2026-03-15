@@ -8,6 +8,7 @@ using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
 using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Enums;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives.Constants;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
@@ -116,13 +117,12 @@ public sealed class OAuthSignInStrategy(
         authenticationSession.UserId = user.Id;
         if (await _twoFactorManager.IsEnabledAsync(user, cancellationToken))
         {
-            var hasPasskey = await _passkeyManager.HasAsync(user, cancellationToken);
-            string[] allowedMfaMethods = hasPasskey
-                ? [AuthenticationMethods.SoftwareKey, AuthenticationMethods.OneTimePassword]
-                : [AuthenticationMethods.OneTimePassword];
+            authenticationSession.Require(AuthenticationMethod.MultiFactorAuthentication);
             
-            authenticationSession.RequiredAuthenticationMethods = [AuthenticationMethods.MultiFactorAuthentication];
-            authenticationSession.AllowedMfaMethods = allowedMfaMethods;
+            var hasPasskey = await _passkeyManager.HasAsync(user, cancellationToken);
+            authenticationSession.AllowMfa(hasPasskey
+                ? [AuthenticationMethod.SoftwareKey, AuthenticationMethod.OneTimePassword]
+                : [AuthenticationMethod.OneTimePassword]);
             
             var sessionResult = await _authenticationSessionManager.UpdateAsync(authenticationSession, cancellationToken);
             if (!sessionResult.Succeeded) return sessionResult;
@@ -139,8 +139,10 @@ public sealed class OAuthSignInStrategy(
             {
                 Id = Guid.CreateVersion7(),
                 UserId = user.Id,
-                AuthenticationMethods = authenticationSession.PassedAuthenticationMethods,
-                ExpireDate = DateTimeOffset.UtcNow.Add(_options.Timestamp)
+                ExpireDate = DateTimeOffset.UtcNow.Add(_options.Timestamp),
+                AuthenticationMethods = authenticationSession.PassedMethods
+                    .Select(x => EnumHelper.GetString(x.Method))
+                    .ToArray()
             };
             
             await _sessionManager.CreateAsync(session, cancellationToken);
