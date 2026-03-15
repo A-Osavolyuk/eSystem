@@ -12,7 +12,7 @@ public sealed class CodeConfiguration : IEntityTypeConfiguration<CodeEntity>
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.CodeHash).HasMaxLength(200);
-        builder.Property(x => x.Sender).HasConversion<EnumValueConverter<SenderType>>();
-        builder.Property(x => x.State).HasConversion<EnumValueConverter<CodeState>>();
+        builder.Property(x => x.Sender).HasEnumConversion();
+        builder.Property(x => x.State).HasEnumConversion();
     }
 }

@@ -11,10 +11,10 @@ public sealed class VerificationRequestConfiguration : IEntityTypeConfiguration<
     {
         builder.HasKey(x => x.Id);
         
-        builder.Property(x => x.Action).HasConversion<EnumValueConverter<ActionType>>();
-        builder.Property(x => x.Purpose).HasConversion<EnumValueConverter<PurposeType>>();
-        builder.Property(x => x.Status).HasConversion<EnumValueConverter<VerificationStatus>>();
-        builder.Property(x => x.Method).HasConversion<EnumValueConverter<VerificationMethod>>();
+        builder.Property(x => x.Action).HasEnumConversion();
+        builder.Property(x => x.Purpose).HasEnumConversion();
+        builder.Property(x => x.Status).HasEnumConversion();
+        builder.Property(x => x.Method).HasEnumConversion();
         
         builder.HasOne(x => x.User)
             .WithMany()

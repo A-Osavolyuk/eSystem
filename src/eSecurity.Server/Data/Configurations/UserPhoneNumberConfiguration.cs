@@ -11,7 +11,7 @@ public sealed class UserPhoneNumberConfiguration : IEntityTypeConfiguration<User
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.PhoneNumber).HasMaxLength(18);
-        builder.Property(x => x.Type).HasConversion<EnumValueConverter<PhoneNumberType>>();
+        builder.Property(x => x.Type).HasEnumConversion();
         
         builder.HasOne(u => u.User)
             .WithMany()

@@ -10,7 +10,7 @@ public sealed class AuthenticationSessionConfiguration : IEntityTypeConfiguratio
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.IdentityProvider).HasMaxLength(32);
-        builder.Property(x => x.OAuthFlow).HasConversion<EnumValueConverter<OAuthFlow>>();
+        builder.Property(x => x.OAuthFlow).HasEnumConversion();
         
         builder.HasOne(x => x.User)
             .WithMany()

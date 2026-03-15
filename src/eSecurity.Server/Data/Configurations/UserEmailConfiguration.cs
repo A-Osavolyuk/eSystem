@@ -12,7 +12,7 @@ public sealed class UserEmailConfiguration : IEntityTypeConfiguration<UserEmailE
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Email).HasMaxLength(64);
         builder.Property(x => x.NormalizedEmail).HasMaxLength(64);
-        builder.Property(x => x.Type).HasConversion<EnumValueConverter<EmailType>>();
+        builder.Property(x => x.Type).HasEnumConversion();
         
         builder.HasOne(u => u.User)
             .WithMany(x => x.Emails)

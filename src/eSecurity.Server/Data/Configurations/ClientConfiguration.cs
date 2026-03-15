@@ -15,18 +15,10 @@ public sealed class ClientConfiguration : IEntityTypeConfiguration<ClientEntity>
         builder.Property(x => x.Secret).HasMaxLength(200);
         builder.Property(x => x.SectorIdentifierUri).HasMaxLength(200);
         builder.Property(x => x.Name).HasMaxLength(64);
-        builder.Property(x => x.ClientType)
-            .HasConversion<EnumValueConverter<ClientType>>();
-        
-        builder.Property(x => x.AccessTokenType)
-            .HasConversion<EnumValueConverter<AccessTokenType>>();
-        
-        builder.Property(x => x.SubjectType)
-            .HasConversion<EnumValueConverter<SubjectType>>();
-        
-        builder.Property(x => x.NotificationDeliveryMode)
-            .HasConversion<EnumValueConverter<NotificationDeliveryMode>>();
-        
+        builder.Property(x => x.ClientType).HasEnumConversion();
+        builder.Property(x => x.AccessTokenType).HasEnumConversion();
+        builder.Property(x => x.SubjectType).HasEnumConversion();
+        builder.Property(x => x.NotificationDeliveryMode).HasEnumConversion();
         builder.Property(x => x.RefreshTokenLifetime).HasConversion(ValueConverters.NullableTimeSpan);
         builder.Property(x => x.AccessTokenLifetime).HasConversion(ValueConverters.NullableTimeSpan);
         builder.Property(x => x.IdTokenLifetime).HasConversion(ValueConverters.NullableTimeSpan);

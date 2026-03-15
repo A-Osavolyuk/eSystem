@@ -10,7 +10,7 @@ public sealed class UserLinkedAccountConfiguration : IEntityTypeConfiguration<Us
     public void Configure(EntityTypeBuilder<UserLinkedAccountEntity> builder)
     {
         builder.HasKey(x => x.Id);
-        builder.Property(x => x.Type).HasConversion<EnumValueConverter<LinkedAccountType>>();
+        builder.Property(x => x.Type).HasEnumConversion();
 
         builder.HasOne(x => x.User)
             .WithMany()

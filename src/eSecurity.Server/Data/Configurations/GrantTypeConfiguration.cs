@@ -10,6 +10,6 @@ public sealed class GrantTypeConfiguration : IEntityTypeConfiguration<GrantTypeE
     public void Configure(EntityTypeBuilder<GrantTypeEntity> builder)
     {
         builder.HasKey(e => e.Id);
-        builder.Property(e => e.Grant).HasConversion<EnumValueConverter<GrantType>>();
+        builder.Property(e => e.Grant).HasEnumConversion();
     }
 }

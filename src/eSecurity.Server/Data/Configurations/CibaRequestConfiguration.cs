@@ -11,7 +11,7 @@ public sealed class CibaRequestConfiguration : IEntityTypeConfiguration<CibaRequ
     {
         builder.HasKey(x => x.Id);
         
-        builder.Property(x => x.State).HasConversion<EnumValueConverter<CibaRequestState>>();
+        builder.Property(x => x.State).HasEnumConversion();
         builder.Property(x => x.AuthReqId).HasMaxLength(36);
         builder.Property(x => x.UserCode).HasMaxLength(12);
         builder.Property(x => x.AcrValues).HasMaxLength(100);
