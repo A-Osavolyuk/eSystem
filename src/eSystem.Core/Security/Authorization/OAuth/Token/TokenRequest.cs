@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using eSystem.Core.Security.Authorization.OAuth.Constants;
+using Microsoft.AspNetCore.Mvc;
 
 namespace eSystem.Core.Security.Authorization.OAuth.Token;
 
 public abstract class TokenRequest
 {
     [FromForm(Name = "grant_type")]
-    public required string GrantType { get; set; }
+    public required GrantType GrantType { get; set; }
     
     [FromForm(Name = "client_id")]
     public required string ClientId { get; set; }

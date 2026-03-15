@@ -46,7 +46,7 @@ public class TokenHandler (
         var requestMessage = new HttpRequestMessage(HttpMethod.Post, discovery.TokenEndpoint);
         var content = FormUrl.Encode(new RefreshTokenRequest
         {
-            GrantType = GrantTypes.RefreshToken,
+            GrantType = GrantType.RefreshToken,
             ClientId = _oauthOptions.ClientId,
             RefreshToken = refreshToken,
         });

@@ -120,7 +120,7 @@ public class ApiClient(
         {
             ClientId = _clientOptions.ClientId,
             ClientSecret = _clientOptions.ClientSecret,
-            GrantType = GrantTypes.RefreshToken,
+            GrantType = GrantType.RefreshToken,
             RefreshToken = _tokenProvider.Get(AuthTokenTypes.RefreshToken)
         });
 

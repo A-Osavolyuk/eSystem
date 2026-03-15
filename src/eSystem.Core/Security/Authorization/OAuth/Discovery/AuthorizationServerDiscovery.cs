@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using eSystem.Core.Security.Authorization.OAuth.Constants;
 
 namespace eSystem.Core.Security.Authorization.OAuth.Discovery;
 
@@ -27,7 +28,7 @@ public sealed class AuthorizationServerDiscovery
     
     
     [JsonPropertyName("grant_types_supported")]
-    public string[] GrantTypesSupported { get; set; } = [];
+    public GrantType[] GrantTypesSupported { get; set; } = [];
     
     [JsonPropertyName("response_types_supported")]
     public string[] ResponseTypesSupported { get; set; } = [];

@@ -1,4 +1,5 @@
 ﻿using eSystem.Core.Binding;
+using eSystem.Core.Enums;
 using eSystem.Core.Primitives.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Token;
@@ -17,8 +18,8 @@ public sealed class TokenRequestBinder(IFormBindingProvider bindingProvider) : I
 
     public async Task<TypedResult<TokenRequest>> BindAsync(IFormCollection form, CancellationToken cancellationToken = default)
     {
-        var grantType = form["grant_type"].ToString();
-        if (string.IsNullOrEmpty(grantType))
+        var grantTypeString = form["grant_type"].ToString();
+        if (string.IsNullOrEmpty(grantTypeString))
         {
             return TypedResult<TokenRequest>.Fail(new Error()
             {
@@ -26,15 +27,25 @@ public sealed class TokenRequestBinder(IFormBindingProvider bindingProvider) : I
                 Description = "grant_type is mandatory"
             });
         }
+        
+        var grantType = EnumHelper.FromString<GrantType>(grantTypeString);
+        if (!grantType.HasValue)
+        {
+            return TypedResult<TokenRequest>.Fail(new Error()
+            {
+                Code = ErrorTypes.OAuth.InvalidGrant,
+                Description = "grant_type is invalid."
+            });
+        }
 
         return grantType switch
         {
-            GrantTypes.AuthorizationCode => await GetRequest<AuthorizationCodeRequest>(form, cancellationToken),
-            GrantTypes.RefreshToken => await GetRequest<RefreshTokenRequest>(form, cancellationToken),
-            GrantTypes.ClientCredentials => await GetRequest<ClientCredentialsRequest>(form, cancellationToken),
-            GrantTypes.DeviceCode => await GetRequest<DeviceCodeRequest>(form, cancellationToken),
-            GrantTypes.TokenExchange => await GetRequest<TokenExchangeRequest>(form, cancellationToken),
-            GrantTypes.Ciba => await GetRequest<CibaRequest>(form, cancellationToken),
+            GrantType.AuthorizationCode => await GetRequest<AuthorizationCodeRequest>(form, cancellationToken),
+            GrantType.RefreshToken => await GetRequest<RefreshTokenRequest>(form, cancellationToken),
+            GrantType.ClientCredentials => await GetRequest<ClientCredentialsRequest>(form, cancellationToken),
+            GrantType.DeviceCode => await GetRequest<DeviceCodeRequest>(form, cancellationToken),
+            GrantType.TokenExchange => await GetRequest<TokenExchangeRequest>(form, cancellationToken),
+            GrantType.Ciba => await GetRequest<CibaRequest>(form, cancellationToken),
             _ => throw new Exception("Invalid token request")
         };
     }

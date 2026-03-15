@@ -25,11 +25,11 @@ public sealed class GetOAuthAuthorizationServerQueryHandler : IRequestHandler<Ge
             ResponseTypesSupported = [ResponseTypes.Code],
             GrantTypesSupported =
             [
-                GrantTypes.AuthorizationCode,
-                GrantTypes.RefreshToken,
-                GrantTypes.ClientCredentials,
-                GrantTypes.DeviceCode,
-                GrantTypes.TokenExchange
+                GrantType.AuthorizationCode,
+                GrantType.RefreshToken,
+                GrantType.ClientCredentials,
+                GrantType.DeviceCode,
+                GrantType.TokenExchange
             ],
             PromptValuesSupported =
             [

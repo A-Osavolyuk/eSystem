@@ -1,9 +1,12 @@
 ﻿using eSecurity.Server.Security.Authorization.OAuth.Token;
 using eSystem.Core.Binding;
+using eSystem.Core.Enums;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives.Constants;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
+using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Token;
+using eSystem.Core.Security.Authorization.OAuth.Token.ClientCredentials;
 
 namespace eSecurity.Server.Features.Connect.Commands;
 
@@ -20,7 +23,7 @@ public class TokenCommandHandler(
 
     public async Task<Result> Handle(TokenCommand request, CancellationToken cancellationToken)
     {
-        if (!request.Form.TryGetValue("grant_type", out var grantType) || string.IsNullOrEmpty(grantType))
+        if (!request.Form.TryGetValue("grant_type", out var grantTypeString) || string.IsNullOrEmpty(grantTypeString))
         {
             return Results.BadRequest(new Error
             {
@@ -29,7 +32,17 @@ public class TokenCommandHandler(
             });
         }
         
-        if (!_configuration.GrantTypesSupported.Contains(grantType.ToString()))
+        var grantType = EnumHelper.FromString<GrantType>(grantTypeString.ToString());
+        if (!grantType.HasValue)
+        {
+            return Results.BadRequest(new Error()
+            {
+                Code = ErrorTypes.OAuth.InvalidGrant,
+                Description = "grant_type is invalid."
+            });
+        }
+        
+        if (!_configuration.GrantTypesSupported.Contains(grantType.Value))
         {
             return Results.BadRequest(new Error
             {
@@ -58,7 +71,7 @@ public class TokenCommandHandler(
             });
         }
 
-        var strategy = _tokenStrategyResolver.Resolve(grantType.ToString());
+        var strategy = _tokenStrategyResolver.Resolve(grantType.Value);
         return await strategy.ExecuteAsync(tokenRequest, cancellationToken);
     }
 }

@@ -1,9 +1,11 @@
-﻿namespace eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange;
+﻿using eSystem.Core.Security.Authorization.OAuth.Constants;
+
+namespace eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange;
 
 public sealed class TokenExchangeFlowContext
 {
     public required string ClientId { get; set; }
-    public required string GrantType { get; set; }
+    public required GrantType GrantType { get; set; }
     public required string SubjectToken { get; set; }
     public required string SubjectTokenType { get; set; }
     public required string Scope { get; set; }

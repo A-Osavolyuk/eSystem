@@ -2,6 +2,7 @@
 using eSystem.Core.Data.Entities;
 using eSystem.Core.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
+using eSystem.Core.Security.Authorization.OAuth.Constants;
 
 namespace eSecurity.Server.Data.Entities;
 
@@ -49,7 +50,7 @@ public class ClientEntity : Entity
     public bool HasScope(string scope)
         => AllowedScopes.Any(x => x.Scope.Value == scope);
 
-    public bool HasGrantType(string grantType)
+    public bool HasGrantType(GrantType grantType)
         => GrantTypes.Any(x => x.Grant.Grant == grantType);
 
     public bool HasUri(string uri, UriType type)

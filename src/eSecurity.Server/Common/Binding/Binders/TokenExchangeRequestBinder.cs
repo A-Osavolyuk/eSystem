@@ -1,4 +1,8 @@
 ﻿using eSystem.Core.Binding;
+using eSystem.Core.Enums;
+using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Security.Authorization.OAuth.Constants;
+using eSystem.Core.Security.Authorization.OAuth.Token.ClientCredentials;
 using eSystem.Core.Security.Authorization.OAuth.Token.TokenExchange;
 
 namespace eSecurity.Server.Common.Binding.Binders;
@@ -8,9 +12,19 @@ public sealed class TokenExchangeRequestBinder : IFormBinder<TokenExchangeReques
     public Task<TypedResult<TokenExchangeRequest>> BindAsync(IFormCollection form,
         CancellationToken cancellationToken = default)
     {
+        var grantType = EnumHelper.FromString<GrantType>(form["grant_type"].ToString());
+        if (!grantType.HasValue)
+        {
+            return Task.FromResult(TypedResult<TokenExchangeRequest>.Fail(new Error()
+            {
+                Code = ErrorTypes.OAuth.InvalidGrant,
+                Description = "grant_type is invalid."
+            }));
+        }
+        
         var result = TypedResult<TokenExchangeRequest>.Success(new TokenExchangeRequest()
         {
-            GrantType = form["grant_type"].ToString(),
+            GrantType = grantType.Value,
             ClientId = form["client_id"].ToString(),
             ClientSecret = form["client_secret"],
             Scope = form["scope"],

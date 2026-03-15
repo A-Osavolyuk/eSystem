@@ -41,8 +41,10 @@ public static class TokenExtensions
             
         services.AddScoped<ITokenManager, TokenManager>();
         services.AddScoped<ITokenStrategyResolver, TokenStrategyResolver>();
-        services.AddKeyedScoped<ITokenStrategy, AuthorizationCodeStrategy>(GrantTypes.AuthorizationCode);
-        services.AddKeyedScoped<ITokenStrategy, RefreshTokenStrategy>(GrantTypes.RefreshToken);
-        services.AddKeyedScoped<ITokenStrategy, ClientCredentialsStrategy>(GrantTypes.ClientCredentials);
+        services.AddKeyedScoped<ITokenStrategy, AuthorizationCodeStrategy>(GrantType.AuthorizationCode);
+        services.AddKeyedScoped<ITokenStrategy, RefreshTokenStrategy>(GrantType.RefreshToken);
+        services.AddKeyedScoped<ITokenStrategy, ClientCredentialsStrategy>(GrantType.ClientCredentials);
+        services.AddKeyedScoped<ITokenStrategy, TokenExchangeStrategy>(GrantType.TokenExchange);
+        services.AddKeyedScoped<ITokenStrategy, DeviceCodeStrategy>(GrantType.DeviceCode);
     }
 }

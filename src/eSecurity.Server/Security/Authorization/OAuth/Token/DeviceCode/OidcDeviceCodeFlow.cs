@@ -120,7 +120,7 @@ public sealed class OidcDeviceCodeFlow(
             response.RefreshToken = refreshToken;
         }
         
-        if (client.HasGrantType(GrantTypes.Ciba))
+        if (client.HasGrantType(GrantType.Ciba))
         {
             var loginTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.LoginToken);
             var loginTokenResult = await loginTokenFactory.CreateAsync(client, user, 

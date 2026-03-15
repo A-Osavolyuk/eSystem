@@ -1,5 +1,9 @@
 ﻿using eSystem.Core.Binding;
+using eSystem.Core.Enums;
+using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Token.AuthorizationCode;
+using eSystem.Core.Security.Authorization.OAuth.Token.ClientCredentials;
 
 namespace eSecurity.Server.Common.Binding.Binders;
 
@@ -8,11 +12,21 @@ public sealed class AuthorizationCodeRequestBinder : IFormBinder<AuthorizationCo
     public Task<TypedResult<AuthorizationCodeRequest>> BindAsync(IFormCollection form,
         CancellationToken cancellationToken = default)
     {
+        var grantType = EnumHelper.FromString<GrantType>(form["grant_type"].ToString());
+        if (!grantType.HasValue)
+        {
+            return Task.FromResult(TypedResult<AuthorizationCodeRequest>.Fail(new Error()
+            {
+                Code = ErrorTypes.OAuth.InvalidGrant,
+                Description = "grant_type is invalid."
+            }));
+        }
+        
         var result = TypedResult<AuthorizationCodeRequest>.Success(new AuthorizationCodeRequest()
         {
+            GrantType = grantType.Value,
             ClientId = form["client_id"].ToString(),
             ClientSecret = form["client_secret"].ToString(),
-            GrantType = form["grant_type"].ToString(),
             Code = form["code"].ToString(),
             CodeVerifier = form["code_verifier"].ToString(),
             RedirectUri = form["redirect_uri"].ToString(),

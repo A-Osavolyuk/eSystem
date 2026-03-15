@@ -51,11 +51,11 @@ public static class AuthenticationExtensions
             cfg.ResponseTypesSupported = [ResponseTypes.Code];
             cfg.GrantTypesSupported =
             [
-                GrantTypes.AuthorizationCode,
-                GrantTypes.RefreshToken,
-                GrantTypes.ClientCredentials,
-                GrantTypes.DeviceCode,
-                GrantTypes.TokenExchange
+                GrantType.AuthorizationCode,
+                GrantType.RefreshToken,
+                GrantType.ClientCredentials,
+                GrantType.DeviceCode,
+                GrantType.TokenExchange
             ];
 
             cfg.PromptValuesSupported =

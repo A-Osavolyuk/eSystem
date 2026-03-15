@@ -47,7 +47,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
             });
         }
 
-        if (!client.HasGrantType(GrantTypes.Ciba))
+        if (!client.HasGrantType(GrantType.Ciba))
         {
             return Results.Unauthorized(new Error()
             {
