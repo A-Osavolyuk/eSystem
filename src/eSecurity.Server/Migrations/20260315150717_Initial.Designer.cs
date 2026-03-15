@@ -12,7 +12,7 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20260314191145_Initial")]
+    [Migration("20260315150717_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -627,8 +627,7 @@ namespace eSecurity.Server.Migrations
 
                     b.Property<string>("Grant")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("text");
 
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("timestamp with time zone");

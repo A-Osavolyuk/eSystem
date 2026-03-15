@@ -624,8 +624,7 @@ namespace eSecurity.Server.Migrations
 
                     b.Property<string>("Grant")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("text");
 
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("timestamp with time zone");
