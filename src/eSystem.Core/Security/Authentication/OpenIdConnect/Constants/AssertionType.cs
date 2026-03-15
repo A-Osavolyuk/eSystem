@@ -1,0 +1,12 @@
+﻿using eSystem.Core.Enums;
+
+namespace eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
+
+public enum AssertionType
+{
+    [EnumValue("urn:ietf:params:oauth:client-assertion-type:jwt-bearer")]
+    JwtBearer,
+        
+    [EnumValue("urn:ietf:params:oauth:client-assertion-type:saml2-bearer")]
+    Saml2Bearer
+}

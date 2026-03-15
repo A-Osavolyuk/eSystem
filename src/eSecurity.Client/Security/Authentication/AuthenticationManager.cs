@@ -30,8 +30,8 @@ public sealed class AuthenticationManager(
             .WithQueryParam("client_id", _clientOptions.ClientId)
             .WithQueryParam("redirect_uri", _clientOptions.CallbackUri)
             .WithQueryParam("scope", string.Join(" ", _clientOptions.SupportedScopes))
-            .WithQueryParam("state", Guid.NewGuid().ToString())
-            .WithQueryParam("nonce", Guid.NewGuid().ToString())
+            .WithQueryParam("state", Guid.NewGuid())
+            .WithQueryParam("nonce", Guid.NewGuid())
             .WithQueryParam("prompt", PromptTypes.Consent);
 
         if (!string.IsNullOrEmpty(returnUrl))
