@@ -1,5 +1,6 @@
 using System.Text;
 using System.Web;
+using eSystem.Core.Enums;
 
 namespace eSystem.Core.Utilities.Query;
 
@@ -25,6 +26,25 @@ public class QueryBuilder
     public QueryBuilder WithQueryParam(string key, string value)
     {
         QueryParams[key] = HttpUtility.UrlEncode(value);
+        return this;
+    }
+    
+    public QueryBuilder WithQueryParam(string key, bool value)
+    {
+        QueryParams[key] = HttpUtility.UrlEncode(value.ToString());
+        return this;
+    }
+    
+    public QueryBuilder WithQueryParam(string key, Guid value)
+    {
+        QueryParams[key] = HttpUtility.UrlEncode(value.ToString());
+        return this;
+    }
+
+    public QueryBuilder WithQueryParam<TEnum>(string key, TEnum value) where TEnum : struct, Enum
+    {
+        var stringValue = EnumHelper.GetString(value);
+        QueryParams[key] = HttpUtility.UrlEncode(stringValue);
         return this;
     }
 
