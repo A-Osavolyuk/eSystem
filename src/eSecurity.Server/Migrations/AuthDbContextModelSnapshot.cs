@@ -1073,15 +1073,37 @@ namespace eSecurity.Server.Migrations
                     b.ToTable("Scopes", "public");
                 });
 
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.SessionEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.SessionAuthenticationMethodEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.PrimitiveCollection<string[]>("AuthenticationMethods")
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Method")
                         .IsRequired()
-                        .HasColumnType("text[]");
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("SessionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SessionId");
+
+                    b.ToTable("SessionAuthenticationMethods", "public");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.SessionEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("timestamp with time zone");
@@ -2028,6 +2050,17 @@ namespace eSecurity.Server.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.SessionAuthenticationMethodEntity", b =>
+                {
+                    b.HasOne("eSecurity.Server.Data.Entities.SessionEntity", "Session")
+                        .WithMany("AuthenticationMethods")
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Session");
+                });
+
             modelBuilder.Entity("eSecurity.Server.Data.Entities.SessionEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
@@ -2217,6 +2250,8 @@ namespace eSecurity.Server.Migrations
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.SessionEntity", b =>
                 {
+                    b.Navigation("AuthenticationMethods");
+
                     b.Navigation("OpaqueTokens");
                 });
 

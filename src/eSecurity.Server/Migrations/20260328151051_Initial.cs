@@ -570,7 +570,6 @@ namespace eSecurity.Server.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     ExpireDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    AuthenticationMethods = table.Column<string[]>(type: "text[]", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
@@ -1094,6 +1093,29 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SessionAuthenticationMethods",
+                schema: "public",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Method = table.Column<string>(type: "text", nullable: false),
+                    SessionId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SessionAuthenticationMethods", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SessionAuthenticationMethods_Sessions_SessionId",
+                        column: x => x.SessionId,
+                        principalSchema: "public",
+                        principalTable: "Sessions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Passkeys",
                 schema: "public",
                 columns: table => new
@@ -1456,6 +1478,12 @@ namespace eSecurity.Server.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_SessionAuthenticationMethods_SessionId",
+                schema: "public",
+                table: "SessionAuthenticationMethods",
+                column: "SessionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Sessions_UserId",
                 schema: "public",
                 table: "Sessions",
@@ -1604,6 +1632,10 @@ namespace eSecurity.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "PublicSubjects",
+                schema: "public");
+
+            migrationBuilder.DropTable(
+                name: "SessionAuthenticationMethods",
                 schema: "public");
 
             migrationBuilder.DropTable(
