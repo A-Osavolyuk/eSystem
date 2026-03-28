@@ -148,12 +148,10 @@ public sealed class PasskeyTwoFactorStrategy(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            ExpireDate = DateTimeOffset.UtcNow.Add(_sessionOptions.Timestamp),
-            AuthenticationMethods = authenticationMethods
-                .Select(x => EnumHelper.GetString(x))
-                .ToArray(),
+            ExpireDate = DateTimeOffset.UtcNow.Add(_sessionOptions.Timestamp)
         };
 
+        session.AddMethods(authenticationMethods);
         await _sessionManager.CreateAsync(session, cancellationToken);
 
         authenticationSession.SessionId = session.Id;

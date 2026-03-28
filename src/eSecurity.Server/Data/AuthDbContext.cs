@@ -29,6 +29,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<ClientAudienceEntity> ClientAudiences { get; set; }
     public DbSet<GrantedScopeEntity> GrantedScopes { get; set; }
     public DbSet<SessionEntity> Sessions { get; set; }
+    public DbSet<SessionAuthenticationMethodEntity> SessionAuthenticationMethods { get; set; }
     public DbSet<AuthorizationCodeEntity> AuthorizationCodes { get; set; }
     public DbSet<ConsentEntity> Consents { get; set; }
     public DbSet<SigningCertificateEntity> Certificates { get; set; }

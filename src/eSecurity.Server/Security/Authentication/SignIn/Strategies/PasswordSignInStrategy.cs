@@ -206,10 +206,10 @@ public sealed class PasswordSignInStrategy(
             {
                 Id = Guid.CreateVersion7(),
                 UserId = user.Id,
-                AuthenticationMethods = [AuthenticationMethods.Password],
                 ExpireDate = DateTimeOffset.UtcNow.Add(_sessionOptions.Timestamp)
             };
 
+            session.AddMethods(AuthenticationMethod.Password);
             await _sessionManager.CreateAsync(session, cancellationToken);
             
             authenticationSession.SessionId = session.Id;

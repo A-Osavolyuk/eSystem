@@ -140,15 +140,12 @@ public sealed class OAuthSignInStrategy(
                 Id = Guid.CreateVersion7(),
                 UserId = user.Id,
                 ExpireDate = DateTimeOffset.UtcNow.Add(_options.Timestamp),
-                AuthenticationMethods = authenticationSession.AuthenticationMethods
-                    .Select(x => EnumHelper.GetString(x.Method))
-                    .ToArray()
             };
             
+            session.AddMethods(authenticationSession.AuthenticationMethods.Select(x => x.Method));
             await _sessionManager.CreateAsync(session, cancellationToken);
             
             authenticationSession.SessionId = session.Id;
-            
             var sessionResult = await _authenticationSessionManager.UpdateAsync(authenticationSession, cancellationToken);
             if (!sessionResult.Succeeded) return sessionResult;
             

@@ -85,10 +85,10 @@ public sealed class PasskeySignInStrategy(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            AuthenticationMethods = [AuthenticationMethods.SoftwareKey],
             ExpireDate = DateTimeOffset.UtcNow.Add(_options.Timestamp)
         };
         
+        session.AddMethods(AuthenticationMethod.SoftwareKey);
         await _sessionManager.CreateAsync(session, cancellationToken);
         
         var authenticationSession = new AuthenticationSessionEntity()

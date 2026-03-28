@@ -152,12 +152,10 @@ public sealed class OAuthSignUpStrategy(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            ExpireDate = DateTimeOffset.UtcNow.Add(_sessionOptions.Timestamp),
-            AuthenticationMethods = authenticationSession.AuthenticationMethods
-                .Select(x => EnumHelper.GetString(x.Method))
-                .ToArray(),
+            ExpireDate = DateTimeOffset.UtcNow.Add(_sessionOptions.Timestamp)
         };
         
+        session.AddMethods(authenticationSession.AuthenticationMethods.Select(x => x.Method));
         await _sessionManager.CreateAsync(session, cancellationToken);
         
         authenticationSession.OAuthFlow = OAuthFlow.SignUp;

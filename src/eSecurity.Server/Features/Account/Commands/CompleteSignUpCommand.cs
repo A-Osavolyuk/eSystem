@@ -63,10 +63,10 @@ public sealed class CompleteSignUpCommandHandler(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            AuthenticationMethods = [AuthenticationMethods.EmailVerification],
             ExpireDate = DateTimeOffset.UtcNow.Add(_options.Timestamp)
         };
 
+        session.AddMethods(AuthenticationMethod.EmailVerification);
         await _sessionManager.CreateAsync(session, cancellationToken);
 
         authenticationSession.SessionId = session.Id;

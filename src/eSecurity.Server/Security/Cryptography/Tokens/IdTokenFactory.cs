@@ -2,6 +2,7 @@
 using eSecurity.Server.Security.Authentication.Subject;
 using eSecurity.Server.Security.Identity.Claims;
 using eSecurity.Server.Security.Identity.Claims.Factories;
+using eSystem.Core.Enums;
 using eSystem.Core.Primitives.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 
@@ -58,13 +59,17 @@ public sealed class IdTokenFactory(
         
         var tokenLifetime = client.IdTokenLifetime ?? _tokenConfigurations.DefaultIdTokenLifetime;
         var claimsFactory = _claimFactoryProvider.GetClaimFactory<IdTokenClaimsContext, UserEntity>();
+        var authenticationMethods = session.AuthenticationMethods
+            .Select(x => EnumHelper.GetString(x.Method))
+            .ToArray();
+        
         var claims = await claimsFactory.GetClaimsAsync(user, new IdTokenClaimsContext
         {
             Subject = subject,
             Audience = client.Id.ToString(),
             Scopes = scopes,
             SessionId = session.Id.ToString(),
-            AuthenticationMethods = session.AuthenticationMethods,
+            AuthenticationMethods = authenticationMethods,
             AuthTime = DateTimeOffset.UtcNow,
             Expiration = DateTimeOffset.UtcNow.Add(tokenLifetime)
         }, cancellationToken);

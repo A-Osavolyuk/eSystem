@@ -7,6 +7,7 @@ using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Phone;
 using eSecurity.Server.Security.Identity.Privacy;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Enums;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives.Constants;
@@ -120,7 +121,11 @@ public class GetUserInfoQueryHandler(
             });
         }
 
-        var response = new UserInfoResponse { Subject = subjectClaim.Value, Amr = session.AuthenticationMethods };
+        var amr = session.AuthenticationMethods
+            .Select(x => EnumHelper.GetString(x.Method))
+            .ToArray();
+        
+        var response = new UserInfoResponse { Subject = subjectClaim.Value, Amr = amr };
         var scopes = scopeClaim.Value.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         if (scopes.Contains(ScopeTypes.Email))
         {
