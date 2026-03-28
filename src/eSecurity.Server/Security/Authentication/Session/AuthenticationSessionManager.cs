@@ -10,8 +10,9 @@ public sealed class AuthenticationSessionManager(AuthDbContext context) : IAuthe
     public async ValueTask<AuthenticationSessionEntity?> FindByIdAsync(Guid id,
         CancellationToken cancellationToken = default)
     {
-        return await _context.AuthenticationSessions.FirstOrDefaultAsync(
-            x => x.Id == id, cancellationToken);
+        return await _context.AuthenticationSessions
+            .Include(x => x.AuthenticationMethods)
+            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 
     public async ValueTask<Result> CreateAsync(AuthenticationSessionEntity entity,
