@@ -23,14 +23,41 @@ namespace eSecurity.Server.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.AuthenticationSessionEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.AuthenticationMethodEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.PrimitiveCollection<string[]>("AllowedMfaMethods")
-                        .HasColumnType("text[]");
+                    b.Property<DateTimeOffset?>("CreateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Method")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("SessionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("UpdateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SessionId");
+
+                    b.ToTable("AuthenticationMethods", "public");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.AuthenticationSessionEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("timestamp with time zone");
@@ -50,14 +77,6 @@ namespace eSecurity.Server.Migrations
 
                     b.Property<string>("OAuthFlow")
                         .HasColumnType("text");
-
-                    b.PrimitiveCollection<string[]>("PassedAuthenticationMethods")
-                        .IsRequired()
-                        .HasColumnType("text[]");
-
-                    b.PrimitiveCollection<string[]>("RequiredAuthenticationMethods")
-                        .IsRequired()
-                        .HasColumnType("text[]");
 
                     b.Property<DateTimeOffset?>("RevokedAt")
                         .HasColumnType("timestamp with time zone");
@@ -1574,6 +1593,17 @@ namespace eSecurity.Server.Migrations
                     b.ToTable("VerificationRequests", "public");
                 });
 
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.AuthenticationMethodEntity", b =>
+                {
+                    b.HasOne("eSecurity.Server.Data.Entities.AuthenticationSessionEntity", "Session")
+                        .WithMany("AuthenticationMethods")
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Session");
+                });
+
             modelBuilder.Entity("eSecurity.Server.Data.Entities.AuthenticationSessionEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.SessionEntity", "Session")
@@ -2144,6 +2174,11 @@ namespace eSecurity.Server.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.AuthenticationSessionEntity", b =>
+                {
+                    b.Navigation("AuthenticationMethods");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ClientEntity", b =>

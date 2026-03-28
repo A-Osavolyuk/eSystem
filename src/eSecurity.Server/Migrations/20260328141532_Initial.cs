@@ -891,9 +891,6 @@ namespace eSecurity.Server.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     IdentityProvider = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
                     OAuthFlow = table.Column<string>(type: "text", nullable: true),
-                    PassedAuthenticationMethods = table.Column<string[]>(type: "text[]", nullable: false),
-                    RequiredAuthenticationMethods = table.Column<string[]>(type: "text[]", nullable: false),
-                    AllowedMfaMethods = table.Column<string[]>(type: "text[]", nullable: true),
                     IsRevoked = table.Column<bool>(type: "boolean", nullable: false),
                     RevokedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     ExpiredAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -1127,6 +1124,30 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AuthenticationMethods",
+                schema: "public",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Method = table.Column<string>(type: "text", nullable: false),
+                    Type = table.Column<string>(type: "text", nullable: false),
+                    SessionId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AuthenticationMethods", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AuthenticationMethods_AuthenticationSessions_SessionId",
+                        column: x => x.SessionId,
+                        principalSchema: "public",
+                        principalTable: "AuthenticationSessions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OpaqueTokenAudiences",
                 schema: "public",
                 columns: table => new
@@ -1185,6 +1206,12 @@ namespace eSecurity.Server.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuthenticationMethods_SessionId",
+                schema: "public",
+                table: "AuthenticationMethods",
+                column: "SessionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AuthenticationSessions_SessionId",
@@ -1500,7 +1527,7 @@ namespace eSecurity.Server.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AuthenticationSessions",
+                name: "AuthenticationMethods",
                 schema: "public");
 
             migrationBuilder.DropTable(
@@ -1613,6 +1640,10 @@ namespace eSecurity.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "VerificationRequests",
+                schema: "public");
+
+            migrationBuilder.DropTable(
+                name: "AuthenticationSessions",
                 schema: "public");
 
             migrationBuilder.DropTable(
