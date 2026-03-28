@@ -4,7 +4,7 @@ using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 
 namespace eSecurity.Server.Data.Entities;
 
-public abstract class AuthenticationMethodEntity : Entity
+public sealed class AuthenticationMethodEntity : Entity
 {
     public required Guid Id { get; set; }
     public required AuthenticationMethod Method { get; set; }

@@ -11,6 +11,5 @@ public sealed class AuthenticationMethodConfiguration : IEntityTypeConfiguration
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Type).HasEnumConversion();
         builder.Property(x => x.Method).HasEnumConversion();
-        builder.UseTpcMappingStrategy();
     }
 }

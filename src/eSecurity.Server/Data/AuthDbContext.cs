@@ -44,9 +44,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<OpaqueTokenAudienceEntity> OpaqueTokenAudiences { get; set; }
     public DbSet<CibaRequestEntity> CibaRequests { get; set; }
     public DbSet<AuthenticationSessionEntity> AuthenticationSessions { get; set; }
-    public DbSet<PassedAuthenticationMethodEntity> PassedAuthenticationMethods { get; set; }
-    public DbSet<RequiredAuthenticationMethodEntity> RequiredAuthenticationMethods { get; set; }
-    public DbSet<AllowedMfaMethodEntity> AllowedMfaMethods { get; set; }
+    public DbSet<AuthenticationMethodEntity> AuthenticationMethods { get; set; }
     public DbSet<PublicSubjectEntity> PublicSubjects { get; set; }
     public DbSet<VerificationRequestEntity> VerificationRequests { get; set; }
 

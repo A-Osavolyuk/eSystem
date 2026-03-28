@@ -25,25 +25,34 @@ public sealed class AuthenticationSessionEntity : Entity
     public Guid? SessionId { get; set; }
     public SessionEntity? Session { get; set; }
 
-    public ICollection<PassedAuthenticationMethodEntity> PassedMethods { get; set; } = [];
-    public ICollection<RequiredAuthenticationMethodEntity> RequiredMethods { get; set; } = [];
-    public ICollection<AllowedMfaMethodEntity> AllowedMfaMethods { get; set; } = [];
+    public ICollection<AuthenticationMethodEntity> AuthenticationMethods { get; set; } = [];
+
+    public List<AuthenticationMethodEntity> GetMethods(AuthenticationMethodType type)
+    {
+        return AuthenticationMethods
+            .Where(x => x.Type == type)
+            .ToList();
+    }
 
     public void Pass(params AuthenticationMethod[] methods)
     {
         foreach (var method in methods)
         {
-            var passedMethod = RequiredMethods.FirstOrDefault(x => x.Method == method);
+            var passedMethod = AuthenticationMethods.FirstOrDefault(x => x.Method == method);
             if (passedMethod is not null)
-                RequiredMethods.Remove(passedMethod);
-
-            PassedMethods.Add(new PassedAuthenticationMethodEntity()
             {
-                Id = Guid.CreateVersion7(),
-                SessionId = Id,
-                Type = AuthenticationMethodType.Passed,
-                Method = method
-            });
+                passedMethod.Type = AuthenticationMethodType.Passed;
+            }
+            else
+            {
+                AuthenticationMethods.Add(new AuthenticationMethodEntity()
+                {
+                    Id = Guid.CreateVersion7(),
+                    SessionId = Id,
+                    Type = AuthenticationMethodType.Passed,
+                    Method = method
+                });
+            }
         }
     }
 
@@ -51,7 +60,7 @@ public sealed class AuthenticationSessionEntity : Entity
     {
         foreach (var method in methods)
         {
-            RequiredMethods.Add(new RequiredAuthenticationMethodEntity()
+            AuthenticationMethods.Add(new AuthenticationMethodEntity()
             {
                 Id = Guid.CreateVersion7(),
                 SessionId = Id,
@@ -65,7 +74,7 @@ public sealed class AuthenticationSessionEntity : Entity
     {
         foreach (var method in methods)
         {
-            AllowedMfaMethods.Add(new AllowedMfaMethodEntity()
+            AuthenticationMethods.Add(new AuthenticationMethodEntity()
             {
                 Id = Guid.CreateVersion7(),
                 SessionId = Id,

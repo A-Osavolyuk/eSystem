@@ -27,18 +27,21 @@ public sealed class GetAuthenticationSessionQueryHandler(
             });
         }
 
-        var nextMethod = authenticationSession.RequiredMethods.FirstOrDefault();
-        var allowedMfaMethods = authenticationSession.AllowedMfaMethods
-            .Select(x => EnumHelper.GetString(x.Method))
-            .ToArray();
+        var nextMethod = authenticationSession
+            .GetMethods(AuthenticationMethodType.Required)
+            .FirstOrDefault();
+        
+        var allowedMfaMethods = authenticationSession
+            .GetMethods(AuthenticationMethodType.AllowedMfa)
+            .Select(x => x.Method);
         
         var response = new AuthenticationSessionDto()
         {
             SessionId = authenticationSession.SessionId,
             OAuthFlow =  authenticationSession.OAuthFlow,
-            IsCompleted = authenticationSession.RequiredMethods.Count == 0,
+            IsCompleted = authenticationSession.GetMethods(AuthenticationMethodType.Required).Count == 0,
             NextMethod = nextMethod?.Method,
-            AllowedMfaMethods = authenticationSession.AllowedMfaMethods.Select(x => x.Method)
+            AllowedMfaMethods = allowedMfaMethods
         };
         
         return Results.Ok(response);

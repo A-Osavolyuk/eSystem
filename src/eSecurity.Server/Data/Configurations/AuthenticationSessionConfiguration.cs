@@ -24,17 +24,7 @@ public sealed class AuthenticationSessionConfiguration : IEntityTypeConfiguratio
             .IsRequired(false)
             .OnDelete(DeleteBehavior.Cascade);
         
-        builder.HasMany(x => x.RequiredMethods)
-            .WithOne(x => x.Session)
-            .HasForeignKey(x => x.SessionId)
-            .OnDelete(DeleteBehavior.Cascade);
-        
-        builder.HasMany(x => x.PassedMethods)
-            .WithOne(x => x.Session)
-            .HasForeignKey(x => x.SessionId)
-            .OnDelete(DeleteBehavior.Cascade);
-        
-        builder.HasMany(x => x.AllowedMfaMethods)
+        builder.HasMany(x => x.AuthenticationMethods)
             .WithOne(x => x.Session)
             .HasForeignKey(x => x.SessionId)
             .OnDelete(DeleteBehavior.Cascade);

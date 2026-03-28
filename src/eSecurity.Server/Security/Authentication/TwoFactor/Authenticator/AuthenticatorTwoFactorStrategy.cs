@@ -51,7 +51,8 @@ public sealed class AuthenticatorTwoFactorStrategy(
         var authenticationSession = await _authenticationSessionManager.FindByIdAsync(
             context.TransactionId, cancellationToken);
 
-        if (authenticationSession?.UserId is null || authenticationSession.AllowedMfaMethods is null)
+        if (authenticationSession?.UserId is null ||
+            authenticationSession.GetMethods(AuthenticationMethodType.AllowedMfa).Count == 0)
         {
             return Results.BadRequest(new Error()
             {
@@ -121,7 +122,7 @@ public sealed class AuthenticatorTwoFactorStrategy(
 
         AuthenticationMethod[] authenticationMethods =
         [
-            ..authenticationSession.PassedMethods.Select(x => x.Method),
+            ..authenticationSession.AuthenticationMethods.Select(x => x.Method),
             AuthenticationMethod.MultiFactorAuthentication,
             AuthenticationMethod.OneTimePassword
         ];

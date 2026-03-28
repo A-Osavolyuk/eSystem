@@ -153,7 +153,7 @@ public sealed class OAuthSignUpStrategy(
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
             ExpireDate = DateTimeOffset.UtcNow.Add(_sessionOptions.Timestamp),
-            AuthenticationMethods = authenticationSession.PassedMethods
+            AuthenticationMethods = authenticationSession.AuthenticationMethods
                 .Select(x => EnumHelper.GetString(x.Method))
                 .ToArray(),
         };
