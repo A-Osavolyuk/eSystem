@@ -1,6 +1,7 @@
 @page "/connect/authorize"
 
 @using eSecurity.Client.Security.Authentication.OpenIdConnect.Authorization
+@using eSystem.Core.Enums
 @using eSystem.Core.Primitives.Constants
 @using eSystem.Core.Security.Authentication.OpenIdConnect.Client
 @using eSystem.Core.Security.Authentication.OpenIdConnect.Constants
@@ -60,7 +61,7 @@
                 ResponseType = ResponseType,
                 State = State,
                 CodeChallenge = CodeChallenge,
-                CodeChallengeMethod = CodeChallengeMethod,
+                CodeChallengeMethod = EnumHelper.FromString<ChallengeMethod>(CodeChallengeMethod),
                 ReturnUrl = ReturnUrl
             };
 

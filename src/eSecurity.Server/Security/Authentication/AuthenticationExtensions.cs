@@ -77,7 +77,7 @@ public static class AuthenticationExtensions
                 TokenAuthMethods.None
             ];
 
-            cfg.CodeChallengeMethodsSupported = [ChallengeMethods.S256];
+            cfg.CodeChallengeMethodsSupported = [ChallengeMethod.S256];
             cfg.ScopesSupported =
             [
                 ScopeTypes.OfflineAccess,

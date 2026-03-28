@@ -1,4 +1,6 @@
-﻿namespace eSecurity.Client.Security.Authentication.OpenIdConnect.Authorization;
+﻿using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
+
+namespace eSecurity.Client.Security.Authentication.OpenIdConnect.Authorization;
 
 public sealed class AuthorizationContext
 {
@@ -10,6 +12,6 @@ public sealed class AuthorizationContext
     public required string Scope { get; set; }
     public List<string> Prompts { get; set; } = [];
     public string? CodeChallenge { get; set; }
-    public string? CodeChallengeMethod { get; set; }
+    public ChallengeMethod? CodeChallengeMethod { get; set; }
     public string? ReturnUrl { get; set; }
 }

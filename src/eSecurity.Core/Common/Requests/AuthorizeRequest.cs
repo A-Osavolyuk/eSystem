@@ -1,3 +1,5 @@
+using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
+
 namespace eSecurity.Core.Common.Requests;
 
 public sealed class AuthorizeRequest
@@ -27,5 +29,5 @@ public sealed class AuthorizeRequest
     public string? CodeChallenge { get; set; }
     
     [JsonPropertyName("code_challenge_method")]
-    public string? CodeChallengeMethod { get; set; }
+    public ChallengeMethod? CodeChallengeMethod { get; set; }
 }

@@ -16,8 +16,11 @@ public static class EnumHelper
         return aliases.Select(alias => alias.Value).ToList();
     }
 
-    public static TEnum? FromString<TEnum>(string value) where TEnum : struct, Enum
+    public static TEnum? FromString<TEnum>(string? value) where TEnum : struct, Enum
     {
+        if (string.IsNullOrEmpty(value))
+            return null;
+        
         if (!EnumCache<TEnum>.From.TryGetValue(value, out var enumValue))
             return null;
         

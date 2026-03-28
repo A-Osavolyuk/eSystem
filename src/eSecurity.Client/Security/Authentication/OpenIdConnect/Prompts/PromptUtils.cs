@@ -25,8 +25,8 @@ public static class PromptUtils
         if (!string.IsNullOrEmpty(context.CodeChallenge))
             returnUrlBuilder.WithQueryParam("code_challenge", context.CodeChallenge);
 
-        if (!string.IsNullOrEmpty(context.CodeChallengeMethod))
-            returnUrlBuilder.WithQueryParam("code_challenge_method", context.CodeChallengeMethod);
+        if (context.CodeChallengeMethod is not null)
+            returnUrlBuilder.WithQueryParam("code_challenge_method", context.CodeChallengeMethod.Value);
 
         if (context.Prompts.Count > 1)
         {

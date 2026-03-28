@@ -1,5 +1,6 @@
 ﻿using eSecurity.Server.Security.Authorization.OAuth.Protocol;
 using eSystem.Core.Data.Entities;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 
 namespace eSecurity.Server.Data.Entities;
 
@@ -14,7 +15,7 @@ public class AuthorizationCodeEntity : Entity
     public required string RedirectUri { get; set; }
     
     public string? CodeChallenge { get; set; }
-    public string? CodeChallengeMethod { get; set; }
+    public ChallengeMethod? CodeChallengeMethod { get; set; }
     
     public bool Used { get; set; }
     public DateTimeOffset ExpiredAt { get; set; }

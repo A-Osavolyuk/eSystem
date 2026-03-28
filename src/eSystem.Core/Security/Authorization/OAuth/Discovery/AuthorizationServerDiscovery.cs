@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 
 namespace eSystem.Core.Security.Authorization.OAuth.Discovery;
@@ -51,5 +52,5 @@ public sealed class AuthorizationServerDiscovery
     public string[] ScopesSupported { get; set; } = [];
     
     [JsonPropertyName("code_challenge_methods_supported")]
-    public string[] CodeChallengeMethodsSupported { get; set; } = [];
+    public ChallengeMethod[] CodeChallengeMethodsSupported { get; set; } = [];
 }

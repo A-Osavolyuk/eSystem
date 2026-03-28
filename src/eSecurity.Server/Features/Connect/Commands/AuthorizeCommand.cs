@@ -111,7 +111,7 @@ public class AuthorizeCommandHandler(
                     Description = "code_challenge is required"
                 });
 
-            if (string.IsNullOrEmpty(request.Request.CodeChallengeMethod))
+            if (!request.Request.CodeChallengeMethod.HasValue)
                 return Results.BadRequest(new Error
                 {
                     Code = ErrorTypes.OAuth.InvalidRequest,

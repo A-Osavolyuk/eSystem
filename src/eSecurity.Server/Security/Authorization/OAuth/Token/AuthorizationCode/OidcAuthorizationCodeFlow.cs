@@ -71,7 +71,7 @@ public class OidcAuthorizationCodeFlow(
         if (client is { ClientType: ClientType.Public, RequirePkce: true })
         {
             if (string.IsNullOrWhiteSpace(code.CodeChallenge)
-                || string.IsNullOrWhiteSpace(code.CodeChallengeMethod)
+                || code.CodeChallengeMethod is null
                 || string.IsNullOrWhiteSpace(context.CodeVerifier))
             {
                 return Results.BadRequest(new Error
@@ -81,7 +81,12 @@ public class OidcAuthorizationCodeFlow(
                 });
             }
 
-            var isValidPkce = _pkceHandler.Verify(code.CodeChallenge, code.CodeChallengeMethod, context.CodeVerifier);
+            var isValidPkce = _pkceHandler.Verify(
+                code.CodeChallenge,
+                code.CodeChallengeMethod.Value,
+                context.CodeVerifier
+            );
+            
             if (!isValidPkce)
             {
                 return Results.BadRequest(new Error
@@ -100,7 +105,7 @@ public class OidcAuthorizationCodeFlow(
             ExpiresIn = (int)_tokenConfigurations.DefaultAccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenTypes.Bearer,
         };
-        
+
         var session = await _sessionManager.FindAsync(user, cancellationToken);
         if (session is null || session.ExpireDate < DateTimeOffset.UtcNow)
         {
@@ -112,7 +117,7 @@ public class OidcAuthorizationCodeFlow(
         }
 
         var accessTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.AccessToken);
-        var accessTokenResult = await accessTokenFactory.CreateAsync(client, user, 
+        var accessTokenResult = await accessTokenFactory.CreateAsync(client, user,
             session, cancellationToken: cancellationToken);
 
         if (!accessTokenResult.Succeeded)
@@ -129,7 +134,7 @@ public class OidcAuthorizationCodeFlow(
                 Description = "Server error"
             });
         }
-            
+
         response.AccessToken = accessToken;
 
         var clientResult = await _clientManager.RelateAsync(client, session, cancellationToken);
@@ -138,7 +143,7 @@ public class OidcAuthorizationCodeFlow(
         if (client.AllowOfflineAccess && client.HasScope(ScopeTypes.OfflineAccess))
         {
             var refreshTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.RefreshToken);
-            var refreshTokenResult = await refreshTokenFactory.CreateAsync(client, user, 
+            var refreshTokenResult = await refreshTokenFactory.CreateAsync(client, user,
                 session, cancellationToken: cancellationToken);
 
             if (!refreshTokenResult.TryGetValue(out var refreshToken))
@@ -149,12 +154,13 @@ public class OidcAuthorizationCodeFlow(
                     Description = "Server error"
                 });
             }
-            
+
             response.RefreshToken = refreshToken;
         }
 
         var idTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.IdToken);
-        var idTokenResult = await idTokenFactory.CreateAsync(client, user, session, cancellationToken: cancellationToken);
+        var idTokenResult =
+            await idTokenFactory.CreateAsync(client, user, session, cancellationToken: cancellationToken);
         if (!idTokenResult.Succeeded)
         {
             var error = idTokenResult.GetError();
@@ -169,9 +175,9 @@ public class OidcAuthorizationCodeFlow(
                 Description = "Server error"
             });
         }
-            
+
         response.IdToken = idToken;
-        
+
         return Results.Ok(response);
     }
 }

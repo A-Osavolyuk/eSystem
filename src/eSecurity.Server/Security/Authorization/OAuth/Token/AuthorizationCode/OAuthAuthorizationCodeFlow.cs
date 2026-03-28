@@ -65,7 +65,7 @@ public class OAuthAuthorizationCodeFlow(
         if (client is { ClientType: ClientType.Public, RequirePkce: true })
         {
             if (string.IsNullOrWhiteSpace(code.CodeChallenge)
-                || string.IsNullOrWhiteSpace(code.CodeChallengeMethod)
+                || code.CodeChallengeMethod is null
                 || string.IsNullOrWhiteSpace(context.CodeVerifier))
             {
                 return Results.BadRequest(new Error
@@ -77,7 +77,7 @@ public class OAuthAuthorizationCodeFlow(
 
             var isValidPkce = _pkceHandler.Verify(
                 code.CodeChallenge,
-                code.CodeChallengeMethod,
+                code.CodeChallengeMethod.Value,
                 context.CodeVerifier
             );
 

@@ -47,7 +47,7 @@ public sealed class GetOAuthAuthorizationServerQueryHandler : IRequestHandler<Ge
                 TokenAuthMethods.PrivateKeyJwt,
                 TokenAuthMethods.None
             ],
-            CodeChallengeMethodsSupported = [ChallengeMethods.S256],
+            CodeChallengeMethodsSupported = [ChallengeMethod.S256],
             ScopesSupported =
             [
                 ScopeTypes.OfflineAccess,
