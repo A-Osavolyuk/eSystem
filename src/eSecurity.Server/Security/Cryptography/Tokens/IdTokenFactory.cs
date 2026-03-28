@@ -74,7 +74,7 @@ public sealed class IdTokenFactory(
             Expiration = DateTimeOffset.UtcNow.Add(tokenLifetime)
         }, cancellationToken);
 
-        var tokenContext = new JwtTokenBuildContext { Claims = claims, Type = JwtTokenTypes.IdToken };
+        var tokenContext = new JwtTokenBuildContext { Claims = claims, Type = JwtTokenType.IdToken };
         var tokenFactory = _tokenBuilderProvider.GetFactory<JwtTokenBuildContext, string>();
         var token = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
         

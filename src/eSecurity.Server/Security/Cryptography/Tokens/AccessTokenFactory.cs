@@ -78,7 +78,7 @@ public sealed class AccessTokenFactory(
                 }, cancellationToken);
             }
 
-            var tokenContext = new JwtTokenBuildContext { Claims = claims, Type = JwtTokenTypes.AccessToken };
+            var tokenContext = new JwtTokenBuildContext { Claims = claims, Type = JwtTokenType.AccessToken };
             var tokenFactory = _tokenBuilderProvider.GetFactory<JwtTokenBuildContext, string>();
 
             var token = await tokenFactory.BuildAsync(tokenContext, cancellationToken);

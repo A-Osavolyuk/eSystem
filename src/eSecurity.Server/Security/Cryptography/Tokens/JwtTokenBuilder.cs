@@ -2,13 +2,14 @@
 using System.Security.Cryptography.X509Certificates;
 using eSecurity.Server.Security.Cryptography.Signing;
 using eSecurity.Server.Security.Cryptography.Signing.Certificates;
+using eSystem.Core.Security.Authorization.OAuth.Constants;
 
 namespace eSecurity.Server.Security.Cryptography.Tokens;
 
 public sealed class JwtTokenBuildContext : TokenBuildContext
 {
     public required IEnumerable<Claim> Claims { get; set; }
-    public required string Type { get; set; }
+    public required JwtTokenType Type { get; set; }
 }
 
 public class JwtTokenBuilder(

@@ -136,7 +136,7 @@ public sealed class JwtTokenDelegationHandler(
         subjectTokenClaims.Add(new Claim(AppClaimTypes.Delegated, "true"));
 
         var tokenFactory = _tokenBuilderProvider.GetFactory<JwtTokenBuildContext, string>();
-        var tokenContext = new JwtTokenBuildContext { Claims = subjectTokenClaims, Type = JwtTokenTypes.AccessToken };
+        var tokenContext = new JwtTokenBuildContext { Claims = subjectTokenClaims, Type = JwtTokenType.AccessToken };
         var accessToken = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
 
         var response = new TokenExchangeResponse

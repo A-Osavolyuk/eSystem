@@ -83,7 +83,7 @@ public sealed class JwtTokenTransformationHandler(
         claims.Add(new Claim(AppClaimTypes.Scope, context.Scope));
 
         var tokenFactory = _tokenBuilderProvider.GetFactory<JwtTokenBuildContext, string>();
-        var tokenContext = new JwtTokenBuildContext { Claims = claims, Type = JwtTokenTypes.AccessToken };
+        var tokenContext = new JwtTokenBuildContext { Claims = claims, Type = JwtTokenType.AccessToken };
         var accessToken = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
 
         var response = new TokenExchangeResponse

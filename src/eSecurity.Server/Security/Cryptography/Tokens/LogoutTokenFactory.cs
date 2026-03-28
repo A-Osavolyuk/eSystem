@@ -55,7 +55,7 @@ public sealed class LogoutTokenFactory(
 
         var claimsFactory = _claimFactoryProvider.GetClaimFactory<LogoutTokenClaimsContext, UserEntity>();
         var claims = await claimsFactory.GetClaimsAsync(user, claimsContext, cancellationToken);
-        var tokenContext = new JwtTokenBuildContext { Claims = claims, Type = JwtTokenTypes.Generic };
+        var tokenContext = new JwtTokenBuildContext { Claims = claims, Type = JwtTokenType.Generic };
         var tokenFactory = _tokenBuilderProvider.GetFactory<JwtTokenBuildContext, string>();
         var token = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
         

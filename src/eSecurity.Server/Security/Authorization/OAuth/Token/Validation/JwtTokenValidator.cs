@@ -1,4 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using eSystem.Core.Enums;
+using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Token.Validation;
 using TokenValidationResult = eSystem.Core.Security.Authorization.OAuth.Token.Validation.TokenValidationResult;
 
@@ -17,8 +19,9 @@ public class JwtTokenValidator(IJwtTokenValidationProvider validationProvider) :
         var securityToken = _handler.ReadJwtToken(token);
         if (securityToken is null)
             return TokenValidationResult.Fail();
-        
-        var validator = _validationProvider.CreateValidator(securityToken.Header.Typ);
+
+        var tokenType = EnumHelper.FromStringOrThrow<JwtTokenType>(securityToken.Header.Typ);
+        var validator = _validationProvider.CreateValidator(tokenType);
         return await validator.ValidateAsync(token, cancellationToken);
     }
 }

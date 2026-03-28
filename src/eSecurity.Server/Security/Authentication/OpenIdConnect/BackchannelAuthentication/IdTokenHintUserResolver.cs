@@ -27,7 +27,7 @@ public sealed class IdTokenHintUserResolver(
             });
         }
         
-        var validator = _validationProvider.CreateValidator(JwtTokenTypes.IdToken);
+        var validator = _validationProvider.CreateValidator(JwtTokenType.IdToken);
         var validationResult = await validator.ValidateAsync(request.IdTokenHint, cancellationToken);
         if (!validationResult.IsValid || validationResult.ClaimsPrincipal is null)
         {
