@@ -34,8 +34,8 @@ public class GetUserEmailsQueryHandler(
             NormalizedEmail = email.NormalizedEmail,
             Type = email.Type,
             IsVerified = email.IsVerified,
-            VerifiedDate = email.VerifiedAt,
-            UpdateDate = email.UpdateDate
+            VerifiedAt = email.VerifiedAt,
+            UpdatedAt = email.UpdateDate
         });
 
         return Results.Ok(response);

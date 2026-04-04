@@ -31,7 +31,7 @@ public class GetUserProvidersQueryHandler(
         {
             Method = provider.Method,
             Preferred = provider.Preferred,
-            UpdateDate = provider.UpdateDate,
+            UpdatedAt = provider.UpdateDate,
         }).ToList();
         
         return Results.Ok(response);

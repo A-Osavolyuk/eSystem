@@ -24,10 +24,10 @@
                     Primary
                 </MudChip>
             </MudTooltip>
-            @if (Email is { IsVerified: true, VerifiedDate: not null })
+            @if (Email is { IsVerified: true, VerifiedAt: not null })
             {
                 <MudTooltip
-                    Text="@($"Verified at: {Email.VerifiedDate?.ToString("MM/dd/yyyy HH:mm")}")">
+                    Text="@($"Verified at: {Email.VerifiedAt?.ToString("MM/dd/yyyy HH:mm")}")">
                     <MudChip
                         T="string"
                         Class="mx-0"

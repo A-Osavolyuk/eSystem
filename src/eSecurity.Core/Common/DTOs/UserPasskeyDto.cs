@@ -4,20 +4,29 @@ namespace eSecurity.Core.Common.DTOs;
 
 public class UserPasskeyDto
 {
+    [JsonPropertyName("id")]
     public Guid Id { get; set; }
+    
+    [JsonPropertyName("current_key")]
     public bool CurrentKey { get; set; }
+    
+    [JsonPropertyName("display_name")]
     public string DisplayName { get; set; } = string.Empty;
-    public DateTimeOffset? LastSeenDate { get; set; }
-    public DateTimeOffset? CreateDate { get; set; }
+    
+    [JsonPropertyName("last_seen_at")]
+    public DateTimeOffset? LastSeenAt { get; set; }
+    
+    [JsonPropertyName("created_at")]
+    public DateTimeOffset? CreatedAt { get; set; }
     
     public string GetInfo()
     {
-        var formattedDate = CreateDate?.ToString("MMM d, yyyy", CultureInfo.InvariantCulture)!;
+        var formattedDate = CreatedAt?.ToString("MMM d, yyyy", CultureInfo.InvariantCulture)!;
         var addedText = $"Added on {formattedDate}";
 
-        if (!LastSeenDate.HasValue) return addedText;
+        if (!LastSeenAt.HasValue) return addedText;
         
-        var difference = DateTimeOffset.UtcNow - LastSeenDate.Value;
+        var difference = DateTimeOffset.UtcNow - LastSeenAt.Value;
         var totalHours = difference.TotalHours;
         var lastSeenText = totalHours switch
         {

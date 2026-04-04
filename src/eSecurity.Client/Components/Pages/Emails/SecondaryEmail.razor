@@ -24,10 +24,10 @@
                 Size="Size.Small">
                 Secondary
             </MudChip>
-            @if (Email.IsVerified && Email.VerifiedDate.HasValue)
+            @if (Email.IsVerified && Email.VerifiedAt.HasValue)
             {
                 <MudTooltip
-                    Text="@($"Verified at: {Email.VerifiedDate?.ToString("MM/dd/yyyy HH:mm")}")">
+                    Text="@($"Verified at: {Email.VerifiedAt?.ToString("MM/dd/yyyy HH:mm")}")">
                     <MudChip
                         T="string"
                         Class="mx-0"
@@ -51,10 +51,10 @@
                     </MudChip>
                 </MudTooltip>
             }
-            @if (Email.UpdateDate.HasValue)
+            @if (Email.UpdatedAt.HasValue)
             {
                 <MudTooltip
-                    Text="@($"Last change: {Email.UpdateDate?.ToString("MM/dd/yyyy HH:mm")}")">
+                    Text="@($"Last change: {Email.UpdatedAt?.ToString("MM/dd/yyyy HH:mm")}")">
                     <MudChip
                         T="string"
                         Class="mx-0"

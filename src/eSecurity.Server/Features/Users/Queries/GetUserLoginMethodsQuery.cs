@@ -61,7 +61,7 @@ public class GetUserLoginMethodsQueryHandler(
             PasswordData = new PasswordData
             {
                 HasPassword = password is not null,
-                LastChange = password?.UpdateDate
+                LastChangedAt = password?.UpdateDate
             },
             TwoFactorData = new TwoFactorData
             {
@@ -80,7 +80,7 @@ public class GetUserLoginMethodsQueryHandler(
                 {
                     Id = linkedAccount.Id,
                     Type = linkedAccount.Type,
-                    LinkedDate = linkedAccount.CreateDate
+                    LinkedAt = linkedAccount.CreateDate
                 }).ToList()
             },
             PasskeysData = new PasskeysData
@@ -91,8 +91,8 @@ public class GetUserLoginMethodsQueryHandler(
                         Id = passkey.Id,
                         CurrentKey = passkey.DeviceId == device.Id,
                         DisplayName = passkey.DisplayName,
-                        LastSeenDate = passkey.LastSeenDate,
-                        CreateDate = passkey.CreateDate
+                        LastSeenAt = passkey.LastSeenDate,
+                        CreatedAt = passkey.CreateDate
                     })
                     .ToList()
             }

@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using eSystem.Core.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Security.Authorization.OAuth;
 
@@ -49,6 +50,7 @@ public sealed class OpenIdConfiguration
     public string TokenEndpoint { get; set; } = string.Empty;
     
     [JsonPropertyName("token_endpoint_auth_methods_supported")]
+    [JsonConverter(typeof(JsonEnumValueStringConverter<TokenAuthMethod>))]
     public TokenAuthMethod[]? TokenEndpointAuthMethodsSupported { get; set; }
     
     [JsonPropertyName("token_endpoint_auth_signing_alg_values_supported")]
@@ -88,15 +90,19 @@ public sealed class OpenIdConfiguration
     
     
     [JsonPropertyName("grant_types_supported")]
+    [JsonConverter(typeof(JsonEnumValueStringConverter<GrantType>))]
     public GrantType[] GrantTypesSupported { get; set; } = [];
     
     [JsonPropertyName("response_types_supported")]
+    [JsonConverter(typeof(JsonEnumValueStringConverter<ResponseType>))]
     public ResponseType[] ResponseTypesSupported { get; set; } = [];
     
     [JsonPropertyName("prompt_values_supported")]
+    [JsonConverter(typeof(JsonEnumValueStringConverter<PromptType>))]
     public PromptType[] PromptValuesSupported { get; set; } = [];
     
     [JsonPropertyName("subject_types_supported")]
+    [JsonConverter(typeof(JsonEnumValueStringConverter<SubjectType>))]
     public SubjectType[] SubjectTypesSupported { get; set; } = [];
     
     [JsonPropertyName("id_token_signing_alg_values_supported")]
@@ -163,6 +169,7 @@ public sealed class OpenIdConfiguration
     public string[] ScopesSupported { get; set; } = [];
     
     [JsonPropertyName("code_challenge_methods_supported")]
+    [JsonConverter(typeof(JsonEnumValueStringConverter<ChallengeMethod>))]
     public ChallengeMethod[] CodeChallengeMethodsSupported { get; set; } = [];
     
 }

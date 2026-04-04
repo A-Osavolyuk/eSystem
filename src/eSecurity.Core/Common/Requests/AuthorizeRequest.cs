@@ -1,3 +1,4 @@
+using eSystem.Core.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 
 namespace eSecurity.Core.Common.Requests;
@@ -8,6 +9,7 @@ public sealed class AuthorizeRequest
     public required Guid SessionId { get; set; }
     
     [JsonPropertyName("response_type")]
+    [JsonConverter(typeof(JsonEnumValueStringConverter<ResponseType>))]
     public required ResponseType ResponseType { get; set; }
     
     [JsonPropertyName("client_id")]
@@ -29,5 +31,6 @@ public sealed class AuthorizeRequest
     public string? CodeChallenge { get; set; }
     
     [JsonPropertyName("code_challenge_method")]
+    [JsonConverter(typeof(JsonEnumValueStringConverter<ChallengeMethod>))]
     public ChallengeMethod? CodeChallengeMethod { get; set; }
 }

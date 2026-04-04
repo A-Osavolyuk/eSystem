@@ -2,7 +2,12 @@
 
 public class RoleDto
 {
+    [JsonPropertyName("id")]
     public Guid Id { get; init; }
-    public string Name  { get; set; } = string.Empty;
+    
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = string.Empty;
+    
+    [JsonPropertyName("normalized_name")]
     public string NormalizedName { get; set; } = string.Empty;
 }

@@ -20,8 +20,8 @@ public class GetPasskeyQueryHandler(IPasskeyManager passkeyManager) : IRequestHa
         {
             Id = passkey.Id,
             DisplayName = passkey.DisplayName,
-            LastSeenDate = passkey.LastSeenDate,
-            CreateDate = passkey.CreateDate,
+            LastSeenAt = passkey.LastSeenDate,
+            CreatedAt = passkey.CreateDate,
         };;
         return Results.Ok(response);
     }

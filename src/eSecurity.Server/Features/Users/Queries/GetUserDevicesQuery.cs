@@ -37,9 +37,9 @@ public class GetUserDevicesQueryHandler(
             UserAgent = device.UserAgent,
             Device = device.Device,
             Location = device.Location,
-            FirstSeen = device.FirstSeenAt,
-            LastSeen = device.LastSeenAt,
-            BlockedDate = device.BlockedAt
+            FirstSeenAt = device.FirstSeenAt,
+            LastSeenAt = device.LastSeenAt,
+            BlockedAt = device.BlockedAt
         }).ToList();
         
         return Results.Ok(response);
