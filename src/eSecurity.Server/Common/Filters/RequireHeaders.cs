@@ -1,5 +1,5 @@
 ﻿using eSystem.Core.Http.Constants;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace eSecurity.Server.Common.Filters;
@@ -15,7 +15,7 @@ public class RequireHeaders(params string[] headers) : Attribute, IAsyncActionFi
             {
                 var error = new Error
                 {
-                    Code = ErrorTypes.OAuth.InvalidRequest,
+                    Code = ErrorType.OAuth.InvalidRequest,
                     Description = $"Header '{header}' is missing."
                 };
 
@@ -31,7 +31,7 @@ public class RequireHeaders(params string[] headers) : Attribute, IAsyncActionFi
             {
                 var error = new Error
                 {
-                    Code = ErrorTypes.OAuth.InvalidRequest,
+                    Code = ErrorType.OAuth.InvalidRequest,
                     Description = $"Header '{header}' is empty."
                 };
                 

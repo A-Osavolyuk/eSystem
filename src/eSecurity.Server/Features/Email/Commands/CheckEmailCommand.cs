@@ -1,7 +1,7 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Security.Identity.Email;
 using eSystem.Core.Mediator;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 
 namespace eSecurity.Server.Features.Email.Commands;
 
@@ -18,7 +18,7 @@ public class CheckEmailCommandHandler(IEmailManager emailManager) : IRequestHand
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.Common.EmailTaken,
+                Code = ErrorType.Common.EmailTaken,
                 Description = "Email is already taken"
             });
         }

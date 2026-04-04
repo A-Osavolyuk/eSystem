@@ -5,6 +5,7 @@ using eSecurity.Server.Security.Authentication.TwoFactor.Authenticator;
 using eSecurity.Server.Security.Authentication.TwoFactor.Secret;
 using eSecurity.Server.Security.Cryptography.Protection.Constants;
 using eSecurity.Server.Security.Identity.User;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Identity.Claims;
 using Microsoft.AspNetCore.DataProtection;
 

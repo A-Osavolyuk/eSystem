@@ -10,7 +10,7 @@ using eSecurity.Server.Security.Cryptography.Protection.Constants;
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Extensions;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.DataProtection;
 
@@ -55,7 +55,7 @@ public sealed class AuthenticatorTwoFactorStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.Common.InvalidSession,
+                Code = ErrorType.Common.InvalidSession,
                 Description = "Invalid session"
             });
         }
@@ -70,7 +70,7 @@ public sealed class AuthenticatorTwoFactorStrategy(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.Common.InvalidDevice,
+                Code = ErrorType.Common.InvalidDevice,
                 Description = "Invalid device."
             });
         }
@@ -87,7 +87,7 @@ public sealed class AuthenticatorTwoFactorStrategy(
             if (user.FailedLoginAttempts < _signInOptions.MaxFailedLoginAttempts)
                 return Results.BadRequest(new Error
                 {
-                    Code = ErrorTypes.Common.FailedLoginAttempt,
+                    Code = ErrorType.Common.FailedLoginAttempt,
                     Description = "Invalid code.",
                     Details = new Dictionary<string, object>
                     {
@@ -105,7 +105,7 @@ public sealed class AuthenticatorTwoFactorStrategy(
             if (!lockoutResult.Succeeded) return lockoutResult;
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.Common.AccountLockedOut,
+                Code = ErrorType.Common.AccountLockedOut,
                 Description = "Account is locked out due to too many failed login attempts",
                 Details = new Dictionary<string, object> { { "userId", user.Id } }
             });

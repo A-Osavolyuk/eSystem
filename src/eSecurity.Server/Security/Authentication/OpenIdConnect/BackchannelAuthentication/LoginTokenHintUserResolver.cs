@@ -2,7 +2,7 @@
 using eSecurity.Server.Security.Authorization.OAuth.Token;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
 
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
@@ -23,7 +23,7 @@ public sealed class LoginTokenHintUserResolver(
         {
             return TypedResult<UserEntity>.Fail(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidRequest,
+                Code = ErrorType.OAuth.InvalidRequest,
                 Description = "login_token_hint is invalid"
             });
         }
@@ -34,7 +34,7 @@ public sealed class LoginTokenHintUserResolver(
         {
             return TypedResult<UserEntity>.Fail(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidRequest,
+                Code = ErrorType.OAuth.InvalidRequest,
                 Description = "login_token_hint is invalid"
             });
         }
@@ -43,7 +43,7 @@ public sealed class LoginTokenHintUserResolver(
         {
             return TypedResult<UserEntity>.Fail(new Error()
             {
-                Code = ErrorTypes.OAuth.ExpiredLoginTokenHint,
+                Code = ErrorType.OAuth.ExpiredLoginTokenHint,
                 Description = "login_token_hint is expired"
             });
         }
@@ -53,7 +53,7 @@ public sealed class LoginTokenHintUserResolver(
         {
             return TypedResult<UserEntity>.Fail(new Error()
             {
-                Code = ErrorTypes.OAuth.UnknownUserId,
+                Code = ErrorType.OAuth.UnknownUserId,
                 Description = "Unknown user"
             });
         }

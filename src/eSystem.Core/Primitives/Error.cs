@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace eSystem.Core.Primitives.Results;
+namespace eSystem.Core.Primitives;
 
 public class Error
 {

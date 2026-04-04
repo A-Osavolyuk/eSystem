@@ -1,4 +1,6 @@
-﻿namespace eSecurity.Server.Security.Authentication.Subject;
+﻿using eSystem.Core.Primitives;
+
+namespace eSecurity.Server.Security.Authentication.Subject;
 
 public interface ISubjectStrategy<TContext> where TContext : SubjectStrategyContext
 {

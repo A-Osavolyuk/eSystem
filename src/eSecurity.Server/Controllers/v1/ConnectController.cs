@@ -5,7 +5,7 @@ using eSecurity.Server.Security.Authorization.Constants;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Mediator;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authentication.OpenIdConnect.User;
 using eSystem.Core.Security.Authorization.OAuth.DeviceAuthorization;
 
@@ -70,11 +70,11 @@ public class ConnectController(ISender sender) : ControllerBase
         {
             const string description = "GET cannot have form body";
             Response.Headers.Append(HeaderTypes.WwwAuthenticate,
-                $"Bearer error=\"{ErrorTypes.OAuth.InvalidRequest}\", error_description=\"{description}\"");
+                $"Bearer error=\"{ErrorType.OAuth.InvalidRequest}\", error_description=\"{description}\"");
             
             return BadRequest(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidRequest,
+                Code = ErrorType.OAuth.InvalidRequest,
                 Description = description
             });
         }

@@ -4,6 +4,7 @@ using eSecurity.Server.Security.Authentication.TwoFactor.Secret;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.TwoFactor.Commands;

@@ -1,5 +1,6 @@
 ﻿using eSecurity.Core.Security.Authentication.Lockout;
 using eSecurity.Server.Data.Entities;
+using eSystem.Core.Primitives;
 
 namespace eSecurity.Server.Security.Authentication.Lockout;
 

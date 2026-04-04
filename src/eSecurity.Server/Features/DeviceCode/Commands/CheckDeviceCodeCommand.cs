@@ -2,6 +2,7 @@
 using eSecurity.Core.Common.Responses;
 using eSecurity.Server.Security.Authorization.OAuth.Token.DeviceCode;
 using eSystem.Core.Mediator;
+using eSystem.Core.Primitives;
 
 namespace eSecurity.Server.Features.DeviceCode.Commands;
 

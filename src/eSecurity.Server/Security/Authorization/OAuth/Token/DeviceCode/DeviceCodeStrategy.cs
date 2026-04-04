@@ -1,6 +1,6 @@
 ﻿using eSecurity.Server.Security.Authorization.OAuth.Protocol;
 using eSecurity.Server.Security.Cryptography.Hashing;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authorization.OAuth.Token;
 using eSystem.Core.Security.Authorization.OAuth.Token.DeviceCode;
@@ -25,7 +25,7 @@ public sealed class DeviceCodeStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidGrant,
+                Code = ErrorType.OAuth.InvalidGrant,
                 Description = "Invalid device code"
             });
         }
@@ -38,7 +38,7 @@ public sealed class DeviceCodeStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidGrant,
+                Code = ErrorType.OAuth.InvalidGrant,
                 Description = "Invalid device code"
             });
         }
@@ -52,7 +52,7 @@ public sealed class DeviceCodeStrategy(
                 
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.OAuth.AccessDenied,
+                Code = ErrorType.OAuth.AccessDenied,
                 Description = "Device code was denied"
             });
         }
@@ -61,7 +61,7 @@ public sealed class DeviceCodeStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.OAuth.AuthorizationPending,
+                Code = ErrorType.OAuth.AuthorizationPending,
                 Description = "Authorization pending"
             });
         }
@@ -70,7 +70,7 @@ public sealed class DeviceCodeStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.OAuth.ExpiredToken,
+                Code = ErrorType.OAuth.ExpiredToken,
                 Description = "Device code is already expired"
             });
         }

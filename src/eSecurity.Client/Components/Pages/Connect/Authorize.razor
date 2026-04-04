@@ -1,7 +1,7 @@
 @page "/connect/authorize"
 @using eSecurity.Client.Security.Authentication.OpenIdConnect.Authorization
 @using eSystem.Core.Enums
-@using eSystem.Core.Primitives.Constants
+@using eSystem.Core.Primitives
 @using eSystem.Core.Security.Authentication.OpenIdConnect
 @using eSystem.Core.Security.Authentication.OpenIdConnect.Client
 
@@ -56,7 +56,7 @@
                 const string message = "response_type is required.";
                 NavigationManager.NavigateTo(QueryBuilder.Create()
                     .WithUri(RedirectUri)
-                    .WithQueryParam("error", ErrorTypes.OAuth.InvalidRequest)
+                    .WithQueryParam("error", ErrorType.OAuth.InvalidRequest)
                     .WithQueryParam("error_description", message)
                     .Build());
                 
@@ -91,7 +91,7 @@
                     {
                         NavigationManager.NavigateTo(QueryBuilder.Create()
                             .WithUri(RedirectUri)
-                            .WithQueryParam("error", ErrorTypes.OAuth.InvalidRequest)
+                            .WithQueryParam("error", ErrorType.OAuth.InvalidRequest)
                             .WithQueryParam("error_description", $"{promptString} is required.")
                             .Build());
                 
@@ -104,7 +104,7 @@
                     const string message = "Prompt 'none' cannot be combined with other prompt values.";
                     NavigationManager.NavigateTo(QueryBuilder.Create()
                         .WithUri(RedirectUri)
-                        .WithQueryParam("error", ErrorTypes.OAuth.InvalidRequest)
+                        .WithQueryParam("error", ErrorType.OAuth.InvalidRequest)
                         .WithQueryParam("error_description", message)
                         .Build());
 
@@ -116,7 +116,7 @@
                 {
                     NavigationManager.NavigateTo(QueryBuilder.Create()
                         .WithUri(RedirectUri)
-                        .WithQueryParam("error", ErrorTypes.OAuth.InvalidRequest)
+                        .WithQueryParam("error", ErrorType.OAuth.InvalidRequest)
                         .WithQueryParam("error_description", $"Prompt '{prompts.First()}' is not supported.")
                         .Build());
 

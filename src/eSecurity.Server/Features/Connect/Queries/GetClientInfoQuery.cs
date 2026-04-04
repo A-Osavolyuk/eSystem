@@ -1,6 +1,7 @@
 using eSecurity.Core.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Mediator;
+using eSystem.Core.Primitives;
 
 namespace eSecurity.Server.Features.Connect.Queries;
 

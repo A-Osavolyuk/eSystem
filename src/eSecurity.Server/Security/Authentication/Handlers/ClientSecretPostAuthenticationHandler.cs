@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using System.Text.Encodings.Web;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Http.Constants;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Security.Authentication.Schemes;
 using eSystem.Core.Security.Identity.Claims;
@@ -25,21 +25,21 @@ public class ClientSecretPostAuthenticationHandler(
     {
         if (!Request.HasFormContentType)
         {
-            Context.Items["error"] = ErrorTypes.OAuth.InvalidClient;
+            Context.Items["error"] = ErrorType.OAuth.InvalidClient;
             return AuthenticateResult.Fail("Unauthorized.");
         }
         
         var body = await Request.ReadFormAsync();
         if (!body.TryGetValue("client_id", out var clientId))
         {
-            Context.Items["error"] = ErrorTypes.OAuth.InvalidClient;
+            Context.Items["error"] = ErrorType.OAuth.InvalidClient;
             return AuthenticateResult.Fail("Unauthorized.");
         }
         
         var client = await _clientManager.FindByIdAsync(clientId.ToString());
         if (client is null)
         {
-            Context.Items["error"] = ErrorTypes.OAuth.InvalidClient;
+            Context.Items["error"] = ErrorType.OAuth.InvalidClient;
             return AuthenticateResult.Fail("Unauthorized.");
         }
 
@@ -50,7 +50,7 @@ public class ClientSecretPostAuthenticationHandler(
                     Encoding.UTF8.GetBytes(client.Secret!), 
                     Encoding.UTF8.GetBytes(secret.ToString())))
             {
-                Context.Items["error"] = ErrorTypes.OAuth.InvalidClient;
+                Context.Items["error"] = ErrorType.OAuth.InvalidClient;
                 return AuthenticateResult.Fail("Unauthorized.");
             }
         }
@@ -72,14 +72,14 @@ public class ClientSecretPostAuthenticationHandler(
     {
         var error = Context.Items["error"]?.ToString();
 
-        if (string.IsNullOrEmpty(error) || error == ErrorTypes.OAuth.ServerError)
+        if (string.IsNullOrEmpty(error) || error == ErrorType.OAuth.ServerError)
         {
             Response.StatusCode = StatusCodes.Status500InternalServerError;
             Response.ContentType = ContentTypes.Application.Json;
         
             await Response.WriteAsJsonAsync(new Error
             {
-                Code = ErrorTypes.OAuth.ServerError, 
+                Code = ErrorType.OAuth.ServerError, 
                 Description = "Server error."
             });
         }

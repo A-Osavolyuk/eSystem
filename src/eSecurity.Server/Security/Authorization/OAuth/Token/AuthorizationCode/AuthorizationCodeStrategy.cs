@@ -1,4 +1,4 @@
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authorization.OAuth.Token;
 using eSystem.Core.Security.Authorization.OAuth.Token.AuthorizationCode;
 
@@ -20,7 +20,7 @@ public class AuthorizationCodeStrategy(
         if (string.IsNullOrEmpty(request.RedirectUri))
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidRequest,
+                Code = ErrorType.OAuth.InvalidRequest,
                 Description = "redirect_uri is required"
             });
 
@@ -34,7 +34,7 @@ public class AuthorizationCodeStrategy(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidGrant,
+                Code = ErrorType.OAuth.InvalidGrant,
                 Description = "Invalid authorization code."
             });
         }

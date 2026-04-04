@@ -1,7 +1,7 @@
 ﻿using eSecurity.Core.Common.Responses;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
 
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Logout;
@@ -24,7 +24,7 @@ public class LogoutHandler(
         {
             return Results.InternalServerError(new Error
             {
-                Code = ErrorTypes.OAuth.ServerError,
+                Code = ErrorType.OAuth.ServerError,
                 Description = "Invalid session."
             });
         }
@@ -34,7 +34,7 @@ public class LogoutHandler(
         {
             return Results.Unauthorized(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidClient,
+                Code = ErrorType.OAuth.InvalidClient,
                 Description = "Invalid client."
             });
         }
@@ -46,7 +46,7 @@ public class LogoutHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidRequest,
+                Code = ErrorType.OAuth.InvalidRequest,
                 Description = "post_logout_redirect_uri is invalid."
             });
         }

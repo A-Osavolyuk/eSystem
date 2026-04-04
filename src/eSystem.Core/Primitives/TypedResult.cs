@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.Primitives.Results;
+﻿namespace eSystem.Core.Primitives;
 
 public sealed class TypedResult<TValue>
 {

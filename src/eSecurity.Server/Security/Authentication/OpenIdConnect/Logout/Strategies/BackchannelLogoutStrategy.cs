@@ -2,7 +2,7 @@
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Logout;
 using eSystem.Core.Security.Cryptography.Encoding;
 
@@ -46,7 +46,7 @@ public class BackchannelLogoutStrategy(
             {
                 return Results.InternalServerError(new Error()
                 {
-                    Code = ErrorTypes.OAuth.ServerError,
+                    Code = ErrorType.OAuth.ServerError,
                     Description = "Server error"
                 });
             }

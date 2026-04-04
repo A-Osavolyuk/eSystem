@@ -2,7 +2,7 @@ using eSecurity.Server.Security.Authorization.OAuth.Token;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSystem.Core.Binding;
 using eSystem.Core.Mediator;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Revocation;
 
@@ -32,7 +32,7 @@ public class RevokeCommandHandler(
         if (string.IsNullOrEmpty(revocationRequest.Token))
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidRequest,
+                Code = ErrorType.OAuth.InvalidRequest,
                 Description = "Token is missing."
             });
 

@@ -3,7 +3,7 @@ using eSecurity.Client.Security.Authentication.OpenIdConnect.Authorization;
 using eSecurity.Client.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Common.Responses;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Utilities.Query;
 using Microsoft.AspNetCore.Components;
@@ -32,7 +32,7 @@ public sealed class NonePromptStrategy(
         {
             return AuthorizationResult.Redirect(QueryBuilder.Create()
                 .WithUri(decodedRedirectUri)
-                .WithQueryParam("error", ErrorTypes.OAuth.LoginRequired)
+                .WithQueryParam("error", ErrorType.OAuth.LoginRequired)
                 .WithQueryParam("error_description", "User must be authenticated.")
                 .Build());
         }

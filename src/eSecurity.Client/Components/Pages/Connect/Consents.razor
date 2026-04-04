@@ -5,7 +5,7 @@
 @using eSecurity.Client.Security.Authorization.Consent
 @using eSecurity.Core.Common.Responses
 @using eSecurity.Core.Security.Authentication.OpenIdConnect.Client
-@using eSystem.Core.Primitives.Constants
+@using eSystem.Core.Primitives
 @using eSystem.Core.Security.Authentication.OpenIdConnect
 @using eSystem.Core.Utilities.State
 
@@ -180,7 +180,7 @@
         {
             NavigationManager.NavigateTo(QueryBuilder.Create()
                 .WithUri(_redirectUri)
-                .WithQueryParam("error", ErrorTypes.OAuth.LoginRequired)
+                .WithQueryParam("error", ErrorType.OAuth.LoginRequired)
                 .WithQueryParam("error_description", "User must pass authentication first.")
                 .Build());
 
@@ -242,7 +242,7 @@
     {
         NavigationManager.NavigateTo(QueryBuilder.Create()
             .WithUri(_redirectUri)
-            .WithQueryParam("error", ErrorTypes.OAuth.AccessDenied)
+            .WithQueryParam("error", ErrorType.OAuth.AccessDenied)
             .WithQueryParam("error_description", "The resource owner or authorization server denied the request")
             .Build());
     }
@@ -254,7 +254,7 @@
         {
             NavigationManager.NavigateTo(QueryBuilder.Create()
                 .WithUri(_redirectUri)
-                .WithQueryParam("error", ErrorTypes.OAuth.LoginRequired)
+                .WithQueryParam("error", ErrorType.OAuth.LoginRequired)
                 .WithQueryParam("error_description", "User must pass authentication first.")
                 .Build());
 

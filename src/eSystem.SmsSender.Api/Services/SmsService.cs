@@ -1,4 +1,5 @@
-﻿using eSystem.SmsSender.Api.Interfaces;
+﻿using eSystem.Core.Primitives;
+using eSystem.SmsSender.Api.Interfaces;
 
 namespace eSystem.SmsSender.Api.Services;
 

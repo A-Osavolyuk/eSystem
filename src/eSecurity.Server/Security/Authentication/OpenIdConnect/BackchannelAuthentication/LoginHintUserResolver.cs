@@ -1,6 +1,6 @@
 ﻿using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
 
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
@@ -16,7 +16,7 @@ public sealed class LoginHintUserResolver(IUserManager userManager) : IUserResol
         {
             return TypedResult<UserEntity>.Fail(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidRequest,
+                Code = ErrorType.OAuth.InvalidRequest,
                 Description = "login_hint is invalid"
             });
         }
@@ -26,7 +26,7 @@ public sealed class LoginHintUserResolver(IUserManager userManager) : IUserResol
         {
             return TypedResult<UserEntity>.Fail(new Error()
             {
-                Code = ErrorTypes.OAuth.UnknownUserId,
+                Code = ErrorType.OAuth.UnknownUserId,
                 Description = "Unknown user"
             });
         }

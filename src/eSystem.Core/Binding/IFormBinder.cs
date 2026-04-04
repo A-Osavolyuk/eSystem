@@ -1,4 +1,4 @@
-﻿using eSystem.Core.Primitives.Results;
+﻿using eSystem.Core.Primitives;
 using Microsoft.AspNetCore.Http;
 
 namespace eSystem.Core.Binding;

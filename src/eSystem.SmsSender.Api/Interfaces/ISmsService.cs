@@ -1,4 +1,6 @@
-﻿namespace eSystem.SmsSender.Api.Interfaces;
+﻿using eSystem.Core.Primitives;
+
+namespace eSystem.SmsSender.Api.Interfaces;
 
 public interface ISmsService
 {

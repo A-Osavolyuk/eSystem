@@ -3,7 +3,7 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Cryptography.Tokens;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Token.TokenExchange;
 
@@ -29,7 +29,7 @@ public sealed class OpaqueTokenDelegationHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidRequest,
+                Code = ErrorType.OAuth.InvalidRequest,
                 Description = "actor_token is required"
             });
         }
@@ -38,7 +38,7 @@ public sealed class OpaqueTokenDelegationHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidRequest,
+                Code = ErrorType.OAuth.InvalidRequest,
                 Description = "actor_token_type is required"
             });
         }
@@ -47,7 +47,7 @@ public sealed class OpaqueTokenDelegationHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidRequest,
+                Code = ErrorType.OAuth.InvalidRequest,
                 Description = $"{TokenTypes.Full.AccessToken} is the only allowed actor_token_type value"
             });
         }
@@ -56,7 +56,7 @@ public sealed class OpaqueTokenDelegationHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidGrant,
+                Code = ErrorType.OAuth.InvalidGrant,
                 Description = "Subject token is invalid."
             });
         }
@@ -65,7 +65,7 @@ public sealed class OpaqueTokenDelegationHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidGrant,
+                Code = ErrorType.OAuth.InvalidGrant,
                 Description = "Actor token is invalid."
             });
         }
@@ -76,7 +76,7 @@ public sealed class OpaqueTokenDelegationHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidGrant,
+                Code = ErrorType.OAuth.InvalidGrant,
                 Description = "Subject token is invalid."
             });
         }
@@ -87,7 +87,7 @@ public sealed class OpaqueTokenDelegationHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidGrant,
+                Code = ErrorType.OAuth.InvalidGrant,
                 Description = "Actor token is invalid."
             });
         }
@@ -96,7 +96,7 @@ public sealed class OpaqueTokenDelegationHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidGrant,
+                Code = ErrorType.OAuth.InvalidGrant,
                 Description = "Delegation chaining is not allowed."
             });
         }
@@ -106,7 +106,7 @@ public sealed class OpaqueTokenDelegationHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidGrant,
+                Code = ErrorType.OAuth.InvalidGrant,
                 Description = "Subject token is invalid."
             });
         }
@@ -130,7 +130,7 @@ public sealed class OpaqueTokenDelegationHandler(
             {
                 return Results.BadRequest(new Error()
                 {
-                    Code = ErrorTypes.OAuth.InvalidTarget,
+                    Code = ErrorType.OAuth.InvalidTarget,
                     Description = "The requested audience is not an allowed audience for this client."
                 });
             }
@@ -148,7 +148,7 @@ public sealed class OpaqueTokenDelegationHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidScope,
+                Code = ErrorType.OAuth.InvalidScope,
                 Description = "Requested scopes exceed the subject token scopes."
             });
         }

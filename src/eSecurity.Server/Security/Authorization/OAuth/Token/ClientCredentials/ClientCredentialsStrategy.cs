@@ -3,7 +3,7 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.Claims;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authorization.OAuth.Token;
 using eSystem.Core.Security.Authorization.OAuth.Token.ClientCredentials;
 
@@ -36,7 +36,7 @@ public sealed class ClientCredentialsStrategy(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidRequest,
+                Code = ErrorType.OAuth.InvalidRequest,
                 Description = "client_secret is required"
             });
         }
@@ -45,7 +45,7 @@ public sealed class ClientCredentialsStrategy(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidRequest,
+                Code = ErrorType.OAuth.InvalidRequest,
                 Description = "scope is required"
             });
         }
@@ -55,7 +55,7 @@ public sealed class ClientCredentialsStrategy(
         {
             return Results.Unauthorized(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidClient,
+                Code = ErrorType.OAuth.InvalidClient,
                 Description = "Client was not found."
             });
         }
@@ -64,7 +64,7 @@ public sealed class ClientCredentialsStrategy(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.OAuth.UnsupportedGrantType,
+                Code = ErrorType.OAuth.UnsupportedGrantType,
                 Description = $"'{request.GrantType}' grant is not supported by client."
             });
         }
@@ -77,7 +77,7 @@ public sealed class ClientCredentialsStrategy(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidScope,
+                Code = ErrorType.OAuth.InvalidScope,
                 Description = "None of the requested scopes are allowed for this client."
             });
         }
@@ -103,7 +103,7 @@ public sealed class ClientCredentialsStrategy(
         {
             return Results.InternalServerError(new Error()
             {
-                Code = ErrorTypes.OAuth.ServerError,
+                Code = ErrorType.OAuth.ServerError,
                 Description = "Server error"
             });
         }

@@ -4,7 +4,7 @@ using eSecurity.Client.Security.Authorization.Consent;
 using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Common.Routing;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Utilities.Query;
 
@@ -26,7 +26,7 @@ public sealed class ConsentPromptStrategy(
         {
             var redirectUri = QueryBuilder.Create()
                 .WithUri(context.RedirectUri)
-                .WithQueryParam("error", ErrorTypes.OAuth.LoginRequired)
+                .WithQueryParam("error", ErrorType.OAuth.LoginRequired)
                 .WithQueryParam("error_description", "User must pass authentication first.")
                 .Build();
             

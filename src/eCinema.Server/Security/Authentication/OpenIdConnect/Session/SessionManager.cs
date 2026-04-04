@@ -1,5 +1,6 @@
 ﻿using eCinema.Server.Data;
 using eCinema.Server.Data.Entities;
+using eSystem.Core.Primitives;
 using Microsoft.EntityFrameworkCore;
 
 namespace eCinema.Server.Security.Authentication.OpenIdConnect.Session;

@@ -1,4 +1,5 @@
 ﻿using eSystem.Core.Mediator;
+using eSystem.Core.Primitives;
 using eSystem.Core.Requests;
 using eSystem.Core.Responses.Storage;
 using eSystem.Storage.Api.Interfaces;

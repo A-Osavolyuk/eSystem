@@ -2,6 +2,7 @@
 using eSecurity.Core.Security.Authentication.SignIn;
 using eSecurity.Server.Security.Authentication.SignIn;
 using eSystem.Core.Mediator;
+using eSystem.Core.Primitives;
 
 namespace eSecurity.Server.Features.Account.Commands;
 

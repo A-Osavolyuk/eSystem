@@ -5,7 +5,7 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authorization.OAuth.Consents;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
 
 namespace eSecurity.Server.Features.Connect.Commands;
@@ -54,7 +54,7 @@ public class GrantConsentCommandHandler(
                 {
                     return Results.BadRequest(new Error
                     {
-                        Code = ErrorTypes.OAuth.InvalidScope,
+                        Code = ErrorType.OAuth.InvalidScope,
                         Description = $"'{scope}' scope is not supported."
                     });
                 }
@@ -64,7 +64,7 @@ public class GrantConsentCommandHandler(
                 {
                     return Results.BadRequest(new Error
                     {
-                        Code = ErrorTypes.OAuth.InvalidScope,
+                        Code = ErrorType.OAuth.InvalidScope,
                         Description = $"'{scope}' scope is not supported by client."
                     });
                 }
@@ -84,7 +84,7 @@ public class GrantConsentCommandHandler(
                 {
                     return Results.BadRequest(new Error
                     {
-                        Code = ErrorTypes.OAuth.InvalidScope,
+                        Code = ErrorType.OAuth.InvalidScope,
                         Description = $"'{scope}' scope is not supported."
                     });
                 }

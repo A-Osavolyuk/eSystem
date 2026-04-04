@@ -6,8 +6,8 @@
 @using eSecurity.Core.Common.Responses
 @using eSecurity.Core.Security.Authentication.SignIn
 @using eSystem.Core.Utilities.State
-@using eSystem.Core.Primitives.Constants
 @using eSecurity.Core.Security.Credentials.PublicKey
+@using eSystem.Core.Primitives
 
 @inject NavigationManager NavigationManager
 @inject WebAuthNManager WebAuthNManager
@@ -133,7 +133,7 @@ else
                 _isLoading = false;
 
                 var error = result.GetError();
-                if (error.Code == ErrorTypes.Common.AccountLockedOut)
+                if (error.Code == ErrorType.Common.AccountLockedOut)
                 {
                     NavigationManager.NavigateTo(Links.Common.AccountLocked);
                 }

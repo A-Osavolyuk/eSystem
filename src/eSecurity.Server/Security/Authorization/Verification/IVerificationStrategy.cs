@@ -1,4 +1,6 @@
-﻿namespace eSecurity.Server.Security.Authorization.Verification;
+﻿using eSystem.Core.Primitives;
+
+namespace eSecurity.Server.Security.Authorization.Verification;
 
 public interface IVerificationStrategy<in TContext> where TContext : VerificationContext
 {

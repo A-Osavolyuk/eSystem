@@ -7,7 +7,7 @@ using eSecurity.Server.Security.Credentials.PublicKey.Challenge;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Mediator;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Identity.Claims;
 using CredentialOptions = eSecurity.Server.Security.Credentials.PublicKey.Credentials.CredentialOptions;
 
@@ -46,7 +46,7 @@ public class GenerateCreationOptionsCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.Common.InvalidDevice,
+                Code = ErrorType.Common.InvalidDevice,
                 Description = "Invalid device."
             });
         }

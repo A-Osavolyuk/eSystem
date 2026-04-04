@@ -3,7 +3,7 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authorization.OAuth.Token.DeviceCode;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.DeviceCode.Commands;
@@ -30,7 +30,7 @@ public sealed class DenyDeviceCodeCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidToken,
+                Code = ErrorType.OAuth.InvalidToken,
                 Description = "Device code is already allowed or consumed"
             });
         }
@@ -39,7 +39,7 @@ public sealed class DenyDeviceCodeCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidToken,
+                Code = ErrorType.OAuth.InvalidToken,
                 Description = "Device code is already denied"
             });
         }

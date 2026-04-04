@@ -3,7 +3,7 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Identity.User;
 using eSecurity.Server.Security.Identity.User.Username;
 using eSystem.Core.Mediator;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 
 namespace eSecurity.Server.Features.Username.Commands;
 
@@ -30,7 +30,7 @@ public sealed class SetUsernameCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.Common.UsernameTaken,
+                Code = ErrorType.Common.UsernameTaken,
                 Description = "The username is already taken."
             });
         }

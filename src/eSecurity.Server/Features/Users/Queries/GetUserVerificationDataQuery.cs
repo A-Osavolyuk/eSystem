@@ -8,7 +8,7 @@ using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Mediator;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.Users.Queries;
@@ -45,7 +45,7 @@ public class GetUserVerificationMethodsQueryHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.Common.InvalidDevice,
+                Code = ErrorType.Common.InvalidDevice,
                 Description = "Invalid device"
             });
         }
@@ -55,7 +55,7 @@ public class GetUserVerificationMethodsQueryHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.Common.InvalidEmail,
+                Code = ErrorType.Common.InvalidEmail,
                 Description = "Invalid email"
             });
         }

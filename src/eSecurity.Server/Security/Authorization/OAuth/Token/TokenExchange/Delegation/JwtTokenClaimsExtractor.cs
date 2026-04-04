@@ -3,7 +3,7 @@ using System.Security.Claims;
 using eSecurity.Server.Security.Authorization.OAuth.Token.Validation;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSystem.Core.Enums;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Identity.Claims;
 
@@ -24,7 +24,7 @@ public sealed class JwtTokenClaimsExtractor(
         {
             return TypedResult<IEnumerable<Claim>>.Fail(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidToken,
+                Code = ErrorType.OAuth.InvalidToken,
                 Description = "Invalid subject token"
             });
         }
@@ -34,7 +34,7 @@ public sealed class JwtTokenClaimsExtractor(
         {
             return TypedResult<IEnumerable<Claim>>.Fail(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidToken,
+                Code = ErrorType.OAuth.InvalidToken,
                 Description = "Invalid subject token"
             });
         }
@@ -44,7 +44,7 @@ public sealed class JwtTokenClaimsExtractor(
         {
             return TypedResult<IEnumerable<Claim>>.Fail(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidToken,
+                Code = ErrorType.OAuth.InvalidToken,
                 Description = "Invalid subject token"
             });
         }
@@ -55,7 +55,7 @@ public sealed class JwtTokenClaimsExtractor(
         {
             return TypedResult<IEnumerable<Claim>>.Fail(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidToken,
+                Code = ErrorType.OAuth.InvalidToken,
                 Description = "Invalid subject token"
             });
         }

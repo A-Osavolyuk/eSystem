@@ -8,7 +8,7 @@ using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Mediator;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.Users.Queries;
@@ -47,7 +47,7 @@ public class GetUserLoginMethodsQueryHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.Common.InvalidDevice,
+                Code = ErrorType.Common.InvalidDevice,
                 Description = "Invalid device"
             });
         }

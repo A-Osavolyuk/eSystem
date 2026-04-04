@@ -1,6 +1,6 @@
 ﻿using eSecurity.Core.Security.Authentication.SignIn;
 using eSecurity.Server.Security.Authentication.TwoFactor;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 
 namespace eSecurity.Server.Security.Authentication.SignIn.Strategies;
 
@@ -17,7 +17,7 @@ public class TwoFactorSignInStrategy(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.Common.InvalidPayloadType,
+                Code = ErrorType.Common.InvalidPayloadType,
                 Description = "Invalid payload type"
             });
         }

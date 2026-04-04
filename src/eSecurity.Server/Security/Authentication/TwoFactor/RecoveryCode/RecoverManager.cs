@@ -1,6 +1,7 @@
 ﻿using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Cryptography.Protection.Constants;
+using eSystem.Core.Primitives;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Server.Security.Authentication.TwoFactor.RecoveryCode;

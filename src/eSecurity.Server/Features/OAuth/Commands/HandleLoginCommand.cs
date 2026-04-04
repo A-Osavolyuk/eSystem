@@ -6,7 +6,7 @@ using eSecurity.Server.Security.Identity.SignUp;
 using eSecurity.Server.Security.Identity.SignUp.Strategies;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authentication.Schemes;
 using eSystem.Core.Utilities.Query;
 using Microsoft.AspNetCore.Authentication;
@@ -51,7 +51,7 @@ public sealed class HandleOAuthLoginCommandHandler(
         {
             return Results.Found(QueryBuilder.Create()
                 .WithUri(request.ReturnUri)
-                .WithQueryParam("error", ErrorTypes.OAuth.ServerError)
+                .WithQueryParam("error", ErrorType.OAuth.ServerError)
                 .WithQueryParam("error_description", request.RemoteError)
                 .Build());
         }
@@ -61,7 +61,7 @@ public sealed class HandleOAuthLoginCommandHandler(
         {
             return Results.Found(QueryBuilder.Create()
                 .WithUri(request.ReturnUri)
-                .WithQueryParam("error", ErrorTypes.Common.InvalidCredentials)
+                .WithQueryParam("error", ErrorType.Common.InvalidCredentials)
                 .WithQueryParam("error_description", "Email was not provided in credentials.")
                 .Build());
         }

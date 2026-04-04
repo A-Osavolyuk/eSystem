@@ -5,7 +5,7 @@ using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Security.Authorization.Verification.Passkey;
@@ -40,7 +40,7 @@ public sealed class PasskeyVerificationStrategy(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.Common.InvalidCredentials,
+                Code = ErrorType.Common.InvalidCredentials,
                 Description = "Invalid credential"
             });
         }
@@ -50,7 +50,7 @@ public sealed class PasskeyVerificationStrategy(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.Common.InvalidChallenge,
+                Code = ErrorType.Common.InvalidChallenge,
                 Description = "Invalid challenge"
             });
         }

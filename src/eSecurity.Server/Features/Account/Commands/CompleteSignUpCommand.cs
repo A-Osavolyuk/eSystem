@@ -8,7 +8,7 @@ using eSecurity.Server.Security.Authorization.Codes;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 
 namespace eSecurity.Server.Features.Account.Commands;
@@ -39,7 +39,7 @@ public sealed class CompleteSignUpCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.Common.InvalidSession,
+                Code = ErrorType.Common.InvalidSession,
                 Description = "Invalid session"
             });
         }

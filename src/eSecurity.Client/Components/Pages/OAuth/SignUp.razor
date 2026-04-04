@@ -1,6 +1,6 @@
 ﻿@page "/oauth/sign-up"
 @using eSystem.Core.Utilities.State
-@using eSystem.Core.Primitives.Constants
+@using eSystem.Core.Primitives
 @using eSecurity.Client.Security.Identity
 
 @inherits PageBase
@@ -112,7 +112,7 @@
                 {
                     NavigationManager.NavigateTo(QueryBuilder.Create()
                         .WithUri(Links.OAuth.Error)
-                        .WithQueryParam("error", ErrorTypes.Common.InvalidSession)
+                        .WithQueryParam("error", ErrorType.Common.InvalidSession)
                         .WithQueryParam("error_description", "Invalid session.")
                         .Build());
                 }
@@ -120,7 +120,7 @@
             else
             {
                 var error = result.GetError();
-                if (error.Code == ErrorTypes.Common.UsernameTaken)
+                if (error.Code == ErrorType.Common.UsernameTaken)
                 {
                     _error = "Username is already taken.";
                     _showError = true;

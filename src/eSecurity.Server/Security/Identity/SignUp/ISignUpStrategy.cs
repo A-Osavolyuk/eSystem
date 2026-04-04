@@ -1,3 +1,5 @@
+using eSystem.Core.Primitives;
+
 namespace eSecurity.Server.Security.Identity.SignUp;
 
 public interface ISignUpStrategy

@@ -1,7 +1,7 @@
 ﻿using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authorization.OAuth.Token.Validation;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Identity.Claims;
@@ -22,7 +22,7 @@ public sealed class IdTokenHintUserResolver(
         {
             return TypedResult<UserEntity>.Fail(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidRequest,
+                Code = ErrorType.OAuth.InvalidRequest,
                 Description = "id_token_hind is invalid"
             });
         }
@@ -34,7 +34,7 @@ public sealed class IdTokenHintUserResolver(
             {
                 return TypedResult<UserEntity>.Fail(new Error()
                 {
-                    Code = ErrorTypes.OAuth.InvalidRequest,
+                    Code = ErrorType.OAuth.InvalidRequest,
                     Description = "id_token_hind is invalid"
                 });
             }
@@ -46,7 +46,7 @@ public sealed class IdTokenHintUserResolver(
             {
                 return TypedResult<UserEntity>.Fail(new Error()
                 {
-                    Code = ErrorTypes.OAuth.InvalidRequest,
+                    Code = ErrorType.OAuth.InvalidRequest,
                     Description = "id_token_hind is invalid"
                 });
             }
@@ -57,7 +57,7 @@ public sealed class IdTokenHintUserResolver(
         {
             return TypedResult<UserEntity>.Fail(new Error()
             {
-                Code = ErrorTypes.OAuth.UnknownUserId,
+                Code = ErrorType.OAuth.UnknownUserId,
                 Description = "Unknown user"
             });
         }

@@ -1,4 +1,4 @@
-﻿using eSystem.Core.Primitives.Results;
+﻿using eSystem.Core.Primitives;
 
 namespace eSystem.Core.Http.Tests;
 

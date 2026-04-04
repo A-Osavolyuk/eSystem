@@ -2,7 +2,7 @@
 using eSystem.Core.Binding;
 using eSystem.Core.Enums;
 using eSystem.Core.Mediator;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Token;
@@ -26,7 +26,7 @@ public class TokenCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidRequest,
+                Code = ErrorType.OAuth.InvalidRequest,
                 Description = "grant_type is required"
             });
         }
@@ -36,7 +36,7 @@ public class TokenCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidGrant,
+                Code = ErrorType.OAuth.InvalidGrant,
                 Description = "grant_type is invalid."
             });
         }
@@ -45,7 +45,7 @@ public class TokenCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidGrant,
+                Code = ErrorType.OAuth.InvalidGrant,
                 Description = $"'{grantType}' grant type is not supported"
             });
         }
@@ -54,7 +54,7 @@ public class TokenCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidRequest,
+                Code = ErrorType.OAuth.InvalidRequest,
                 Description = "client_id is required"
             });
         }
@@ -65,7 +65,7 @@ public class TokenCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.OAuth.UnsupportedGrantType,
+                Code = ErrorType.OAuth.UnsupportedGrantType,
                 Description = $"'{grantType}' grant type is allowed, but not supported"
             });
         }

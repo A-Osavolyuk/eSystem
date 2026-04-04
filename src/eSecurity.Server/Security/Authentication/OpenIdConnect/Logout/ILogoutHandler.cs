@@ -1,4 +1,6 @@
-﻿namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Logout;
+﻿using eSystem.Core.Primitives;
+
+namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Logout;
 
 public interface ILogoutHandler
 {

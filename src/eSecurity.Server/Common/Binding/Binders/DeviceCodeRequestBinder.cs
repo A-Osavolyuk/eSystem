@@ -1,6 +1,6 @@
 ﻿using eSystem.Core.Binding;
 using eSystem.Core.Enums;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Token.DeviceCode;
 
@@ -16,7 +16,7 @@ public sealed class DeviceCodeRequestBinder : IFormBinder<DeviceCodeRequest>
         {
             return Task.FromResult(TypedResult<DeviceCodeRequest>.Fail(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidGrant,
+                Code = ErrorType.OAuth.InvalidGrant,
                 Description = "grant_type is invalid."
             }));
         }

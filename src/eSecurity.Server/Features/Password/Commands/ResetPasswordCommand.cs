@@ -4,7 +4,7 @@ using eSecurity.Server.Security.Authentication.Password;
 using eSecurity.Server.Security.Authorization.Verification;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 
 namespace eSecurity.Server.Features.Password.Commands;
 
@@ -28,7 +28,7 @@ public sealed class ResetPasswordCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.Common.InvalidPassword,
+                Code = ErrorType.Common.InvalidPassword,
                 Description = "User does not have a password."
             });
         }

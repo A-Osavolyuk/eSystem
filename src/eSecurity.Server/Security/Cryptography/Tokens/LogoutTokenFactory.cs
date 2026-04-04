@@ -2,7 +2,7 @@
 using eSecurity.Server.Security.Authentication.Subject;
 using eSecurity.Server.Security.Identity.Claims;
 using eSecurity.Server.Security.Identity.Claims.Factories;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authorization.OAuth;
 
 namespace eSecurity.Server.Security.Cryptography.Tokens;
@@ -29,7 +29,7 @@ public sealed class LogoutTokenFactory(
         {
             return TypedResult<string>.Fail(new Error()
             {
-                Code = ErrorTypes.OAuth.ServerError,
+                Code = ErrorType.OAuth.ServerError,
                 Description = "Server error"
             });
         }
@@ -40,7 +40,7 @@ public sealed class LogoutTokenFactory(
         {
             return TypedResult<string>.Fail(new Error()
             {
-                Code = ErrorTypes.OAuth.ServerError,
+                Code = ErrorType.OAuth.ServerError,
                 Description = "Server error"
             });
         }

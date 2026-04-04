@@ -6,7 +6,7 @@ using eSecurity.Server.Security.Authorization.Codes;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Common.Messaging;
 using eSystem.Core.Mediator;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 
 namespace eSecurity.Server.Features.Password.Commands;
 
@@ -33,7 +33,7 @@ public sealed class ForgotPasswordCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.Common.InvalidPassword,
+                Code = ErrorType.Common.InvalidPassword,
                 Description = "Password was not provided."
             });
         }

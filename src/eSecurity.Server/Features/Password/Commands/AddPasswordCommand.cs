@@ -2,7 +2,7 @@
 using eSecurity.Server.Security.Authentication.Password;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.Password.Commands;
@@ -29,7 +29,7 @@ public class AddPasswordCommandHandler(
         if (await _passwordManager.HasAsync(user, cancellationToken)) 
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.Common.InvalidPassword,
+                Code = ErrorType.Common.InvalidPassword,
                 Description = "User already has a password."
             });
         

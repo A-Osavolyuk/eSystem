@@ -6,7 +6,7 @@ using eSecurity.Server.Security.Authorization.OAuth.Consents;
 using eSecurity.Server.Security.Authorization.OAuth.Token.DeviceCode;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.DeviceCode.Commands;
@@ -37,7 +37,7 @@ public sealed class ApproveDeviceCodeCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.OAuth.ExpiredToken,
+                Code = ErrorType.OAuth.ExpiredToken,
                 Description = "Device code is already expired"
             });
         }
@@ -46,7 +46,7 @@ public sealed class ApproveDeviceCodeCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidToken,
+                Code = ErrorType.OAuth.InvalidToken,
                 Description = "Device code is not valid"
             });
         }

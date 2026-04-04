@@ -3,7 +3,7 @@ using System.Text.Encodings.Web;
 using eSecurity.Server.Security.Authorization.Constants;
 using eSecurity.Server.Security.Authorization.OAuth.Token.Validation;
 using eSystem.Core.Http.Constants;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using Microsoft.AspNetCore.Authentication;
 
 namespace eSecurity.Server.Security.Authentication.Handlers;
@@ -25,7 +25,7 @@ public sealed class JwtAuthenticationHandler(
         var header = Request.Headers.Authorization.ToString();
         if (string.IsNullOrEmpty(header) || !header.StartsWith($"{AuthenticationTypes.Bearer} "))
         {
-            Context.Items["error"] = ErrorTypes.OAuth.InvalidToken;
+            Context.Items["error"] = ErrorType.OAuth.InvalidToken;
             return AuthenticateResult.Fail("Invalid token.");
         }
         
@@ -36,7 +36,7 @@ public sealed class JwtAuthenticationHandler(
         
         if (!result.IsValid || result.ClaimsPrincipal is null)
         {
-            Context.Items["error"] = ErrorTypes.OAuth.InvalidToken;
+            Context.Items["error"] = ErrorType.OAuth.InvalidToken;
             return AuthenticateResult.Fail("Invalid token");
         }
         
@@ -48,14 +48,14 @@ public sealed class JwtAuthenticationHandler(
     {
         var error = Context.Items["error"]?.ToString();
 
-        if (string.IsNullOrEmpty(error) || error == ErrorTypes.OAuth.ServerError)
+        if (string.IsNullOrEmpty(error) || error == ErrorType.OAuth.ServerError)
         {
             Response.StatusCode = StatusCodes.Status500InternalServerError;
             Response.ContentType = ContentTypes.Application.Json;
         
             await Response.WriteAsJsonAsync(new Error
             {
-                Code = ErrorTypes.OAuth.ServerError, 
+                Code = ErrorType.OAuth.ServerError, 
                 Description = "Server error."
             });
         }

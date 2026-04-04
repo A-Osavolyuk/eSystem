@@ -4,7 +4,7 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Token.DeviceCode;
@@ -34,7 +34,7 @@ public sealed class OidcDeviceCodeFlow(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidGrant,
+                Code = ErrorType.OAuth.InvalidGrant,
                 Description = "Invalid device code"
             });
         }
@@ -51,7 +51,7 @@ public sealed class OidcDeviceCodeFlow(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidGrant,
+                Code = ErrorType.OAuth.InvalidGrant,
                 Description = "Invalid device code"
             });
         }
@@ -67,7 +67,7 @@ public sealed class OidcDeviceCodeFlow(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidGrant,
+                Code = ErrorType.OAuth.InvalidGrant,
                 Description = "Invalid authorization code."
             });
         }
@@ -86,7 +86,7 @@ public sealed class OidcDeviceCodeFlow(
         {
             return Results.InternalServerError(new Error()
             {
-                Code = ErrorTypes.OAuth.ServerError,
+                Code = ErrorType.OAuth.ServerError,
                 Description = "Server error"
             });
         }
@@ -112,7 +112,7 @@ public sealed class OidcDeviceCodeFlow(
             {
                 return Results.InternalServerError(new Error()
                 {
-                    Code = ErrorTypes.OAuth.ServerError,
+                    Code = ErrorType.OAuth.ServerError,
                     Description = "Server error"
                 });
             }
@@ -136,7 +136,7 @@ public sealed class OidcDeviceCodeFlow(
             {
                 return Results.InternalServerError(new Error()
                 {
-                    Code = ErrorTypes.OAuth.ServerError,
+                    Code = ErrorType.OAuth.ServerError,
                     Description = "Server error"
                 });
             }
@@ -158,7 +158,7 @@ public sealed class OidcDeviceCodeFlow(
         {
             return Results.InternalServerError(new Error()
             {
-                Code = ErrorTypes.OAuth.ServerError,
+                Code = ErrorType.OAuth.ServerError,
                 Description = "Server error"
             });
         }

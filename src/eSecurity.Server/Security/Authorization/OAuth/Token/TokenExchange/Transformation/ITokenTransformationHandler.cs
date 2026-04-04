@@ -1,4 +1,6 @@
-﻿namespace eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Transformation;
+﻿using eSystem.Core.Primitives;
+
+namespace eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Transformation;
 
 public interface ITokenTransformationHandler
 {

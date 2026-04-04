@@ -2,7 +2,7 @@
 
 @using eSystem.Core.Utilities.State
 @using eSecurity.Core.Common.Responses
-@using eSystem.Core.Primitives.Constants
+@using eSystem.Core.Primitives
 @using eSecurity.Client.Security
 
 @inherits PageBase
@@ -147,7 +147,7 @@
             else
             {
                 var error = result.GetError();
-                if (error.Code == ErrorTypes.Common.UsernameTaken)
+                if (error.Code == ErrorType.Common.UsernameTaken)
                 {
                     _error = "This username is already taken";
                     _showError = true;

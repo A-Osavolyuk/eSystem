@@ -8,6 +8,7 @@ using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Common.Messaging;
 using eSystem.Core.Mediator;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.Verification.Commands;

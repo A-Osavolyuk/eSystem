@@ -5,7 +5,7 @@ using eSecurity.Server.Security.Authorization.Verification.AuthenticationApp;
 using eSecurity.Server.Security.Authorization.Verification.Passkey;
 using eSecurity.Server.Security.Authorization.Verification.Totp;
 using eSystem.Core.Mediator;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 
 namespace eSecurity.Server.Features.Verification.Commands;
 
@@ -45,7 +45,7 @@ public class VerificationCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidRequest,
+                Code = ErrorType.OAuth.InvalidRequest,
                 Description = "Invalid payload"
             });
         }

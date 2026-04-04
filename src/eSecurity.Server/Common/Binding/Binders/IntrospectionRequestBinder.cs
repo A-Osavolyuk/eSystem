@@ -1,6 +1,6 @@
 ﻿using eSystem.Core.Binding;
 using eSystem.Core.Enums;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Introspection;
 
@@ -15,7 +15,7 @@ public sealed class IntrospectionRequestBinder : IFormBinder<IntrospectionReques
         {
             return Task.FromResult(TypedResult<IntrospectionRequest>.Fail(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidRequest,
+                Code = ErrorType.OAuth.InvalidRequest,
                 Description = "token is required"
             }));
         }

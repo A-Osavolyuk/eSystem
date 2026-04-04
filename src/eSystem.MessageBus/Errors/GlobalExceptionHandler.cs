@@ -1,5 +1,4 @@
-﻿using eSystem.Core.Primitives.Constants;
-using eSystem.Core.Primitives.Results;
+﻿using eSystem.Core.Primitives;
 using Microsoft.AspNetCore.Diagnostics;
 
 namespace eSystem.MessageBus.Errors;
@@ -16,7 +15,7 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
         httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
         await httpContext.Response.WriteAsJsonAsync(new Error
         {
-            Code = ErrorTypes.OAuth.ServerError,
+            Code = ErrorType.OAuth.ServerError,
             Description = exception.Message
         }, cancellationToken);
 

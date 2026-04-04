@@ -1,4 +1,6 @@
-﻿namespace eSecurity.Server.Security.Authentication.TwoFactor;
+﻿using eSystem.Core.Primitives;
+
+namespace eSecurity.Server.Security.Authentication.TwoFactor;
 
 public interface ITwoFactorStrategy<in TContext> 
     where TContext : TwoFactorContext

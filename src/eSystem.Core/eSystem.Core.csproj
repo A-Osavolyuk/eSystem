@@ -32,8 +32,4 @@
         <PackageReference Include="UAParser" Version="3.1.47" />
     </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\eSystem.Core.Primitives\eSystem.Core.Primitives.csproj" />
-    </ItemGroup>
-
 </Project>

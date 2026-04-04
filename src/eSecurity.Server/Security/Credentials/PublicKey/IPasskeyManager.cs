@@ -1,5 +1,6 @@
 ﻿using eSecurity.Core.Security.Credentials.PublicKey;
 using eSecurity.Server.Data.Entities;
+using eSystem.Core.Primitives;
 
 namespace eSecurity.Server.Security.Credentials.PublicKey;
 

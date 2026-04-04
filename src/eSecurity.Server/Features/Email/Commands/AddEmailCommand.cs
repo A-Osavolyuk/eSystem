@@ -4,7 +4,7 @@ using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.Email.Commands;
@@ -35,7 +35,7 @@ public class AddEmailCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.Common.MaxEmailsCount,
+                Code = ErrorType.Common.MaxEmailsCount,
                 Description = "User already has maximum count of secondary emails."
             });
         }
@@ -45,7 +45,7 @@ public class AddEmailCommandHandler(
             var taken = await _emailManager.IsTakenAsync(request.Request.Email, cancellationToken);
             if (taken) return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.Common.EmailTaken,
+                Code = ErrorType.Common.EmailTaken,
                 Description = "Email is already taken"
             });
         }

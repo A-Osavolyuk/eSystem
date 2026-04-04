@@ -3,6 +3,7 @@ using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Cryptography.Codes;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSystem.Core.Common.Messaging;
+using eSystem.Core.Primitives;
 
 namespace eSecurity.Server.Security.Authorization.Codes;
 

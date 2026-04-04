@@ -9,7 +9,7 @@ using eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
 using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Extensions;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Utilities.Query;
 
@@ -45,7 +45,7 @@ public sealed class OAuthSignInStrategy(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.Common.InvalidPayloadType,
+                Code = ErrorType.Common.InvalidPayloadType,
                 Description = "Invalid payload"
             });
         }
@@ -55,7 +55,7 @@ public sealed class OAuthSignInStrategy(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.Common.InvalidSession,
+                Code = ErrorType.Common.InvalidSession,
                 Description = "Invalid session"
             });
         }
@@ -90,7 +90,7 @@ public sealed class OAuthSignInStrategy(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.Common.BlockedDevice,
+                Code = ErrorType.Common.BlockedDevice,
                 Description = "Device is blocked"
             });
         }

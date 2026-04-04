@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using eSystem.Core.Primitives;
 
 namespace eSystem.Core.Http;
 

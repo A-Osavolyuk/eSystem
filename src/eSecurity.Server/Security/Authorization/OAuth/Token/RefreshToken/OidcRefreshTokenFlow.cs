@@ -4,7 +4,7 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authorization.OAuth.Token.RefreshToken;
 
@@ -30,7 +30,7 @@ public sealed class OidcRefreshTokenFlow(
         {
             return Results.NotFound(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidGrant,
+                Code = ErrorType.OAuth.InvalidGrant,
                 Description = "Invalid refresh token."
             });
         }
@@ -40,7 +40,7 @@ public sealed class OidcRefreshTokenFlow(
         {
             return Results.NotFound(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidGrant,
+                Code = ErrorType.OAuth.InvalidGrant,
                 Description = "Invalid refresh token."
             });
         }
@@ -52,7 +52,7 @@ public sealed class OidcRefreshTokenFlow(
 
             return Results.NotFound(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidGrant,
+                Code = ErrorType.OAuth.InvalidGrant,
                 Description = "Invalid refresh token."
             });
         }
@@ -62,7 +62,7 @@ public sealed class OidcRefreshTokenFlow(
         {
             return Results.Unauthorized(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidClient,
+                Code = ErrorType.OAuth.InvalidClient,
                 Description = "Invalid client."
             });
         }
@@ -71,7 +71,7 @@ public sealed class OidcRefreshTokenFlow(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.OAuth.UnsupportedGrantType,
+                Code = ErrorType.OAuth.UnsupportedGrantType,
                 Description = $"'{flowContext.GrantType}' is not supported by client."
             });
         }
@@ -80,7 +80,7 @@ public sealed class OidcRefreshTokenFlow(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidGrant,
+                Code = ErrorType.OAuth.InvalidGrant,
                 Description = "Invalid refresh token"
             });
         }
@@ -89,7 +89,7 @@ public sealed class OidcRefreshTokenFlow(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidScope,
+                Code = ErrorType.OAuth.InvalidScope,
                 Description = "offline_access scope was not originally granted."
             });
         }
@@ -98,7 +98,7 @@ public sealed class OidcRefreshTokenFlow(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidGrant,
+                Code = ErrorType.OAuth.InvalidGrant,
                 Description = "Refresh token grant is not allowed for this client."
             });
         }
@@ -108,7 +108,7 @@ public sealed class OidcRefreshTokenFlow(
         {
             return Results.NotFound(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidGrant,
+                Code = ErrorType.OAuth.InvalidGrant,
                 Description = "Invalid refresh token."
             });
         }
@@ -133,7 +133,7 @@ public sealed class OidcRefreshTokenFlow(
         {
             return Results.InternalServerError(new Error()
             {
-                Code = ErrorTypes.OAuth.ServerError,
+                Code = ErrorType.OAuth.ServerError,
                 Description = "Server error"
             });
         }
@@ -156,7 +156,7 @@ public sealed class OidcRefreshTokenFlow(
             {
                 return Results.InternalServerError(new Error()
                 {
-                    Code = ErrorTypes.OAuth.ServerError,
+                    Code = ErrorType.OAuth.ServerError,
                     Description = "Server error"
                 });
             }
@@ -182,7 +182,7 @@ public sealed class OidcRefreshTokenFlow(
         {
             return Results.InternalServerError(new Error()
             {
-                Code = ErrorTypes.OAuth.ServerError,
+                Code = ErrorType.OAuth.ServerError,
                 Description = "Server error"
             });
         }

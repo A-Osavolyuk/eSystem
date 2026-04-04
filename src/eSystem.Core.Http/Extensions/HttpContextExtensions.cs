@@ -1,4 +1,5 @@
 ﻿using eSystem.Core.Http.Constants;
+using eSystem.Core.Primitives;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using UAParser;

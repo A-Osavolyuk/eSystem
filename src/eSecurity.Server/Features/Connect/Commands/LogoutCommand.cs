@@ -3,7 +3,7 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Logout;
 using eSecurity.Server.Security.Authorization.Constants;
 using eSecurity.Server.Security.Authorization.OAuth.Token.Validation;
 using eSystem.Core.Mediator;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authorization.OAuth.Token.Validation;
 using eSystem.Core.Security.Identity.Claims;
 
@@ -24,7 +24,7 @@ public class LogoutCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidRequest,
+                Code = ErrorType.OAuth.InvalidRequest,
                 Description = "post_logout_redirect_uri is required."
             });
         }
@@ -33,7 +33,7 @@ public class LogoutCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidRequest,
+                Code = ErrorType.OAuth.InvalidRequest,
                 Description = "id_token_hint is required."
             });
         }
@@ -43,7 +43,7 @@ public class LogoutCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidRequest,
+                Code = ErrorType.OAuth.InvalidRequest,
                 Description = "id_token_hint is invalid."
             });
         }
@@ -54,7 +54,7 @@ public class LogoutCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidRequest,
+                Code = ErrorType.OAuth.InvalidRequest,
                 Description = "id_token_hint is invalid."
             });
         }

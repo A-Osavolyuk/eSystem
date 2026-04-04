@@ -3,7 +3,7 @@
 @using eSecurity.Client.Security
 @using eSecurity.Core.Common.DTOs
 @using eSecurity.Core.Security.Authorization.OAuth
-@using eSystem.Core.Primitives.Constants
+@using eSystem.Core.Primitives
 @using eSystem.Core.Security.Authentication.OpenIdConnect
 @using eSystem.Core.Utilities.State
 
@@ -35,7 +35,7 @@
         {
             NavigationManager.NavigateTo(QueryBuilder.Create()
                 .WithUri(Links.OAuth.Error)
-                .WithQueryParam("error", ErrorTypes.Common.InvalidSession)
+                .WithQueryParam("error", ErrorType.Common.InvalidSession)
                 .WithQueryParam("error_description", "Invalid session.")
                 .Build());
 

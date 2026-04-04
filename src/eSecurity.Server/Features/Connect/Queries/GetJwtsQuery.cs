@@ -1,6 +1,7 @@
 using System.Security.Cryptography.X509Certificates;
 using eSecurity.Server.Security.Cryptography.Signing.Certificates;
 using eSystem.Core.Mediator;
+using eSystem.Core.Primitives;
 
 namespace eSecurity.Server.Features.Connect.Queries;
 

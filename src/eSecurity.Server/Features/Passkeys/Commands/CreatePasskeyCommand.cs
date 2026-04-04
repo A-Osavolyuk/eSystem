@@ -11,7 +11,7 @@ using eSecurity.Server.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Mediator;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.Passkeys.Commands;
@@ -51,7 +51,7 @@ public class CreatePasskeyCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.Common.InvalidDevice,
+                Code = ErrorType.Common.InvalidDevice,
                 Description = "Invalid device."
             });
         }
@@ -62,7 +62,7 @@ public class CreatePasskeyCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.Common.InvalidCredentials,
+                Code = ErrorType.Common.InvalidCredentials,
                 Description = "Invalid credentials."
             });
         }
@@ -73,7 +73,7 @@ public class CreatePasskeyCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.Common.InvalidChallenge,
+                Code = ErrorType.Common.InvalidChallenge,
                 Description = "Challenge mismatch"
             });
         }
@@ -85,7 +85,7 @@ public class CreatePasskeyCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.Common.InvalidRp,
+                Code = ErrorType.Common.InvalidRp,
                 Description = "Invalid RP ID"
             });
         }

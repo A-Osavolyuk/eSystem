@@ -1,7 +1,6 @@
 ﻿using System.Net;
-using eSystem.Core.Primitives.Constants;
 
-namespace eSystem.Core.Primitives.Results;
+namespace eSystem.Core.Primitives;
 
 public static class Results
 {
@@ -15,7 +14,7 @@ public static class Results
     public static Result BadRequest(string description)
         => Result.Failure(HttpStatusCode.BadRequest, new Error
         {
-            Code = ErrorTypes.Common.BadRequest,
+            Code = ErrorType.Common.BadRequest,
             Description = description
         });
 
@@ -25,7 +24,7 @@ public static class Results
     public static Result Unauthorized(string description)
         => Result.Failure(HttpStatusCode.Unauthorized, new Error
         {
-            Code = ErrorTypes.Common.Unauthorized,
+            Code = ErrorType.Common.Unauthorized,
             Description = description
         });
 
@@ -35,7 +34,7 @@ public static class Results
     public static Result Forbidden(string description)
         => Result.Failure(HttpStatusCode.Forbidden, new Error
         {
-            Code = ErrorTypes.Common.Forbidden,
+            Code = ErrorType.Common.Forbidden,
             Description = description
         });
 
@@ -45,7 +44,7 @@ public static class Results
     public static Result NotFound(string description)
         => Result.Failure(HttpStatusCode.NotFound, new Error
         {
-            Code = ErrorTypes.Common.NotFound,
+            Code = ErrorType.Common.NotFound,
             Description = description
         });
 
@@ -55,7 +54,7 @@ public static class Results
     public static Result TooManyRequests(string description)
         => Result.Failure(HttpStatusCode.TooManyRequests, new Error
         {
-            Code = ErrorTypes.Common.TooManyRequests,
+            Code = ErrorType.Common.TooManyRequests,
             Description = description
         });
 
@@ -65,7 +64,7 @@ public static class Results
     public static Result InternalServerError(string description)
         => Result.Failure(HttpStatusCode.InternalServerError, new Error
         {
-            Code = ErrorTypes.Common.InternalServerError,
+            Code = ErrorType.Common.InternalServerError,
             Description = description
         });
 

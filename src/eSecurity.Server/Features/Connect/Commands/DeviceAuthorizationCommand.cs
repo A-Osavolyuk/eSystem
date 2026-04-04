@@ -4,7 +4,7 @@ using eSecurity.Server.Security.Authorization.OAuth.Token.DeviceCode;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Cryptography.Keys;
 using eSystem.Core.Mediator;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
 using eSystem.Core.Security.Authorization.OAuth.DeviceAuthorization;
 using eSystem.Core.Utilities.Query;
@@ -36,7 +36,7 @@ public sealed class DeviceAuthorizationCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.OAuth.UnauthorizedClient,
+                Code = ErrorType.OAuth.UnauthorizedClient,
                 Description = "Client is not registered to for device authorization flow"
             });
         }
@@ -47,7 +47,7 @@ public sealed class DeviceAuthorizationCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidScope,
+                Code = ErrorType.OAuth.InvalidScope,
                 Description = $"Scopes are not supported: {string.Join(", ", invalidScopes)}."
             });
         }
@@ -58,7 +58,7 @@ public sealed class DeviceAuthorizationCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.OAuth.InvalidScope,
+                Code = ErrorType.OAuth.InvalidScope,
                 Description = $"Scopes are not allowed for this client: {string.Join(", ", unallowedScopes)}."
             });
         }

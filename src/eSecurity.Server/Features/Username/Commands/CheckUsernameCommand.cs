@@ -1,7 +1,7 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Security.Identity.User.Username;
 using eSystem.Core.Mediator;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 
 namespace eSecurity.Server.Features.Username.Commands;
 
@@ -18,7 +18,7 @@ public class CheckUsernameCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.Common.UsernameTaken,
+                Code = ErrorType.Common.UsernameTaken,
                 Description = "The username is already taken."
             });
         }

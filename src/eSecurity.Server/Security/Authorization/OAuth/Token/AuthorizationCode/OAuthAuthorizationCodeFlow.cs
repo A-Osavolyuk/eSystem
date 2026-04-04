@@ -4,7 +4,7 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
 using eSecurity.Server.Security.Cryptography.Pkce;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Security.Authorization.OAuth.Token.AuthorizationCode;
 
@@ -32,7 +32,7 @@ public class OAuthAuthorizationCodeFlow(
         if (client is null)
             return Results.Unauthorized(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidClient,
+                Code = ErrorType.OAuth.InvalidClient,
                 Description = "Client was not found."
             });
 
@@ -40,7 +40,7 @@ public class OAuthAuthorizationCodeFlow(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidGrant,
+                Code = ErrorType.OAuth.InvalidGrant,
                 Description = "Invalid authorization code."
             });
         }
@@ -48,7 +48,7 @@ public class OAuthAuthorizationCodeFlow(
         if (!client.HasGrantType(context.GrantType))
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.OAuth.UnsupportedGrantType,
+                Code = ErrorType.OAuth.UnsupportedGrantType,
                 Description = $"'{context.GrantType}' grant is not supported by client."
             });
 
@@ -57,7 +57,7 @@ public class OAuthAuthorizationCodeFlow(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorTypes.OAuth.InvalidGrant,
+                Code = ErrorType.OAuth.InvalidGrant,
                 Description = "Invalid authorization code."
             });
         }
@@ -70,7 +70,7 @@ public class OAuthAuthorizationCodeFlow(
             {
                 return Results.BadRequest(new Error
                 {
-                    Code = ErrorTypes.OAuth.InvalidGrant,
+                    Code = ErrorType.OAuth.InvalidGrant,
                     Description = "Invalid authorization code."
                 });
             }
@@ -85,7 +85,7 @@ public class OAuthAuthorizationCodeFlow(
             {
                 return Results.BadRequest(new Error
                 {
-                    Code = ErrorTypes.OAuth.InvalidGrant,
+                    Code = ErrorType.OAuth.InvalidGrant,
                     Description = "Invalid authorization code."
                 });
             }
@@ -112,7 +112,7 @@ public class OAuthAuthorizationCodeFlow(
         {
             return Results.InternalServerError(new Error()
             {
-                Code = ErrorTypes.OAuth.ServerError,
+                Code = ErrorType.OAuth.ServerError,
                 Description = "Server error"
             });
         }
@@ -133,7 +133,7 @@ public class OAuthAuthorizationCodeFlow(
             {
                 return Results.InternalServerError(new Error()
                 {
-                    Code = ErrorTypes.OAuth.ServerError,
+                    Code = ErrorType.OAuth.ServerError,
                     Description = "Server error"
                 });
             }

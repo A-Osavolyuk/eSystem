@@ -1,6 +1,7 @@
 ﻿using eSecurity.Server.Security.Authentication.TwoFactor.RecoveryCode;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.TwoFactor.Commands;

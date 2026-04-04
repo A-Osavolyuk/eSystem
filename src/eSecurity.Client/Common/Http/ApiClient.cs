@@ -4,7 +4,7 @@ using eSecurity.Client.Common.JS.Localization;
 using eSecurity.Client.Security.Authentication;
 using eSecurity.Client.Security.Authentication.OpenIdConnect.Token;
 using eSystem.Core.Http.Extensions;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Token.RefreshToken;
@@ -54,7 +54,7 @@ public class ApiClient(
         {
             return ApiResponse.Fail(new Error
             {
-                Code = ErrorTypes.Common.InternalServerError,
+                Code = ErrorType.Common.InternalServerError,
                 Description = ex.Message
             });
         }
@@ -74,7 +74,7 @@ public class ApiClient(
         var responseJson = await responseMessage.Content.ReadAsStringAsync(cancellationToken);
         var error = JsonSerializer.Deserialize<Error>(responseJson);
 
-        if (error is null || error.Code != ErrorTypes.OAuth.InvalidToken)
+        if (error is null || error.Code != ErrorType.OAuth.InvalidToken)
             return responseMessage;
 
         return await RefreshAsync(requestMessage, responseMessage, cancellationToken);

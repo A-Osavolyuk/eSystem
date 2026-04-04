@@ -1,7 +1,7 @@
 ﻿using eSecurity.Core.Common.DTOs;
 using eSecurity.Server.Security.Authentication.Session;
 using eSystem.Core.Mediator;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 
 namespace eSecurity.Server.Features.Account.Queries;
 
@@ -21,7 +21,7 @@ public sealed class GetAuthenticationSessionQueryHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorTypes.Common.ExpiredAuthenticationSession,
+                Code = ErrorType.Common.ExpiredAuthenticationSession,
                 Description = "Session is already expired"
             });
         }

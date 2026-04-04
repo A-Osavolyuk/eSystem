@@ -1,6 +1,6 @@
-namespace eSystem.Core.Primitives.Constants;
+namespace eSystem.Core.Primitives;
 
-public static class ErrorTypes
+public static class ErrorType
 {
     public static class OAuth
     {

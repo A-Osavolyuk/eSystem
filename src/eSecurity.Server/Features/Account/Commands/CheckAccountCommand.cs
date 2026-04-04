@@ -5,7 +5,7 @@ using eSecurity.Server.Security.Authentication.Lockout;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
-using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Primitives;
 
 namespace eSecurity.Server.Features.Account.Commands;
 
@@ -36,7 +36,7 @@ public class CheckAccountCommandHandler(
         {
             return Results.NotFound(new Error
             {
-                Code = ErrorTypes.Common.InvalidLockoutState,
+                Code = ErrorType.Common.InvalidLockoutState,
                 Description = "Invalid state"
             });
         }
