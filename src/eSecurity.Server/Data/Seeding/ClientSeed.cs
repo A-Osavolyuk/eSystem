@@ -2,6 +2,7 @@
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Data.Seeding;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 
 namespace eSecurity.Server.Data.Seeding;
 

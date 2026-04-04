@@ -38,7 +38,7 @@ public sealed class GetOAuthAuthorizationServerQueryHandler : IRequestHandler<Ge
                 PromptType.Consent,
                 PromptType.SelectAccount
             ],
-            SubjectTypesSupported = [SubjectTypes.Public, SubjectTypes.Pairwise],
+            SubjectTypesSupported = [SubjectType.Public, SubjectType.Pairwise],
             TokenEndpointAuthMethodsSupported =
             [
                 TokenAuthMethods.ClientSecretBasic,

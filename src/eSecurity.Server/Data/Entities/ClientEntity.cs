@@ -2,6 +2,7 @@
 using eSystem.Core.Data.Entities;
 using eSystem.Core.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 
 namespace eSecurity.Server.Data.Entities;

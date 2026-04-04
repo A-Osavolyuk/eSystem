@@ -97,7 +97,7 @@ public sealed class OpenIdConfiguration
     public PromptType[] PromptValuesSupported { get; set; } = [];
     
     [JsonPropertyName("subject_types_supported")]
-    public string[] SubjectTypesSupported { get; set; } = [];
+    public SubjectType[] SubjectTypesSupported { get; set; } = [];
     
     [JsonPropertyName("id_token_signing_alg_values_supported")]
     public string[]? IdTokenSigningAlgValuesSupported { get; set; }

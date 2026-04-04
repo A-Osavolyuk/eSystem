@@ -66,7 +66,7 @@ public static class AuthenticationExtensions
                 PromptType.SelectAccount
             ];
 
-            cfg.SubjectTypesSupported = [SubjectTypes.Public, SubjectTypes.Pairwise];
+            cfg.SubjectTypesSupported = [SubjectType.Public, SubjectType.Pairwise];
             cfg.IdTokenSigningAlgValuesSupported = [SecurityAlgorithms.RsaSha256];
             cfg.TokenEndpointAuthMethodsSupported =
             [

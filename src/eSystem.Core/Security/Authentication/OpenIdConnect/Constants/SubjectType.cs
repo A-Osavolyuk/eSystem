@@ -1,6 +1,6 @@
 using eSystem.Core.Enums;
 
-namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
+namespace eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 
 public enum SubjectType
 {
