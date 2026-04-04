@@ -41,11 +41,11 @@ public sealed class GetOAuthAuthorizationServerQueryHandler : IRequestHandler<Ge
             SubjectTypesSupported = [SubjectType.Public, SubjectType.Pairwise],
             TokenEndpointAuthMethodsSupported =
             [
-                TokenAuthMethods.ClientSecretBasic,
-                TokenAuthMethods.ClientSecretJwt,
-                TokenAuthMethods.ClientSecretPost,
-                TokenAuthMethods.PrivateKeyJwt,
-                TokenAuthMethods.None
+                TokenAuthMethod.ClientSecretBasic,
+                TokenAuthMethod.ClientSecretJwt,
+                TokenAuthMethod.ClientSecretPost,
+                TokenAuthMethod.PrivateKeyJwt,
+                TokenAuthMethod.None
             ],
             CodeChallengeMethodsSupported = [ChallengeMethod.S256],
             ScopesSupported =

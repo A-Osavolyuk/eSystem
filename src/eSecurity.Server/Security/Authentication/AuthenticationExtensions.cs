@@ -70,11 +70,11 @@ public static class AuthenticationExtensions
             cfg.IdTokenSigningAlgValuesSupported = [SecurityAlgorithms.RsaSha256];
             cfg.TokenEndpointAuthMethodsSupported =
             [
-                TokenAuthMethods.ClientSecretBasic,
-                TokenAuthMethods.ClientSecretJwt,
-                TokenAuthMethods.ClientSecretPost,
-                TokenAuthMethods.PrivateKeyJwt,
-                TokenAuthMethods.None
+                TokenAuthMethod.ClientSecretBasic,
+                TokenAuthMethod.ClientSecretJwt,
+                TokenAuthMethod.ClientSecretPost,
+                TokenAuthMethod.PrivateKeyJwt,
+                TokenAuthMethod.None
             ];
 
             cfg.CodeChallengeMethodsSupported = [ChallengeMethod.S256];

@@ -49,7 +49,7 @@ public sealed class OpenIdConfiguration
     public string TokenEndpoint { get; set; } = string.Empty;
     
     [JsonPropertyName("token_endpoint_auth_methods_supported")]
-    public string[]? TokenEndpointAuthMethodsSupported { get; set; }
+    public TokenAuthMethod[]? TokenEndpointAuthMethodsSupported { get; set; }
     
     [JsonPropertyName("token_endpoint_auth_signing_alg_values_supported")]
     public string[]? TokenEndpointAuthSigningAlgValuesSupported { get; set; }

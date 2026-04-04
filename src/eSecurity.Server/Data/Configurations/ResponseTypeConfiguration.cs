@@ -1,4 +1,5 @@
 ﻿using eSecurity.Server.Data.Entities;
+using eSystem.Core.Data.Conversion;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace eSecurity.Server.Data.Configurations;
@@ -8,6 +9,6 @@ public sealed class ResponseTypeConfiguration : IEntityTypeConfiguration<Respons
     public void Configure(EntityTypeBuilder<ResponseTypeEntity> builder)
     {
         builder.HasKey(x => x.Id);
-        builder.Property(x => x.Type).HasMaxLength(60);
+        builder.Property(x => x.Type).HasEnumConversion();
     }
 }

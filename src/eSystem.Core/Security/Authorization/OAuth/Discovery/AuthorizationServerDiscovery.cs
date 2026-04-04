@@ -42,7 +42,7 @@ public sealed class AuthorizationServerDiscovery
     public SubjectType[] SubjectTypesSupported { get; set; } = [];
     
     [JsonPropertyName("token_endpoint_auth_methods_supported")]
-    public string[] TokenEndpointAuthMethodsSupported { get; set; } = [];
+    public TokenAuthMethod[] TokenEndpointAuthMethodsSupported { get; set; } = [];
     
     [JsonPropertyName("claims_supported")]
     public string[] ClaimsSupported { get; set; } = [];
