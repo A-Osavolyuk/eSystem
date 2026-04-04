@@ -6,7 +6,6 @@ using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Binding;
 using eSystem.Core.Mediator;
-using eSystem.Core.Primitives.Constants;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Introspection;

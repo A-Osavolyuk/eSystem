@@ -1,5 +1,4 @@
-﻿using eSecurity.Core.Common.Requests;
-using eSecurity.Server.Security.Authentication.TwoFactor.RecoveryCode;
+﻿using eSecurity.Server.Security.Authentication.TwoFactor.RecoveryCode;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
 using eSystem.Core.Security.Identity.Claims;

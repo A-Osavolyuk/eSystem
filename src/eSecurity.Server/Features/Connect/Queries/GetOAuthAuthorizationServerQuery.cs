@@ -1,10 +1,7 @@
-﻿using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
-using eSecurity.Server.Security.Authorization.Constants;
-using eSystem.Core.Mediator;
+﻿using eSystem.Core.Mediator;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Security.Authorization.OAuth;
-using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Discovery;
 
 namespace eSecurity.Server.Features.Connect.Queries;

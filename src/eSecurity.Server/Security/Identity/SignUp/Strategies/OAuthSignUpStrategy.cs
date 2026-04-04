@@ -12,7 +12,6 @@ using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Common.Messaging;
-using eSystem.Core.Enums;
 using eSystem.Core.Primitives.Constants;
 using eSystem.Core.Utilities.Query;
 

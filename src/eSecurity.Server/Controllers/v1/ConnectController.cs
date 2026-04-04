@@ -8,8 +8,6 @@ using eSystem.Core.Mediator;
 using eSystem.Core.Primitives.Constants;
 using eSystem.Core.Security.Authentication.OpenIdConnect.User;
 using eSystem.Core.Security.Authorization.OAuth.DeviceAuthorization;
-using eSystem.Core.Security.Authorization.OAuth.Introspection;
-using eSystem.Core.Security.Authorization.OAuth.Revocation;
 
 namespace eSecurity.Server.Controllers.v1;
 

@@ -11,7 +11,6 @@ using eSecurity.Server.Security.Authorization.Roles;
 using eSecurity.Server.Security.Authorization.Verification;
 using eSystem.Core.Security.Authentication.Schemes;
 using eSystem.Core.Security.Authorization.OAuth;
-using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Token.Validation;
 
 namespace eSecurity.Server.Security.Authorization;

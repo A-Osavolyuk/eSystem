@@ -4,7 +4,6 @@ using eSystem.Core.Binding;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives.Constants;
 using eSystem.Core.Security.Authorization.OAuth;
-using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Revocation;
 
 namespace eSecurity.Server.Features.Connect.Commands;

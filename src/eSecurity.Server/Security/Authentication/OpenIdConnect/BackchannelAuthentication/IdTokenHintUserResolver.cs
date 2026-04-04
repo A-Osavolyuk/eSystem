@@ -4,7 +4,6 @@ using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Primitives.Constants;
 using eSystem.Core.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
 using eSystem.Core.Security.Authorization.OAuth;
-using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect.BackchannelAuthentication;

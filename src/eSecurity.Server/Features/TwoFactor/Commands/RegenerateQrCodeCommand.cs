@@ -1,5 +1,4 @@
-﻿using eSecurity.Core.Common.Requests;
-using eSecurity.Core.Security.Identity;
+﻿using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Security.Authentication.TwoFactor.Authenticator;
 using eSecurity.Server.Security.Authentication.TwoFactor.Secret;
 using eSecurity.Server.Security.Identity.Email;

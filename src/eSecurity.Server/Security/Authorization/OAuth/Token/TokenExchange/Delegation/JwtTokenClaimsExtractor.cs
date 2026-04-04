@@ -5,7 +5,6 @@ using eSecurity.Server.Security.Cryptography.Tokens;
 using eSystem.Core.Enums;
 using eSystem.Core.Primitives.Constants;
 using eSystem.Core.Security.Authorization.OAuth;
-using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Delegation;

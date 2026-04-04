@@ -1,5 +1,4 @@
 ﻿using eSecurity.Server.Data.Entities;
-using eSecurity.Server.Security.Authorization.OAuth.Protocol;
 using eSystem.Core.Data.Conversion;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

@@ -1,5 +1,4 @@
-﻿using eSystem.Core.Security.Authorization.OAuth.Constants;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace eSystem.Core.Security.Authorization.OAuth.Token;
 

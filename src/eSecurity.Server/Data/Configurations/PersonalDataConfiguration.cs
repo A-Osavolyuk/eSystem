@@ -1,5 +1,4 @@
-﻿using eSecurity.Core.Security.Identity;
-using eSecurity.Server.Data.Entities;
+﻿using eSecurity.Server.Data.Entities;
 using eSystem.Core.Data.Conversion;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

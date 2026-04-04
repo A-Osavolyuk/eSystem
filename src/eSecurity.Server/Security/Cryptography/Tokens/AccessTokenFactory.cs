@@ -7,7 +7,6 @@ using eSecurity.Server.Security.Identity.Claims;
 using eSecurity.Server.Security.Identity.Claims.Factories;
 using eSystem.Core.Primitives.Constants;
 using eSystem.Core.Security.Authorization.OAuth;
-using eSystem.Core.Security.Authorization.OAuth.Constants;
 
 namespace eSecurity.Server.Security.Cryptography.Tokens;
 

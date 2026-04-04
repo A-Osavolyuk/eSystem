@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using eSystem.Core.Security.Authorization.OAuth;
-using eSystem.Core.Security.Authorization.OAuth.Constants;
 
 namespace eSecurity.Server.Security.Cryptography.Signing;
 

@@ -1,7 +1,6 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Core.Security.Identity;
-using eSecurity.Server.Security.Authorization;
 using eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
 using eSecurity.Server.Security.Authorization.Verification;
 using eSecurity.Server.Security.Identity.Email;

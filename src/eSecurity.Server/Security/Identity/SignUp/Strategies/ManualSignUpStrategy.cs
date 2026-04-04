@@ -1,5 +1,4 @@
 using eSecurity.Core.Common.Responses;
-using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Common.Messaging;
 using eSecurity.Server.Common.Messaging.Messages.Email;

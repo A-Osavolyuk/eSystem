@@ -1,6 +1,5 @@
 ﻿using eSecurity.Core.Common.DTOs;
 using eSecurity.Server.Security.Authentication.Session;
-using eSystem.Core.Enums;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives.Constants;
 

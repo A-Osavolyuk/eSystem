@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace eSystem.Core.Enums;
+﻿namespace eSystem.Core.Enums;
 
 public static class EnumHelper
 {

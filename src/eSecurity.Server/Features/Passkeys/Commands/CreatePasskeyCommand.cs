@@ -1,14 +1,11 @@
 ﻿using System.Security.Cryptography;
 using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Security.Authentication.TwoFactor;
-using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Core.Security.Credentials.PublicKey.Constants;
 using eSecurity.Server.Common.Storage.Session;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.TwoFactor;
-using eSecurity.Server.Security.Authorization;
 using eSecurity.Server.Security.Authorization.Devices;
-using eSecurity.Server.Security.Authorization.Verification;
 using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Server.Security.Identity.User;

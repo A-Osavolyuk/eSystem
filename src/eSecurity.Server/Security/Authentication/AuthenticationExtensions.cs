@@ -1,20 +1,17 @@
 ﻿using eSecurity.Server.Security.Authentication.Handlers;
 using eSecurity.Server.Security.Authentication.Lockout;
 using eSecurity.Server.Security.Authentication.OpenIdConnect;
-using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
 using eSecurity.Server.Security.Authentication.Password;
 using eSecurity.Server.Security.Authentication.Session;
 using eSecurity.Server.Security.Authentication.SignIn;
 using eSecurity.Server.Security.Authentication.Subject;
 using eSecurity.Server.Security.Authentication.TwoFactor;
-using eSecurity.Server.Security.Authorization.Constants;
 using eSecurity.Server.Security.Cookies;
 using eSystem.Core.Common.Configuration;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Security.Authentication.Schemes;
 using eSystem.Core.Security.Authorization.OAuth;
-using eSystem.Core.Security.Authorization.OAuth.Constants;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace eSecurity.Server.Security.Authentication;
