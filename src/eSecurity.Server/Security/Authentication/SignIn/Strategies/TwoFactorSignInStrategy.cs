@@ -17,7 +17,7 @@ public class TwoFactorSignInStrategy(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.InvalidPayloadType,
+                Code = ErrorCode.InvalidPayloadType,
                 Description = "Invalid payload type"
             });
         }

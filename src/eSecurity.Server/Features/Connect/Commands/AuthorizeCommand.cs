@@ -38,7 +38,7 @@ public class AuthorizeCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.UnsupportedResponseType,
+                Code = ErrorCode.UnsupportedResponseType,
                 Description = $"'{request.Request.ResponseType}' is unsupported response type"
             });
         }
@@ -47,7 +47,7 @@ public class AuthorizeCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = "nonce is required."
             });
         }
@@ -62,14 +62,14 @@ public class AuthorizeCommandHandler(
             {
                 return Results.BadRequest(new Error
                 {
-                    Code = ErrorType.OAuth.InvalidScope,
+                    Code = ErrorCode.InvalidScope,
                     Description = $"'{unsupportedScopes.First()}' scope is invalid."
                 });
             }
 
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.InvalidScope,
+                Code = ErrorCode.InvalidScope,
                 Description = $"'{string.Join(" ", unsupportedScopes)}' scopes are invalid."
             });
         }
@@ -79,7 +79,7 @@ public class AuthorizeCommandHandler(
         {
             return Results.Unauthorized(new Error
             {
-                Code = ErrorType.OAuth.InvalidClient,
+                Code = ErrorCode.InvalidClient,
                 Description = "Invalid client"
             });
         }
@@ -88,7 +88,7 @@ public class AuthorizeCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = "redirect_uri is invalid."
             });
         }
@@ -97,7 +97,7 @@ public class AuthorizeCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.InvalidScope,
+                Code = ErrorCode.InvalidScope,
                 Description = $"'{string.Join(',', scopes)}' are not supported scopes."
             });
         }
@@ -107,14 +107,14 @@ public class AuthorizeCommandHandler(
             if (string.IsNullOrEmpty(request.Request.CodeChallenge))
                 return Results.BadRequest(new Error
                 {
-                    Code = ErrorType.OAuth.InvalidRequest,
+                    Code = ErrorCode.InvalidRequest,
                     Description = "code_challenge is required"
                 });
 
             if (!request.Request.CodeChallengeMethod.HasValue)
                 return Results.BadRequest(new Error
                 {
-                    Code = ErrorType.OAuth.InvalidRequest,
+                    Code = ErrorCode.InvalidRequest,
                     Description = "code_challenge_method is required"
                 });
         }
@@ -124,7 +124,7 @@ public class AuthorizeCommandHandler(
         {
             return Results.InternalServerError(new Error
             {
-                Code = ErrorType.OAuth.ServerError,
+                Code = ErrorCode.ServerError,
                 Description = "Invalid authorization session."
             });
         }
@@ -134,7 +134,7 @@ public class AuthorizeCommandHandler(
         {
             return Results.InternalServerError(new Error
             {
-                Code = ErrorType.OAuth.ServerError,
+                Code = ErrorCode.ServerError,
                 Description = "Invalid authorization session."
             });
         }
@@ -144,7 +144,7 @@ public class AuthorizeCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.ConsentRequired,
+                Code = ErrorCode.ConsentRequired,
                 Description = "User consent is required."
             });
         }

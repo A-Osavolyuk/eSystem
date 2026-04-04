@@ -25,7 +25,7 @@ public sealed class DeviceCodeStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "Invalid device code"
             });
         }
@@ -38,7 +38,7 @@ public sealed class DeviceCodeStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "Invalid device code"
             });
         }
@@ -52,7 +52,7 @@ public sealed class DeviceCodeStrategy(
                 
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.AccessDenied,
+                Code = ErrorCode.AccessDenied,
                 Description = "Device code was denied"
             });
         }
@@ -61,7 +61,7 @@ public sealed class DeviceCodeStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.AuthorizationPending,
+                Code = ErrorCode.AuthorizationPending,
                 Description = "Authorization pending"
             });
         }
@@ -70,7 +70,7 @@ public sealed class DeviceCodeStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.ExpiredToken,
+                Code = ErrorCode.ExpiredToken,
                 Description = "Device code is already expired"
             });
         }

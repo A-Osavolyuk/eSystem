@@ -32,7 +32,7 @@ public sealed class NonePromptStrategy(
         {
             return AuthorizationResult.Redirect(QueryBuilder.Create()
                 .WithUri(decodedRedirectUri)
-                .WithQueryParam("error", ErrorType.OAuth.LoginRequired)
+                .WithQueryParam("error", ErrorCode.LoginRequired)
                 .WithQueryParam("error_description", "User must be authenticated.")
                 .Build());
         }

@@ -30,7 +30,7 @@ public sealed class SetUsernameCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.UsernameTaken,
+                Code = ErrorCode.UsernameTaken,
                 Description = "The username is already taken."
             });
         }

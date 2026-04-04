@@ -20,7 +20,7 @@ public class AuthorizationCodeStrategy(
         if (string.IsNullOrEmpty(request.RedirectUri))
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = "redirect_uri is required"
             });
 
@@ -34,7 +34,7 @@ public class AuthorizationCodeStrategy(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "Invalid authorization code."
             });
         }

@@ -22,7 +22,7 @@ public sealed class IdTokenHintUserResolver(
         {
             return TypedResult<UserEntity>.Fail(new Error()
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = "id_token_hind is invalid"
             });
         }
@@ -34,7 +34,7 @@ public sealed class IdTokenHintUserResolver(
             {
                 return TypedResult<UserEntity>.Fail(new Error()
                 {
-                    Code = ErrorType.OAuth.InvalidRequest,
+                    Code = ErrorCode.InvalidRequest,
                     Description = "id_token_hind is invalid"
                 });
             }
@@ -46,7 +46,7 @@ public sealed class IdTokenHintUserResolver(
             {
                 return TypedResult<UserEntity>.Fail(new Error()
                 {
-                    Code = ErrorType.OAuth.InvalidRequest,
+                    Code = ErrorCode.InvalidRequest,
                     Description = "id_token_hind is invalid"
                 });
             }
@@ -57,7 +57,7 @@ public sealed class IdTokenHintUserResolver(
         {
             return TypedResult<UserEntity>.Fail(new Error()
             {
-                Code = ErrorType.OAuth.UnknownUserId,
+                Code = ErrorCode.UnknownUserId,
                 Description = "Unknown user"
             });
         }

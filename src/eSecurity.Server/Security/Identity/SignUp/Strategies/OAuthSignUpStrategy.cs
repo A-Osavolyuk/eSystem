@@ -56,7 +56,7 @@ public sealed class OAuthSignUpStrategy(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.InvalidPayloadType,
+                Code = ErrorCode.InvalidPayloadType,
                 Description = "Invalid payload"
             });
         }
@@ -66,7 +66,7 @@ public sealed class OAuthSignUpStrategy(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.InvalidSession,
+                Code = ErrorCode.InvalidSession,
                 Description = "Invalid session"
             });
         }
@@ -76,7 +76,7 @@ public sealed class OAuthSignUpStrategy(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.EmailTaken,
+                Code = ErrorCode.EmailTaken,
                 Description = "Email is already taken"
             });
         }

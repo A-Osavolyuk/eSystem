@@ -39,7 +39,7 @@ public sealed class CompleteSignUpCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.Common.InvalidSession,
+                Code = ErrorCode.InvalidSession,
                 Description = "Invalid session"
             });
         }

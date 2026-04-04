@@ -180,7 +180,7 @@
         {
             NavigationManager.NavigateTo(QueryBuilder.Create()
                 .WithUri(_redirectUri)
-                .WithQueryParam("error", ErrorType.OAuth.LoginRequired)
+                .WithQueryParam("error", ErrorCode.LoginRequired)
                 .WithQueryParam("error_description", "User must pass authentication first.")
                 .Build());
 
@@ -242,7 +242,7 @@
     {
         NavigationManager.NavigateTo(QueryBuilder.Create()
             .WithUri(_redirectUri)
-            .WithQueryParam("error", ErrorType.OAuth.AccessDenied)
+            .WithQueryParam("error", ErrorCode.AccessDenied)
             .WithQueryParam("error_description", "The resource owner or authorization server denied the request")
             .Build());
     }
@@ -254,7 +254,7 @@
         {
             NavigationManager.NavigateTo(QueryBuilder.Create()
                 .WithUri(_redirectUri)
-                .WithQueryParam("error", ErrorType.OAuth.LoginRequired)
+                .WithQueryParam("error", ErrorCode.LoginRequired)
                 .WithQueryParam("error_description", "User must pass authentication first.")
                 .Build());
 

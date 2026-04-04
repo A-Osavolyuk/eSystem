@@ -2,6 +2,7 @@
 using eSecurity.Server.Features.Connect.Commands;
 using eSecurity.Server.Features.Connect.Queries;
 using eSecurity.Server.Security.Authorization.Constants;
+using eSystem.Core.Enums;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Mediator;
@@ -70,11 +71,11 @@ public class ConnectController(ISender sender) : ControllerBase
         {
             const string description = "GET cannot have form body";
             Response.Headers.Append(HeaderTypes.WwwAuthenticate,
-                $"Bearer error=\"{ErrorType.OAuth.InvalidRequest}\", error_description=\"{description}\"");
+                $"Bearer error=\"{ErrorCode.InvalidRequest.GetString()}\", error_description=\"{description}\"");
             
             return BadRequest(new Error
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = description
             });
         }

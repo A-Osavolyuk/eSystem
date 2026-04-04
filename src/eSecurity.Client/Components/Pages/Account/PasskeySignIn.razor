@@ -133,7 +133,7 @@ else
                 _isLoading = false;
 
                 var error = result.GetError();
-                if (error.Code == ErrorType.Common.AccountLockedOut)
+                if (error.Code == ErrorCode.AccountLockedOut)
                 {
                     NavigationManager.NavigateTo(Links.Common.AccountLocked);
                 }

@@ -15,7 +15,7 @@ public sealed class RevocationRequestBinder : IFormBinder<RevocationRequest>
         {
             return Task.FromResult(TypedResult<RevocationRequest>.Fail(new Error()
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = "token is required"
             }));
         }

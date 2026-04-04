@@ -14,7 +14,7 @@ public static class Results
     public static Result BadRequest(string description)
         => Result.Failure(HttpStatusCode.BadRequest, new Error
         {
-            Code = ErrorType.Common.BadRequest,
+            Code = ErrorCode.BadRequest,
             Description = description
         });
 
@@ -24,7 +24,7 @@ public static class Results
     public static Result Unauthorized(string description)
         => Result.Failure(HttpStatusCode.Unauthorized, new Error
         {
-            Code = ErrorType.Common.Unauthorized,
+            Code = ErrorCode.Unauthorized,
             Description = description
         });
 
@@ -34,7 +34,7 @@ public static class Results
     public static Result Forbidden(string description)
         => Result.Failure(HttpStatusCode.Forbidden, new Error
         {
-            Code = ErrorType.Common.Forbidden,
+            Code = ErrorCode.Forbidden,
             Description = description
         });
 
@@ -44,7 +44,7 @@ public static class Results
     public static Result NotFound(string description)
         => Result.Failure(HttpStatusCode.NotFound, new Error
         {
-            Code = ErrorType.Common.NotFound,
+            Code = ErrorCode.NotFound,
             Description = description
         });
 
@@ -54,7 +54,7 @@ public static class Results
     public static Result TooManyRequests(string description)
         => Result.Failure(HttpStatusCode.TooManyRequests, new Error
         {
-            Code = ErrorType.Common.TooManyRequests,
+            Code = ErrorCode.TooManyRequests,
             Description = description
         });
 
@@ -64,7 +64,7 @@ public static class Results
     public static Result InternalServerError(string description)
         => Result.Failure(HttpStatusCode.InternalServerError, new Error
         {
-            Code = ErrorType.Common.InternalServerError,
+            Code = ErrorCode.InternalServerError,
             Description = description
         });
 

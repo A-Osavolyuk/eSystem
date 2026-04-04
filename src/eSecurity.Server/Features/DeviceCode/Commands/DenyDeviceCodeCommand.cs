@@ -30,7 +30,7 @@ public sealed class DenyDeviceCodeCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidToken,
+                Code = ErrorCode.InvalidToken,
                 Description = "Device code is already allowed or consumed"
             });
         }
@@ -39,7 +39,7 @@ public sealed class DenyDeviceCodeCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidToken,
+                Code = ErrorCode.InvalidToken,
                 Description = "Device code is already denied"
             });
         }

@@ -24,7 +24,7 @@ public class LogoutHandler(
         {
             return Results.InternalServerError(new Error
             {
-                Code = ErrorType.OAuth.ServerError,
+                Code = ErrorCode.ServerError,
                 Description = "Invalid session."
             });
         }
@@ -34,7 +34,7 @@ public class LogoutHandler(
         {
             return Results.Unauthorized(new Error
             {
-                Code = ErrorType.OAuth.InvalidClient,
+                Code = ErrorCode.InvalidClient,
                 Description = "Invalid client."
             });
         }
@@ -46,7 +46,7 @@ public class LogoutHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = "post_logout_redirect_uri is invalid."
             });
         }

@@ -54,7 +54,7 @@ public sealed class PasskeyTwoFactorStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.Common.InvalidSession,
+                Code = ErrorCode.InvalidSession,
                 Description = "Invalid session"
             });
         }
@@ -69,7 +69,7 @@ public sealed class PasskeyTwoFactorStrategy(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.InvalidDevice,
+                Code = ErrorCode.InvalidDevice,
                 Description = "Invalid device."
             });
         }
@@ -82,7 +82,7 @@ public sealed class PasskeyTwoFactorStrategy(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.InvalidCredentials,
+                Code = ErrorCode.InvalidCredentials,
                 Description = "Invalid credential"
             });
         }
@@ -92,7 +92,7 @@ public sealed class PasskeyTwoFactorStrategy(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.InvalidChallenge,
+                Code = ErrorCode.InvalidChallenge,
                 Description = "Invalid challenge"
             });
         }
@@ -104,7 +104,7 @@ public sealed class PasskeyTwoFactorStrategy(
             if (user.FailedLoginAttempts < _signInOptions.MaxFailedLoginAttempts)
                 return Results.BadRequest(new Error
                 {
-                    Code = ErrorType.Common.FailedLoginAttempt,
+                    Code = ErrorCode.FailedLoginAttempt,
                     Description = "Invalid passkey.",
                     Details = new Dictionary<string, object>
                     {
@@ -122,7 +122,7 @@ public sealed class PasskeyTwoFactorStrategy(
             if (!lockoutResult.Succeeded) return lockoutResult;
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.AccountLockedOut,
+                Code = ErrorCode.AccountLockedOut,
                 Description = "Account is locked out due to too many failed login attempts",
                 Details = new Dictionary<string, object> { { "userId", user.Id } }
             });

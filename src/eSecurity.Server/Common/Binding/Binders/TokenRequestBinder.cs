@@ -23,7 +23,7 @@ public sealed class TokenRequestBinder(IFormBindingProvider bindingProvider) : I
         {
             return TypedResult<TokenRequest>.Fail(new Error()
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = "grant_type is mandatory"
             });
         }
@@ -33,7 +33,7 @@ public sealed class TokenRequestBinder(IFormBindingProvider bindingProvider) : I
         {
             return TypedResult<TokenRequest>.Fail(new Error()
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "grant_type is invalid."
             });
         }

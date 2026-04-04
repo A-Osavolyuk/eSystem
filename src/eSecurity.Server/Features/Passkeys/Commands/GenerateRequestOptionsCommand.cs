@@ -55,7 +55,7 @@ public class GenerateRequestOptionsCommandHandler(
             {
                 return Results.BadRequest(new Error
                 {
-                    Code = ErrorType.Common.InvalidDevice,
+                    Code = ErrorCode.InvalidDevice,
                     Description = "Invalid device."
                 });
             }
@@ -65,7 +65,7 @@ public class GenerateRequestOptionsCommandHandler(
             {
                 return Results.BadRequest(new Error
                 {
-                    Code = ErrorType.Common.InvalidDevice,
+                    Code = ErrorCode.InvalidDevice,
                     Description = "This device does not have a passkey."
                 });
             }

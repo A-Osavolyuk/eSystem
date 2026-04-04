@@ -29,7 +29,7 @@ public sealed class OpaqueTokenTransformationHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "Subject token is invalid."
             });
         }
@@ -40,7 +40,7 @@ public sealed class OpaqueTokenTransformationHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "Subject token is invalid."
             });
         }
@@ -50,7 +50,7 @@ public sealed class OpaqueTokenTransformationHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "Subject token is invalid."
             });
         }
@@ -73,7 +73,7 @@ public sealed class OpaqueTokenTransformationHandler(
             {
                 return Results.BadRequest(new Error()
                 {
-                    Code = ErrorType.OAuth.InvalidTarget,
+                    Code = ErrorCode.InvalidTarget,
                     Description = "The requested audience is not an allowed audience for this client."
                 });
             }
@@ -91,7 +91,7 @@ public sealed class OpaqueTokenTransformationHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.InvalidScope,
+                Code = ErrorCode.InvalidScope,
                 Description = "Requested scopes exceed the subject token scopes."
             });
         }

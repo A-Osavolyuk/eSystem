@@ -26,7 +26,7 @@ public sealed class ConsentPromptStrategy(
         {
             var redirectUri = QueryBuilder.Create()
                 .WithUri(context.RedirectUri)
-                .WithQueryParam("error", ErrorType.OAuth.LoginRequired)
+                .WithQueryParam("error", ErrorCode.LoginRequired)
                 .WithQueryParam("error_description", "User must pass authentication first.")
                 .Build();
             

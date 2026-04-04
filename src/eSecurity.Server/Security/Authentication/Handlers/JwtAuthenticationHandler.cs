@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text.Encodings.Web;
 using eSecurity.Server.Security.Authorization.Constants;
 using eSecurity.Server.Security.Authorization.OAuth.Token.Validation;
+using eSystem.Core.Enums;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Primitives;
 using Microsoft.AspNetCore.Authentication;
@@ -25,7 +26,7 @@ public sealed class JwtAuthenticationHandler(
         var header = Request.Headers.Authorization.ToString();
         if (string.IsNullOrEmpty(header) || !header.StartsWith($"{AuthenticationTypes.Bearer} "))
         {
-            Context.Items["error"] = ErrorType.OAuth.InvalidToken;
+            Context.Items["error"] = ErrorCode.InvalidToken;
             return AuthenticateResult.Fail("Invalid token.");
         }
         
@@ -36,7 +37,7 @@ public sealed class JwtAuthenticationHandler(
         
         if (!result.IsValid || result.ClaimsPrincipal is null)
         {
-            Context.Items["error"] = ErrorType.OAuth.InvalidToken;
+            Context.Items["error"] = ErrorCode.InvalidToken;
             return AuthenticateResult.Fail("Invalid token");
         }
         
@@ -46,16 +47,15 @@ public sealed class JwtAuthenticationHandler(
 
     protected override async Task HandleChallengeAsync(AuthenticationProperties properties)
     {
-        var error = Context.Items["error"]?.ToString();
-
-        if (string.IsNullOrEmpty(error) || error == ErrorType.OAuth.ServerError)
+        var error = EnumHelper.FromString<ErrorCode>(Context.Items["error"]?.ToString());
+        if (error is null or ErrorCode.ServerError)
         {
             Response.StatusCode = StatusCodes.Status500InternalServerError;
             Response.ContentType = ContentTypes.Application.Json;
         
             await Response.WriteAsJsonAsync(new Error
             {
-                Code = ErrorType.OAuth.ServerError, 
+                Code = ErrorCode.ServerError, 
                 Description = "Server error."
             });
         }
@@ -66,7 +66,7 @@ public sealed class JwtAuthenticationHandler(
         
             await Response.WriteAsJsonAsync(new Error
             {
-                Code = error, 
+                Code = error.Value, 
                 Description = "Invalid token."
             });
         }

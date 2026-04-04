@@ -45,7 +45,7 @@ public class VerificationCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = "Invalid payload"
             });
         }

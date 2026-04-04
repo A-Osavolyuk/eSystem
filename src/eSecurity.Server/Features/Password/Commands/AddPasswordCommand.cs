@@ -29,7 +29,7 @@ public class AddPasswordCommandHandler(
         if (await _passwordManager.HasAsync(user, cancellationToken)) 
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.InvalidPassword,
+                Code = ErrorCode.InvalidPassword,
                 Description = "User already has a password."
             });
         

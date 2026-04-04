@@ -36,7 +36,7 @@ public class CheckAccountCommandHandler(
         {
             return Results.NotFound(new Error
             {
-                Code = ErrorType.Common.InvalidLockoutState,
+                Code = ErrorCode.InvalidLockoutState,
                 Description = "Invalid state"
             });
         }

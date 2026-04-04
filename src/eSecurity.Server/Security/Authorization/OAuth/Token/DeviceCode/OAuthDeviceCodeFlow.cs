@@ -31,7 +31,7 @@ public sealed class OAuthDeviceCodeFlow(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "Invalid device code"
             });
         }
@@ -48,7 +48,7 @@ public sealed class OAuthDeviceCodeFlow(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "Invalid device code"
             });
         }
@@ -71,7 +71,7 @@ public sealed class OAuthDeviceCodeFlow(
         {
             return Results.InternalServerError(new Error()
             {
-                Code = ErrorType.OAuth.ServerError,
+                Code = ErrorCode.ServerError,
                 Description = "Server error"
             });
         }
@@ -92,7 +92,7 @@ public sealed class OAuthDeviceCodeFlow(
             {
                 return Results.InternalServerError(new Error()
                 {
-                    Code = ErrorType.OAuth.ServerError,
+                    Code = ErrorCode.ServerError,
                     Description = "Server error"
                 });
             }
@@ -114,7 +114,7 @@ public sealed class OAuthDeviceCodeFlow(
             {
                 return Results.InternalServerError(new Error()
                 {
-                    Code = ErrorType.OAuth.ServerError,
+                    Code = ErrorCode.ServerError,
                     Description = "Server error"
                 });
             }

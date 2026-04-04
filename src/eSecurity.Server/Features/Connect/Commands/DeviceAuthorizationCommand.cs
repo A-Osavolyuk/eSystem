@@ -36,7 +36,7 @@ public sealed class DeviceAuthorizationCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.UnauthorizedClient,
+                Code = ErrorCode.UnauthorizedClient,
                 Description = "Client is not registered to for device authorization flow"
             });
         }
@@ -47,7 +47,7 @@ public sealed class DeviceAuthorizationCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidScope,
+                Code = ErrorCode.InvalidScope,
                 Description = $"Scopes are not supported: {string.Join(", ", invalidScopes)}."
             });
         }
@@ -58,7 +58,7 @@ public sealed class DeviceAuthorizationCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidScope,
+                Code = ErrorCode.InvalidScope,
                 Description = $"Scopes are not allowed for this client: {string.Join(", ", unallowedScopes)}."
             });
         }

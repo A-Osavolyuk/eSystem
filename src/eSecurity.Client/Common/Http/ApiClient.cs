@@ -54,7 +54,7 @@ public class ApiClient(
         {
             return ApiResponse.Fail(new Error
             {
-                Code = ErrorType.Common.InternalServerError,
+                Code = ErrorCode.InternalServerError,
                 Description = ex.Message
             });
         }
@@ -74,7 +74,7 @@ public class ApiClient(
         var responseJson = await responseMessage.Content.ReadAsStringAsync(cancellationToken);
         var error = JsonSerializer.Deserialize<Error>(responseJson);
 
-        if (error is null || error.Code != ErrorType.OAuth.InvalidToken)
+        if (error is null || error.Code != ErrorCode.InvalidToken)
             return responseMessage;
 
         return await RefreshAsync(requestMessage, responseMessage, cancellationToken);

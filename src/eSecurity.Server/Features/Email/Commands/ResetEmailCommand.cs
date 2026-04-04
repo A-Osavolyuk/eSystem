@@ -41,7 +41,7 @@ public class ResetEmailCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.InvalidEmail,
+                Code = ErrorCode.InvalidEmail,
                 Description = "User's primary email address is missing"
             });
         }
@@ -53,7 +53,7 @@ public class ResetEmailCommandHandler(
             {
                 return Results.BadRequest(new Error
                 {
-                    Code = ErrorType.Common.EmailTaken,
+                    Code = ErrorCode.EmailTaken,
                     Description = "User's primary email address is missing"
                 });
             }

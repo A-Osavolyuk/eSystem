@@ -45,7 +45,7 @@ public sealed class OAuthSignInStrategy(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.InvalidPayloadType,
+                Code = ErrorCode.InvalidPayloadType,
                 Description = "Invalid payload"
             });
         }
@@ -55,7 +55,7 @@ public sealed class OAuthSignInStrategy(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.InvalidSession,
+                Code = ErrorCode.InvalidSession,
                 Description = "Invalid session"
             });
         }
@@ -90,7 +90,7 @@ public sealed class OAuthSignInStrategy(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.BlockedDevice,
+                Code = ErrorCode.BlockedDevice,
                 Description = "Device is blocked"
             });
         }

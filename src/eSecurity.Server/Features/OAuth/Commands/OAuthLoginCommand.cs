@@ -26,7 +26,7 @@ public sealed class OAuthLoginCommandHandler(
         {
             return Results.InternalServerError(QueryBuilder.Create()
                 .WithUri(request.ReturnUri)
-                .WithQueryParam("error", ErrorType.OAuth.ServerError)
+                .WithQueryParam("error", ErrorCode.ServerError)
                 .WithQueryParam("error_description", "OAuth is not allowed")
                 .Build());
         }

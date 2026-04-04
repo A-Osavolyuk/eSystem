@@ -16,7 +16,7 @@ public sealed class ClientCredentialsRequestBinder : IFormBinder<ClientCredentia
         {
             return Task.FromResult(TypedResult<ClientCredentialsRequest>.Fail(new Error()
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "grant_type is invalid."
             }));
         }

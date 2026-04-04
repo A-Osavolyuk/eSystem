@@ -23,7 +23,7 @@ public sealed class LoginTokenHintUserResolver(
         {
             return TypedResult<UserEntity>.Fail(new Error()
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = "login_token_hint is invalid"
             });
         }
@@ -34,7 +34,7 @@ public sealed class LoginTokenHintUserResolver(
         {
             return TypedResult<UserEntity>.Fail(new Error()
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = "login_token_hint is invalid"
             });
         }
@@ -43,7 +43,7 @@ public sealed class LoginTokenHintUserResolver(
         {
             return TypedResult<UserEntity>.Fail(new Error()
             {
-                Code = ErrorType.OAuth.ExpiredLoginTokenHint,
+                Code = ErrorCode.ExpiredLoginTokenHint,
                 Description = "login_token_hint is expired"
             });
         }
@@ -53,7 +53,7 @@ public sealed class LoginTokenHintUserResolver(
         {
             return TypedResult<UserEntity>.Fail(new Error()
             {
-                Code = ErrorType.OAuth.UnknownUserId,
+                Code = ErrorCode.UnknownUserId,
                 Description = "Unknown user"
             });
         }

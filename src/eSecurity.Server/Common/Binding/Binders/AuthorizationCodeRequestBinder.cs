@@ -16,7 +16,7 @@ public sealed class AuthorizationCodeRequestBinder : IFormBinder<AuthorizationCo
         {
             return Task.FromResult(TypedResult<AuthorizationCodeRequest>.Fail(new Error()
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "grant_type is invalid."
             }));
         }

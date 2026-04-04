@@ -46,7 +46,7 @@ public class BackchannelLogoutStrategy(
             {
                 return Results.InternalServerError(new Error()
                 {
-                    Code = ErrorType.OAuth.ServerError,
+                    Code = ErrorCode.ServerError,
                     Description = "Server error"
                 });
             }

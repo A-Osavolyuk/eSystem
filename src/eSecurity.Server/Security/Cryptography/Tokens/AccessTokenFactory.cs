@@ -63,7 +63,7 @@ public sealed class AccessTokenFactory(
                 {
                     return TypedResult<string>.Fail(new Error()
                     {
-                        Code = ErrorType.OAuth.ServerError,
+                        Code = ErrorCode.ServerError,
                         Description = "Server error"
                     });
                 }
@@ -109,7 +109,7 @@ public sealed class AccessTokenFactory(
                 {
                     return TypedResult<string>.Fail(new Error()
                     {
-                        Code = ErrorType.OAuth.ServerError,
+                        Code = ErrorCode.ServerError,
                         Description = "Server error"
                     });
                 }

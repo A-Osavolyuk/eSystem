@@ -32,7 +32,7 @@ public class RevokeCommandHandler(
         if (string.IsNullOrEmpty(revocationRequest.Token))
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = "Token is missing."
             });
 

@@ -54,7 +54,7 @@ public class GrantConsentCommandHandler(
                 {
                     return Results.BadRequest(new Error
                     {
-                        Code = ErrorType.OAuth.InvalidScope,
+                        Code = ErrorCode.InvalidScope,
                         Description = $"'{scope}' scope is not supported."
                     });
                 }
@@ -64,7 +64,7 @@ public class GrantConsentCommandHandler(
                 {
                     return Results.BadRequest(new Error
                     {
-                        Code = ErrorType.OAuth.InvalidScope,
+                        Code = ErrorCode.InvalidScope,
                         Description = $"'{scope}' scope is not supported by client."
                     });
                 }
@@ -84,7 +84,7 @@ public class GrantConsentCommandHandler(
                 {
                     return Results.BadRequest(new Error
                     {
-                        Code = ErrorType.OAuth.InvalidScope,
+                        Code = ErrorCode.InvalidScope,
                         Description = $"'{scope}' scope is not supported."
                     });
                 }

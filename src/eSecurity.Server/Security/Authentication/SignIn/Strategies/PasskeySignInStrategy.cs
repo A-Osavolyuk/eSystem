@@ -40,7 +40,7 @@ public sealed class PasskeySignInStrategy(
         if (payload is not PasskeySignInPayload passkeyPayload)
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.InvalidPayloadType, 
+                Code = ErrorCode.InvalidPayloadType, 
                 Description = "Invalid payload type"
             });
 
@@ -64,7 +64,7 @@ public sealed class PasskeySignInStrategy(
         if (lockoutState.Enabled)
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.AccountLockedOut, 
+                Code = ErrorCode.AccountLockedOut, 
                 Description = "Account is locked out",
                 Details = new() { { "userId", user.Id } }
             });
@@ -76,7 +76,7 @@ public sealed class PasskeySignInStrategy(
         {
             return Results.NotFound(new Error
             {
-                Code = ErrorType.Common.InvalidDevice, 
+                Code = ErrorCode.InvalidDevice, 
                 Description = "Invalid device."
             });
         }

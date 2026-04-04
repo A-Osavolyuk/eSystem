@@ -16,7 +16,7 @@ public sealed class TokenExchangeRequestBinder : IFormBinder<TokenExchangeReques
         {
             return Task.FromResult(TypedResult<TokenExchangeRequest>.Fail(new Error()
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "grant_type is invalid."
             }));
         }

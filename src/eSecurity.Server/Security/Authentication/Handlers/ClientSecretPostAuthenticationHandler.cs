@@ -2,6 +2,7 @@
 using System.Security.Cryptography;
 using System.Text.Encodings.Web;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
+using eSystem.Core.Enums;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
@@ -25,21 +26,21 @@ public class ClientSecretPostAuthenticationHandler(
     {
         if (!Request.HasFormContentType)
         {
-            Context.Items["error"] = ErrorType.OAuth.InvalidClient;
+            Context.Items["error"] = ErrorCode.InvalidClient;
             return AuthenticateResult.Fail("Unauthorized.");
         }
         
         var body = await Request.ReadFormAsync();
         if (!body.TryGetValue("client_id", out var clientId))
         {
-            Context.Items["error"] = ErrorType.OAuth.InvalidClient;
+            Context.Items["error"] = ErrorCode.InvalidClient;
             return AuthenticateResult.Fail("Unauthorized.");
         }
         
         var client = await _clientManager.FindByIdAsync(clientId.ToString());
         if (client is null)
         {
-            Context.Items["error"] = ErrorType.OAuth.InvalidClient;
+            Context.Items["error"] = ErrorCode.InvalidClient;
             return AuthenticateResult.Fail("Unauthorized.");
         }
 
@@ -50,7 +51,7 @@ public class ClientSecretPostAuthenticationHandler(
                     Encoding.UTF8.GetBytes(client.Secret!), 
                     Encoding.UTF8.GetBytes(secret.ToString())))
             {
-                Context.Items["error"] = ErrorType.OAuth.InvalidClient;
+                Context.Items["error"] = ErrorCode.InvalidClient;
                 return AuthenticateResult.Fail("Unauthorized.");
             }
         }
@@ -70,16 +71,15 @@ public class ClientSecretPostAuthenticationHandler(
     
     protected override async Task HandleChallengeAsync(AuthenticationProperties properties)
     {
-        var error = Context.Items["error"]?.ToString();
-
-        if (string.IsNullOrEmpty(error) || error == ErrorType.OAuth.ServerError)
+        var error = EnumHelper.FromString<ErrorCode>(Context.Items["error"]?.ToString());
+        if (error is null or  ErrorCode.ServerError)
         {
             Response.StatusCode = StatusCodes.Status500InternalServerError;
             Response.ContentType = ContentTypes.Application.Json;
         
             await Response.WriteAsJsonAsync(new Error
             {
-                Code = ErrorType.OAuth.ServerError, 
+                Code = ErrorCode.ServerError, 
                 Description = "Server error."
             });
         }
@@ -90,7 +90,7 @@ public class ClientSecretPostAuthenticationHandler(
         
             await Response.WriteAsJsonAsync(new Error
             {
-                Code = error, 
+                Code = error.Value, 
                 Description = "Invalid client."
             });
         }

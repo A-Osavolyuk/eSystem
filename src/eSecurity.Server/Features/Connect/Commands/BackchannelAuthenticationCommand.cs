@@ -32,7 +32,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = "client_id is required"
             });
         }
@@ -42,7 +42,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
         {
             return Results.Unauthorized(new Error()
             {
-                Code = ErrorType.OAuth.InvalidClient,
+                Code = ErrorCode.InvalidClient,
                 Description = "Invalid client"
             });
         }
@@ -51,7 +51,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
         {
             return Results.Unauthorized(new Error()
             {
-                Code = ErrorType.OAuth.UnauthorizedClient,
+                Code = ErrorCode.UnauthorizedClient,
                 Description = "CIBA grant type is not allowed"
             });
         }
@@ -60,7 +60,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
         {
             return Results.Unauthorized(new Error()
             {
-                Code = ErrorType.OAuth.UnauthorizedClient,
+                Code = ErrorCode.UnauthorizedClient,
                 Description = "Notification delivery mode is not configured"
             });
         }
@@ -70,7 +70,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
         {
             return Results.Unauthorized(new Error()
             {
-                Code = ErrorType.OAuth.UnauthorizedClient,
+                Code = ErrorCode.UnauthorizedClient,
                 Description = "Client notification endpoint is not configured"
             });
         }
@@ -79,7 +79,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = "scope is required"
             });
         }
@@ -89,7 +89,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidScope,
+                Code = ErrorCode.InvalidScope,
                 Description = "openid scope is mandatory for backchannel authentication"
             });
         }
@@ -98,7 +98,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidScope,
+                Code = ErrorCode.InvalidScope,
                 Description = $"'{string.Join(", ", unsupportedScopes)}' scopes are not allowed for this client"
             });
         }
@@ -112,7 +112,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = "One of login_hint, login_token_hint or id_token_hint must be provided"
             });
         }
@@ -121,7 +121,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = "Multiple hints are not allowed"
             });
         }
@@ -138,7 +138,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = "Invalid hint"
             });
         }
@@ -154,7 +154,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.UnknownUserId,
+                Code = ErrorCode.UnknownUserId,
                 Description = "Unknown user"
             });
         }
@@ -165,7 +165,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = $"requested_expiry must be between {_options.MinRequestLifetime} " +
                               $"and {_options.MaxRequestLifetime} seconds"
             });
@@ -179,7 +179,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidBindingMessage,
+                Code = ErrorCode.InvalidBindingMessage,
                 Description = "binding_message must not be longer then 255 characters"
             });
         }
@@ -188,7 +188,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.MissingUserCode,
+                Code = ErrorCode.MissingUserCode,
                 Description = "user_code is missing"
             });
         }
@@ -199,7 +199,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidUserCode,
+                Code = ErrorCode.InvalidUserCode,
                 Description = $"user_code length must be between {_options.UserCodeMinLength} " +
                               $"and {_options.UserCodeMaxLength} characters"
             });

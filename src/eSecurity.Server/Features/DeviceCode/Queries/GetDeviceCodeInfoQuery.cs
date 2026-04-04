@@ -24,7 +24,7 @@ public sealed class GetDeviceCodeInfoQueryHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidToken,
+                Code = ErrorCode.InvalidToken,
                 Description = "This device code is not available anymore"
             });
         }

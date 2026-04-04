@@ -24,7 +24,7 @@ public sealed class JwtTokenClaimsExtractor(
         {
             return TypedResult<IEnumerable<Claim>>.Fail(new Error()
             {
-                Code = ErrorType.OAuth.InvalidToken,
+                Code = ErrorCode.InvalidToken,
                 Description = "Invalid subject token"
             });
         }
@@ -34,7 +34,7 @@ public sealed class JwtTokenClaimsExtractor(
         {
             return TypedResult<IEnumerable<Claim>>.Fail(new Error()
             {
-                Code = ErrorType.OAuth.InvalidToken,
+                Code = ErrorCode.InvalidToken,
                 Description = "Invalid subject token"
             });
         }
@@ -44,7 +44,7 @@ public sealed class JwtTokenClaimsExtractor(
         {
             return TypedResult<IEnumerable<Claim>>.Fail(new Error()
             {
-                Code = ErrorType.OAuth.InvalidToken,
+                Code = ErrorCode.InvalidToken,
                 Description = "Invalid subject token"
             });
         }
@@ -55,7 +55,7 @@ public sealed class JwtTokenClaimsExtractor(
         {
             return TypedResult<IEnumerable<Claim>>.Fail(new Error()
             {
-                Code = ErrorType.OAuth.InvalidToken,
+                Code = ErrorCode.InvalidToken,
                 Description = "Invalid subject token"
             });
         }

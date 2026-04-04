@@ -30,7 +30,7 @@ public sealed class OidcRefreshTokenFlow(
         {
             return Results.NotFound(new Error
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "Invalid refresh token."
             });
         }
@@ -40,7 +40,7 @@ public sealed class OidcRefreshTokenFlow(
         {
             return Results.NotFound(new Error
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "Invalid refresh token."
             });
         }
@@ -52,7 +52,7 @@ public sealed class OidcRefreshTokenFlow(
 
             return Results.NotFound(new Error
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "Invalid refresh token."
             });
         }
@@ -62,7 +62,7 @@ public sealed class OidcRefreshTokenFlow(
         {
             return Results.Unauthorized(new Error
             {
-                Code = ErrorType.OAuth.InvalidClient,
+                Code = ErrorCode.InvalidClient,
                 Description = "Invalid client."
             });
         }
@@ -71,7 +71,7 @@ public sealed class OidcRefreshTokenFlow(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.UnsupportedGrantType,
+                Code = ErrorCode.UnsupportedGrantType,
                 Description = $"'{flowContext.GrantType}' is not supported by client."
             });
         }
@@ -80,7 +80,7 @@ public sealed class OidcRefreshTokenFlow(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "Invalid refresh token"
             });
         }
@@ -89,7 +89,7 @@ public sealed class OidcRefreshTokenFlow(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.InvalidScope,
+                Code = ErrorCode.InvalidScope,
                 Description = "offline_access scope was not originally granted."
             });
         }
@@ -98,7 +98,7 @@ public sealed class OidcRefreshTokenFlow(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "Refresh token grant is not allowed for this client."
             });
         }
@@ -108,7 +108,7 @@ public sealed class OidcRefreshTokenFlow(
         {
             return Results.NotFound(new Error
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "Invalid refresh token."
             });
         }
@@ -133,7 +133,7 @@ public sealed class OidcRefreshTokenFlow(
         {
             return Results.InternalServerError(new Error()
             {
-                Code = ErrorType.OAuth.ServerError,
+                Code = ErrorCode.ServerError,
                 Description = "Server error"
             });
         }
@@ -156,7 +156,7 @@ public sealed class OidcRefreshTokenFlow(
             {
                 return Results.InternalServerError(new Error()
                 {
-                    Code = ErrorType.OAuth.ServerError,
+                    Code = ErrorCode.ServerError,
                     Description = "Server error"
                 });
             }
@@ -182,7 +182,7 @@ public sealed class OidcRefreshTokenFlow(
         {
             return Results.InternalServerError(new Error()
             {
-                Code = ErrorType.OAuth.ServerError,
+                Code = ErrorCode.ServerError,
                 Description = "Server error"
             });
         }

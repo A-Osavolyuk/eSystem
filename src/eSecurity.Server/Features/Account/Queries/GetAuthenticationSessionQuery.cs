@@ -21,7 +21,7 @@ public sealed class GetAuthenticationSessionQueryHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.Common.ExpiredAuthenticationSession,
+                Code = ErrorCode.ExpiredAuthenticationSession,
                 Description = "Session is already expired"
             });
         }

@@ -51,7 +51,7 @@ public class CreatePasskeyCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.InvalidDevice,
+                Code = ErrorCode.InvalidDevice,
                 Description = "Invalid device."
             });
         }
@@ -62,7 +62,7 @@ public class CreatePasskeyCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.InvalidCredentials,
+                Code = ErrorCode.InvalidCredentials,
                 Description = "Invalid credentials."
             });
         }
@@ -73,7 +73,7 @@ public class CreatePasskeyCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.InvalidChallenge,
+                Code = ErrorCode.InvalidChallenge,
                 Description = "Challenge mismatch"
             });
         }
@@ -85,7 +85,7 @@ public class CreatePasskeyCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.InvalidRp,
+                Code = ErrorCode.InvalidRp,
                 Description = "Invalid RP ID"
             });
         }

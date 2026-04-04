@@ -32,7 +32,7 @@ public class OAuthAuthorizationCodeFlow(
         if (client is null)
             return Results.Unauthorized(new Error
             {
-                Code = ErrorType.OAuth.InvalidClient,
+                Code = ErrorCode.InvalidClient,
                 Description = "Client was not found."
             });
 
@@ -40,7 +40,7 @@ public class OAuthAuthorizationCodeFlow(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "Invalid authorization code."
             });
         }
@@ -48,7 +48,7 @@ public class OAuthAuthorizationCodeFlow(
         if (!client.HasGrantType(context.GrantType))
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.UnsupportedGrantType,
+                Code = ErrorCode.UnsupportedGrantType,
                 Description = $"'{context.GrantType}' grant is not supported by client."
             });
 
@@ -57,7 +57,7 @@ public class OAuthAuthorizationCodeFlow(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "Invalid authorization code."
             });
         }
@@ -70,7 +70,7 @@ public class OAuthAuthorizationCodeFlow(
             {
                 return Results.BadRequest(new Error
                 {
-                    Code = ErrorType.OAuth.InvalidGrant,
+                    Code = ErrorCode.InvalidGrant,
                     Description = "Invalid authorization code."
                 });
             }
@@ -85,7 +85,7 @@ public class OAuthAuthorizationCodeFlow(
             {
                 return Results.BadRequest(new Error
                 {
-                    Code = ErrorType.OAuth.InvalidGrant,
+                    Code = ErrorCode.InvalidGrant,
                     Description = "Invalid authorization code."
                 });
             }
@@ -112,7 +112,7 @@ public class OAuthAuthorizationCodeFlow(
         {
             return Results.InternalServerError(new Error()
             {
-                Code = ErrorType.OAuth.ServerError,
+                Code = ErrorCode.ServerError,
                 Description = "Server error"
             });
         }
@@ -133,7 +133,7 @@ public class OAuthAuthorizationCodeFlow(
             {
                 return Results.InternalServerError(new Error()
                 {
-                    Code = ErrorType.OAuth.ServerError,
+                    Code = ErrorCode.ServerError,
                     Description = "Server error"
                 });
             }

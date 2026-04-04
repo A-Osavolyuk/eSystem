@@ -26,7 +26,7 @@ public class TokenCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = "grant_type is required"
             });
         }
@@ -36,7 +36,7 @@ public class TokenCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "grant_type is invalid."
             });
         }
@@ -45,7 +45,7 @@ public class TokenCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = $"'{grantType}' grant type is not supported"
             });
         }
@@ -54,7 +54,7 @@ public class TokenCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = "client_id is required"
             });
         }
@@ -65,7 +65,7 @@ public class TokenCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.UnsupportedGrantType,
+                Code = ErrorCode.UnsupportedGrantType,
                 Description = $"'{grantType}' grant type is allowed, but not supported"
             });
         }

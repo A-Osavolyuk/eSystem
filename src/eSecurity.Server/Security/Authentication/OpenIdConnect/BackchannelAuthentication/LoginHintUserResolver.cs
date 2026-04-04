@@ -16,7 +16,7 @@ public sealed class LoginHintUserResolver(IUserManager userManager) : IUserResol
         {
             return TypedResult<UserEntity>.Fail(new Error()
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = "login_hint is invalid"
             });
         }
@@ -26,7 +26,7 @@ public sealed class LoginHintUserResolver(IUserManager userManager) : IUserResol
         {
             return TypedResult<UserEntity>.Fail(new Error()
             {
-                Code = ErrorType.OAuth.UnknownUserId,
+                Code = ErrorCode.UnknownUserId,
                 Description = "Unknown user"
             });
         }

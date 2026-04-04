@@ -147,7 +147,7 @@
             else
             {
                 var error = result.GetError();
-                if (error.Code == ErrorType.Common.UsernameTaken)
+                if (error.Code == ErrorCode.UsernameTaken)
                 {
                     _error = "This username is already taken";
                     _showError = true;

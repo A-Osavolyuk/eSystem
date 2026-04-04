@@ -33,7 +33,7 @@ public sealed class ForgotPasswordCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.InvalidPassword,
+                Code = ErrorCode.InvalidPassword,
                 Description = "Password was not provided."
             });
         }

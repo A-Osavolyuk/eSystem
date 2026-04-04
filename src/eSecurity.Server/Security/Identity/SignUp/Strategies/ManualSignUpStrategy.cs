@@ -62,7 +62,7 @@ public sealed class ManualSignUpStrategy(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.UsernameTaken,
+                Code = ErrorCode.UsernameTaken,
                 Description = "This username is already taken"
             });
         }
@@ -72,7 +72,7 @@ public sealed class ManualSignUpStrategy(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.EmailTaken,
+                Code = ErrorCode.EmailTaken,
                 Description = "This email is already taken."
             });
         }

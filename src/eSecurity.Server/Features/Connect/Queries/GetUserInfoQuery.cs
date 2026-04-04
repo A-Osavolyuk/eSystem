@@ -52,11 +52,11 @@ public class GetUserInfoQueryHandler(
             const string description = "Missing access_token";
 
             _httpContext.Response.Headers.Append(HeaderTypes.WwwAuthenticate,
-                $"Bearer error=\"{ErrorType.OAuth.InvalidRequest}\", error_description=\"{description}\"");
+                $"Bearer error=\"{ErrorCode.InvalidRequest.GetString()}\", error_description=\"{description}\"");
 
             return Results.Unauthorized(new Error
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = description
             });
         }
@@ -65,11 +65,11 @@ public class GetUserInfoQueryHandler(
         if (!validationResult.IsValid || validationResult.ClaimsPrincipal is null)
         {
             _httpContext.Response.Headers.Append(HeaderTypes.WwwAuthenticate,
-                $"Bearer error=\"{ErrorType.OAuth.InvalidToken}\", error_description=\"Invalid token\"");
+                $"Bearer error=\"{ErrorCode.InvalidToken}\", error_description=\"Invalid token\"");
 
             return Results.Unauthorized(new Error
             {
-                Code = ErrorType.OAuth.InvalidToken,
+                Code = ErrorCode.InvalidToken,
                 Description = "Invalid token"
             });
         }
@@ -81,11 +81,11 @@ public class GetUserInfoQueryHandler(
             const string description = "The access token does not contain the required 'openid' scope";
 
             _httpContext.Response.Headers.Append(HeaderTypes.WwwAuthenticate,
-                $"Bearer error=\"{ErrorType.OAuth.InvalidRequest}\", error_description=\"{description}\"");
+                $"Bearer error=\"{ErrorCode.InvalidRequest}\", error_description=\"{description}\"");
 
             return Results.Forbidden(new Error
             {
-                Code = ErrorType.OAuth.InsufficientScope,
+                Code = ErrorCode.InsufficientScope,
                 Description = description
             });
         }
@@ -97,11 +97,11 @@ public class GetUserInfoQueryHandler(
             const string description = "The access token is invalid or the user does not exist";
 
             _httpContext.Response.Headers.Append(HeaderTypes.WwwAuthenticate,
-                $"Bearer error=\"{ErrorType.OAuth.InvalidToken}\", error_description=\"{description}\"");
+                $"Bearer error=\"{ErrorCode.InvalidToken}\", error_description=\"{description}\"");
 
             return Results.Unauthorized(new Error
             {
-                Code = ErrorType.OAuth.InvalidToken,
+                Code = ErrorCode.InvalidToken,
                 Description = description
             });
         }
@@ -112,11 +112,11 @@ public class GetUserInfoQueryHandler(
             const string description = "The access token is invalid or the session does not exist";
 
             _httpContext.Response.Headers.Append(HeaderTypes.WwwAuthenticate,
-                $"Bearer error=\"{ErrorType.OAuth.InvalidToken}\", error_description=\"{description}\"");
+                $"Bearer error=\"{ErrorCode.InvalidToken}\", error_description=\"{description}\"");
 
             return Results.Unauthorized(new Error
             {
-                Code = ErrorType.OAuth.InvalidToken,
+                Code = ErrorCode.InvalidToken,
                 Description = description
             });
         }

@@ -15,7 +15,7 @@ public sealed class CibaRequestBinder : IFormBinder<CibaRequest>
         {
             return Task.FromResult(TypedResult<CibaRequest>.Fail(new Error()
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "grant_type is invalid."
             }));
         }

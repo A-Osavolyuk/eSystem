@@ -15,7 +15,7 @@ public class RequireHeaders(params string[] headers) : Attribute, IAsyncActionFi
             {
                 var error = new Error
                 {
-                    Code = ErrorType.OAuth.InvalidRequest,
+                    Code = ErrorCode.InvalidRequest,
                     Description = $"Header '{header}' is missing."
                 };
 
@@ -31,7 +31,7 @@ public class RequireHeaders(params string[] headers) : Attribute, IAsyncActionFi
             {
                 var error = new Error
                 {
-                    Code = ErrorType.OAuth.InvalidRequest,
+                    Code = ErrorCode.InvalidRequest,
                     Description = $"Header '{header}' is empty."
                 };
                 

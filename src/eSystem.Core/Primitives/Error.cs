@@ -5,7 +5,7 @@ namespace eSystem.Core.Primitives;
 public class Error
 {
     [JsonPropertyName("error")]
-    public required string Code { get; init; }
+    public required ErrorCode Code { get; init; }
     
     [JsonPropertyName("error_description")]
     public required string Description { get; init; }

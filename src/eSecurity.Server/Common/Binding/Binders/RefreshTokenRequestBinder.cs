@@ -16,7 +16,7 @@ public sealed class RefreshTokenRequestBinder : IFormBinder<RefreshTokenRequest>
         {
             return Task.FromResult(TypedResult<RefreshTokenRequest>.Fail(new Error()
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "grant_type is invalid."
             }));
         }

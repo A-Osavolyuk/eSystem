@@ -37,7 +37,7 @@ public sealed class ApproveDeviceCodeCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.ExpiredToken,
+                Code = ErrorCode.ExpiredToken,
                 Description = "Device code is already expired"
             });
         }
@@ -46,7 +46,7 @@ public sealed class ApproveDeviceCodeCommandHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidToken,
+                Code = ErrorCode.InvalidToken,
                 Description = "Device code is not valid"
             });
         }

@@ -35,7 +35,7 @@ public class AddEmailCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.MaxEmailsCount,
+                Code = ErrorCode.MaxEmailsCount,
                 Description = "User already has maximum count of secondary emails."
             });
         }
@@ -45,7 +45,7 @@ public class AddEmailCommandHandler(
             var taken = await _emailManager.IsTakenAsync(request.Request.Email, cancellationToken);
             if (taken) return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.EmailTaken,
+                Code = ErrorCode.EmailTaken,
                 Description = "Email is already taken"
             });
         }

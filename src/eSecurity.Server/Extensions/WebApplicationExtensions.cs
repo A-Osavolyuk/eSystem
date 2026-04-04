@@ -21,7 +21,7 @@ public static class WebApplicationExtensions
                     response.ContentType = ContentTypes.Application.Json;
                     var error = new Error
                     {
-                        Code = ErrorType.Common.MethodNotAllowed,
+                        Code = ErrorCode.MethodNotAllowed,
                         Description = "Method not allowed"
                     };
                     
@@ -32,7 +32,7 @@ public static class WebApplicationExtensions
                     response.ContentType = ContentTypes.Application.Json;
                     var error = new Error
                     {
-                        Code = ErrorType.Common.UnsupportedMediaType,
+                        Code = ErrorCode.UnsupportedMediaType,
                         Description = "Unsupported media type"
                     };
                     

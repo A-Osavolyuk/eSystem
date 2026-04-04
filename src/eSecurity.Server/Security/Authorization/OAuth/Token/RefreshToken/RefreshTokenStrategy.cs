@@ -26,7 +26,7 @@ public class RefreshTokenStrategy(
         {
             return Results.NotFound(new Error
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "Invalid refresh token."
             });
         }
@@ -38,7 +38,7 @@ public class RefreshTokenStrategy(
         {
             return Results.NotFound(new Error
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "Invalid refresh token."
             });
         }

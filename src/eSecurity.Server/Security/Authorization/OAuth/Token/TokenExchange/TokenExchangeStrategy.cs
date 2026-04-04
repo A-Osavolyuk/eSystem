@@ -26,7 +26,7 @@ public sealed class TokenExchangeStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = "subject_token is required"
             });
         }
@@ -35,7 +35,7 @@ public sealed class TokenExchangeStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = "subject_token_type is required"
             });
         }
@@ -44,7 +44,7 @@ public sealed class TokenExchangeStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.UnsupportedTokenType,
+                Code = ErrorCode.UnsupportedTokenType,
                 Description = $"{TokenTypes.Full.AccessToken} is the only supported subject_token_type value"
             });
         }
@@ -54,7 +54,7 @@ public sealed class TokenExchangeStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.UnsupportedTokenType,
+                Code = ErrorCode.UnsupportedTokenType,
                 Description = $"{TokenTypes.Full.AccessToken} is the only supported request_token_type value"
             });
         }
@@ -64,7 +64,7 @@ public sealed class TokenExchangeStrategy(
         {
             return Results.Unauthorized(new Error()
             {
-                Code = ErrorType.OAuth.UnauthorizedClient,
+                Code = ErrorCode.UnauthorizedClient,
                 Description = "Unauthorized client"
             });
         }
@@ -73,7 +73,7 @@ public sealed class TokenExchangeStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = "scope is required"
             });
         }
@@ -83,7 +83,7 @@ public sealed class TokenExchangeStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidScope,
+                Code = ErrorCode.InvalidScope,
                 Description = "delegation and transformation scopes are not allowed to use in the same time"
             });
         }
@@ -92,7 +92,7 @@ public sealed class TokenExchangeStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidScope,
+                Code = ErrorCode.InvalidScope,
                 Description = "scope must contain either delegation or transformation scope"
             });
         }

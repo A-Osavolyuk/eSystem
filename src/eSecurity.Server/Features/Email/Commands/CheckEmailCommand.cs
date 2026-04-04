@@ -18,7 +18,7 @@ public class CheckEmailCommandHandler(IEmailManager emailManager) : IRequestHand
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.EmailTaken,
+                Code = ErrorCode.EmailTaken,
                 Description = "Email is already taken"
             });
         }

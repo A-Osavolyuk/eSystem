@@ -42,7 +42,7 @@ public class RemoveEmailCommandHandler(
         {
             return Results.NotFound(new Error
             {
-                Code = ErrorType.Common.InvalidEmail,
+                Code = ErrorCode.InvalidEmail,
                 Description = "User doesn't owe this email."
             });
         }
@@ -54,7 +54,7 @@ public class RemoveEmailCommandHandler(
             {
                 return Results.BadRequest(new Error
                 {
-                    Code = ErrorType.Common.InvalidEmail,
+                    Code = ErrorCode.InvalidEmail,
                     Description = "Cannot remove the primary email, because it is the only authentication method"
                 });
             }
@@ -63,7 +63,7 @@ public class RemoveEmailCommandHandler(
             {
                 return Results.BadRequest(new Error
                 {
-                    Code = ErrorType.Common.LinkedAccountConnected,
+                    Code = ErrorCode.LinkedAccountConnected,
                     Description = "Cannot remove the primary email, because there are one or more linked accounts"
                 });
             }

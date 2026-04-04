@@ -35,7 +35,7 @@
         {
             NavigationManager.NavigateTo(QueryBuilder.Create()
                 .WithUri(Links.OAuth.Error)
-                .WithQueryParam("error", ErrorType.Common.InvalidSession)
+                .WithQueryParam("error", eSystem.Core.Primitives.ErrorCode.InvalidSession)
                 .WithQueryParam("error_description", "Invalid session.")
                 .Build());
 

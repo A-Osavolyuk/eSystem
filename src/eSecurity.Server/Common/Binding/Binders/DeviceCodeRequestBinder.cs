@@ -16,7 +16,7 @@ public sealed class DeviceCodeRequestBinder : IFormBinder<DeviceCodeRequest>
         {
             return Task.FromResult(TypedResult<DeviceCodeRequest>.Fail(new Error()
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "grant_type is invalid."
             }));
         }

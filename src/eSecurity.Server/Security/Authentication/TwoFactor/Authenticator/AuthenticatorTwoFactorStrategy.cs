@@ -55,7 +55,7 @@ public sealed class AuthenticatorTwoFactorStrategy(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.Common.InvalidSession,
+                Code = ErrorCode.InvalidSession,
                 Description = "Invalid session"
             });
         }
@@ -70,7 +70,7 @@ public sealed class AuthenticatorTwoFactorStrategy(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.InvalidDevice,
+                Code = ErrorCode.InvalidDevice,
                 Description = "Invalid device."
             });
         }
@@ -87,7 +87,7 @@ public sealed class AuthenticatorTwoFactorStrategy(
             if (user.FailedLoginAttempts < _signInOptions.MaxFailedLoginAttempts)
                 return Results.BadRequest(new Error
                 {
-                    Code = ErrorType.Common.FailedLoginAttempt,
+                    Code = ErrorCode.FailedLoginAttempt,
                     Description = "Invalid code.",
                     Details = new Dictionary<string, object>
                     {
@@ -105,7 +105,7 @@ public sealed class AuthenticatorTwoFactorStrategy(
             if (!lockoutResult.Succeeded) return lockoutResult;
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.AccountLockedOut,
+                Code = ErrorCode.AccountLockedOut,
                 Description = "Account is locked out due to too many failed login attempts",
                 Details = new Dictionary<string, object> { { "userId", user.Id } }
             });

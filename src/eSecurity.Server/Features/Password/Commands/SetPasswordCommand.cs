@@ -30,7 +30,7 @@ public sealed class SetPasswordCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.InvalidPassword,
+                Code = ErrorCode.InvalidPassword,
                 Description = "User does not have a password."
             });
         }

@@ -15,7 +15,7 @@ public sealed class IntrospectionRequestBinder : IFormBinder<IntrospectionReques
         {
             return Task.FromResult(TypedResult<IntrospectionRequest>.Fail(new Error()
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = "token is required"
             }));
         }

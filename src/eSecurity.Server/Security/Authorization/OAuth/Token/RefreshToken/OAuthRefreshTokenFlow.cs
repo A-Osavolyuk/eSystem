@@ -29,7 +29,7 @@ public sealed class OAuthRefreshTokenFlow(
         {
             return Results.Unauthorized(new Error
             {
-                Code = ErrorType.OAuth.InvalidClient,
+                Code = ErrorCode.InvalidClient,
                 Description = "Invalid client."
             });
         }
@@ -38,7 +38,7 @@ public sealed class OAuthRefreshTokenFlow(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.UnsupportedGrantType,
+                Code = ErrorCode.UnsupportedGrantType,
                 Description = $"'{flowContext.GrantType}' is not supported by client."
             });
         }
@@ -47,7 +47,7 @@ public sealed class OAuthRefreshTokenFlow(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "Invalid refresh token"
             });
         }
@@ -56,7 +56,7 @@ public sealed class OAuthRefreshTokenFlow(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "Refresh token grant is not allowed for this client."
             });
         }
@@ -66,7 +66,7 @@ public sealed class OAuthRefreshTokenFlow(
         {
             return Results.NotFound(new Error
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "Invalid refresh token."
             });
         }
@@ -91,7 +91,7 @@ public sealed class OAuthRefreshTokenFlow(
         {
             return Results.InternalServerError(new Error()
             {
-                Code = ErrorType.OAuth.ServerError,
+                Code = ErrorCode.ServerError,
                 Description = "Server error"
             });
         }
@@ -114,7 +114,7 @@ public sealed class OAuthRefreshTokenFlow(
             {
                 return Results.InternalServerError(new Error()
                 {
-                    Code = ErrorType.OAuth.ServerError,
+                    Code = ErrorCode.ServerError,
                     Description = "Server error"
                 });
             }

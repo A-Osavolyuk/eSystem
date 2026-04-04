@@ -31,7 +31,7 @@ public sealed class ChangePasswordCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.InvalidPassword,
+                Code = ErrorCode.InvalidPassword,
                 Description = "User does not have a password."
             });
         }
@@ -40,7 +40,7 @@ public sealed class ChangePasswordCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = "Invalid password",
+                Code = ErrorCode.InvalidPassword,
                 Description = "Invalid password."
             });
         }

@@ -64,7 +64,7 @@ public class ApiResponseTests
     public void GetError_ShouldReturnError()
     {
         //Arrange
-        var error = new Error { Code = "error", Description = "description" };
+        var error = new Error { Code = ErrorCode.ServerError, Description = "description" };
         var response = ApiResponse.Fail(error);
         
         //Act

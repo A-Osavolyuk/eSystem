@@ -29,7 +29,7 @@ public sealed class JwtTokenDelegationHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = "actor_token is required"
             });
         }
@@ -38,7 +38,7 @@ public sealed class JwtTokenDelegationHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = "actor_token_type is required"
             });
         }
@@ -48,7 +48,7 @@ public sealed class JwtTokenDelegationHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "Actor token is invalid"
             });
         }
@@ -58,7 +58,7 @@ public sealed class JwtTokenDelegationHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "Subject token is invalid"
             });
         }
@@ -70,7 +70,7 @@ public sealed class JwtTokenDelegationHandler(
         {
             return Results.BadRequest(new Error()
             {
-                Code = ErrorType.OAuth.InvalidGrant,
+                Code = ErrorCode.InvalidGrant,
                 Description = "Delegation chaining is not allowed"
             });
         }
@@ -80,7 +80,7 @@ public sealed class JwtTokenDelegationHandler(
         {
             return Results.Unauthorized(new Error()
             {
-                Code = ErrorType.OAuth.UnauthorizedClient,
+                Code = ErrorCode.UnauthorizedClient,
                 Description = "Unauthorized client"
             });
         }
@@ -91,7 +91,7 @@ public sealed class JwtTokenDelegationHandler(
             {
                 return Results.BadRequest(new Error()
                 {
-                    Code = ErrorType.OAuth.InvalidTarget,
+                    Code = ErrorCode.InvalidTarget,
                     Description = "The requested audience is not an allowed audience for this client."
                 });
             }
@@ -109,7 +109,7 @@ public sealed class JwtTokenDelegationHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.InvalidScope,
+                Code = ErrorCode.InvalidScope,
                 Description = "Requested scopes exceed the subject token scopes."
             });
         }

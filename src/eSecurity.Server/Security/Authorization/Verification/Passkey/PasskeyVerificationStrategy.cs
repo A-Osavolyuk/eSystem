@@ -40,7 +40,7 @@ public sealed class PasskeyVerificationStrategy(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.InvalidCredentials,
+                Code = ErrorCode.InvalidCredentials,
                 Description = "Invalid credential"
             });
         }
@@ -50,7 +50,7 @@ public sealed class PasskeyVerificationStrategy(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.InvalidChallenge,
+                Code = ErrorCode.InvalidChallenge,
                 Description = "Invalid challenge"
             });
         }

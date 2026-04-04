@@ -47,7 +47,7 @@ public class GetUserLoginMethodsQueryHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.InvalidDevice,
+                Code = ErrorCode.InvalidDevice,
                 Description = "Invalid device"
             });
         }

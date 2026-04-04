@@ -45,7 +45,7 @@ public class GetUserVerificationMethodsQueryHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.InvalidDevice,
+                Code = ErrorCode.InvalidDevice,
                 Description = "Invalid device"
             });
         }
@@ -55,7 +55,7 @@ public class GetUserVerificationMethodsQueryHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.Common.InvalidEmail,
+                Code = ErrorCode.InvalidEmail,
                 Description = "Invalid email"
             });
         }

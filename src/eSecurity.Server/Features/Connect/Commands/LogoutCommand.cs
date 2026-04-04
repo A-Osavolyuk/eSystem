@@ -24,7 +24,7 @@ public class LogoutCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = "post_logout_redirect_uri is required."
             });
         }
@@ -33,7 +33,7 @@ public class LogoutCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = "id_token_hint is required."
             });
         }
@@ -43,7 +43,7 @@ public class LogoutCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = "id_token_hint is invalid."
             });
         }
@@ -54,7 +54,7 @@ public class LogoutCommandHandler(
         {
             return Results.BadRequest(new Error
             {
-                Code = ErrorType.OAuth.InvalidRequest,
+                Code = ErrorCode.InvalidRequest,
                 Description = "id_token_hint is invalid."
             });
         }
