@@ -10,12 +10,6 @@ public static class EnumHelper
         return aliases.First(alias => alias.IsPreferred == isPreferred).Value;
     }
 
-    public static List<string> GetStrings<TEnum>(TEnum value) where TEnum : struct, Enum
-    {
-        var aliases = EnumCache<TEnum>.To[value];
-        return aliases.Select(alias => alias.Value).ToList();
-    }
-
     public static TEnum? FromString<TEnum>(string? value) where TEnum : struct, Enum
     {
         if (string.IsNullOrEmpty(value))

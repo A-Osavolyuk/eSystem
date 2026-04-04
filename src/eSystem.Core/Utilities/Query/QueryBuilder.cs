@@ -43,7 +43,7 @@ public class QueryBuilder
 
     public QueryBuilder WithQueryParam<TEnum>(string key, TEnum value) where TEnum : struct, Enum
     {
-        var stringValue = EnumHelper.GetString(value);
+        var stringValue = value.GetString();
         QueryParams[key] = HttpUtility.UrlEncode(stringValue);
         return this;
     }

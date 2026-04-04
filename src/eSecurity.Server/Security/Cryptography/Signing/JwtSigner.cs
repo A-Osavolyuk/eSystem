@@ -13,7 +13,7 @@ public class JwtSigner() : IJwtSigner
         var payload = new JwtPayload(claims);
         var header = new JwtHeader(signingCredentials)
         {
-            ["typ"] = EnumHelper.GetString(tokenType)
+            ["typ"] = tokenType.GetString()
         };
         var token = new JwtSecurityToken(header, payload);
         var handler = new JwtSecurityTokenHandler();

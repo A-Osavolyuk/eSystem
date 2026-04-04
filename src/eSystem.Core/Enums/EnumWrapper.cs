@@ -8,6 +8,6 @@ public readonly struct EnumWrapper<TEnum>(TEnum value, string alias)
     
     public static implicit operator EnumWrapper<TEnum>(TEnum value)
     {
-        return new EnumWrapper<TEnum>(value, EnumHelper.GetString(value));
+        return new EnumWrapper<TEnum>(value, value.GetString());
     }
 }

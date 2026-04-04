@@ -61,7 +61,7 @@ public sealed class IdTokenFactory(
         var tokenLifetime = client.IdTokenLifetime ?? _tokenConfigurations.DefaultIdTokenLifetime;
         var claimsFactory = _claimFactoryProvider.GetClaimFactory<IdTokenClaimsContext, UserEntity>();
         var authenticationMethods = session.AuthenticationMethods
-            .Select(x => EnumHelper.GetString(x.Method))
+            .Select(x => x.Method.GetString())
             .ToArray();
         
         var claims = await claimsFactory.GetClaimsAsync(user, new IdTokenClaimsContext

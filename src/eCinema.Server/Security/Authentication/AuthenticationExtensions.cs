@@ -54,7 +54,7 @@ public static class AuthenticationExtensions
 
                     options.ClientId = oauthOptions.ClientId;
                     options.ClientSecret = oauthOptions.ClientSecret;
-                    options.ResponseType = EnumHelper.GetString(ResponseType.Code);
+                    options.ResponseType = ResponseType.Code.GetString();
                     options.UsePkce = true;
 
                     options.MapInboundClaims = false;

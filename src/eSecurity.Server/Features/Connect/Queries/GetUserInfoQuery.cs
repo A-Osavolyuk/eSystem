@@ -122,7 +122,7 @@ public class GetUserInfoQueryHandler(
         }
 
         var amr = session.AuthenticationMethods
-            .Select(x => EnumHelper.GetString(x.Method))
+            .Select(x => x.Method.GetString())
             .ToArray();
         
         var response = new UserInfoResponse { Subject = subjectClaim.Value, Amr = amr };
