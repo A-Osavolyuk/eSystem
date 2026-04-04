@@ -4,7 +4,7 @@ namespace eSecurity.Client.Security.Authentication.OpenIdConnect.Authorization;
 
 public sealed class AuthorizationContext
 {
-    public required string ResponseType { get; set; }
+    public required ResponseType ResponseType { get; set; }
     public required string ClientId { get; set; }
     public required string RedirectUri { get; set; }
     public required string State { get; set; }

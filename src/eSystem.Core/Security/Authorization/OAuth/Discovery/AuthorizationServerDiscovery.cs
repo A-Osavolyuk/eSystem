@@ -32,7 +32,7 @@ public sealed class AuthorizationServerDiscovery
     public GrantType[] GrantTypesSupported { get; set; } = [];
     
     [JsonPropertyName("response_types_supported")]
-    public string[] ResponseTypesSupported { get; set; } = [];
+    public ResponseType[] ResponseTypesSupported { get; set; } = [];
     
     [JsonPropertyName("prompt_values_supported")]
     public string[] PromptValuesSupported { get; set; } = [];

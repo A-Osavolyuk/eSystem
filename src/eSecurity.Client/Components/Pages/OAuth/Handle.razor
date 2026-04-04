@@ -104,8 +104,8 @@
     {
         var builder = QueryBuilder.Create().WithUri(Links.Connect.Authorize);
 
-        if (!string.IsNullOrEmpty(state!.ResponseType))
-            builder.WithQueryParam("response_type", state.ResponseType);
+        if (state!.ResponseType.HasValue)
+            builder.WithQueryParam("response_type", state.ResponseType.Value);
 
         if (!string.IsNullOrEmpty(state.ClientId))
             builder.WithQueryParam("client_id", state.ClientId);

@@ -13,7 +13,7 @@ public sealed class ResponseTypeSeed : Seed<ResponseTypeEntity>
             new ResponseTypeEntity()
             {
                 Id = Guid.Parse("690d364a-056b-4bbf-ab24-5d3835ff3917"),
-                Type = ResponseTypes.Code
+                Type = ResponseType.Code
             }
         ];
     }

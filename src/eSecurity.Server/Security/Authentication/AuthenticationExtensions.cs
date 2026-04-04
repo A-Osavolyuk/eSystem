@@ -48,7 +48,7 @@ public static class AuthenticationExtensions
             cfg.JwksUri = "https://localhost:6201/api/v1/connect/.well-known/jwks.json";
             cfg.DeviceAuthorizationEndpoint = "https://localhost:6201/api/v1/connect/device_authorization";
 
-            cfg.ResponseTypesSupported = [ResponseTypes.Code];
+            cfg.ResponseTypesSupported = [ResponseType.Code];
             cfg.GrantTypesSupported =
             [
                 GrantType.AuthorizationCode,

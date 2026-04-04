@@ -1,9 +1,11 @@
-﻿namespace eSecurity.Core.Security.Authorization.OAuth;
+﻿using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
+
+namespace eSecurity.Core.Security.Authorization.OAuth;
 
 public class OAuthState
 {
     [JsonPropertyName("response_type")]
-    public string? ResponseType { get; set; }
+    public ResponseType? ResponseType { get; set; }
     
     [JsonPropertyName("client_id")]
     public string? ClientId { get; set; }

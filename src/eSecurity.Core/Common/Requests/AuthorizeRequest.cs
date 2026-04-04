@@ -8,7 +8,7 @@ public sealed class AuthorizeRequest
     public required Guid SessionId { get; set; }
     
     [JsonPropertyName("response_type")]
-    public required string ResponseType { get; set; }
+    public required ResponseType ResponseType { get; set; }
     
     [JsonPropertyName("client_id")]
     public required string ClientId { get; set; }

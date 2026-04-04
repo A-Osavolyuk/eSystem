@@ -1,5 +1,6 @@
 @page "/connect/authorize"
 
+@using Azure
 @using eSecurity.Client.Security.Authentication.OpenIdConnect.Authorization
 @using eSystem.Core.Enums
 @using eSystem.Core.Primitives.Constants
@@ -52,13 +53,26 @@
     {
         if (firstRender)
         {
+            var responseType = EnumHelper.FromString<ResponseType>(ResponseType);
+            if (!responseType.HasValue)
+            {
+                const string message = "response_type is required.";
+                NavigationManager.NavigateTo(QueryBuilder.Create()
+                    .WithUri(RedirectUri)
+                    .WithQueryParam("error", ErrorTypes.OAuth.InvalidRequest)
+                    .WithQueryParam("error_description", message)
+                    .Build());
+                
+                return;
+            }
+            
             var context = new AuthorizationContext()
             {
                 ClientId = ClientId,
                 RedirectUri = RedirectUri,
                 Scope = Scope,
                 Nonce = Nonce,
-                ResponseType = ResponseType,
+                ResponseType = responseType.Value,
                 State = State,
                 CodeChallenge = CodeChallenge,
                 CodeChallengeMethod = EnumHelper.FromString<ChallengeMethod>(CodeChallengeMethod),

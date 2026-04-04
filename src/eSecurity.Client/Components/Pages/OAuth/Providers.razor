@@ -1,5 +1,6 @@
 ﻿@using eSecurity.Core.Security.Authorization.OAuth
 @using eSecurity.Core.Security.Authorization.OAuth.Constants
+@using eSystem.Core.Enums
 @using eSystem.Core.Security.Authentication.OpenIdConnect.Client
 @using eSystem.Core.Security.Authentication.OpenIdConnect.Constants
 @using eSystem.Core.Utilities.State
@@ -71,9 +72,11 @@
             var stateData = StateParser.Parse(State);
             var decodedReturnUrl = HttpUtility.UrlDecode(stateData["return_url"]);
             var queryParams = QueryParser.GetQueryParameters(decodedReturnUrl);
+            var responseTypeString = queryParams.GetValueOrDefault("response_type");
+            
             state = new OAuthState
             {
-                ResponseType = queryParams.GetValueOrDefault("response_type"),
+                ResponseType = EnumHelper.FromString<ResponseType>(responseTypeString),
                 ClientId = queryParams.GetValueOrDefault("client_id"),
                 RedirectUri = queryParams.GetValueOrDefault("redirect_uri"),
                 Scope = queryParams.GetValueOrDefault("scope"),
@@ -88,7 +91,7 @@
             var options = ClientOptions.Value;
             state = new OAuthState
             {
-                ResponseType = ResponseTypes.Code,
+                ResponseType = ResponseType.Code,
                 ClientId = options.ClientId,
                 RedirectUri = options.CallbackUri,
                 Scope = string.Join(" ", options.SupportedScopes),

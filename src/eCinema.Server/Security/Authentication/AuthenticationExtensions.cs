@@ -5,6 +5,7 @@ using eCinema.Server.Security.Authentication.OpenIdConnect.Token.Validation;
 using eCinema.Server.Security.Authentication.Ticket;
 using eCinema.Server.Security.Identity;
 using eSystem.Core.Common.Configuration;
+using eSystem.Core.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Token.Validation;
 using eSystem.Core.Security.Identity.Claims;
@@ -53,7 +54,7 @@ public static class AuthenticationExtensions
 
                     options.ClientId = oauthOptions.ClientId;
                     options.ClientSecret = oauthOptions.ClientSecret;
-                    options.ResponseType = ResponseTypes.Code;
+                    options.ResponseType = EnumHelper.GetString(ResponseType.Code);
                     options.UsePkce = true;
 
                     options.MapInboundClaims = false;

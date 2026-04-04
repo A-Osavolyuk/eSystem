@@ -26,7 +26,7 @@ public sealed class AuthenticationManager(
     {
         var builder = QueryBuilder.Create().WithUri(Links.Connect.Authorize)
             .WithQueryParam("prompt", PromptTypes.Consent)
-            .WithQueryParam("response_type", ResponseTypes.Code)
+            .WithQueryParam("response_type", ResponseType.Code)
             .WithQueryParam("client_id", _clientOptions.ClientId)
             .WithQueryParam("redirect_uri", _clientOptions.CallbackUri)
             .WithQueryParam("scope", string.Join(" ", _clientOptions.SupportedScopes))
