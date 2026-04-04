@@ -5,8 +5,9 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Cryptography.Keys;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
+using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 
 namespace eSecurity.Server.Features.Connect.Commands;

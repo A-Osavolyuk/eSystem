@@ -1,7 +1,7 @@
 ﻿using eSecurity.Client.Security.Authentication.OpenIdConnect.Authorization;
 using eSecurity.Client.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Core.Common.Routing;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
 
 namespace eSecurity.Client.Security.Authentication.OpenIdConnect.Prompts;
 

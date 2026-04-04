@@ -11,7 +11,7 @@ using eSystem.Core.Enums;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives.Constants;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authentication.OpenIdConnect.User;
 using eSystem.Core.Security.Authorization.OAuth.Token.Validation;
 using eSystem.Core.Security.Identity.Claims;

@@ -1,7 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Text.Json;
 using eCinema.Server.Security.Authentication.OpenIdConnect.Discovery;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Logout;
 using eSystem.Core.Security.Authorization.OAuth.Token.Validation;
 using eSystem.Core.Security.Cryptography.Encryption;
 using eSystem.Core.Security.Identity.Claims;

@@ -11,7 +11,7 @@ using eSecurity.Server.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives.Constants;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
 
 namespace eSecurity.Server.Security.Authentication.SignIn.Strategies;
 

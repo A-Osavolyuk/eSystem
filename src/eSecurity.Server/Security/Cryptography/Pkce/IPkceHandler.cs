@@ -1,4 +1,4 @@
-using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
 
 namespace eSecurity.Server.Security.Cryptography.Pkce;
 

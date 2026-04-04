@@ -9,7 +9,7 @@ using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives.Constants;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
 
 namespace eSecurity.Server.Features.Account.Commands;
 

@@ -1,6 +1,6 @@
 ﻿using eSecurity.Server.Security.Authorization.OAuth.Protocol;
 using eSystem.Core.Data.Entities;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
 
 namespace eSecurity.Server.Data.Entities;
 

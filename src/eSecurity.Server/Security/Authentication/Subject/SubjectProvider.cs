@@ -2,7 +2,7 @@
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authentication.Subject.Pairwise;
 using eSecurity.Server.Security.Authentication.Subject.Public;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 
 namespace eSecurity.Server.Security.Authentication.Subject;
 

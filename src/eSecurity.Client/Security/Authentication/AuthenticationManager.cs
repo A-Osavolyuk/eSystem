@@ -1,8 +1,8 @@
 using eSecurity.Client.Common.JS.Fetch;
 using eSecurity.Client.Security.Cookies;
 using eSecurity.Core.Common.Routing;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Utilities.Query;
 using eSystem.Core.Utilities.State;
 using Microsoft.AspNetCore.Components;

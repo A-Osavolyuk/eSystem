@@ -6,8 +6,8 @@ using eSecurity.Server.Security.Cryptography.Pkce;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Token.AuthorizationCode;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.AuthorizationCode;

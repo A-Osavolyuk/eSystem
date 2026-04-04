@@ -1,5 +1,5 @@
 ﻿using eSecurity.Core.Security.Authorization.OAuth;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
 
 namespace eSecurity.Core.Common.DTOs;
 

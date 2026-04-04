@@ -2,6 +2,7 @@
 using System.Security.Cryptography.X509Certificates;
 using eSecurity.Server.Security.Cryptography.Signing;
 using eSecurity.Server.Security.Cryptography.Signing.Certificates;
+using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 
 namespace eSecurity.Server.Security.Cryptography.Tokens;

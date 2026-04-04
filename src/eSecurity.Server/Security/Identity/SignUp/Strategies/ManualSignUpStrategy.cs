@@ -16,7 +16,7 @@ using eSecurity.Server.Security.Identity.User.Username;
 using eSystem.Core.Common.Messaging;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives.Constants;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
 
 namespace eSecurity.Server.Security.Identity.SignUp.Strategies;
 

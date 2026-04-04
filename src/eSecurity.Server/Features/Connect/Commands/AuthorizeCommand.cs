@@ -9,8 +9,8 @@ using eSecurity.Server.Security.Authorization.OAuth.Token.AuthorizationCode;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives.Constants;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
 
 namespace eSecurity.Server.Features.Connect.Commands;

@@ -12,7 +12,7 @@ using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Enums;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives.Constants;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Server.Security.Authentication.TwoFactor.Authenticator;

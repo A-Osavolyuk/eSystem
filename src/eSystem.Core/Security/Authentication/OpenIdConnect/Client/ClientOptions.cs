@@ -1,5 +1,3 @@
-using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
-
 namespace eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 
 public class ClientOptions

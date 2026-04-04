@@ -1,5 +1,6 @@
 ﻿using eSecurity.Server.Data.Entities;
 using eSystem.Core.Data.Seeding;
+using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Constants;
 
 namespace eSecurity.Server.Data.Seeding;

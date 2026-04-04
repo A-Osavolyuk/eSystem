@@ -1,6 +1,6 @@
 ﻿using eSystem.Core.Enums;
 
-namespace eSystem.Core.Security.Authorization.OAuth.Constants;
+namespace eSystem.Core.Security.Authorization.OAuth;
 
 public enum JwtTokenType
 {

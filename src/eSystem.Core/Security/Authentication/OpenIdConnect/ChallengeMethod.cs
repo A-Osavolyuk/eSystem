@@ -1,7 +1,6 @@
-﻿using System.Text.Json.Serialization;
-using eSystem.Core.Enums;
+﻿using eSystem.Core.Enums;
 
-namespace eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
+namespace eSystem.Core.Security.Authentication.OpenIdConnect;
 
 public enum ChallengeMethod
 {

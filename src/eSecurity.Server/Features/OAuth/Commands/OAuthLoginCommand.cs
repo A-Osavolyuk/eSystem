@@ -4,7 +4,7 @@ using eSecurity.Server.Security.Authentication.Session;
 using eSecurity.Server.Security.Identity.Options;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives.Constants;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Utilities.Query;
 using Microsoft.AspNetCore.Authentication;
 

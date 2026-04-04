@@ -1,4 +1,4 @@
-﻿namespace eSystem.Core.Security.Authentication.OpenIdConnect.Constants;
+﻿namespace eSystem.Core.Security.Authentication.OpenIdConnect.Logout;
 
 public static class LogoutEvents
 {
