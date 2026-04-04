@@ -19,7 +19,7 @@ public sealed class NonePromptStrategy(
     private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
     private readonly IConnectService _connectService = connectService;
 
-    public bool CanHandle(string? prompt) => prompt == PromptTypes.None || string.IsNullOrEmpty(prompt);
+    public bool CanHandle(PromptType? prompt) => prompt is PromptType.None or null;
 
     public async Task<AuthorizationResult> ExecuteAsync(AuthorizationContext context)
     {

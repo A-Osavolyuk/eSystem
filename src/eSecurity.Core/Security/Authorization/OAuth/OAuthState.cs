@@ -23,7 +23,7 @@ public class OAuthState
     public string? State { get; set; }
     
     [JsonPropertyName("prompt")]
-    public string? Prompt { get; set; }
+    public PromptType? Prompt { get; set; }
     
     [JsonPropertyName("return_url")] 
     public string? ReturnUrl { get; set; }

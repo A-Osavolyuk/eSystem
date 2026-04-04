@@ -72,17 +72,19 @@
             var stateData = StateParser.Parse(State);
             var decodedReturnUrl = HttpUtility.UrlDecode(stateData["return_url"]);
             var queryParams = QueryParser.GetQueryParameters(decodedReturnUrl);
+            
             var responseTypeString = queryParams.GetValueOrDefault("response_type");
+            var promptString = queryParams.GetValueOrDefault("prompt");
             
             state = new OAuthState
             {
                 ResponseType = EnumHelper.FromString<ResponseType>(responseTypeString),
+                Prompt = EnumHelper.FromString<PromptType>(promptString),
                 ClientId = queryParams.GetValueOrDefault("client_id"),
                 RedirectUri = queryParams.GetValueOrDefault("redirect_uri"),
                 Scope = queryParams.GetValueOrDefault("scope"),
                 Nonce = queryParams.GetValueOrDefault("nonce"),
                 State = queryParams.GetValueOrDefault("state"),
-                Prompt = queryParams.GetValueOrDefault("prompt"),
                 ReturnUrl = ReturnUrl
             };
         }
@@ -97,7 +99,7 @@
                 Scope = string.Join(" ", options.SupportedScopes),
                 Nonce = Guid.NewGuid().ToString(),
                 State = Guid.NewGuid().ToString(),
-                Prompt = PromptTypes.Consent,
+                Prompt = PromptType.Consent,
                 ReturnUrl = ReturnUrl
             };
         }

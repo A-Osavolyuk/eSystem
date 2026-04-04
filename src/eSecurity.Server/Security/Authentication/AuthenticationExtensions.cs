@@ -60,10 +60,10 @@ public static class AuthenticationExtensions
 
             cfg.PromptValuesSupported =
             [
-                PromptTypes.None,
-                PromptTypes.Login,
-                PromptTypes.Consent,
-                PromptTypes.SelectAccount
+                PromptType.None,
+                PromptType.Login,
+                PromptType.Consent,
+                PromptType.SelectAccount
             ];
 
             cfg.SubjectTypesSupported = [SubjectTypes.Public, SubjectTypes.Pairwise];

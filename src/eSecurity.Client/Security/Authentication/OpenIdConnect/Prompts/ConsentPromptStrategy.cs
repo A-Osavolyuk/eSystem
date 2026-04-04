@@ -17,7 +17,7 @@ public sealed class ConsentPromptStrategy(
     private readonly IConsentService _consentService = consentService;
     private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
 
-    public bool CanHandle(string? prompt) => !string.IsNullOrEmpty(prompt) && prompt == PromptTypes.Consent;
+    public bool CanHandle(PromptType? prompt) => prompt is PromptType.Consent;
 
     public async Task<AuthorizationResult> ExecuteAsync(AuthorizationContext context)
     {

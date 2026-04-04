@@ -85,8 +85,24 @@
             }
             else
             {
-                var prompts = Prompt!.Split(' ').ToList();
-                if (prompts.Contains(PromptTypes.None) && prompts.Count > 1)
+                var promptStrings = Prompt!.Split(' ').ToList();
+                var prompts = new List<PromptType>();
+                foreach (var promptString in promptStrings)
+                {
+                    var prompt = EnumHelper.FromString<PromptType>(promptString);
+                    if (!prompt.HasValue)
+                    {
+                        NavigationManager.NavigateTo(QueryBuilder.Create()
+                            .WithUri(RedirectUri)
+                            .WithQueryParam("error", ErrorTypes.OAuth.InvalidRequest)
+                            .WithQueryParam("error_description", $"{promptString} is required.")
+                            .Build());
+                
+                        return;
+                    }
+                }
+                
+                if (prompts.Contains(PromptType.None) && prompts.Count > 1)
                 {
                     const string message = "Prompt 'none' cannot be combined with other prompt values.";
                     NavigationManager.NavigateTo(QueryBuilder.Create()

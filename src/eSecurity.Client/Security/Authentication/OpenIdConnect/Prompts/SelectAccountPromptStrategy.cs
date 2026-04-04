@@ -5,7 +5,7 @@ namespace eSecurity.Client.Security.Authentication.OpenIdConnect.Prompts;
 
 public sealed class SelectAccountPromptStrategy : IPromptStrategy
 {
-    public bool CanHandle(string? prompt) => !string.IsNullOrEmpty(prompt) && PromptTypes.SelectAccount == prompt;
+    public bool CanHandle(PromptType? prompt) => prompt is PromptType.SelectAccount;
 
     public Task<AuthorizationResult> ExecuteAsync(AuthorizationContext context)
     {

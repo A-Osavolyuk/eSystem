@@ -40,10 +40,10 @@ public static class OdicExtensions
                 ];
                 cfg.SupportedPrompts =
                 [
-                    PromptTypes.Login,
-                    PromptTypes.Consent,
-                    PromptTypes.SelectAccount,
-                    PromptTypes.None
+                    PromptType.Login,
+                    PromptType.Consent,
+                    PromptType.SelectAccount,
+                    PromptType.None
                 ];
             });
         }

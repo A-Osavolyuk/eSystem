@@ -9,7 +9,7 @@ public sealed class LoginPromptStrategy(ISessionAccessor sessionAccessor) : IPro
 {
     private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
 
-    public bool CanHandle(string? prompt) => !string.IsNullOrEmpty(prompt) && prompt == PromptTypes.Login;
+    public bool CanHandle(PromptType? prompt) => prompt is PromptType.Login;
 
     public Task<AuthorizationResult> ExecuteAsync(AuthorizationContext context)
     {

@@ -25,14 +25,14 @@ public sealed class AuthenticationManager(
     public string GetAuthorizationUri(string? returnUrl = null)
     {
         var builder = QueryBuilder.Create().WithUri(Links.Connect.Authorize)
-            .WithQueryParam("prompt", PromptTypes.Consent)
+            .WithQueryParam("prompt", PromptType.Consent)
             .WithQueryParam("response_type", ResponseType.Code)
             .WithQueryParam("client_id", _clientOptions.ClientId)
             .WithQueryParam("redirect_uri", _clientOptions.CallbackUri)
             .WithQueryParam("scope", string.Join(" ", _clientOptions.SupportedScopes))
             .WithQueryParam("state", Guid.NewGuid())
             .WithQueryParam("nonce", Guid.NewGuid())
-            .WithQueryParam("prompt", PromptTypes.Consent);
+            .WithQueryParam("prompt", PromptType.Consent);
 
         if (!string.IsNullOrEmpty(returnUrl))
             builder.WithQueryParam("return_url", returnUrl);
