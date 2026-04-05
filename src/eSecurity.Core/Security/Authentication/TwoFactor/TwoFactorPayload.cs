@@ -3,7 +3,7 @@
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
 [JsonDerivedType(typeof(AuthenticatorTwoFactorPayload), typeDiscriminator: "authenticator")]
 [JsonDerivedType(typeof(PasskeyTwoFactorPayload), typeDiscriminator: "passkey")]
-[JsonDerivedType(typeof(PasskeyTwoFactorPayload), typeDiscriminator: "recoveryCode")]
+[JsonDerivedType(typeof(RecoveryCodeTwoFactorPayload), typeDiscriminator: "recoveryCode")]
 public abstract class TwoFactorPayload
 {
     
