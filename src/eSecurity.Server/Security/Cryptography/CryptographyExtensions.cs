@@ -5,6 +5,7 @@ using eSecurity.Server.Security.Cryptography.Keys;
 using eSecurity.Server.Security.Cryptography.Signing;
 using eSecurity.Server.Security.Cryptography.Signing.Certificates;
 using eSecurity.Server.Security.Cryptography.Tokens;
+using eSystem.Core.Security.Authorization.OAuth;
 
 namespace eSecurity.Server.Security.Cryptography;
 

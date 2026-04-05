@@ -4,7 +4,6 @@ using eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Delegati
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authorization.OAuth;
-using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Token.TokenExchange;
 using eSystem.Core.Security.Identity.Claims;
 
@@ -90,7 +89,7 @@ public sealed class JwtTokenTransformationHandler(
         {
             ExpiresIn = (int)_configurations.DefaultAccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenType.Bearer,
-            IssuedTokenType = TokenTypes.Full.AccessToken,
+            IssuedTokenType = TokenType.AccessToken,
             Scope = context.Scope,
             Audience = context.Audience,
             AccessToken = accessToken,

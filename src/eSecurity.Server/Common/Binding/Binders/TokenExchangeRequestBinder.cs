@@ -1,4 +1,5 @@
-﻿using eSystem.Core.Binding;
+﻿using eSecurity.Server.Security.Cryptography.Tokens;
+using eSystem.Core.Binding;
 using eSystem.Core.Enums;
 using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authorization.OAuth;
@@ -28,11 +29,11 @@ public sealed class TokenExchangeRequestBinder : IFormBinder<TokenExchangeReques
             ClientSecret = form["client_secret"],
             Scope = form["scope"],
             ActorToken = form["actor_token"],
-            ActorTokenType = form["actor_token_type"],
+            ActorTokenType = EnumHelper.FromString<TokenType>(form["actor_token_type"]),
             Audience = form["audience"],
-            RequestTokenType = form["request_token_type"],
+            RequestTokenType = EnumHelper.FromString<TokenType>(form["request_token_type"]),
             SubjectToken = form["subject_token"],
-            SubjectTokenType = form["subject_token_type"],
+            SubjectTokenType = EnumHelper.FromString<TokenType>(form["subject_token_type"]),
             ClientAssertion = form["client_assertion"],
             ClientAssertionType = form["client_assertion_type"],
         });

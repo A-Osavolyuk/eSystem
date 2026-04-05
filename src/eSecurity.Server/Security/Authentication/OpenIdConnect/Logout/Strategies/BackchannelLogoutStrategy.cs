@@ -4,6 +4,7 @@ using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Logout;
+using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Cryptography.Encoding;
 
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Logout.Strategies;

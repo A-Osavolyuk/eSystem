@@ -5,7 +5,7 @@ namespace eSystem.Core.Security.Authorization.OAuth.Token.TokenExchange;
 public sealed class TokenExchangeResponse : TokenResponse
 {
     [JsonPropertyName("issued_token_type")]
-    public required string IssuedTokenType { get; set; }
+    public required TokenType IssuedTokenType { get; set; }
     
     [JsonPropertyName("scope")]
     public string? Scope { get; set; }

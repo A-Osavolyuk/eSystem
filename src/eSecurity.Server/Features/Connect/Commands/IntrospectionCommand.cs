@@ -5,10 +5,10 @@ using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Binding;
+using eSystem.Core.Enums;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authorization.OAuth;
-using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Introspection;
 
 namespace eSecurity.Server.Features.Connect.Commands;
@@ -59,15 +59,15 @@ public class IntrospectionCommandHandler(
 
         var tokenType = token.TokenType switch
         {
-            OpaqueTokenType.AccessToken => TokenTypes.Short.AccessToken,
-            OpaqueTokenType.RefreshToken => TokenTypes.Short.RefreshToken,
+            OpaqueTokenType.AccessToken => TokenType.AccessToken,
+            OpaqueTokenType.RefreshToken => TokenType.RefreshToken,
             _ => throw new NotSupportedException("Unsupported token type")
         };
 
         var response = new IntrospectionResponse
         {
             Active = true,
-            TokenType = tokenType,
+            TokenType = tokenType.GetString(true),
             ClientId = token.Client.Id,
             Issuer = _configurations.Issuer,
             Audience = JsonSerializer.Serialize(token.Client.Audiences),

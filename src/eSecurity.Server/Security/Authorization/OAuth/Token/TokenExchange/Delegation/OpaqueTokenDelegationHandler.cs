@@ -4,7 +4,6 @@ using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authorization.OAuth;
-using eSystem.Core.Security.Authorization.OAuth.Constants;
 using eSystem.Core.Security.Authorization.OAuth.Token.TokenExchange;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Delegation;
@@ -34,7 +33,7 @@ public sealed class OpaqueTokenDelegationHandler(
             });
         }
 
-        if (string.IsNullOrEmpty(context.ActorTokenType))
+        if (context.ActorTokenType is null)
         {
             return Results.BadRequest(new Error()
             {
@@ -43,12 +42,12 @@ public sealed class OpaqueTokenDelegationHandler(
             });
         }
 
-        if (context.ActorTokenType != TokenTypes.Full.AccessToken)
+        if (context.ActorTokenType != TokenType.AccessToken)
         {
             return Results.BadRequest(new Error()
             {
                 Code = ErrorCode.InvalidRequest,
-                Description = $"{TokenTypes.Full.AccessToken} is the only allowed actor_token_type value"
+                Description = $"{TokenType.AccessToken} is the only allowed actor_token_type value"
             });
         }
 
@@ -162,7 +161,7 @@ public sealed class OpaqueTokenDelegationHandler(
         {
             ExpiresIn = (int)_configurations.DefaultAccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenType.Bearer,
-            IssuedTokenType = TokenTypes.Full.AccessToken,
+            IssuedTokenType = TokenType.AccessToken,
             Scope = context.Scope,
             Audience = JsonSerializer.Serialize(tokenContext.Audiences),
             AccessToken = opaqueToken,

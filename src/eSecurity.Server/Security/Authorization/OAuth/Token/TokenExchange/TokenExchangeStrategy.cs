@@ -1,7 +1,9 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using eSecurity.Server.Security.Cryptography.Tokens;
+using eSystem.Core.Enums;
 using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
-using eSystem.Core.Security.Authorization.OAuth.Constants;
+using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Token;
 using eSystem.Core.Security.Authorization.OAuth.Token.TokenExchange;
 using eSystem.Core.Security.Identity.Claims;
@@ -31,7 +33,7 @@ public sealed class TokenExchangeStrategy(
             });
         }
 
-        if (string.IsNullOrEmpty(request.SubjectTokenType))
+        if (request.SubjectTokenType is null)
         {
             return Results.BadRequest(new Error()
             {
@@ -40,22 +42,21 @@ public sealed class TokenExchangeStrategy(
             });
         }
 
-        if (!request.SubjectTokenType.Equals(TokenTypes.Full.AccessToken))
+        if (request.SubjectTokenType is not TokenType.AccessToken)
         {
             return Results.BadRequest(new Error()
             {
                 Code = ErrorCode.UnsupportedTokenType,
-                Description = $"{TokenTypes.Full.AccessToken} is the only supported subject_token_type value"
+                Description = $"{TokenType.AccessToken.GetString()} is the only supported subject_token_type value"
             });
         }
 
-        if (!string.IsNullOrEmpty(request.RequestTokenType) &&
-            !request.RequestTokenType.Equals(TokenTypes.Full.AccessToken))
+        if (request.RequestTokenType is not TokenType.AccessToken)
         {
             return Results.BadRequest(new Error()
             {
                 Code = ErrorCode.UnsupportedTokenType,
-                Description = $"{TokenTypes.Full.AccessToken} is the only supported request_token_type value"
+                Description = $"{TokenType.AccessToken.GetString()} is the only supported request_token_type value"
             });
         }
 
@@ -102,7 +103,7 @@ public sealed class TokenExchangeStrategy(
             ClientId = clientIdClaim.Value,
             GrantType = request.GrantType,
             SubjectToken = request.SubjectToken,
-            SubjectTokenType = request.SubjectTokenType,
+            SubjectTokenType = request.SubjectTokenType.Value,
             RequestTokenType = request.RequestTokenType,
             ActorToken = request.ActorToken,
             ActorTokenType = request.ActorTokenType,
