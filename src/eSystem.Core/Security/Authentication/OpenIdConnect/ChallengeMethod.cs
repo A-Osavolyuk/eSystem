@@ -1,11 +1,12 @@
-﻿using eSystem.Core.Enums;
+﻿using System.Text.Json.Serialization;
+using eSystem.Core.Enums;
 
 namespace eSystem.Core.Security.Authentication.OpenIdConnect;
 
+[JsonConverter(typeof(JsonEnumValueStringConverter<ChallengeMethod>))]
 public enum ChallengeMethod
 {
     [EnumValue("plain")]
-    [Obsolete("Use 'S256' instead. 'plain' is not recommended due to security reasons.")]
     Plain,
     
     [EnumValue("S256")]

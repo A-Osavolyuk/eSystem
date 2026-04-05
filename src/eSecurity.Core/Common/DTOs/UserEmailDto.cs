@@ -1,5 +1,4 @@
 ﻿using eSecurity.Core.Security.Identity;
-using eSystem.Core.Enums;
 
 namespace eSecurity.Core.Common.DTOs;
 
@@ -15,7 +14,6 @@ public class UserEmailDto
     public string NormalizedEmail { get; set; } = string.Empty;
     
     [JsonPropertyName("type")]
-    [JsonConverter(typeof(JsonEnumValueStringConverter<EmailType>))]
     public EmailType Type { get; set; }
     
     [JsonPropertyName("is_verified")]

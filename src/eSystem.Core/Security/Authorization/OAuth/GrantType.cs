@@ -1,7 +1,9 @@
-﻿using eSystem.Core.Enums;
+﻿using System.Text.Json.Serialization;
+using eSystem.Core.Enums;
 
 namespace eSystem.Core.Security.Authorization.OAuth;
 
+[JsonConverter(typeof(JsonEnumValueStringConverter<GrantType>))]
 public enum GrantType
 {
     [EnumValue("implicit")]

@@ -2,6 +2,7 @@
 
 namespace eSecurity.Core.Security.Authorization.Verification;
 
+[JsonConverter(typeof(JsonEnumValueStringConverter<VerificationMethod>))]
 public enum VerificationMethod
 {
     [EnumValue("email_otp")]

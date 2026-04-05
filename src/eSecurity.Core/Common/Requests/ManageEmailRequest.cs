@@ -1,5 +1,4 @@
 using eSecurity.Core.Security.Identity;
-using eSystem.Core.Enums;
 
 namespace eSecurity.Core.Common.Requests;
 
@@ -12,6 +11,5 @@ public sealed class ManageEmailRequest
     public required string Email { get; set; }
     
     [JsonPropertyName("type")]
-    [JsonConverter(typeof(JsonEnumValueStringConverter<EmailType>))]
     public required EmailType Type { get; set; }
 }

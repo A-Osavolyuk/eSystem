@@ -22,5 +22,7 @@ public sealed class JsonEnumValueStringConverter<TEnum> : JsonConverter<TEnum> w
     }
 
     public override void Write(Utf8JsonWriter writer, TEnum value, JsonSerializerOptions options)
-        => writer.WriteStringValue(EnumHelper.GetString(value));
+    {
+        writer.WriteStringValue(EnumHelper.GetString(value));
+    }
 }

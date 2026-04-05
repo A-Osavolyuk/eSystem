@@ -1,5 +1,4 @@
 ﻿using eSecurity.Core.Security.Authentication.TwoFactor;
-using eSystem.Core.Enums;
 
 namespace eSecurity.Core.Common.DTOs;
 
@@ -42,7 +41,6 @@ public class TwoFactorData
     public bool SmsEnabled { get; set; }
     
     [JsonPropertyName("preferred_method")]
-    [JsonConverter(typeof(JsonEnumValueStringConverter<TwoFactorMethod>))]
     public TwoFactorMethod? PreferredMethod { get; set; }
 }
 

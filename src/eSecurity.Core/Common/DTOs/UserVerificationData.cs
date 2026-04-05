@@ -1,12 +1,10 @@
 ﻿using eSecurity.Core.Security.Authorization.Verification;
-using eSystem.Core.Enums;
 
 namespace eSecurity.Core.Common.DTOs;
 
 public class UserVerificationData
 {
     [JsonPropertyName("preferred_method")]
-    [JsonConverter(typeof(JsonEnumValueStringConverter<VerificationMethod>))]
     public VerificationMethod PreferredMethod { get; set; }
     
     [JsonPropertyName("email_enabled")]

@@ -1,7 +1,9 @@
+using System.Text.Json.Serialization;
 using eSystem.Core.Enums;
 
 namespace eSystem.Core.Primitives;
 
+[JsonConverter(typeof(JsonEnumValueStringConverter<ErrorCode>))]
 public enum ErrorCode
 {
     [EnumValue("invalid_request")]
