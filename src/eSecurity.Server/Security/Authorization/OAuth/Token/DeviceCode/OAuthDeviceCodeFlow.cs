@@ -1,6 +1,5 @@
 ﻿using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
-using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Primitives;
@@ -56,7 +55,7 @@ public sealed class OAuthDeviceCodeFlow(
         var response = new DeviceCodeResponse
         {
             ExpiresIn = (int)_tokenConfigurations.DefaultAccessTokenLifetime.TotalSeconds,
-            TokenType = ResponseTokenTypes.Bearer,
+            TokenType = ResponseTokenType.Bearer,
         };
 
         var accessTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.AccessToken);

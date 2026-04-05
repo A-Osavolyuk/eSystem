@@ -1,6 +1,5 @@
 ﻿using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
-using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Cryptography.Pkce;
 using eSecurity.Server.Security.Cryptography.Tokens;
@@ -8,6 +7,7 @@ using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
+using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Token.AuthorizationCode;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.AuthorizationCode;
@@ -103,7 +103,7 @@ public class OidcAuthorizationCodeFlow(
         var response = new AuthorizationCodeResponse
         {
             ExpiresIn = (int)_tokenConfigurations.DefaultAccessTokenLifetime.TotalSeconds,
-            TokenType = ResponseTokenTypes.Bearer,
+            TokenType = ResponseTokenType.Bearer,
         };
 
         var session = await _sessionManager.FindAsync(user, cancellationToken);

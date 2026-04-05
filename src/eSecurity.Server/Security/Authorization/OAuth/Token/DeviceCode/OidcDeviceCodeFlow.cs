@@ -1,6 +1,5 @@
 ﻿using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
-using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.User;
@@ -59,7 +58,7 @@ public sealed class OidcDeviceCodeFlow(
         var response = new DeviceCodeResponse
         {
             ExpiresIn = (int)_tokenConfigurations.DefaultAccessTokenLifetime.TotalSeconds,
-            TokenType = ResponseTokenTypes.Bearer,
+            TokenType = ResponseTokenType.Bearer,
         };
         
         var session = await _sessionManager.FindAsync(user, cancellationToken);

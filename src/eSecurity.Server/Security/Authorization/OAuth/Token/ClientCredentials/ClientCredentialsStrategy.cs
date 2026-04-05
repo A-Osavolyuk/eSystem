@@ -1,9 +1,9 @@
 ﻿using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
-using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.Claims;
 using eSystem.Core.Primitives;
+using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Token;
 using eSystem.Core.Security.Authorization.OAuth.Token.ClientCredentials;
 
@@ -85,7 +85,7 @@ public sealed class ClientCredentialsStrategy(
         var response = new ClientCredentialsResponse
         {
             ExpiresIn = (int)_tokenConfigurations.DefaultAccessTokenLifetime.TotalSeconds,
-            TokenType = ResponseTokenTypes.Bearer
+            TokenType = ResponseTokenType.Bearer
         };
 
         var factoryOptions = new TokenFactoryOptions() { AllowedScopes = allowedScopes };

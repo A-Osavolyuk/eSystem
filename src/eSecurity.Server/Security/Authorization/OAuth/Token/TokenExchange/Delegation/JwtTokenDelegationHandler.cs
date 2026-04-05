@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
-using eSecurity.Server.Security.Authentication.OpenIdConnect.Constants;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authorization.OAuth;
@@ -143,7 +142,7 @@ public sealed class JwtTokenDelegationHandler(
         var response = new TokenExchangeResponse
         {
             ExpiresIn = (int)_configurations.DefaultAccessTokenLifetime.TotalSeconds,
-            TokenType = ResponseTokenTypes.Bearer,
+            TokenType = ResponseTokenType.Bearer,
             IssuedTokenType = TokenTypes.Full.AccessToken,
             Scope = context.Scope,
             Audience = context.Audience,
