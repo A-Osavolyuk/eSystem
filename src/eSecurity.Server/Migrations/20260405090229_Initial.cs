@@ -87,7 +87,7 @@ namespace eSecurity.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Type = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
+                    Type = table.Column<string>(type: "text", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
@@ -134,7 +134,7 @@ namespace eSecurity.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Method = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
+                    Method = table.Column<string>(type: "text", nullable: false),
                     CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
@@ -341,7 +341,7 @@ namespace eSecurity.Server.Migrations
                     Nonce = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     RedirectUri = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     CodeChallenge = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
-                    CodeChallengeMethod = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: true),
+                    CodeChallengeMethod = table.Column<int>(type: "integer", maxLength: 16, nullable: true),
                     Used = table.Column<bool>(type: "boolean", nullable: false),
                     ExpiredAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     ClientId = table.Column<Guid>(type: "uuid", nullable: false),

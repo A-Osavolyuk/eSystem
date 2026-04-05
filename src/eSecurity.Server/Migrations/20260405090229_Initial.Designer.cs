@@ -12,7 +12,7 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20260328151051_Initial")]
+    [Migration("20260405090229_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -120,9 +120,9 @@ namespace eSecurity.Server.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<string>("CodeChallengeMethod")
+                    b.Property<int?>("CodeChallengeMethod")
                         .HasMaxLength(16)
-                        .HasColumnType("character varying(16)");
+                        .HasColumnType("integer");
 
                     b.Property<DateTimeOffset?>("CreateDate")
                         .HasColumnType("timestamp with time zone");
@@ -1011,8 +1011,7 @@ namespace eSecurity.Server.Migrations
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .HasMaxLength(60)
-                        .HasColumnType("character varying(60)");
+                        .HasColumnType("text");
 
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("timestamp with time zone");
@@ -1172,8 +1171,7 @@ namespace eSecurity.Server.Migrations
 
                     b.Property<string>("Method")
                         .IsRequired()
-                        .HasMaxLength(60)
-                        .HasColumnType("character varying(60)");
+                        .HasColumnType("text");
 
                     b.Property<DateTimeOffset?>("UpdateDate")
                         .HasColumnType("timestamp with time zone");
