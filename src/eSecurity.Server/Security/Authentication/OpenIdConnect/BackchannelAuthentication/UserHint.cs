@@ -1,8 +1,17 @@
-﻿namespace eSecurity.Server.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
+﻿using System.Text.Json.Serialization;
+using eSystem.Core.Enums;
 
+namespace eSecurity.Server.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
+
+[JsonConverter(typeof(JsonEnumValueStringConverter<UserHint>))]
 public enum UserHint
 {
+    [EnumValue("login_hint")]
     LoginHint,
+    
+    [EnumValue("login_token_hint")]
     LoginTokenHint,
+    
+    [EnumValue("id_token_hint")]
     IdTokenHint
 }

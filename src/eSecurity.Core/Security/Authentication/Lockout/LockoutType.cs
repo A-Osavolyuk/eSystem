@@ -1,65 +1,44 @@
-﻿namespace eSecurity.Core.Security.Authentication.Lockout;
+﻿using eSystem.Core.Enums;
 
-/// <summary>
-/// Specifies the reason why a user account has been locked out.
-/// </summary>
+namespace eSecurity.Core.Security.Authentication.Lockout;
+
+[JsonConverter(typeof(JsonEnumValueStringConverter<LockoutPeriod>))]
 public enum LockoutType
 {
+    [EnumValue("none")]
     None,
     
-    /// <summary>
-    /// The account has been locked due to exceeding the allowed number of failed login attempts.
-    /// </summary>
+    [EnumValue("too_many_failed_login_attempts")]
     TooManyFailedLoginAttempts,
-
-    /// <summary>
-    /// The account has been locked due to detection of suspicious activity, such as abnormal login patterns.
-    /// </summary>
+    
+    [EnumValue("suspicious_activity")]
     SuspiciousActivity,
-
-    /// <summary>
-    /// The account has been manually locked by an administrator.
-    /// </summary>
+    
+    [EnumValue("manual_admin_lockout")]
     ManualAdminLockout,
-
-    /// <summary>
-    /// The account has been locked due to a violation of the terms of service.
-    /// </summary>
+    
+    [EnumValue("terms_of_service_violation")]
     TermsOfServiceViolation,
-
-    /// <summary>
-    /// The account has been locked because it is believed to be compromised (e.g., unauthorized access).
-    /// </summary>
+    
+    [EnumValue("account_compromised")]
     AccountCompromised,
-
-    /// <summary>
-    /// The account has been temporarily locked for reasons such as maintenance or policy enforcement.
-    /// </summary>
+    
+    [EnumValue("temporary_lockout")]
     TemporaryLockout,
-
-    /// <summary>
-    /// The account has been locked due to a legal request, court order, or regulatory action.
-    /// </summary>
+    
+    [EnumValue("legal_hold")]
     LegalHold,
-
-    /// <summary>
-    /// The account has been locked due to payment issues, such as failed or overdue billing.
-    /// </summary>
+    
+    [EnumValue("billing_issue")]
     BillingIssue,
-
-    /// <summary>
-    /// The account has been flagged for review after triggering automated security rules.
-    /// </summary>
+    
+    [EnumValue("automated_security_flag")]
     AutomatedSecurityFlag,
-
-    /// <summary>
-    /// The user requested the account to be temporarily locked for personal or security reasons.
-    /// </summary>
+    
+    [EnumValue("user_requested_lockout")]
     UserRequestedLockout,
-
-    /// <summary>
-    /// The account has been locked due to inactivity over an extended period.
-    /// </summary>
+    
+    [EnumValue("inactivity_timeout")]
     InactivityTimeout
 }
 

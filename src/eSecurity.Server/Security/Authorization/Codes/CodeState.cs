@@ -1,7 +1,9 @@
-﻿using eSystem.Core.Enums;
+﻿using System.Text.Json.Serialization;
+using eSystem.Core.Enums;
 
 namespace eSecurity.Server.Security.Authorization.Codes;
 
+[JsonConverter(typeof(JsonEnumValueStringConverter<CodeState>))]
 public enum CodeState
 {
     [EnumValue("pending")]

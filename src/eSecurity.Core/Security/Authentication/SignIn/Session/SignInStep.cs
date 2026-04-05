@@ -1,11 +1,22 @@
-﻿namespace eSecurity.Core.Security.Authentication.SignIn.Session;
+﻿using eSystem.Core.Enums;
 
-[JsonConverter(typeof(JsonStringEnumConverter))]
+namespace eSecurity.Core.Security.Authentication.SignIn.Session;
+
+[JsonConverter(typeof(JsonEnumValueStringConverter<SignInStep>))]
 public enum SignInStep
 {
+    [EnumValue("password")]
     Password,
+    
+    [EnumValue("two_factor")]
     TwoFactor,
+    
+    [EnumValue("oauth")]
     OAuth,
+    
+    [EnumValue("passkey")]
     Passkey,
-    Complete
+    
+    [EnumValue("completed")]
+    Completed
 }
