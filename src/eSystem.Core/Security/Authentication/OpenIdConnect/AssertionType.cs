@@ -1,7 +1,9 @@
-﻿using eSystem.Core.Enums;
+﻿using System.Text.Json.Serialization;
+using eSystem.Core.Enums;
 
 namespace eSystem.Core.Security.Authentication.OpenIdConnect;
 
+[JsonConverter(typeof(JsonEnumValueConverter<AssertionType>))]
 public enum AssertionType
 {
     [EnumValue("urn:ietf:params:oauth:client-assertion-type:jwt-bearer")]

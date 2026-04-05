@@ -1,6 +1,7 @@
 ﻿using eSystem.Core.Binding;
 using eSystem.Core.Enums;
 using eSystem.Core.Primitives;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Token.AuthorizationCode;
 
@@ -20,7 +21,8 @@ public sealed class AuthorizationCodeRequestBinder : IFormBinder<AuthorizationCo
                 Description = "grant_type is invalid."
             }));
         }
-        
+
+        var assertionsTypeString = form["client_assertion_type"].ToString();
         var result = TypedResult<AuthorizationCodeRequest>.Success(new AuthorizationCodeRequest()
         {
             GrantType = grantType.Value,
@@ -30,7 +32,7 @@ public sealed class AuthorizationCodeRequestBinder : IFormBinder<AuthorizationCo
             CodeVerifier = form["code_verifier"].ToString(),
             RedirectUri = form["redirect_uri"].ToString(),
             ClientAssertion = form["client_assertion"].ToString(),
-            ClientAssertionType = form["client_assertion_type"].ToString(),
+            ClientAssertionType = EnumHelper.FromString<AssertionType>(assertionsTypeString)?.Value,
         });
         
         return Task.FromResult(result);

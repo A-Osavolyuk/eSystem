@@ -1,4 +1,6 @@
 ﻿using System.Text.Json.Serialization;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
+using eSystem.Core.Security.Authorization.OAuth;
 
 namespace eSystem.Core.Security.Authentication.OpenIdConnect.Registration;
 
@@ -35,16 +37,16 @@ public sealed class RegistrationResponse
     public required string[] RedirectUris { get; set; }
     
     [JsonPropertyName("grant_types")] 
-    public required string[] GrantTypes { get; set; }
+    public required GrantType[] GrantTypes { get; set; }
     
     [JsonPropertyName("response_types")] 
-    public required string[] ResponseTypes { get; set; }
+    public required ResponseType[] ResponseTypes { get; set; }
     
     [JsonPropertyName("scope")] 
     public required string Scope { get; set; }
     
     [JsonPropertyName("token_endpoint_auth_methods")] 
-    public required string[] TokenEndpointAuthMethods { get; set; }
+    public required TokenAuthMethod[] TokenEndpointAuthMethods { get; set; }
     
     [JsonPropertyName("post_logout_redirect_uris")]
     public string[]? PostLogoutRedirectUris { get; set; }
@@ -62,7 +64,7 @@ public sealed class RegistrationResponse
     public bool? BackchannelLogoutSessionSupported { get; set; }
     
     [JsonPropertyName("subject_type")]
-    public string? SubjectType { get; set; }
+    public SubjectType? SubjectType { get; set; }
     
     [JsonPropertyName("sector_identifier_uri")]
     public string? SectorIdentifierUri { get; set; }

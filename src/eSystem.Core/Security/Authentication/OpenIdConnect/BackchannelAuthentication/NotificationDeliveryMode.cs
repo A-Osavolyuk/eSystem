@@ -1,7 +1,9 @@
-﻿using eSystem.Core.Enums;
+﻿using System.Text.Json.Serialization;
+using eSystem.Core.Enums;
 
 namespace eSystem.Core.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
 
+[JsonConverter(typeof(JsonEnumValueConverter<NotificationDeliveryMode>))]
 public enum NotificationDeliveryMode
 {
     [EnumValue("none")]

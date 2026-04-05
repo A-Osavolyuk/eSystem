@@ -17,7 +17,7 @@ public sealed class BackchannelAuthenticationRequest
     public string? ClientAssertion { get; set; }
     
     [FromForm(Name = "client_assertion_type")]
-    public string? ClientAssertionType { get; set; }
+    public AssertionType? ClientAssertionType { get; set; }
     
     [FromForm(Name = "login_hint")]
     public string? LoginHint { get; set; }

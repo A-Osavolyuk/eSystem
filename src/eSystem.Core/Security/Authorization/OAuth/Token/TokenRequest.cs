@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using eSystem.Core.Security.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Mvc;
 
 namespace eSystem.Core.Security.Authorization.OAuth.Token;
 
@@ -17,5 +18,5 @@ public abstract class TokenRequest
     public string? ClientAssertion { get; set; }
     
     [FromForm(Name = "client_assertion_type")]
-    public string? ClientAssertionType { get; set; }
+    public AssertionType? ClientAssertionType { get; set; }
 }

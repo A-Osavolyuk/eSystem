@@ -1,6 +1,7 @@
 ﻿using eSystem.Core.Binding;
 using eSystem.Core.Enums;
 using eSystem.Core.Primitives;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Token.RefreshToken;
 
@@ -21,6 +22,7 @@ public sealed class RefreshTokenRequestBinder : IFormBinder<RefreshTokenRequest>
             }));
         }
         
+        var assertionsTypeString = form["client_assertion_type"].ToString();
         var result = TypedResult<RefreshTokenRequest>.Success(new RefreshTokenRequest()
         {
             GrantType = grantType.Value,
@@ -28,7 +30,7 @@ public sealed class RefreshTokenRequestBinder : IFormBinder<RefreshTokenRequest>
             ClientSecret = form["client_secret"],
             RefreshToken = form["refresh_token"],
             ClientAssertion = form["client_assertion"],
-            ClientAssertionType = form["client_assertion_type"],
+            ClientAssertionType = EnumHelper.FromString<AssertionType>(assertionsTypeString)?.Value
         });
         
         return Task.FromResult(result);

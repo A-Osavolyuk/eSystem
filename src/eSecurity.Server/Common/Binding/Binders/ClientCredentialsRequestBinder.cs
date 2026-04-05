@@ -1,6 +1,7 @@
 ﻿using eSystem.Core.Binding;
 using eSystem.Core.Enums;
 using eSystem.Core.Primitives;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Token.ClientCredentials;
 
@@ -21,6 +22,7 @@ public sealed class ClientCredentialsRequestBinder : IFormBinder<ClientCredentia
             }));
         }
         
+        var assertionsTypeString = form["client_assertion_type"].ToString();
         var result = TypedResult<ClientCredentialsRequest>.Success(new ClientCredentialsRequest()
         {
             ClientId = form["client_id"].ToString(),
@@ -28,7 +30,7 @@ public sealed class ClientCredentialsRequestBinder : IFormBinder<ClientCredentia
             ClientSecret = form["client_secret"],
             Scope = form["scope"],
             ClientAssertion = form["client_assertion"],
-            ClientAssertionType = form["client_assertion_type"],
+            ClientAssertionType = EnumHelper.FromString<AssertionType>(assertionsTypeString)?.Value,
         });
         
         return Task.FromResult(result);

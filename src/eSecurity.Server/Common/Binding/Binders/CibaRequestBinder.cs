@@ -1,6 +1,7 @@
 ﻿using eSystem.Core.Binding;
 using eSystem.Core.Enums;
 using eSystem.Core.Primitives;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Token.Ciba;
 
@@ -20,13 +21,14 @@ public sealed class CibaRequestBinder : IFormBinder<CibaRequest>
             }));
         }
         
+        var assertionsTypeString = form["client_assertion_type"].ToString();
         var result = TypedResult<CibaRequest>.Success(new CibaRequest()
         {
             GrantType = grantType.Value,
             ClientId = form["client_id"].ToString(),
             AuthReqId = form["auth_req_id"].ToString(),
             ClientAssertion = form["client_assertion"],
-            ClientAssertionType = form["client_assertion_type"],
+            ClientAssertionType = EnumHelper.FromString<AssertionType>(assertionsTypeString)?.Value,
             ClientSecret = form["client_secret"],
         });
         

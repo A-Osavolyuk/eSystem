@@ -2,6 +2,7 @@
 using eSystem.Core.Binding;
 using eSystem.Core.Enums;
 using eSystem.Core.Primitives;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Token.TokenExchange;
 
@@ -22,6 +23,7 @@ public sealed class TokenExchangeRequestBinder : IFormBinder<TokenExchangeReques
             }));
         }
         
+        var assertionsTypeString = form["client_assertion_type"].ToString();
         var result = TypedResult<TokenExchangeRequest>.Success(new TokenExchangeRequest()
         {
             GrantType = grantType.Value,
@@ -32,7 +34,7 @@ public sealed class TokenExchangeRequestBinder : IFormBinder<TokenExchangeReques
             Audience = form["audience"],
             SubjectToken = form["subject_token"],
             ClientAssertion = form["client_assertion"],
-            ClientAssertionType = form["client_assertion_type"],
+            ClientAssertionType = EnumHelper.FromString<AssertionType>(assertionsTypeString)?.Value,
             ActorTokenType = EnumHelper.FromString<TokenType>(form["actor_token_type"])?.Value,
             RequestTokenType = EnumHelper.FromString<TokenType>(form["request_token_type"])?.Value,
             SubjectTokenType = EnumHelper.FromString<TokenType>(form["subject_token_type"])?.Value,

@@ -1,6 +1,7 @@
 ﻿using eSystem.Core.Binding;
 using eSystem.Core.Enums;
 using eSystem.Core.Primitives;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Token.DeviceCode;
 
@@ -21,6 +22,7 @@ public sealed class DeviceCodeRequestBinder : IFormBinder<DeviceCodeRequest>
             }));
         }
         
+        var assertionsTypeString = form["client_assertion_type"].ToString();
         var result = TypedResult<DeviceCodeRequest>.Success(new DeviceCodeRequest()
         {
             ClientId = form["client_id"].ToString(),
@@ -28,7 +30,7 @@ public sealed class DeviceCodeRequestBinder : IFormBinder<DeviceCodeRequest>
             DeviceCode = form["device_code"],
             ClientSecret = form["client_secret"],
             ClientAssertion = form["client_assertion"],
-            ClientAssertionType = form["client_assertion_type"]
+            ClientAssertionType = EnumHelper.FromString<AssertionType>(assertionsTypeString)?.Value
         });
 
         return Task.FromResult(result);
