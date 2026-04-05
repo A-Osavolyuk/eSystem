@@ -51,7 +51,7 @@
         if (firstRender)
         {
             var responseType = EnumHelper.FromString<ResponseType>(ResponseType);
-            if (!responseType.HasValue)
+            if (responseType is null)
             {
                 const string message = "response_type is required.";
                 NavigationManager.NavigateTo(QueryBuilder.Create()
@@ -72,7 +72,7 @@
                 ResponseType = responseType.Value,
                 State = State,
                 CodeChallenge = CodeChallenge,
-                CodeChallengeMethod = EnumHelper.FromString<ChallengeMethod>(CodeChallengeMethod),
+                CodeChallengeMethod = EnumHelper.FromString<ChallengeMethod>(CodeChallengeMethod)?.Value,
                 ReturnUrl = ReturnUrl
             };
 
@@ -87,7 +87,7 @@
                 foreach (var promptString in promptStrings)
                 {
                     var prompt = EnumHelper.FromString<PromptType>(promptString);
-                    if (!prompt.HasValue)
+                    if (prompt is null)
                     {
                         NavigationManager.NavigateTo(QueryBuilder.Create()
                             .WithUri(RedirectUri)

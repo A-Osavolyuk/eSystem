@@ -2,7 +2,7 @@
 
 namespace eSecurity.Core.Security.Identity;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<PhoneNumberType>))]
+[JsonConverter(typeof(JsonEnumValueConverter<PhoneNumberType>))]
 public enum PhoneNumberType
 {
     [EnumValue("primary")]

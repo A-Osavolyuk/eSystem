@@ -3,7 +3,7 @@ using eSystem.Core.Enums;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<OpaqueTokenType>))]
+[JsonConverter(typeof(JsonEnumValueConverter<OpaqueTokenType>))]
 public enum OpaqueTokenType
 {
     [EnumValue("access_token")]

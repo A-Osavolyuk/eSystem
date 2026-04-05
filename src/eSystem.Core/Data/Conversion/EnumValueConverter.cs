@@ -9,5 +9,5 @@ public sealed class EnumValueConverter<TEnum> : ValueConverter<TEnum, string>
     public EnumValueConverter() 
         : base(
             v => EnumHelper.GetString(v), 
-            v => EnumHelper.FromStringOrThrow<TEnum>(v)) { }
+            v => EnumHelper.FromStringOrThrow<TEnum>(v).Value) { }
 }

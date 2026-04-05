@@ -3,7 +3,7 @@ using eSystem.Core.Enums;
 
 namespace eSystem.Core.Security.Authorization.OAuth;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<JwtTokenType>))]
+[JsonConverter(typeof(JsonEnumValueConverter<JwtTokenType>))]
 public enum JwtTokenType
 {
     [EnumValue("at+jwt")]

@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace eSystem.Core.Enums;
 
-public sealed class JsonEnumValueStringConverter<TEnum> : JsonConverter<TEnum> where TEnum : struct, Enum
+public sealed class JsonEnumValueConverter<TEnum> : JsonConverter<TEnum> where TEnum : struct, Enum
 {
     public override TEnum Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
@@ -12,13 +12,10 @@ public sealed class JsonEnumValueStringConverter<TEnum> : JsonConverter<TEnum> w
 
         var value = reader.GetString();
         if (string.IsNullOrEmpty(value))
-            throw new JsonException($"Value cannot be null or empty");
+            throw new JsonException("Value cannot be null or empty");
         
         var enumValue = EnumHelper.FromString<TEnum>(value);
-        if (!enumValue.HasValue)
-            throw new JsonException($"Invalid enum value '{value}'");
-
-        return enumValue.Value;
+        return enumValue?.Value ?? throw new JsonException($"Invalid enum value '{value}'");
     }
 
     public override void Write(Utf8JsonWriter writer, TEnum value, JsonSerializerOptions options)

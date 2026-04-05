@@ -2,7 +2,7 @@
 
 namespace eSecurity.Core.Security.Identity;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<EmailType>))]
+[JsonConverter(typeof(JsonEnumValueConverter<EmailType>))]
 public enum EmailType
 {
     [EnumValue("primary")]

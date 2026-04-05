@@ -2,7 +2,7 @@
 
 namespace eSecurity.Core.Security.Authorization.Verification;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<PurposeType>))]
+[JsonConverter(typeof(JsonEnumValueConverter<PurposeType>))]
 public enum PurposeType
 {
     [EnumValue("email")]

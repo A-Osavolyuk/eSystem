@@ -2,7 +2,7 @@
 
 namespace eSecurity.Core.Security.Authentication.SignIn.Session;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<SignInStep>))]
+[JsonConverter(typeof(JsonEnumValueConverter<SignInStep>))]
 public enum SignInStep
 {
     [EnumValue("password")]

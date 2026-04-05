@@ -20,10 +20,11 @@ public sealed class IntrospectionRequestBinder : IFormBinder<IntrospectionReques
             }));
         }
 
+        var tokenTypeHintString = form["token_type_hint"];
         var result = new IntrospectionRequest()
         {
             Token = token.ToString(),
-            TokenTypeHint = EnumHelper.FromString<TokenTypeHint>(form["token_type_hint"].ToString())
+            TokenTypeHint = EnumHelper.FromString<TokenTypeHint>(tokenTypeHintString)?.Value
         };
         
         return Task.FromResult(TypedResult<IntrospectionRequest>.Success(result));

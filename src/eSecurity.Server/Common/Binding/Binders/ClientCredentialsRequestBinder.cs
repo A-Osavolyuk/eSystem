@@ -12,7 +12,7 @@ public sealed class ClientCredentialsRequestBinder : IFormBinder<ClientCredentia
         CancellationToken cancellationToken = default)
     {
         var grantType = EnumHelper.FromString<GrantType>(form["grant_type"].ToString());
-        if (!grantType.HasValue)
+        if (grantType is null)
         {
             return Task.FromResult(TypedResult<ClientCredentialsRequest>.Fail(new Error()
             {

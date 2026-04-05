@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using eSystem.Core.Enums;
 
 namespace eSystem.Core.Security.Authorization.OAuth.Introspection;
 
@@ -8,7 +9,8 @@ public class IntrospectionResponse
     public required bool Active { get; set; }
     
     [JsonPropertyName("token_type")]
-    public string? TokenType { get; set; }
+    [JsonConverter(typeof(JsonUnpreferredEnumValueConverter<TokenType>))]
+    public TokenType? TokenType { get; set; }
     
     [JsonPropertyName("client_id")]
     public Guid? ClientId { get; set; }

@@ -12,7 +12,7 @@ public sealed class RefreshTokenRequestBinder : IFormBinder<RefreshTokenRequest>
         CancellationToken cancellationToken = default)
     {
         var grantType = EnumHelper.FromString<GrantType>(form["grant_type"].ToString());
-        if (!grantType.HasValue)
+        if (grantType is null)
         {
             return Task.FromResult(TypedResult<RefreshTokenRequest>.Fail(new Error()
             {

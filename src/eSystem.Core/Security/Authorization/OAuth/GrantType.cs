@@ -3,7 +3,7 @@ using eSystem.Core.Enums;
 
 namespace eSystem.Core.Security.Authorization.OAuth;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<GrantType>))]
+[JsonConverter(typeof(JsonEnumValueConverter<GrantType>))]
 public enum GrantType
 {
     [EnumValue("implicit")]

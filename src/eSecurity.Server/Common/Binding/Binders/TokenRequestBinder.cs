@@ -29,7 +29,7 @@ public sealed class TokenRequestBinder(IFormBindingProvider bindingProvider) : I
         }
         
         var grantType = EnumHelper.FromString<GrantType>(grantTypeString);
-        if (!grantType.HasValue)
+        if (grantType is null)
         {
             return TypedResult<TokenRequest>.Fail(new Error()
             {
@@ -38,7 +38,7 @@ public sealed class TokenRequestBinder(IFormBindingProvider bindingProvider) : I
             });
         }
 
-        return grantType switch
+        return grantType.Value switch
         {
             GrantType.AuthorizationCode => await GetRequest<AuthorizationCodeRequest>(form, cancellationToken),
             GrantType.RefreshToken => await GetRequest<RefreshTokenRequest>(form, cancellationToken),

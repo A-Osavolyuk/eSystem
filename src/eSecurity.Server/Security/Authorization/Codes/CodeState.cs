@@ -3,7 +3,7 @@ using eSystem.Core.Enums;
 
 namespace eSecurity.Server.Security.Authorization.Codes;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<CodeState>))]
+[JsonConverter(typeof(JsonEnumValueConverter<CodeState>))]
 public enum CodeState
 {
     [EnumValue("pending")]

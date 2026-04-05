@@ -3,7 +3,7 @@ using eSystem.Core.Enums;
 
 namespace eSystem.Core.Security.Authentication.OpenIdConnect;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<ChallengeMethod>))]
+[JsonConverter(typeof(JsonEnumValueConverter<ChallengeMethod>))]
 public enum ChallengeMethod
 {
     [EnumValue("plain")]

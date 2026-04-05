@@ -3,7 +3,7 @@ using eSystem.Core.Enums;
 
 namespace eSystem.Core.Security.Authentication.OpenIdConnect;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<PromptType>))]
+[JsonConverter(typeof(JsonEnumValueConverter<PromptType>))]
 public enum PromptType
 {
     [EnumValue("none")]

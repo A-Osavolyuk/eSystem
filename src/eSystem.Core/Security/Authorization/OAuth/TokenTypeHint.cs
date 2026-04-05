@@ -3,7 +3,7 @@ using eSystem.Core.Enums;
 
 namespace eSystem.Core.Security.Authorization.OAuth;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<TokenTypeHint>))]
+[JsonConverter(typeof(JsonEnumValueConverter<TokenTypeHint>))]
 public enum TokenTypeHint
 {
     [EnumValue("access_token")]

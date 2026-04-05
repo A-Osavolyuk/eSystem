@@ -3,7 +3,7 @@ using eSystem.Core.Enums;
 
 namespace eSecurity.Server.Security.Identity.SignUp;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<SignUpType>))]
+[JsonConverter(typeof(JsonEnumValueConverter<SignUpType>))]
 public enum SignUpType
 {
     [EnumValue("manual")]

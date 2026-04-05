@@ -3,7 +3,7 @@ using eSystem.Core.Enums;
 
 namespace eSystem.Core.Primitives;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<ErrorCode>))]
+[JsonConverter(typeof(JsonEnumValueConverter<ErrorCode>))]
 public enum ErrorCode
 {
     [EnumValue("invalid_request")]

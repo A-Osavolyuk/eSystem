@@ -3,7 +3,7 @@ using eSystem.Core.Enums;
 
 namespace eSystem.Storage.Api.Enums;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<Container>))]
+[JsonConverter(typeof(JsonEnumValueConverter<Container>))]
 public enum Container
 {
     [EnumValue("avatar")]

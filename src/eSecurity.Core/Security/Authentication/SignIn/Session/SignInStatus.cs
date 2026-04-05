@@ -2,7 +2,7 @@
 
 namespace eSecurity.Core.Security.Authentication.SignIn.Session;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<SignInStatus>))]
+[JsonConverter(typeof(JsonEnumValueConverter<SignInStatus>))]
 public enum SignInStatus
 {
     [EnumValue("in_progress")]

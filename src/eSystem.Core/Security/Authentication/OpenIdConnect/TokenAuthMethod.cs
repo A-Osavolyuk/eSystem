@@ -3,7 +3,7 @@ using eSystem.Core.Enums;
 
 namespace eSystem.Core.Security.Authentication.OpenIdConnect;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<TokenAuthMethod>))]
+[JsonConverter(typeof(JsonEnumValueConverter<TokenAuthMethod>))]
 public enum TokenAuthMethod
 {
     [EnumValue("none")]

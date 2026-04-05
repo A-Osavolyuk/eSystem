@@ -32,7 +32,7 @@ public class TokenCommandHandler(
         }
         
         var grantType = EnumHelper.FromString<GrantType>(grantTypeString.ToString());
-        if (!grantType.HasValue)
+        if (grantType is null)
         {
             return Results.BadRequest(new Error()
             {

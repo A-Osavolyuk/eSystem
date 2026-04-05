@@ -3,7 +3,7 @@ using eSystem.Core.Enums;
 
 namespace eSecurity.Server.Security.Authorization.Constants;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<TokenKind>))]
+[JsonConverter(typeof(JsonEnumValueConverter<TokenKind>))]
 public enum TokenKind
 {
     [EnumValue("opaque")]

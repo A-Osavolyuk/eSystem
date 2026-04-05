@@ -3,7 +3,7 @@ using eSystem.Core.Enums;
 
 namespace eSecurity.Server.Security.Cryptography.Hashing;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<HashAlgorithm>))]
+[JsonConverter(typeof(JsonEnumValueConverter<HashAlgorithm>))]
 public enum HashAlgorithm
 {
     [EnumValue("pbkdf2")]

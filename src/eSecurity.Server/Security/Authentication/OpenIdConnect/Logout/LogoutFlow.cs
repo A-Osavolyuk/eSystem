@@ -3,7 +3,7 @@ using eSystem.Core.Enums;
 
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Logout;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<LogoutFlow>))]
+[JsonConverter(typeof(JsonEnumValueConverter<LogoutFlow>))]
 public enum LogoutFlow
 {
     [EnumValue("frontchannel")]

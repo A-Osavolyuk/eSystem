@@ -3,7 +3,7 @@ using eSystem.Core.Enums;
 
 namespace eSystem.Core.Security.Authorization.OAuth;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<ResponseTokenType>))]
+[JsonConverter(typeof(JsonEnumValueConverter<ResponseTokenType>))]
 public enum ResponseTokenType
 {
     [EnumValue("Bearer")]

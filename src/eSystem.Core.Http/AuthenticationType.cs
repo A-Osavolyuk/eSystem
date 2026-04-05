@@ -3,7 +3,7 @@ using eSystem.Core.Enums;
 
 namespace eSystem.Core.Http;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<AuthenticationType>))]
+[JsonConverter(typeof(JsonEnumValueConverter<AuthenticationType>))]
 public enum AuthenticationType
 {
     [EnumValue("none")]

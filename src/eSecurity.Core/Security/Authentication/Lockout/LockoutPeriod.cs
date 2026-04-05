@@ -2,7 +2,7 @@
 
 namespace eSecurity.Core.Security.Authentication.Lockout;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<LockoutPeriod>))]
+[JsonConverter(typeof(JsonEnumValueConverter<LockoutPeriod>))]
 public enum LockoutPeriod
 {
     [EnumValue("day")]

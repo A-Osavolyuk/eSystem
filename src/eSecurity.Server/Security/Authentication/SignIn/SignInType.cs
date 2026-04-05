@@ -3,7 +3,7 @@ using eSystem.Core.Enums;
 
 namespace eSecurity.Server.Security.Authentication.SignIn;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<SignInType>))]
+[JsonConverter(typeof(JsonEnumValueConverter<SignInType>))]
 public enum SignInType
 {
     [EnumValue("password")]

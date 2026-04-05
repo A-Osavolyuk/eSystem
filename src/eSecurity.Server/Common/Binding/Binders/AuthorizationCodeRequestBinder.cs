@@ -12,7 +12,7 @@ public sealed class AuthorizationCodeRequestBinder : IFormBinder<AuthorizationCo
         CancellationToken cancellationToken = default)
     {
         var grantType = EnumHelper.FromString<GrantType>(form["grant_type"].ToString());
-        if (!grantType.HasValue)
+        if (grantType is null)
         {
             return Task.FromResult(TypedResult<AuthorizationCodeRequest>.Fail(new Error()
             {

@@ -2,7 +2,7 @@
 
 namespace eSecurity.Core.Security.Authorization.OAuth;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<OAuthFlow>))]
+[JsonConverter(typeof(JsonEnumValueConverter<OAuthFlow>))]
 public enum OAuthFlow
 {
     [EnumValue("sign_in")]

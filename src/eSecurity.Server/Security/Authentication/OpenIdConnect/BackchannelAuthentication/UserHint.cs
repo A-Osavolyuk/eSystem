@@ -3,7 +3,7 @@ using eSystem.Core.Enums;
 
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<UserHint>))]
+[JsonConverter(typeof(JsonEnumValueConverter<UserHint>))]
 public enum UserHint
 {
     [EnumValue("login_hint")]

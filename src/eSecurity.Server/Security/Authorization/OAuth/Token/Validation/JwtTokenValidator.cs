@@ -20,7 +20,7 @@ public class JwtTokenValidator(IJwtTokenValidationProvider validationProvider) :
         if (securityToken is null)
             return TokenValidationResult.Fail();
 
-        var tokenType = EnumHelper.FromStringOrThrow<JwtTokenType>(securityToken.Header.Typ);
+        var tokenType = EnumHelper.FromStringOrThrow<JwtTokenType>(securityToken.Header.Typ).Value;
         var validator = _validationProvider.CreateValidator(tokenType);
         return await validator.ValidateAsync(token, cancellationToken);
     }

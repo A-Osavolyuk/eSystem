@@ -67,7 +67,7 @@ public class IntrospectionCommandHandler(
         var response = new IntrospectionResponse
         {
             Active = true,
-            TokenType = tokenType.GetString(true),
+            TokenType = tokenType,
             ClientId = token.Client.Id,
             Issuer = _configurations.Issuer,
             Audience = JsonSerializer.Serialize(token.Client.Audiences),

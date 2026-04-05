@@ -3,29 +3,29 @@ using eSystem.Core.Enums;
 
 namespace eSystem.Core.Security.Authorization.OAuth;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<TokenType>))]
+[JsonConverter(typeof(JsonEnumValueConverter<TokenType>))]
 public enum TokenType
 {
-    [EnumValue("access_token", true)]
-    [EnumValue("urn:ietf:params:oauth:token-type:access_token")]
+    [EnumValue("urn:ietf:params:oauth:token-type:access_token", true)]
+    [EnumValue("access_token")]
     AccessToken,
     
-    [EnumValue("refresh_token", true)]
-    [EnumValue("urn:ietf:params:oauth:token-type:refresh_token")]
+    [EnumValue("urn:ietf:params:oauth:token-type:refresh_token", true)]
+    [EnumValue("refresh_token")]
     RefreshToken,
     
-    [EnumValue("id_token", true)]
-    [EnumValue("urn:ietf:params:oauth:token-type:id_token")]
+    [EnumValue("urn:ietf:params:oauth:token-type:id_token", true)]
+    [EnumValue("id_token")]
     IdToken,
     
-    [EnumValue("login_token", true)]
-    [EnumValue("urn:ietf:params:oauth:token-type:login_token")]
-    LoginToken,
-    
+    [EnumValue("urn:ietf:params:oauth:token-type:logout_token" ,true)]
     [EnumValue("logout_token")]
     LogoutToken,
     
-    [EnumValue("jwt", true)]
-    [EnumValue("urn:ietf:params:oauth:token-type:jwt")]
+    [EnumValue("login_token")]
+    LoginToken,
+    
+    [EnumValue("urn:ietf:params:oauth:token-type:jwt", true)]
+    [EnumValue("jwt")]
     Jwt,
 }

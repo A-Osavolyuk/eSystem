@@ -9,5 +9,5 @@ public sealed class NullableEnumValueConverter<TEnum> : ValueConverter<TEnum?, s
     public NullableEnumValueConverter() 
         : base(
             v => v == null ? null : EnumHelper.GetString(v.Value), 
-            v => v == null ? null : EnumHelper.FromStringOrThrow<TEnum>(v)) { }
+            v => v == null ? null : EnumHelper.FromStringOrThrow<TEnum>(v).Value) { }
 }

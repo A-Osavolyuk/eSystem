@@ -2,7 +2,7 @@
 
 namespace eSecurity.Core.Security.Authorization.Verification;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<VerificationStatus>))]
+[JsonConverter(typeof(JsonEnumValueConverter<VerificationStatus>))]
 public enum VerificationStatus
 {
     [EnumValue("pending")]

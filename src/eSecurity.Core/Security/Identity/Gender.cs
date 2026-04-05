@@ -2,7 +2,7 @@
 
 namespace eSecurity.Core.Security.Identity;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<Gender>))]
+[JsonConverter(typeof(JsonEnumValueConverter<Gender>))]
 public enum Gender
 {
     [EnumValue("unspecified")]

@@ -3,7 +3,7 @@ using eSystem.Core.Enums;
 
 namespace eSystem.Core.Security.Authentication.OpenIdConnect;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<AuthenticationMethod>))]
+[JsonConverter(typeof(JsonEnumValueConverter<AuthenticationMethod>))]
 public enum AuthenticationMethod
 {
     [EnumValue("pwd")]

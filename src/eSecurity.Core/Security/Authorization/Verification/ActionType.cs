@@ -2,7 +2,7 @@
 
 namespace eSecurity.Core.Security.Authorization.Verification;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<ActionType>))]
+[JsonConverter(typeof(JsonEnumValueConverter<ActionType>))]
 public enum ActionType
 {
     [EnumValue("verify")]

@@ -78,8 +78,8 @@
             
             state = new OAuthState
             {
-                ResponseType = EnumHelper.FromString<ResponseType>(responseTypeString),
-                Prompt = EnumHelper.FromString<PromptType>(promptString),
+                ResponseType = EnumHelper.FromString<ResponseType>(responseTypeString)?.Value,
+                Prompt = EnumHelper.FromString<PromptType>(promptString)?.Value,
                 ClientId = queryParams.GetValueOrDefault("client_id"),
                 RedirectUri = queryParams.GetValueOrDefault("redirect_uri"),
                 Scope = queryParams.GetValueOrDefault("scope"),

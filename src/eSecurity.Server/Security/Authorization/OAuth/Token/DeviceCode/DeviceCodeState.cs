@@ -3,7 +3,7 @@ using eSystem.Core.Enums;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.DeviceCode;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<DeviceCodeState>))]
+[JsonConverter(typeof(JsonEnumValueConverter<DeviceCodeState>))]
 public enum DeviceCodeState
 {
     [EnumValue("pending")]

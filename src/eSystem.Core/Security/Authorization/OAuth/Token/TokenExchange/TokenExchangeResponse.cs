@@ -1,10 +1,12 @@
 ﻿using System.Text.Json.Serialization;
+using eSystem.Core.Enums;
 
 namespace eSystem.Core.Security.Authorization.OAuth.Token.TokenExchange;
 
 public sealed class TokenExchangeResponse : TokenResponse
 {
     [JsonPropertyName("issued_token_type")]
+    [JsonConverter(typeof(JsonPreferredEnumValueConverter<TokenType>))]
     public required TokenType IssuedTokenType { get; set; }
     
     [JsonPropertyName("scope")]

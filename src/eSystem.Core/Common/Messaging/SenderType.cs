@@ -3,7 +3,7 @@ using eSystem.Core.Enums;
 
 namespace eSystem.Core.Common.Messaging;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<SenderType>))]
+[JsonConverter(typeof(JsonEnumValueConverter<SenderType>))]
 public enum SenderType
 {
     [EnumValue("email")]

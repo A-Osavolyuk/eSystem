@@ -40,7 +40,7 @@ public sealed class JwtTokenClaimsExtractor(
         }
 
         var tokenType = EnumHelper.FromString<JwtTokenType>(securityToken.Header.Typ);
-        if (tokenType is not JwtTokenType.AccessToken)
+        if (tokenType?.Value is not JwtTokenType.AccessToken)
         {
             return TypedResult<IEnumerable<Claim>>.Fail(new Error()
             {

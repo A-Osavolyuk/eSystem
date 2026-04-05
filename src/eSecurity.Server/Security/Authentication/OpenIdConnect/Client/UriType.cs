@@ -3,7 +3,7 @@ using eSystem.Core.Enums;
 
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<UriType>))]
+[JsonConverter(typeof(JsonEnumValueConverter<UriType>))]
 public enum UriType
 {
     [EnumValue("redirect")]

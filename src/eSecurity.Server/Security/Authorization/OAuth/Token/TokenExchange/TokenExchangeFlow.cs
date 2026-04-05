@@ -3,7 +3,7 @@ using eSystem.Core.Enums;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange;
 
-[JsonConverter(typeof(JsonEnumValueStringConverter<TokenExchangeFlow>))]
+[JsonConverter(typeof(JsonEnumValueConverter<TokenExchangeFlow>))]
 public enum TokenExchangeFlow
 {
     [EnumValue("delegation")]
