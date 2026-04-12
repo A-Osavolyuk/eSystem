@@ -2,6 +2,6 @@
 
 public abstract class Entity
 {
-    public DateTimeOffset? CreateDate { get; set; }
-    public DateTimeOffset? UpdateDate { get; set; }
+    public DateTimeOffset? CreatedAt { get; set; }
+    public DateTimeOffset? UpdatedAt { get; set; }
 }

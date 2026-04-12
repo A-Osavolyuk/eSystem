@@ -38,7 +38,7 @@ public class GetUserLinkedAccountDataQueryHandler(
             {
                 Id = x.Id,
                 Type = x.Type,
-                LinkedAt = x.CreateDate,
+                LinkedAt = x.CreatedAt,
             }).ToList()
         };
 

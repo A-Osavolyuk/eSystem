@@ -151,7 +151,7 @@ public class GetUserInfoQueryHandler(
         if (scopes.Contains(ScopeTypes.Profile))
         {
             response.PreferredUsername = user.Username;
-            response.UpdatedAt = user.UpdateDate?.ToUnixTimeSeconds();
+            response.UpdatedAt = user.UpdatedAt?.ToUnixTimeSeconds();
             response.Zoneinfo = user.ZoneInfo;
             response.Locale = user.Locale;
 

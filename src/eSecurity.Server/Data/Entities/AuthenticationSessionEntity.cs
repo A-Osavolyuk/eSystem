@@ -15,7 +15,6 @@ public sealed class AuthenticationSessionEntity : Entity
     public DateTimeOffset? RevokedAt { get; set; }
 
     public DateTimeOffset ExpiredAt { get; set; }
-    public DateTimeOffset CreatedAt { get; set; }
 
     public bool IsActive => !IsRevoked && ExpiredAt > DateTimeOffset.UtcNow;
 

@@ -97,9 +97,9 @@ public sealed class IdTokenClaimsFactory(
             claims.Add(new Claim(AppClaimTypes.ZoneInfo, user.ZoneInfo));
             claims.Add(new Claim(AppClaimTypes.Locale, user.Locale));
 
-            if (user.UpdateDate.HasValue)
+            if (user.UpdatedAt.HasValue)
             {
-                var updatedAt = user.UpdateDate.Value.ToUnixTimeSeconds().ToString();
+                var updatedAt = user.UpdatedAt.Value.ToUnixTimeSeconds().ToString();
                 claims.Add(new Claim(AppClaimTypes.UpdatedAt, updatedAt, ClaimValueTypes.Integer64));
             }
 

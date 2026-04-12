@@ -12,7 +12,6 @@ public sealed class DeviceCodeEntity : Entity
     public int Interval { get; set; }
     
     public DateTimeOffset ExpiresAt { get; set; }
-    public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset ConsumedAt { get; set; }
 
     public DeviceCodeState State { get; set; }

@@ -13,7 +13,6 @@ public sealed class CibaRequestEntity : Entity
     public required CibaRequestState State { get; set; }
     
     public required DateTimeOffset ExpiredAt { get; set; }
-    public required DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset? ConsumedAt { get; set; }
     
     public string? UserCode { get; set; }
