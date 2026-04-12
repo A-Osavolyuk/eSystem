@@ -8,6 +8,7 @@ using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.Email.Commands;
@@ -33,22 +34,36 @@ public sealed class RequestChangeEmailCommandHandler(
         CancellationToken cancellationToken)
     {
         var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
-        if (subjectClaim is null) return Results.BadRequest("Invalid request");
-        
+        if (subjectClaim is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Invalid request"
+            });
+        }
+
         var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
-        if (user is null) return Results.NotFound("User not found.");
+        if (user is null)
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "User not found"
+            });
 
         if (request.Request.Type is EmailType.Secondary)
-            return Results.BadRequest(new Error
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidEmail,
                 Description = "Cannot change a secondary phone number."
             });
+        }
 
         var currentEmail = await _emailManager.FindByTypeAsync(user, request.Request.Type, cancellationToken);
         if (currentEmail is null)
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidEmail,
                 Description = "User's primary email address is missing"
@@ -60,7 +75,7 @@ public sealed class RequestChangeEmailCommandHandler(
             var isTaken = await _emailManager.IsTakenAsync(request.Request.Email, cancellationToken);
             if (isTaken)
             {
-                return Results.BadRequest(new Error
+                return Results.ClientError(ClientErrorCode.BadRequest, new Error
                 {
                     Code = ErrorCode.EmailTaken,
                     Description = "Email address is already taken"
@@ -69,15 +84,23 @@ public sealed class RequestChangeEmailCommandHandler(
         }
 
         if (await _linkedAccountManager.HasAsync(user, cancellationToken))
-            return Results.BadRequest(new Error
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.LinkedAccountConnected,
                 Description = "Cannot change email, first disconnect linked accounts."
             });
+        }
 
         var verification = await _verificationManager.FindByIdAsync(request.Request.VerificationId, cancellationToken);
-        if (verification?.Status is not VerificationStatus.Approved) 
-            return Results.BadRequest("Unverified request.");
+        if (verification?.Status is not VerificationStatus.Approved)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Unverified request."
+            });
+        }
 
         var verificationResult = await _verificationManager.ConsumeAsync(verification, cancellationToken);
         if (!verificationResult.Succeeded) return verificationResult;

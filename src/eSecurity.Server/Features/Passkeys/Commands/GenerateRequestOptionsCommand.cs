@@ -9,6 +9,7 @@ using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using CredentialOptions = eSecurity.Server.Security.Credentials.PublicKey.Credentials.CredentialOptions;
 
 namespace eSecurity.Server.Features.Passkeys.Commands;
@@ -46,14 +47,21 @@ public class GenerateRequestOptionsCommandHandler(
         if (!string.IsNullOrEmpty(request.Request.Subject))
         {
             var user = await _userManager.FindBySubjectAsync(request.Request.Subject, cancellationToken);
-            if (user is null) return Results.NotFound("User not found.");
+            if (user is null)
+            {
+                return Results.ClientError(ClientErrorCode.NotFound, new Error()
+                {
+                    Code = ErrorCode.NotFound,
+                    Description = "User not found."
+                });
+            }
 
             var userAgent = _httpContext.GetUserAgent();
             var ipAddress = _httpContext.GetIpV4();
             var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
             if (device is null)
             {
-                return Results.BadRequest(new Error
+                return Results.ClientError(ClientErrorCode.BadRequest, new Error
                 {
                     Code = ErrorCode.InvalidDevice,
                     Description = "Invalid device."
@@ -63,7 +71,7 @@ public class GenerateRequestOptionsCommandHandler(
             var passkey = await _passkeyManager.FindByDeviceAsync(device, cancellationToken);
             if (passkey is null)
             {
-                return Results.BadRequest(new Error
+                return Results.ClientError(ClientErrorCode.BadRequest, new Error
                 {
                     Code = ErrorCode.InvalidDevice,
                     Description = "This device does not have a passkey."
@@ -82,6 +90,6 @@ public class GenerateRequestOptionsCommandHandler(
         }
 
         _sessionStorage.Set(ChallengeSessionKeys.Assertion, challenge);
-        return Results.Ok(options);
+        return Results.Success(SuccessCodes.Ok, options);
     }
 }

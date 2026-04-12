@@ -6,6 +6,7 @@ using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Features.Account.Commands;
 
@@ -28,13 +29,13 @@ public class CheckAccountCommandHandler(
         if (user is null)
         {
             response = new CheckAccountResponse { Exists = false };
-            return Results.Ok(response);
+            return Results.Success(SuccessCodes.Ok, response);
         }
 
         var lockoutState = await _lockoutManager.GetAsync(user, cancellationToken);
         if (lockoutState is null)
         {
-            return Results.NotFound(new Error
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.InvalidLockoutState,
                 Description = "Invalid state"
@@ -48,7 +49,7 @@ public class CheckAccountCommandHandler(
                 Exists = true
             };
 
-            return Results.Ok(response);
+            return Results.Success(SuccessCodes.Ok, response);
         }
 
         var email = await _emailManager.FindByTypeAsync(user, EmailType.Recovery, cancellationToken);
@@ -59,7 +60,7 @@ public class CheckAccountCommandHandler(
                 Exists = true
             };
 
-            return Results.Ok(response);
+            return Results.Success(SuccessCodes.Ok, response);
         }
 
         response = new CheckAccountResponse
@@ -67,6 +68,6 @@ public class CheckAccountCommandHandler(
             Exists = true
         };
 
-        return Results.Ok(response);
+        return Results.Success(SuccessCodes.Ok, response);
     }
 }

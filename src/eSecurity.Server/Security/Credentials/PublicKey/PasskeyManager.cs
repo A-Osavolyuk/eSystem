@@ -4,6 +4,7 @@ using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Credentials.PublicKey.Credentials;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Security.Credentials.PublicKey;
 
@@ -51,14 +52,43 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
         var authenticatorAssertionResponse = credential.Response;
         var clientData = ClientData.Parse(authenticatorAssertionResponse.ClientDataJson);
 
-        if (clientData is null) return Results.BadRequest("Invalid client data");
-        if (clientData.Type != ClientDataTypes.Get) return Results.BadRequest("Invalid type");
+        if (clientData is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Invalid client data"
+            });
+        }
+
+        if (clientData.Type != ClientDataTypes.Get)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Invalid type"
+            });
+        }
 
         var base64Challenge = CredentialUtils.ToBase64String(clientData.Challenge);
-        if (storedChallenge != base64Challenge) return Results.BadRequest("Challenge mismatch");
+        if (storedChallenge != base64Challenge)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Challenge mismatch"
+            });
+        }
 
         var valid = CredentialUtils.VerifySignature(authenticatorAssertionResponse, passkey.PublicKey);
-        if (!valid) return Results.BadRequest("Invalid client data");
+        if (!valid)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Invalid client data"
+            });
+        }
 
         var signCount = CredentialUtils.ParseSignCount(authenticatorAssertionResponse.AuthenticatorData);
 
@@ -68,7 +98,7 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
         _context.Passkeys.Update(passkey);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<bool> HasAsync(UserEntity user, CancellationToken cancellationToken)
@@ -84,7 +114,7 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
         await _context.Passkeys.AddAsync(entity, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> UpdateAsync(PasskeyEntity entity, CancellationToken cancellationToken = default)
@@ -92,7 +122,7 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
         _context.Passkeys.Update(entity);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> DeleteAsync(PasskeyEntity entity, CancellationToken cancellationToken = default)
@@ -100,6 +130,6 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
         _context.Passkeys.Remove(entity);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 }

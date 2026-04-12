@@ -1,6 +1,7 @@
 ﻿using eCinema.Server.Data;
 using eCinema.Server.Data.Entities;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace eCinema.Server.Security.Authentication.OpenIdConnect.Session;
@@ -33,20 +34,20 @@ public class SessionManager(AppDbContext context) : ISessionManager
     {
         await _context.Sessions.AddAsync(session, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> UpdateAsync(SessionEntity session, CancellationToken cancellationToken = default)
     {
         _context.Sessions.Update(session);
         await _context.SaveChangesAsync(cancellationToken);
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> DeleteAsync(SessionEntity session, CancellationToken cancellationToken = default)
     {
         _context.Sessions.Remove(session);
         await _context.SaveChangesAsync(cancellationToken);
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 }

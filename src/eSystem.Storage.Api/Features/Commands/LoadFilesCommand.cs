@@ -1,5 +1,6 @@
 ﻿using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Requests.Storage;
 using eSystem.Core.Responses.Storage;
 using eSystem.Storage.Api.Interfaces;
@@ -17,6 +18,6 @@ public class LoadFilesCommandHandler(IStorageManager storageManager) : IRequestH
         var metadata = request.Request.Metadata;
         var files = await _storageManager.LoadAsync(metadata);
         var response = new LoadFilesResponse { Files = files };
-        return Results.Ok(response);
+        return Results.Success(SuccessCodes.Ok, response);
     }
 }

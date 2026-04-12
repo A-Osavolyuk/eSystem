@@ -13,6 +13,7 @@ using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Common.Messaging;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Utilities.Query;
 
 namespace eSecurity.Server.Security.Identity.SignUp.Strategies;
@@ -54,7 +55,7 @@ public sealed class OAuthSignUpStrategy(
     {
         if (payload is not OAuthSignUpPayload oauthPayload)
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidPayloadType,
                 Description = "Invalid payload"
@@ -64,7 +65,7 @@ public sealed class OAuthSignUpStrategy(
         var authenticationSession = await _authenticationSessionManager.FindByIdAsync(oauthPayload.Sid, cancellationToken);
         if (authenticationSession is null)
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidSession,
                 Description = "Invalid session"
@@ -74,7 +75,7 @@ public sealed class OAuthSignUpStrategy(
         var taken = await _emailManager.IsTakenAsync(oauthPayload.Email, cancellationToken);
         if (taken)
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.EmailTaken,
                 Description = "Email is already taken"
@@ -94,7 +95,14 @@ public sealed class OAuthSignUpStrategy(
         if (!setResult.Succeeded) return setResult;
 
         var role = await _roleManager.FindByNameAsync("User", cancellationToken);
-        if (role is null) return Results.NotFound("Cannot find role 'User'");
+        if (role is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "Cannot find role 'User'"
+            });
+        }
 
         var assignResult = await _roleManager.AssignAsync(user, role, cancellationToken);
         if (!assignResult.Succeeded) return assignResult;
@@ -120,7 +128,14 @@ public sealed class OAuthSignUpStrategy(
         if (!deviceResult.Succeeded) return deviceResult;
 
         var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
-        if (email is null) return Results.NotFound("Email not found");
+        if (email is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Email not found"
+            });
+        }
         
         var message = new EmailMessage
         {
@@ -164,7 +179,7 @@ public sealed class OAuthSignUpStrategy(
         var sessionResult = await _authenticationSessionManager.UpdateAsync(authenticationSession, cancellationToken);
         if (!sessionResult.Succeeded) return sessionResult;
         
-        return Results.Found(QueryBuilder.Create()
+        return Results.Redirect(RedirectionCode.Found, QueryBuilder.Create()
             .WithUri(oauthPayload.ReturnUri)
             .WithQueryParam("sid", authenticationSession.Id.ToString())
             .WithQueryParam("state", oauthPayload.State)

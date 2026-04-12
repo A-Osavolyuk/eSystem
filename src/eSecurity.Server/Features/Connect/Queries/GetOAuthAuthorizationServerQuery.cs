@@ -1,5 +1,6 @@
 ﻿using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Security.Authorization.OAuth;
@@ -61,6 +62,6 @@ public sealed class GetOAuthAuthorizationServerQueryHandler : IRequestHandler<Ge
             ]
         };
 
-        return Task.FromResult(Results.Ok(discovery));
+        return Task.FromResult(Results.Success(SuccessCodes.Ok, discovery));
     }
 }

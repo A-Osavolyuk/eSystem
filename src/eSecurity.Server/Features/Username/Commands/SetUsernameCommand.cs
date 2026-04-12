@@ -4,6 +4,7 @@ using eSecurity.Server.Security.Identity.User;
 using eSecurity.Server.Security.Identity.User.Username;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Features.Username.Commands;
 
@@ -21,14 +22,28 @@ public sealed class SetUsernameCommandHandler(
     public async Task<Result> Handle(SetUsernameCommand request, CancellationToken cancellationToken)
     {
         var session = await _sessionManager.FindByIdAsync(request.Request.SessionId, cancellationToken);
-        if (session is null) return Results.NotFound("Session not found");
+        if (session is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "Session not found"
+            });
+        }
         
         var user = await _userManager.FindByIdAsync(session.UserId, cancellationToken);
-        if (user is null) return Results.NotFound("User not found");
+        if (user is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "User not found"
+            });
+        }
 
         if (await _usernameManager.IsTakenAsync(request.Request.Username, cancellationToken))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.UsernameTaken,
                 Description = "The username is already taken."

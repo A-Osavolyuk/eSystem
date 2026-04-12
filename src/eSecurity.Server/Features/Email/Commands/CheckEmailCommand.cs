@@ -2,6 +2,7 @@
 using eSecurity.Server.Security.Identity.Email;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Features.Email.Commands;
 
@@ -16,13 +17,13 @@ public class CheckEmailCommandHandler(IEmailManager emailManager) : IRequestHand
         var isTaken = await _emailManager.IsTakenAsync(request.Request.Email, cancellationToken);
         if (isTaken)
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.EmailTaken,
                 Description = "Email is already taken"
             });
         }
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 }

@@ -4,6 +4,7 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Token.DeviceCode;
@@ -31,7 +32,7 @@ public sealed class OidcDeviceCodeFlow(
         var client = await _clientManager.FindByIdAsync(context.ClientId, cancellationToken);
         if (client is null || deviceCode.UserId is null || deviceCode.SessionId is null)
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Invalid device code"
@@ -48,7 +49,7 @@ public sealed class OidcDeviceCodeFlow(
         var user = await _userManager.FindByIdAsync(deviceCode.UserId.Value, cancellationToken);
         if (user is null)
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Invalid device code"
@@ -64,7 +65,7 @@ public sealed class OidcDeviceCodeFlow(
         var session = await _sessionManager.FindAsync(user, cancellationToken);
         if (session is null || session.ExpireDate < DateTimeOffset.UtcNow)
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Invalid authorization code."
@@ -78,12 +79,12 @@ public sealed class OidcDeviceCodeFlow(
         if (!accessTokenResult.Succeeded)
         {
             var error = accessTokenResult.GetError();
-            return Results.InternalServerError(error);
+            return Results.ServerError(ServerErrorCode.InternalServerError, error);
         }
 
         if (!accessTokenResult.TryGetValue(out var accessToken))
         {
-            return Results.InternalServerError(new Error()
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
             {
                 Code = ErrorCode.ServerError,
                 Description = "Server error"
@@ -104,12 +105,12 @@ public sealed class OidcDeviceCodeFlow(
             if (!refreshTokenResult.Succeeded)
             {
                 var error = refreshTokenResult.GetError();
-                return Results.InternalServerError(error);
+                return Results.ServerError(ServerErrorCode.InternalServerError, error);
             }
 
             if (!accessTokenResult.TryGetValue(out var refreshToken))
             {
-                return Results.InternalServerError(new Error()
+                return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
                 {
                     Code = ErrorCode.ServerError,
                     Description = "Server error"
@@ -128,12 +129,12 @@ public sealed class OidcDeviceCodeFlow(
             if (!loginTokenResult.Succeeded)
             {
                 var error = loginTokenResult.GetError();
-                return Results.InternalServerError(error);
+                return Results.ServerError(ServerErrorCode.InternalServerError, error);
             }
 
             if (!accessTokenResult.TryGetValue(out var loginToken))
             {
-                return Results.InternalServerError(new Error()
+                return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
                 {
                     Code = ErrorCode.ServerError,
                     Description = "Server error"
@@ -150,12 +151,12 @@ public sealed class OidcDeviceCodeFlow(
         if (!idTokenResult.Succeeded)
         {
             var error = idTokenResult.GetError();
-            return Results.InternalServerError(error);
+            return Results.ServerError(ServerErrorCode.InternalServerError, error);
         }
 
         if (!idTokenResult.TryGetValue(out var idToken))
         {
-            return Results.InternalServerError(new Error()
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
             {
                 Code = ErrorCode.ServerError,
                 Description = "Server error"
@@ -164,6 +165,6 @@ public sealed class OidcDeviceCodeFlow(
             
         response.IdToken = idToken;
         
-        return Results.Ok(response);
+        return Results.Success(SuccessCodes.Ok, response);
     }
 }

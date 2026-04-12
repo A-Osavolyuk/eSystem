@@ -5,6 +5,7 @@ using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.Email.Commands;
@@ -25,15 +26,26 @@ public class AddEmailCommandHandler(
     public async Task<Result> Handle(AddEmailCommand request, CancellationToken cancellationToken)
     {
         var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
-        if (subjectClaim is null) return Results.BadRequest("Invalid request");
+        if (subjectClaim is null) return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+        {
+            Code = ErrorCode.BadRequest,
+            Description = "Invalid request"
+        });
         
         var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
-        if (user is null) return Results.NotFound("User not found");
+        if (user is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "User not found"
+            });
+        }
 
         var secondaryEmails = await _emailManager.GetAllAsync(user, EmailType.Secondary, cancellationToken);
         if (secondaryEmails.Count >= _options.SecondaryEmailMaxCount)
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.MaxEmailsCount,
                 Description = "User already has maximum count of secondary emails."
@@ -43,7 +55,7 @@ public class AddEmailCommandHandler(
         if (_options.RequireUniqueEmail)
         {
             var taken = await _emailManager.IsTakenAsync(request.Request.Email, cancellationToken);
-            if (taken) return Results.BadRequest(new Error
+            if (taken) return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.EmailTaken,
                 Description = "Email is already taken"

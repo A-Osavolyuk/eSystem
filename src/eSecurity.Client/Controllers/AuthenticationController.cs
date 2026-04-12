@@ -5,6 +5,7 @@ using eSecurity.Client.Security.Cookies;
 using eSecurity.Client.Security.Cookies.Constants;
 using eSecurity.Client.Security.Cryptography.Protection.Constants;
 using eSecurity.Core.Common.DTOs;
+using eSystem.Core.Primitives.Enums;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
@@ -34,7 +35,7 @@ public class AuthenticationController(IDataProtectionProvider protectionProvider
         };
 
         Response.Cookies.Append(DefaultCookies.Session, protectedCookie, cookieOptions);
-        return Ok(Results.Ok());
+        return Ok(Results.Success(SuccessCodes.Ok));
     }
     
     [HttpPost("logout")]
@@ -42,7 +43,7 @@ public class AuthenticationController(IDataProtectionProvider protectionProvider
     {
         Response.Cookies.Delete(DefaultCookies.Session);
 
-        return Ok(Results.Ok());
+        return Ok(Results.Success(SuccessCodes.Ok));
     }
 
     [HttpPost("sign-in")]
@@ -78,7 +79,7 @@ public class AuthenticationController(IDataProtectionProvider protectionProvider
             authenticationProperties
         );
 
-        return Ok(Results.Ok());
+        return Ok(Results.Success(SuccessCodes.Ok));
     }
 
     [HttpPost("sign-out")]
@@ -87,7 +88,7 @@ public class AuthenticationController(IDataProtectionProvider protectionProvider
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         Response.Cookies.Delete(DefaultCookies.Payload);
 
-        return Ok(Results.Ok());
+        return Ok(Results.Success(SuccessCodes.Ok));
     }
 
     [HttpPost("refresh")]
@@ -106,6 +107,6 @@ public class AuthenticationController(IDataProtectionProvider protectionProvider
         };
 
         Response.Cookies.Append(DefaultCookies.Payload, protectedCookie, cookieOptions);
-        return Ok(Results.Ok());
+        return Ok(Results.Success(SuccessCodes.Ok));
     }
 }

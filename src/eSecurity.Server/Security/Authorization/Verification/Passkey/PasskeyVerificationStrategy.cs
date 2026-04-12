@@ -6,6 +6,7 @@ using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Security.Authorization.Verification.Passkey;
@@ -23,32 +24,46 @@ public sealed class PasskeyVerificationStrategy(
     private readonly IVerificationManager _verificationManager = verificationManager;
     private readonly VerificationConfiguration _configuration = options.Value;
 
-    public async ValueTask<Result> ExecuteAsync(PasskeyVerificationContext context, 
+    public async ValueTask<Result> ExecuteAsync(PasskeyVerificationContext context,
         CancellationToken cancellationToken = default)
     {
         var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
-        if (subjectClaim is null) return Results.BadRequest("Invalid request");
+        if (subjectClaim is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Invalid subject"
+            });
+        }
 
         var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
-        if (user is null) return Results.NotFound("User was not found");
-        
+        if (user is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "User was not found"
+            });
+        }
+
         var credential = context.Credential;
         var credentialId = CredentialUtils.ToBase64String(credential.Id);
 
         var passkey = await _passkeyManager.FindByCredentialIdAsync(credentialId, cancellationToken);
         if (passkey is null)
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidCredentials,
                 Description = "Invalid credential"
             });
         }
-        
+
         var savedChallenge = _httpContext.Session.GetString(ChallengeSessionKeys.Assertion);
         if (string.IsNullOrEmpty(savedChallenge))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidChallenge,
                 Description = "Invalid challenge"
@@ -69,11 +84,11 @@ public sealed class PasskeyVerificationStrategy(
             ApprovedAt = DateTimeOffset.UtcNow,
             ExpiredAt = DateTimeOffset.UtcNow.Add(_configuration.Timestamp),
         };
-        
+
         var verificationResult = await _verificationManager.CreateAsync(requestEntity, cancellationToken);
         if (!verificationResult.Succeeded) return verificationResult;
 
         var response = new VerificationResponse() { VerificationId = requestEntity.Id };
-        return Results.Ok(response);
+        return Results.Success(SuccessCodes.Ok, response);
     }
 }

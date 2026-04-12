@@ -1,4 +1,5 @@
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authorization.OAuth.Token;
 using eSystem.Core.Security.Authorization.OAuth.Token.AuthorizationCode;
 
@@ -18,7 +19,7 @@ public class AuthorizationCodeStrategy(
             throw new NotSupportedException("Payload type must be 'AuthorizationCodeRequest'");
 
         if (string.IsNullOrEmpty(request.RedirectUri))
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "redirect_uri is required"
@@ -32,7 +33,7 @@ public class AuthorizationCodeStrategy(
             authorizationCode.ExpiredAt < DateTimeOffset.UtcNow ||
             !authorizationCode.RedirectUri.Equals(redirectUri))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Invalid authorization code."

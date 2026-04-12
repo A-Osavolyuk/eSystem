@@ -3,6 +3,7 @@ using eSecurity.Core.Common.Responses;
 using eSecurity.Server.Security.Authorization.OAuth.Token.DeviceCode;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Features.DeviceCode.Commands;
 
@@ -18,7 +19,7 @@ public class CheckDeviceCodeCommandHandler(
         var deviceCode = await _deviceCodeManager.FindByCodeAsync(request.Request.UserCode, cancellationToken);
         if (deviceCode is null)
         {
-            return Results.Ok(new CheckDeviceCodeResponse()
+            return Results.Success(SuccessCodes.Ok, new CheckDeviceCodeResponse()
             {
                 Exists = false
             });
@@ -26,7 +27,7 @@ public class CheckDeviceCodeCommandHandler(
 
         if (deviceCode.ExpiresAt < DateTimeOffset.UtcNow)
         {
-            return Results.Ok(new CheckDeviceCodeResponse()
+            return Results.Success(SuccessCodes.Ok, new CheckDeviceCodeResponse()
             {
                 Exists = true,
                 IsExpired = true
@@ -42,6 +43,6 @@ public class CheckDeviceCodeCommandHandler(
             _ => throw new NotSupportedException("Unsupported device code state")
         };
         
-        return Results.Ok(response);
+        return Results.Success(SuccessCodes.Ok, response);
     }
 }

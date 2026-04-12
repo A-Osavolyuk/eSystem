@@ -2,6 +2,7 @@
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Cryptography.Protection.Constants;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Server.Security.Authentication.TwoFactor.RecoveryCode;
@@ -54,18 +55,32 @@ public sealed class RecoverManager(
         var recoveryCodes = await _context.UserRecoveryCodes
             .Where(x => x.UserId == user.Id)
             .ToListAsync(cancellationToken);
-        
-        if (recoveryCodes.Count == 0) return Results.BadRequest("User does not have any recovery code.");
+
+        if (recoveryCodes.Count == 0)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "User does not have any recovery code."
+            });
+        }
         
         var recoveryCode = recoveryCodes.FirstOrDefault(
             x => _protector.Unprotect(x.ProtectedCode) == code);
-        
-        if (recoveryCode is null) return Results.BadRequest("Invalid recovery code.");
+
+        if (recoveryCode is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Invalid recovery code."
+            });
+        }
 
         _context.UserRecoveryCodes.Remove(recoveryCode);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> RevokeAsync(UserEntity user, CancellationToken cancellationToken = default)
@@ -77,7 +92,7 @@ public sealed class RecoverManager(
         _context.UserRecoveryCodes.RemoveRange(codes);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<bool> HasAsync(UserEntity user, CancellationToken cancellationToken = default)

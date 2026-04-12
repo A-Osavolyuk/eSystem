@@ -2,6 +2,7 @@
 using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Security.Authentication.Lockout;
 
@@ -20,7 +21,14 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
         string? description = null, CancellationToken cancellationToken = default)
     {
         var state = await GetAsync(user, cancellationToken);
-        if (state is null) return Results.NotFound("State not found");
+        if (state is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "State not found"
+            });
+        }
 
         state.Permanent = true;
         state.Type = type;
@@ -30,14 +38,21 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
         _context.LockoutStates.Update(state);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> BlockTemporaryAsync(UserEntity user, LockoutType type, LockoutPeriod period,
         string? description = null, CancellationToken cancellationToken = default)
     {
         var state = await GetAsync(user, cancellationToken);
-        if (state is null) return Results.NotFound("State not found");
+        if (state is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "State not found"
+            });
+        }
         
         var duration = period switch
         {
@@ -58,14 +73,21 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
         _context.LockoutStates.Update(state);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> BlockTemporaryAsync(UserEntity user, LockoutType type, TimeSpan duration,
         string? description = null, CancellationToken cancellationToken = default)
     {
         var state = await GetAsync(user, cancellationToken);
-        if (state is null) return Results.NotFound("State not found");
+        if (state is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "State not found"
+            });
+        }
 
         state.Permanent = false;
         state.Type = type;
@@ -76,13 +98,20 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
         _context.LockoutStates.Update(state);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> UnblockAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
         var state = await GetAsync(user, cancellationToken);
-        if (state is null) return Results.NotFound("State not found");
+        if (state is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "State not found"
+            });
+        }
 
         state.Permanent = false;
         state.Type = LockoutType.None;
@@ -93,6 +122,6 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
         _context.LockoutStates.Update(state);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 }

@@ -3,6 +3,7 @@ using eSystem.Core.Binding;
 using eSystem.Core.Enums;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Token;
@@ -24,7 +25,7 @@ public class TokenCommandHandler(
     {
         if (!request.Form.TryGetValue("grant_type", out var grantTypeString) || string.IsNullOrEmpty(grantTypeString))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "grant_type is required"
@@ -34,7 +35,7 @@ public class TokenCommandHandler(
         var grantType = EnumHelper.FromString<GrantType>(grantTypeString.ToString());
         if (grantType is null)
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "grant_type is invalid."
@@ -43,7 +44,7 @@ public class TokenCommandHandler(
         
         if (!_configuration.GrantTypesSupported.Contains(grantType.Value))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = $"'{grantType}' grant type is not supported"
@@ -52,7 +53,7 @@ public class TokenCommandHandler(
 
         if (!request.Form.TryGetValue("client_id", out var clientId) || string.IsNullOrEmpty(clientId))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "client_id is required"
@@ -63,7 +64,7 @@ public class TokenCommandHandler(
         var tokenResult = await binder.BindAsync(request.Form, cancellationToken);
         if (!tokenResult.Succeeded || !tokenResult.TryGetValue(out var tokenRequest))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.UnsupportedGrantType,
                 Description = $"'{grantType}' grant type is allowed, but not supported"

@@ -4,6 +4,7 @@ using eSecurity.Server.Security.Cryptography.Pkce;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Token.AuthorizationCode;
@@ -30,7 +31,7 @@ public class OAuthAuthorizationCodeFlow(
     {
         var client = await _clientManager.FindByIdAsync(context.ClientId, cancellationToken);
         if (client is null)
-            return Results.Unauthorized(new Error
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error
             {
                 Code = ErrorCode.InvalidClient,
                 Description = "Client was not found."
@@ -38,7 +39,7 @@ public class OAuthAuthorizationCodeFlow(
 
         if (client.Id != code.ClientId || !client.HasUri(context.RedirectUri, UriType.Redirect))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Invalid authorization code."
@@ -46,16 +47,18 @@ public class OAuthAuthorizationCodeFlow(
         }
 
         if (!client.HasGrantType(context.GrantType))
-            return Results.BadRequest(new Error
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.UnsupportedGrantType,
                 Description = $"'{context.GrantType}' grant is not supported by client."
             });
+        }
 
         var user = await _userManager.FindByIdAsync(code.UserId, cancellationToken);
         if (user is null)
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Invalid authorization code."
@@ -64,11 +67,11 @@ public class OAuthAuthorizationCodeFlow(
 
         if (client is { ClientType: ClientType.Public, RequirePkce: true })
         {
-            if (string.IsNullOrWhiteSpace(code.CodeChallenge)
-                || code.CodeChallengeMethod is null
-                || string.IsNullOrWhiteSpace(context.CodeVerifier))
+            if (string.IsNullOrWhiteSpace(code.CodeChallenge) || 
+                code.CodeChallengeMethod is null || 
+                string.IsNullOrWhiteSpace(context.CodeVerifier))
             {
-                return Results.BadRequest(new Error
+                return Results.ClientError(ClientErrorCode.BadRequest, new Error
                 {
                     Code = ErrorCode.InvalidGrant,
                     Description = "Invalid authorization code."
@@ -83,7 +86,7 @@ public class OAuthAuthorizationCodeFlow(
 
             if (!isValidPkce)
             {
-                return Results.BadRequest(new Error
+                return Results.ClientError(ClientErrorCode.BadRequest, new Error
                 {
                     Code = ErrorCode.InvalidGrant,
                     Description = "Invalid authorization code."
@@ -105,12 +108,12 @@ public class OAuthAuthorizationCodeFlow(
         if (!accessTokenResult.Succeeded)
         {
             var error = accessTokenResult.GetError();
-            return Results.InternalServerError(error);
+            return Results.ServerError(ServerErrorCode.InternalServerError, error);
         }
         
         if (!accessTokenResult.TryGetValue(out var accessToken))
         {
-            return Results.InternalServerError(new Error()
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
             {
                 Code = ErrorCode.ServerError,
                 Description = "Server error"
@@ -126,12 +129,12 @@ public class OAuthAuthorizationCodeFlow(
             if (!refreshTokenResult.Succeeded)
             {
                 var error = refreshTokenResult.GetError();
-                return Results.InternalServerError(error);
+                return Results.ServerError(ServerErrorCode.InternalServerError, error);
             }
             
             if (!refreshTokenResult.TryGetValue(out var refreshToken))
             {
-                return Results.InternalServerError(new Error()
+                return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
                 {
                     Code = ErrorCode.ServerError,
                     Description = "Server error"
@@ -141,6 +144,6 @@ public class OAuthAuthorizationCodeFlow(
             response.RefreshToken = refreshToken;
         }
 
-        return Results.Ok(response);
+        return Results.Success(SuccessCodes.Ok, response);
     }
 }

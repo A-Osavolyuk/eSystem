@@ -8,6 +8,7 @@ using eSystem.Core.Binding;
 using eSystem.Core.Enums;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Introspection;
 
@@ -37,7 +38,7 @@ public class IntrospectionCommandHandler(
         if (!bindingResult.Succeeded || !bindingResult.TryGetValue(out var introspectionRequest))
         {
             var error = bindingResult.GetError();
-            return Results.BadRequest(error);
+            return Results.ClientError(ClientErrorCode.BadRequest, error);
         }
 
         OpaqueTokenType? opaqueTokenType = introspectionRequest.TokenTypeHint switch
@@ -55,7 +56,7 @@ public class IntrospectionCommandHandler(
             : await _tokenManager.FindByHashAsync(incomingHash, cancellationToken);
 
         if (token is null || !token.IsValid || token.TokenType is OpaqueTokenType.LoginToken)
-            return Results.Ok(IntrospectionResponse.Fail());
+            return Results.Success(SuccessCodes.Ok, IntrospectionResponse.Fail());
 
         var tokenType = token.TokenType switch
         {
@@ -81,15 +82,15 @@ public class IntrospectionCommandHandler(
         if (token.SessionId.HasValue)
         {
             var session = await _sessionManager.FindByIdAsync(token.SessionId.Value, cancellationToken);
-            if (session is null) return Results.Ok(IntrospectionResponse.Fail());
+            if (session is null) return Results.Success(SuccessCodes.Ok, IntrospectionResponse.Fail());
             
             var user = await _userManager.FindByIdAsync(session.UserId, cancellationToken);
-            if (user is null) return Results.Ok(IntrospectionResponse.Fail());
+            if (user is null) return Results.Success(SuccessCodes.Ok, IntrospectionResponse.Fail());
 
             response.Subject = user.Id.ToString();
             response.Username = user.Username;
         }
 
-        return Results.Ok(response);
+        return Results.Success(SuccessCodes.Ok, response);
     }
 }

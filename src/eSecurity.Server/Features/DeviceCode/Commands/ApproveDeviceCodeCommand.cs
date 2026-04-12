@@ -7,6 +7,7 @@ using eSecurity.Server.Security.Authorization.OAuth.Token.DeviceCode;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.DeviceCode.Commands;
@@ -31,11 +32,18 @@ public sealed class ApproveDeviceCodeCommandHandler(
     public async Task<Result> Handle(ApproveDeviceCodeCommand request, CancellationToken cancellationToken)
     {
         var deviceCode = await _deviceCodeManager.FindByCodeAsync(request.Request.UserCode, cancellationToken);
-        if (deviceCode is null) return Results.NotFound("Device code was not found");
+        if (deviceCode is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "Device code not found"
+            });
+        }
 
         if (deviceCode.ExpiresAt < DateTimeOffset.UtcNow)
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.ExpiredToken,
                 Description = "Device code is already expired"
@@ -44,7 +52,7 @@ public sealed class ApproveDeviceCodeCommandHandler(
 
         if (deviceCode.State != DeviceCodeState.Pending)
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidToken,
                 Description = "Device code is not valid"
@@ -54,19 +62,47 @@ public sealed class ApproveDeviceCodeCommandHandler(
         if (request.Request.SessionId.HasValue)
         {
             var session = await _sessionManager.FindByIdAsync(request.Request.SessionId.Value, cancellationToken);
-            if (session is null) return Results.NotFound("Session was not found");
+            if (session is null)
+            {
+                return Results.ClientError(ClientErrorCode.NotFound, new Error()
+                {
+                    Code = ErrorCode.NotFound,
+                    Description = "Session not found"
+                });
+            }
 
             deviceCode.SessionId = session.Id;
         }
 
         var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
-        if (subjectClaim is null) return Results.BadRequest("Invalid request");
+        if (subjectClaim is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Invalid request"
+            });
+        }
         
         var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
-        if (user is null) return Results.NotFound("User was not found");
+        if (user is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "User not found"
+            });
+        }
         
         var client = await _clientManager.FindByIdAsync(deviceCode.ClientId, cancellationToken);
-        if (client is null) return Results.NotFound("Client was not found");
+        if (client is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "Client not found"
+            });
+        }
 
         var scopes = deviceCode.Scope.Split(' ').ToList();
         var consent = await _consentManager.FindAsync(user, client, cancellationToken);

@@ -7,6 +7,7 @@ using eSecurity.Server.Security.Authorization.Verification;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Features.Password.Commands;
 
@@ -24,11 +25,24 @@ public sealed class ConfirmForgotPasswordCommandHandler(
     public async Task<Result> Handle(ConfirmForgotPasswordCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
-        if (user is null) return Results.NotFound("User not found.");
+        if (user is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "User not found."
+            });
+        }
 
         var code = await _codeManager.FindAsync(user, request.Request.Code, cancellationToken);
-        if (code is null || code.ExpiredAt < DateTimeOffset.UtcNow) 
-            return Results.NotFound("Invalid code.");
+        if (code is null || code.ExpiredAt < DateTimeOffset.UtcNow)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "Code not found."
+            });
+        }
 
         var codeResult = await _codeManager.ConsumeAsync(code, cancellationToken);
         if (codeResult.Succeeded) return codeResult;
@@ -49,6 +63,6 @@ public sealed class ConfirmForgotPasswordCommandHandler(
         if (verificationResult.Succeeded) return verificationResult;
 
         var response = new ConfirmForgotPasswordResponse { VerificationId = requestEntity.Id };
-        return Results.Ok(response);
+        return Results.Success(SuccessCodes.Ok, response);
     }
 }

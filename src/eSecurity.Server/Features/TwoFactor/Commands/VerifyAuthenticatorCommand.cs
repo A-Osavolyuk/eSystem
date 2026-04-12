@@ -3,6 +3,7 @@ using eSecurity.Server.Security.Authentication.TwoFactor.Authenticator;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.TwoFactor.Commands;
@@ -14,17 +15,37 @@ public class VerifyAuthenticatorCommandHandler(
     IHttpContextAccessor httpContextAccessor) : IRequestHandler<VerifyAuthenticatorCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
-    private readonly HttpContext _httpContext= httpContextAccessor.HttpContext!;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(VerifyAuthenticatorCommand request, CancellationToken cancellationToken)
     {
         var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
-        if (subjectClaim is null) return Results.BadRequest("Invalid request");
-        
+        if (subjectClaim is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Invalid request"
+            });
+        }
+
         var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
-        if (user is null) return Results.NotFound("User not found.");
-        
+        if (user is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "User not found"
+            });
+        }
+
         var verified = AuthenticatorUtils.VerifyCode(request.Request.Code, request.Request.Secret);
-        return verified ? Results.Ok() : Results.BadRequest("Invalid code.");
+        return verified
+            ? Results.Success(SuccessCodes.Ok)
+            : Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Invalid code."
+            });
     }
 }

@@ -30,6 +30,12 @@ public class Result
         StatusCode = statusCode,
     };
     
+    public static Result Failure(HttpStatusCode statusCode) => new()
+    {
+        Succeeded = false,
+        StatusCode = statusCode
+    };
+    
     public static Result Failure(HttpStatusCode statusCode, Error error) => new()
     {
         Succeeded = false,

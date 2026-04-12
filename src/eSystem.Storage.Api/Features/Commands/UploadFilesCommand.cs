@@ -1,5 +1,6 @@
 ﻿using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Requests;
 using eSystem.Core.Responses.Storage;
 using eSystem.Storage.Api.Interfaces;
@@ -22,11 +23,15 @@ internal sealed class UploadFilesCommandHandler(
 
         if (list.Count == 0)
         {
-            return Results.InternalServerError($"Cannot upload files of type '{metadata.Type}' with identifier '{metadata.Identifier}'.");
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+            {
+                Code = ErrorCode.ServerError,
+                Description = $"Cannot upload files of type '{metadata.Type}' with identifier '{metadata.Identifier}'."
+            });
         }
 
         var response = new UploadFiledResponse { Files = list };
         
-        return Results.Ok(response);
+        return Results.Success(SuccessCodes.Ok, response);
     }
 }

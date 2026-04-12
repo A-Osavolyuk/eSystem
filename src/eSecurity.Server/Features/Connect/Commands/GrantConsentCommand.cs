@@ -6,6 +6,7 @@ using eSecurity.Server.Security.Authorization.OAuth.Consents;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
 
 namespace eSecurity.Server.Features.Connect.Commands;
@@ -28,13 +29,34 @@ public class GrantConsentCommandHandler(
     public async Task<Result> Handle(GrantConsentCommand request, CancellationToken cancellationToken)
     {
         var session = await _sessionManager.FindByIdAsync(request.Request.SessionId, cancellationToken);
-        if (session is null) return Results.NotFound("Session was not found");
+        if (session is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "Session was not found"
+            });
+        }
         
         var user = await _userManager.FindByIdAsync(session.UserId, cancellationToken);
-        if (user is null) return Results.NotFound("User was not found");
+        if (user is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "User was not found"
+            });
+        }
 
         var client = await _clientManager.FindByIdAsync(request.Request.ClientId, cancellationToken);
-        if (client is null) return Results.NotFound("Client was not found");
+        if (client is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "Client was not found"
+            });
+        }
 
         var consent = await _consentManager.FindAsync(user, client, cancellationToken);
         if (consent is null)
@@ -52,7 +74,7 @@ public class GrantConsentCommandHandler(
             {
                 if (!_options.ScopesSupported.Contains(scope))
                 {
-                    return Results.BadRequest(new Error
+                    return Results.ClientError(ClientErrorCode.BadRequest, new Error
                     {
                         Code = ErrorCode.InvalidScope,
                         Description = $"'{scope}' scope is not supported."
@@ -62,7 +84,7 @@ public class GrantConsentCommandHandler(
                 var clientScope = client.AllowedScopes.FirstOrDefault(x => x.Scope.Value == scope);
                 if (clientScope is null)
                 {
-                    return Results.BadRequest(new Error
+                    return Results.ClientError(ClientErrorCode.BadRequest, new Error
                     {
                         Code = ErrorCode.InvalidScope,
                         Description = $"'{scope}' scope is not supported by client."
@@ -73,7 +95,7 @@ public class GrantConsentCommandHandler(
                 if (!grantResult.Succeeded) return grantResult;
             }
 
-            return Results.Ok();
+            return Results.Success(SuccessCodes.Ok);
         }
 
         if (!consent.HasScopes(request.Request.Scopes, out var remainingScopes))
@@ -82,7 +104,7 @@ public class GrantConsentCommandHandler(
             {
                 if (!_options.ScopesSupported.Contains(scope))
                 {
-                    return Results.BadRequest(new Error
+                    return Results.ClientError(ClientErrorCode.BadRequest, new Error
                     {
                         Code = ErrorCode.InvalidScope,
                         Description = $"'{scope}' scope is not supported."
@@ -95,6 +117,6 @@ public class GrantConsentCommandHandler(
             }
         }
         
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 }

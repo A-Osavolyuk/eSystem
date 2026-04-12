@@ -1,5 +1,6 @@
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
 
 namespace eSecurity.Server.Features.Connect.Queries;
@@ -13,6 +14,6 @@ public class GetOpenidConfigurationQueryHandler(
 
     public Task<Result> Handle(GetOpenidConfigurationQuery request, CancellationToken cancellationToken)
     {
-        return Task.FromResult(Results.Ok(_configuration));
+        return Task.FromResult(Results.Success(SuccessCodes.Ok, _configuration));
     }
 }

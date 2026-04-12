@@ -2,6 +2,7 @@
 using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Security.Authorization.Verification;
 
@@ -22,7 +23,7 @@ public class VerificationManager(AuthDbContext context) : IVerificationManager
         await _context.VerificationRequests.AddAsync(request, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> ConsumeAsync(VerificationRequestEntity request, 
@@ -34,7 +35,7 @@ public class VerificationManager(AuthDbContext context) : IVerificationManager
         _context.VerificationRequests.Update(request);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> CancelAsync(VerificationRequestEntity request, 
@@ -46,6 +47,6 @@ public class VerificationManager(AuthDbContext context) : IVerificationManager
         _context.VerificationRequests.Update(request);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 }

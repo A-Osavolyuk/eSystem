@@ -6,6 +6,7 @@ using eSecurity.Server.Security.Authorization.OAuth.Consents;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Features.Connect.Commands;
 
@@ -25,18 +26,39 @@ public class CheckConsentCommandHandler(
     public async Task<Result> Handle(CheckConsentCommand request, CancellationToken cancellationToken)
     {
         var session = await _sessionManager.FindByIdAsync(request.Request.SessionId, cancellationToken);
-        if (session is null) return Results.NotFound("Session not found");
+        if (session is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "Session not found"
+            });
+        }
         
         var user = await _userManager.FindByIdAsync(session.UserId, cancellationToken);
-        if (user is null) return Results.NotFound("User not found");
+        if (user is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "User not found"
+            });
+        }
 
         var client = await _clientManager.FindByIdAsync(request.Request.ClientId, cancellationToken);
-        if (client is null) return Results.NotFound("Client not found");
+        if (client is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "Client not found"
+            });
+        }
 
         var consent = await _consentManager.FindAsync(user, client, cancellationToken);
         if (consent is null)
         {
-            return Results.Ok(new CheckConsentResponse
+            return Results.Success(SuccessCodes.Ok, new CheckConsentResponse
             {
                 IsGranted = false,
                 UserHint = user.Username,
@@ -46,7 +68,7 @@ public class CheckConsentCommandHandler(
 
         if (!consent.HasScopes(request.Request.Scopes, out var remainingScopes))
         {
-            return Results.Ok(new CheckConsentResponse
+            return Results.Success(SuccessCodes.Ok, new CheckConsentResponse
             {
                 IsGranted = false,
                 UserHint = user.Username,
@@ -54,7 +76,7 @@ public class CheckConsentCommandHandler(
             });
         }
         
-        return Results.Ok(new CheckConsentResponse
+        return Results.Success(SuccessCodes.Ok, new CheckConsentResponse
         {
             IsGranted = true, 
             UserHint = user.Username,

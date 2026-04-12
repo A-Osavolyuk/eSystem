@@ -3,6 +3,7 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Token.TokenExchange;
 
@@ -26,7 +27,7 @@ public sealed class OpaqueTokenTransformationHandler(
     {
         if (!await _tokenManager.IsOpaqueAsync(context.SubjectToken, cancellationToken))
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Subject token is invalid."
@@ -37,7 +38,7 @@ public sealed class OpaqueTokenTransformationHandler(
         var token = await _tokenManager.FindByHashAsync(hash, cancellationToken);
         if (token is null || !token.IsValid)
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Subject token is invalid."
@@ -47,7 +48,7 @@ public sealed class OpaqueTokenTransformationHandler(
         var client = await _clientManager.FindByIdAsync(context.ClientId, cancellationToken);
         if (client is null)
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Subject token is invalid."
@@ -70,7 +71,7 @@ public sealed class OpaqueTokenTransformationHandler(
         {
             if (!client.IsValidAudience(context.Audience))
             {
-                return Results.BadRequest(new Error()
+                return Results.ClientError(ClientErrorCode.BadRequest, new Error()
                 {
                     Code = ErrorCode.InvalidTarget,
                     Description = "The requested audience is not an allowed audience for this client."
@@ -88,7 +89,7 @@ public sealed class OpaqueTokenTransformationHandler(
 
         if (!scopes.All(s => subjectScopes.Contains(s)))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidScope,
                 Description = "Requested scopes exceed the subject token scopes."
@@ -100,7 +101,7 @@ public sealed class OpaqueTokenTransformationHandler(
         var tokenFactory = _tokenBuilderProvider.GetFactory<OpaqueTokenBuildContext, string>();
         var opaqueToken = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
 
-        return Results.Ok(new TokenExchangeResponse
+        return Results.Success(SuccessCodes.Ok, new TokenExchangeResponse
         {
             ExpiresIn = (int)_configurations.DefaultAccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenType.Bearer,

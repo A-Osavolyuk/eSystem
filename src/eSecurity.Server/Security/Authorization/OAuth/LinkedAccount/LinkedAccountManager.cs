@@ -2,6 +2,7 @@
 using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
 
@@ -30,7 +31,7 @@ public class LinkedAccountManager(AuthDbContext context) : ILinkedAccountManager
         await _context.UserLinkedAccounts.AddAsync(linkedAccount, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> RemoveAsync(UserLinkedAccountEntity linkedAccount,
@@ -39,7 +40,7 @@ public class LinkedAccountManager(AuthDbContext context) : ILinkedAccountManager
         _context.UserLinkedAccounts.Remove(linkedAccount);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<bool> HasAsync(UserEntity user, CancellationToken cancellationToken = default)

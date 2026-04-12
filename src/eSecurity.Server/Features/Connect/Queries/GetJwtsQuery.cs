@@ -2,6 +2,7 @@ using System.Security.Cryptography.X509Certificates;
 using eSecurity.Server.Security.Cryptography.Signing.Certificates;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Features.Connect.Queries;
 
@@ -16,16 +17,30 @@ public class GetJwksQueryHandler(
     {
         var certificate = await _certificateProvider.GetActiveAsync(cancellationToken);
         var publicKey = certificate.Certificate.GetRSAPublicKey();
-        if (publicKey is null) return Results.InternalServerError("Error on retrieving public key.");
-        
+        if (publicKey is null)
+        {
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+            {
+                Description = "Error on retrieving public key.",
+                Code = ErrorCode.ServerError
+            });
+        }
+
         var securityKey = new RsaSecurityKey(publicKey) { KeyId = certificate.Id.ToString() };
         var jwks = JsonWebKeyConverter.ConvertFromRSASecurityKey(securityKey);
-        if (jwks is null) return Results.InternalServerError("Error on converting public key.");
-        
+        if (jwks is null)
+        {
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+            {
+                Code = ErrorCode.ServerError,
+                Description = "Error on converting public key."
+            });
+        }
+
         jwks.Use = "sig";
         jwks.Alg = SecurityAlgorithms.RsaSha256;
 
         var response = new JsonWebKeySet { Keys = { jwks } };
-        return Results.Ok(response);
+        return Results.Success(SuccessCodes.Ok, response);
     }
 }

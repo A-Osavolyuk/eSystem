@@ -5,6 +5,7 @@ using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Cryptography.Keys;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
 using eSystem.Core.Security.Authorization.OAuth.DeviceAuthorization;
 using eSystem.Core.Utilities.Query;
@@ -34,7 +35,7 @@ public sealed class DeviceAuthorizationCommandHandler(
         var client = await _clientManager.FindByIdAsync(request.Request.ClientId, cancellationToken);
         if (client is null)
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.UnauthorizedClient,
                 Description = "Client is not registered to for device authorization flow"
@@ -45,7 +46,7 @@ public sealed class DeviceAuthorizationCommandHandler(
         var invalidScopes = scopes.Except(_options.ScopesSupported).ToList();
         if (invalidScopes.Count > 0)
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidScope,
                 Description = $"Scopes are not supported: {string.Join(", ", invalidScopes)}."
@@ -56,7 +57,7 @@ public sealed class DeviceAuthorizationCommandHandler(
         var unallowedScopes = scopes.Except(allowedScopes).ToList();
         if (unallowedScopes.Count > 0)
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidScope,
                 Description = $"Scopes are not allowed for this client: {string.Join(", ", unallowedScopes)}."
@@ -101,6 +102,6 @@ public sealed class DeviceAuthorizationCommandHandler(
             VerificationUriComplete = verificationUriComplete
         };
         
-        return Results.Ok(response);
+        return Results.Success(SuccessCodes.Ok, response);
     }
 }

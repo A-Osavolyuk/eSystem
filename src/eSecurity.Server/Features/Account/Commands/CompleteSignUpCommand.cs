@@ -9,6 +9,7 @@ using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 
 namespace eSecurity.Server.Features.Account.Commands;
@@ -37,7 +38,7 @@ public sealed class CompleteSignUpCommandHandler(
 
         if (authenticationSession is null || !authenticationSession.IsActive || authenticationSession.UserId is null)
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidSession,
                 Description = "Invalid session"
@@ -45,16 +46,37 @@ public sealed class CompleteSignUpCommandHandler(
         }
 
         var user = await _userManager.FindByIdAsync(authenticationSession.UserId.Value, cancellationToken);
-        if (user is null) return Results.NotFound("User not found");
+        if (user is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "User not found"
+            });
+        }
 
         var code = await _codeManager.FindAsync(user, request.Request.Code, cancellationToken);
-        if (code is null) return Results.NotFound("Code not found");
+        if (code is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound, 
+                Description = "Code not found"
+            });
+        }
 
         var codeResult = await _codeManager.ConsumeAsync(code, cancellationToken);
         if (!codeResult.Succeeded) return codeResult;
 
         var primaryEmail = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
-        if (primaryEmail is null) return Results.NotFound("Email not found");
+        if (primaryEmail is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "Email not found"
+            });
+        }
 
         var emailResult = await _emailManager.VerifyAsync(user, primaryEmail.Email, cancellationToken);
         if (!emailResult.Succeeded) return emailResult;
@@ -77,6 +99,6 @@ public sealed class CompleteSignUpCommandHandler(
 
         if (!authenticationSessionResult.Succeeded) return authenticationSessionResult;
 
-        return Results.Ok(new CompleteSignUpResponse { SessionId = session.Id });
+        return Results.Success(SuccessCodes.Ok, new CompleteSignUpResponse { SessionId = session.Id });
     }
 }

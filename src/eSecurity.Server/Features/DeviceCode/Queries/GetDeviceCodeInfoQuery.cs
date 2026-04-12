@@ -3,6 +3,7 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authorization.OAuth.Token.DeviceCode;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Features.DeviceCode.Queries;
 
@@ -18,11 +19,18 @@ public sealed class GetDeviceCodeInfoQueryHandler(
     public async Task<Result> Handle(GetDeviceCodeInfoQuery request, CancellationToken cancellationToken)
     {
         var deviceCode = await _deviceCodeManager.FindByCodeAsync(request.UserCode, cancellationToken);
-        if (deviceCode is null) return Results.NotFound("Device code was not found");
+        if (deviceCode is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "Device code not found"
+            });
+        }
 
         if (deviceCode.State is not DeviceCodeState.Pending)
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidToken,
                 Description = "This device code is not available anymore"
@@ -30,7 +38,14 @@ public sealed class GetDeviceCodeInfoQueryHandler(
         }
 
         var client = await _clientManager.FindByIdAsync(deviceCode.ClientId, cancellationToken);
-        if (client is null) return Results.NotFound("Client was not found");
+        if (client is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "Client not found"
+            });
+        }
 
         var response = new DeviceCodeInfo()
         {
@@ -40,6 +55,6 @@ public sealed class GetDeviceCodeInfoQueryHandler(
             Scopes = deviceCode.Scope.Split(' ')
         };
         
-        return Results.Ok(response);
+        return Results.Success(SuccessCodes.Ok, response);
     }
 }

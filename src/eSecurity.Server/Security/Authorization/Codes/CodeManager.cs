@@ -4,6 +4,7 @@ using eSecurity.Server.Security.Cryptography.Codes;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSystem.Core.Common.Messaging;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Security.Authorization.Codes;
 
@@ -54,7 +55,7 @@ public sealed class CodeManager(
         _context.Codes.Remove(code);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> CancelAsync(CodeEntity code, CancellationToken cancellationToken = default)
@@ -65,6 +66,6 @@ public sealed class CodeManager(
         _context.Codes.Remove(code);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 }

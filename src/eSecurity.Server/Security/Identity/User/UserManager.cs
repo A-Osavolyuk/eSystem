@@ -3,6 +3,7 @@ using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Security.Identity.User;
 
@@ -92,7 +93,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         await _context.LockoutStates.AddAsync(lockoutState, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> UpdateAsync(UserEntity user,
@@ -101,7 +102,7 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         _context.Users.Update(user);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> DeleteAsync(UserEntity user,
@@ -110,6 +111,6 @@ public sealed class UserManager(AuthDbContext context) : IUserManager
         _context.Users.Remove(user);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 }

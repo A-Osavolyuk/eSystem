@@ -1,6 +1,7 @@
 ﻿using eSecurity.Server.Security.Authorization.OAuth.Protocol;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authorization.OAuth.Token;
 using eSystem.Core.Security.Authorization.OAuth.Token.DeviceCode;
@@ -23,7 +24,7 @@ public sealed class DeviceCodeStrategy(
 
         if (string.IsNullOrEmpty(request.DeviceCode))
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Invalid device code"
@@ -36,7 +37,7 @@ public sealed class DeviceCodeStrategy(
             deviceCode is { State: DeviceCodeState.Denied, IsFirstPoll: false } ||
             deviceCode.ClientId.ToString() != request.ClientId)
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Invalid device code"
@@ -50,7 +51,7 @@ public sealed class DeviceCodeStrategy(
             var deviceResult = await _deviceCodeManager.UpdateAsync(deviceCode, cancellationToken);
             if (!deviceResult.Succeeded) return deviceResult;
                 
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.AccessDenied,
                 Description = "Device code was denied"
@@ -59,7 +60,7 @@ public sealed class DeviceCodeStrategy(
 
         if (deviceCode.State == DeviceCodeState.Pending)
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.AuthorizationPending,
                 Description = "Authorization pending"
@@ -68,7 +69,7 @@ public sealed class DeviceCodeStrategy(
 
         if (deviceCode.ExpiresAt < DateTimeOffset.UtcNow)
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.ExpiredToken,
                 Description = "Device code is already expired"

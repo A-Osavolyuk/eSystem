@@ -1,6 +1,7 @@
 ﻿using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Security.Identity.Privacy;
 
@@ -20,7 +21,7 @@ public sealed class PersonalDataManager(AuthDbContext context) : IPersonalDataMa
         await _context.PersonalData.AddAsync(personalData, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> UpdateAsync(PersonalDataEntity personalData, 
@@ -29,7 +30,7 @@ public sealed class PersonalDataManager(AuthDbContext context) : IPersonalDataMa
         _context.PersonalData.Update(personalData);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> DeleteAsync(PersonalDataEntity personalData, 
@@ -38,6 +39,6 @@ public sealed class PersonalDataManager(AuthDbContext context) : IPersonalDataMa
         _context.PersonalData.Remove(personalData);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 }

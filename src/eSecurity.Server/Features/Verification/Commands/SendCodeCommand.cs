@@ -7,6 +7,7 @@ using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Common.Messaging;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.Verification.Commands;
@@ -27,14 +28,27 @@ public class SendCodeCommandHandler(
     public async Task<Result> Handle(SendCodeCommand request, CancellationToken cancellationToken)
     {
         var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
-        if (subjectClaim is null) return Results.BadRequest("Invalid request.");
+        if (subjectClaim is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Invalid request."
+            });
+        }
         
         var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
-        if (user is null) return Results.NotFound("User not found.");
+        if (user is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "User not found."
+            });
+        }
 
         var sender = request.Request.Sender;
         var payload = request.Request.Payload;
-
         var code = await _codeManager.CreateAsync(user, sender, cancellationToken);
 
         payload["Code"] = code;
@@ -46,12 +60,19 @@ public class SendCodeCommandHandler(
             SenderType.Sms => new CodeSmsMessage(),
             _ => null
         };
-        
-        if (message is null) return Results.BadRequest("Invalid message type.");
+
+        if (message is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Invalid message type."
+            });
+        }
 
         message.Initialize(payload);
         await _messageService.SendMessageAsync(sender, message, cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 }

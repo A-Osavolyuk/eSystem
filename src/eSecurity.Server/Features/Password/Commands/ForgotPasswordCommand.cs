@@ -7,6 +7,7 @@ using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Common.Messaging;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Features.Password.Commands;
 
@@ -27,11 +28,18 @@ public sealed class ForgotPasswordCommandHandler(
         CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
-        if (user is null) return Results.NotFound("User not found.");
+        if (user is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "User not found."
+            });
+        }
 
         if (!await _passwordManager.HasAsync(user, cancellationToken))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidPassword,
                 Description = "Password was not provided."
@@ -54,6 +62,6 @@ public sealed class ForgotPasswordCommandHandler(
         
         await _messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
         
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 }

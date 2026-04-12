@@ -2,6 +2,7 @@
 using eSecurity.Server.Security.Identity.User.Username;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Features.Username.Commands;
 
@@ -16,13 +17,13 @@ public class CheckUsernameCommandHandler(
     {
         if (await _usernameManager.IsTakenAsync(request.Request.Username, cancellationToken))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.UsernameTaken,
                 Description = "The username is already taken."
             });
         }
         
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 }

@@ -3,6 +3,7 @@ using eSecurity.Core.Security.Authentication.SignIn;
 using eSecurity.Server.Security.Authentication.SignIn;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Features.Account.Commands;
 
@@ -22,7 +23,12 @@ public class SignInCommandHandler(ISignInResolver signInResolver) : IRequestHand
             TwoFactorSignInPayload => SignInType.TwoFactor,
             _ => throw new NotSupportedException("Unknown payload")
         };
-        if (type == SignInType.OAuth) return Results.BadRequest("Unsupported for manual call");
+        
+        if (type == SignInType.OAuth) return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+        {
+            Code = ErrorCode.BadRequest,
+            Description = "Unsupported for manual call"
+        });
         
         var strategy = _signInResolver.Resolve(type);
         return await strategy.ExecuteAsync(request.Request.Payload, cancellationToken);

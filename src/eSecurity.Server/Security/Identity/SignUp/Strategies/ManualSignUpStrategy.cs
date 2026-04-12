@@ -15,6 +15,7 @@ using eSecurity.Server.Security.Identity.User.Username;
 using eSystem.Core.Common.Messaging;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 
 namespace eSecurity.Server.Security.Identity.SignUp.Strategies;
@@ -55,12 +56,18 @@ public sealed class ManualSignUpStrategy(
         CancellationToken cancellationToken = default)
     {
         if (payload is not ManualSignUpPayload manualPayload)
-            return Results.BadRequest("Incorrect payload type");
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Incorrect payload type"
+            });
+        }
         
         if (_options.RequireUniqueUsername && 
             await _usernameManager.IsTakenAsync(manualPayload.Username, cancellationToken))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.UsernameTaken,
                 Description = "This username is already taken"
@@ -70,7 +77,7 @@ public sealed class ManualSignUpStrategy(
         if (_options.RequireUniqueEmail && 
             await _emailManager.IsTakenAsync(manualPayload.Email, cancellationToken))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.EmailTaken,
                 Description = "This email is already taken."
@@ -98,7 +105,14 @@ public sealed class ManualSignUpStrategy(
         if (!setResult.Succeeded) return setResult;
 
         var role = await _roleManager.FindByNameAsync("User", cancellationToken);
-        if (role is null) return Results.NotFound("Cannot find role with name User");
+        if (role is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "Cannot find role with name User"
+            });
+        }
 
         var assignRoleResult = await _roleManager.AssignAsync(user, role, cancellationToken);
         if (!assignRoleResult.Succeeded) return assignRoleResult;
@@ -153,7 +167,7 @@ public sealed class ManualSignUpStrategy(
         var sessionResult = await _sessionManager.CreateAsync(session, cancellationToken);
         if (!sessionResult.Succeeded) return sessionResult;
 
-        return Results.Ok(new SignUpResponse
+        return Results.Success(SuccessCodes.Ok, new SignUpResponse
         {
             TransactionId = session.Id
         });

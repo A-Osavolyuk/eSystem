@@ -1,6 +1,7 @@
 ﻿using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Security.Authorization.Devices;
 
@@ -39,7 +40,7 @@ public class DeviceManager(AuthDbContext context) : IDeviceManager
         await _context.UserDevices.AddAsync(device, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> BlockAsync(UserDeviceEntity device, CancellationToken cancellationToken = default)
@@ -50,7 +51,7 @@ public class DeviceManager(AuthDbContext context) : IDeviceManager
         _context.UserDevices.Update(device);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> UnblockAsync(UserDeviceEntity device, CancellationToken cancellationToken = default)
@@ -61,6 +62,6 @@ public class DeviceManager(AuthDbContext context) : IDeviceManager
         _context.UserDevices.Update(device);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 }

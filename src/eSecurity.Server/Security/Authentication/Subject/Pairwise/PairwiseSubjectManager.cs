@@ -1,6 +1,7 @@
 ﻿using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Security.Authentication.Subject.Pairwise;
 
@@ -21,6 +22,6 @@ public sealed class PairwiseSubjectManager(AuthDbContext context) : IPairwiseSub
         await _context.PairwiseSubjects.AddAsync(subject, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 }

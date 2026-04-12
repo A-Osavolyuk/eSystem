@@ -2,6 +2,7 @@
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Cryptography.Keys;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.AuthorizationCode;
 
@@ -25,7 +26,7 @@ public class AuthorizationCodeManager(
         await _context.AuthorizationCodes.AddAsync(code, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> UseAsync(AuthorizationCodeEntity code, 
@@ -36,7 +37,7 @@ public class AuthorizationCodeManager(
         _context.AuthorizationCodes.Update(code);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public string Generate() => _keyFactory.Create(20);

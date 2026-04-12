@@ -2,6 +2,7 @@ using eSecurity.Core.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Features.Connect.Queries;
 
@@ -14,7 +15,14 @@ public class GetClientInfoQueryHandler(IClientManager clientManager) : IRequestH
     public async Task<Result> Handle(GetClientInfoQuery request, CancellationToken cancellationToken)
     {
         var client = await _clientManager.FindByIdAsync(request.ClientId, cancellationToken);
-        if (client is null) return Results.NotFound("Client not found");
+        if (client is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "Client not found"
+            });
+        }
 
         var response = new ClientInfo
         {
@@ -23,6 +31,6 @@ public class GetClientInfoQueryHandler(IClientManager clientManager) : IRequestH
             RequiredScopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
         };
         
-        return Results.Ok(response);
+        return Results.Success(SuccessCodes.Ok, response);
     }
 }

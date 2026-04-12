@@ -1,73 +1,41 @@
 ﻿using System.Net;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSystem.Core.Primitives;
 
 public static class Results
 {
-    public static Result Ok(object response) => Result.Success(HttpStatusCode.OK, response);
+    public static Result Information(InformationalCodes code)
+    {
+        var httpStatusCode = StatusCodeMapper.Map(code);
+        return Result.Success(httpStatusCode);
+    }
 
-    public static Result Ok() => Result.Success(HttpStatusCode.OK);
-    public static Result Created(object? response = null) => Result.Success(HttpStatusCode.Created, response);
-    public static Result Found(string uri) => Result.Success(HttpStatusCode.Found, uri);
-    public static Result SeeOther(string uri) => Result.Success(HttpStatusCode.SeeOther, uri);
+    public static Result Success(SuccessCodes code, object? response = null)
+    {
+        var httpStatusCode = StatusCodeMapper.Map(code);
+        return Result.Success(httpStatusCode, response);
+    }
 
-    public static Result BadRequest(string description)
-        => Result.Failure(HttpStatusCode.BadRequest, new Error
-        {
-            Code = ErrorCode.BadRequest,
-            Description = description
-        });
+    public static Result Redirect(RedirectionCode code, string uri)
+    {
+        var httpStatusCode = StatusCodeMapper.Map(code);
+        return Result.Success(httpStatusCode, uri);
+    }
 
-    public static Result BadRequest(Error error)
-        => Result.Failure(HttpStatusCode.BadRequest, error);
+    public static Result ClientError(ClientErrorCode code, Error? error = null)
+    {
+        var httpStatusCode = StatusCodeMapper.Map(code);
+        return error is not null 
+            ? Result.Failure(httpStatusCode, error) 
+            : Result.Failure(httpStatusCode);
+    }
 
-    public static Result Unauthorized(string description)
-        => Result.Failure(HttpStatusCode.Unauthorized, new Error
-        {
-            Code = ErrorCode.Unauthorized,
-            Description = description
-        });
-
-    public static Result Unauthorized(Error error)
-        => Result.Failure(HttpStatusCode.Unauthorized, error);
-
-    public static Result Forbidden(string description)
-        => Result.Failure(HttpStatusCode.Forbidden, new Error
-        {
-            Code = ErrorCode.Forbidden,
-            Description = description
-        });
-
-    public static Result Forbidden(Error error)
-        => Result.Failure(HttpStatusCode.Forbidden, error);
-
-    public static Result NotFound(string description)
-        => Result.Failure(HttpStatusCode.NotFound, new Error
-        {
-            Code = ErrorCode.NotFound,
-            Description = description
-        });
-
-    public static Result NotFound(Error error)
-        => Result.Failure(HttpStatusCode.NotFound, error);
-
-    public static Result TooManyRequests(string description)
-        => Result.Failure(HttpStatusCode.TooManyRequests, new Error
-        {
-            Code = ErrorCode.TooManyRequests,
-            Description = description
-        });
-
-    public static Result TooManyRequests(Error error)
-        => Result.Failure(HttpStatusCode.TooManyRequests, error);
-
-    public static Result InternalServerError(string description)
-        => Result.Failure(HttpStatusCode.InternalServerError, new Error
-        {
-            Code = ErrorCode.InternalServerError,
-            Description = description
-        });
-
-    public static Result InternalServerError(Error error)
-        => Result.Failure(HttpStatusCode.InternalServerError, error);
+    public static Result ServerError(ServerErrorCode code, Error? error = null)
+    {
+        var httpStatusCode = StatusCodeMapper.Map(code);
+        return error is not null 
+            ? Result.Failure(httpStatusCode, error) 
+            : Result.Failure(httpStatusCode);
+    }
 }

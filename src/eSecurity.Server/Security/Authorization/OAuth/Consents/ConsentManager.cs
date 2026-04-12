@@ -1,6 +1,7 @@
 using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Consents;
 
@@ -28,7 +29,7 @@ public class ConsentManager(AuthDbContext context) : IConsentManager
         await _context.Consents.AddAsync(consent, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> UpdateAsync(ConsentEntity consent, CancellationToken cancellationToken = default)
@@ -36,7 +37,7 @@ public class ConsentManager(AuthDbContext context) : IConsentManager
         _context.Consents.Update(consent);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> GrantAsync(ConsentEntity consent, ClientAllowedScopeEntity scope,
@@ -52,7 +53,7 @@ public class ConsentManager(AuthDbContext context) : IConsentManager
         await _context.GrantedScopes.AddAsync(grantedScope, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> RevokeAsync(ConsentEntity consent, ClientAllowedScopeEntity scope,
@@ -61,11 +62,18 @@ public class ConsentManager(AuthDbContext context) : IConsentManager
         var grantedScope = await _context.GrantedScopes.FirstOrDefaultAsync(
             x => x.ConsentId == consent.Id && x.ClientScopeId == scope.Id, cancellationToken);
 
-        if (grantedScope is null) return Results.NotFound("Scope is not granted.");
+        if (grantedScope is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "Scope is not granted."
+            });
+        }
 
         _context.GrantedScopes.Remove(grantedScope);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Security.Authorization.Roles;
 
@@ -36,7 +37,7 @@ public sealed class RoleManager(AuthDbContext context) : IRoleManager
 
         if (hasRole)
         {
-            return Results.Ok();
+            return Results.Success(SuccessCodes.Ok);
         }
         
         var userRole = new UserRoleEntity
@@ -48,6 +49,6 @@ public sealed class RoleManager(AuthDbContext context) : IRoleManager
         await _context.UserRoles.AddAsync(userRole, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 }

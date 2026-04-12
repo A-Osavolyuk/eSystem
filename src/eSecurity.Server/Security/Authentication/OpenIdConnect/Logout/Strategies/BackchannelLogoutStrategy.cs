@@ -3,6 +3,7 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Logout;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Cryptography.Encoding;
@@ -25,7 +26,14 @@ public class BackchannelLogoutStrategy(
     public async ValueTask<Result> ExecuteAsync(SessionEntity session, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(session.UserId, cancellationToken);
-        if (user is null) return Results.NotFound("User was not found");
+        if (user is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "User was not found"
+            });
+        }
 
         var clients = await _clientManager.GetClientsAsync(session, cancellationToken);
         foreach (var client in clients.Where(x => x.AllowBackChannelLogout))
@@ -40,12 +48,12 @@ public class BackchannelLogoutStrategy(
             if (!accessTokenResult.Succeeded)
             {
                 var error = accessTokenResult.GetError();
-                return Results.InternalServerError(error);
+                return Results.ServerError(ServerErrorCode.InternalServerError, error);
             }
 
             if (!accessTokenResult.TryGetValue(out var token))
             {
-                return Results.InternalServerError(new Error()
+                return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
                 {
                     Code = ErrorCode.ServerError,
                     Description = "Server error"
@@ -61,6 +69,6 @@ public class BackchannelLogoutStrategy(
             await _httpClient.SendAsync(requestMessage, cancellationToken);
         }
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 }

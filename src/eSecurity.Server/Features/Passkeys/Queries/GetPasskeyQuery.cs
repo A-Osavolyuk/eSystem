@@ -2,6 +2,7 @@
 using eSecurity.Server.Security.Credentials.PublicKey;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Features.Passkeys.Queries;
 
@@ -14,7 +15,14 @@ public class GetPasskeyQueryHandler(IPasskeyManager passkeyManager) : IRequestHa
     public async Task<Result> Handle(GetPasskeyQuery request, CancellationToken cancellationToken)
     {
         var passkey = await _passkeyManager.FindByIdAsync(request.Id, cancellationToken);
-        if (passkey is null) return Results.NotFound("Passkey not found");
+        if (passkey is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "Passkey not found"
+            });
+        }
         
         var response = new UserPasskeyDto
         {
@@ -23,6 +31,6 @@ public class GetPasskeyQueryHandler(IPasskeyManager passkeyManager) : IRequestHa
             LastSeenAt = passkey.LastSeenDate,
             CreatedAt = passkey.CreatedAt,
         };;
-        return Results.Ok(response);
+        return Results.Success(SuccessCodes.Ok, response);
     }
 }

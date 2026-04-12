@@ -6,6 +6,7 @@ using eSecurity.Server.Security.Authorization.Verification.Passkey;
 using eSecurity.Server.Security.Authorization.Verification.Totp;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Features.Verification.Commands;
 
@@ -43,7 +44,7 @@ public class VerificationCommandHandler(
 
         if (context is null)
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "Invalid payload"

@@ -1,6 +1,7 @@
 ﻿using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.DeviceCode;
 
@@ -28,7 +29,7 @@ public sealed class DeviceCodeManager(AuthDbContext context) : IDeviceCodeManage
         await _context.DeviceCodes.AddAsync(deviceCode, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> UpdateAsync(DeviceCodeEntity deviceCode,
@@ -37,6 +38,6 @@ public sealed class DeviceCodeManager(AuthDbContext context) : IDeviceCodeManage
         _context.DeviceCodes.Update(deviceCode);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 }

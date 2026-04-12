@@ -12,6 +12,7 @@ using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.Passkeys.Commands;
@@ -39,17 +40,31 @@ public class CreatePasskeyCommandHandler(
         CancellationToken cancellationToken)
     {
         var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
-        if (subjectClaim is null) return Results.BadRequest("Invalid request");
+        if (subjectClaim is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Invalid request"
+            });
+        }
         
         var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
-        if (user is null) return Results.NotFound("User not found.");
+        if (user is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "User not found"
+            });
+        }
 
         var userAgent = _httpContext.GetUserAgent();
         var ipAddress = _httpContext.GetIpV4();
         var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
         if (device is null || device.IsBlocked)
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidDevice,
                 Description = "Invalid device."
@@ -60,7 +75,7 @@ public class CreatePasskeyCommandHandler(
         var clientData = ClientData.Parse(credentialResponse.Response.ClientDataJson);
         if (clientData is null || clientData.Type != ClientDataTypes.Create)
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidCredentials,
                 Description = "Invalid credentials."
@@ -71,7 +86,7 @@ public class CreatePasskeyCommandHandler(
         var savedChallenge = _sessionStorage.Get(ChallengeSessionKeys.Attestation);
         if (savedChallenge != base64Challenge)
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidChallenge,
                 Description = "Challenge mismatch"
@@ -83,7 +98,7 @@ public class CreatePasskeyCommandHandler(
         var rpHash = SHA256.HashData(source);
         if (!authData.RpIdHash.SequenceEqual(rpHash))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidRp,
                 Description = "Invalid RP ID"
@@ -104,16 +119,18 @@ public class CreatePasskeyCommandHandler(
         };
 
         var result = await _passkeyManager.CreateAsync(passkey, cancellationToken);
-        if (!result.Succeeded) return result;
+        if (!result.Succeeded) 
+            return result;
 
         if (!await _twoFactorManager.HasMethodAsync(user, TwoFactorMethod.Passkey, cancellationToken))
         {
             var twoFactorResult = await _twoFactorManager.SubscribeAsync(user,
                 TwoFactorMethod.Passkey, cancellationToken: cancellationToken);
 
-            if (!twoFactorResult.Succeeded) return twoFactorResult;
+            if (!twoFactorResult.Succeeded) 
+                return twoFactorResult;
         }
         
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 }

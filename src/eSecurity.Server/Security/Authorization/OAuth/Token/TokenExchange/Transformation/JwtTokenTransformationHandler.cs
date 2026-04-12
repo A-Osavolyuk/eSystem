@@ -3,6 +3,7 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Delegation;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Token.TokenExchange;
 using eSystem.Core.Security.Identity.Claims;
@@ -26,7 +27,7 @@ public sealed class JwtTokenTransformationHandler(
         var extractionResult = await _claimsExtractor.ExtractAsync(context.SubjectToken, cancellationToken);
         if (!extractionResult.Succeeded || !extractionResult.TryGetValue(out var value))
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Subject token is invalid"
@@ -37,7 +38,7 @@ public sealed class JwtTokenTransformationHandler(
         var client = await _clientManager.FindByIdAsync(context.ClientId, cancellationToken);
         if (client is null)
         {
-            return Results.Unauthorized(new Error()
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error()
             {
                 Code = ErrorCode.UnauthorizedClient,
                 Description = "Unauthorized client"
@@ -48,7 +49,7 @@ public sealed class JwtTokenTransformationHandler(
         {
             if (!client.IsValidAudience(context.Audience))
             {
-                return Results.BadRequest(new Error()
+                return Results.ClientError(ClientErrorCode.BadRequest, new Error()
                 {
                     Code = ErrorCode.InvalidTarget,
                     Description = "The requested audience is not an allowed audience for this client."
@@ -66,7 +67,7 @@ public sealed class JwtTokenTransformationHandler(
 
         if (subjectScopes is not null && !scopes.All(s => subjectScopes.Contains(s)))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidScope,
                 Description = "Requested scopes exceed the subject token scopes."
@@ -96,6 +97,6 @@ public sealed class JwtTokenTransformationHandler(
             IssuedAt = long.Parse(claims.First(x => x.Type == AppClaimTypes.Iat).Value)
         };
 
-        return Results.Ok(response);
+        return Results.Success(SuccessCodes.Ok, response);
     }
 }

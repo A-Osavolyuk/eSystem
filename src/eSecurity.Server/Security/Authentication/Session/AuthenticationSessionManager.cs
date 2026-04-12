@@ -1,6 +1,7 @@
 ﻿using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Security.Authentication.Session;
 
@@ -22,7 +23,7 @@ public sealed class AuthenticationSessionManager(AuthDbContext context) : IAuthe
         await _context.AuthenticationSessions.AddAsync(entity, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> UpdateAsync(AuthenticationSessionEntity entity,
@@ -31,6 +32,6 @@ public sealed class AuthenticationSessionManager(AuthDbContext context) : IAuthe
         _context.Update(entity);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 }

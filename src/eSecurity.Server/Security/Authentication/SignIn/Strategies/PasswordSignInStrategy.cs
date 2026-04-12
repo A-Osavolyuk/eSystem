@@ -15,6 +15,7 @@ using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 
 namespace eSecurity.Server.Security.Authentication.SignIn.Strategies;
@@ -52,11 +53,13 @@ public sealed class PasswordSignInStrategy(
         UserEntity? user = null;
 
         if (payload is not PasswordSignInPayload passwordPayload)
-            return Results.BadRequest(new Error
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidPayloadType,
                 Description = "Invalid payload type"
             });
+        }
 
         if (_signInOptions.AllowUserNameLogin)
         {
@@ -68,9 +71,23 @@ public sealed class PasswordSignInStrategy(
             user = await _userManager.FindByEmailAsync(passwordPayload.Login, cancellationToken);
         }
 
-        if (user is null) return Results.NotFound($"Cannot find user with login {passwordPayload.Login}.");
+        if (user is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = $"Cannot find user with login {passwordPayload.Login}."
+            });
+        }
+
         if (!await _passwordManager.HasAsync(user, cancellationToken))
-            return Results.BadRequest("Cannot log in, you don't have a password.");
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Cannot log in, you don't have a password."
+            });
+        }
 
         var userAgent = _httpContext.GetUserAgent()!;
         var ipAddress = _httpContext.GetIpV4()!;
@@ -96,29 +113,53 @@ public sealed class PasswordSignInStrategy(
         }
 
         var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
-        if (email is null) return Results.NotFound("Email not found");
+        if (email is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "Email not found"
+            });
+        }
 
         if (_signInOptions.RequireConfirmedEmail && !email.IsVerified)
-            return Results.BadRequest(new Error
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.UnverifiedEmail,
                 Description = "Email is not verified.",
                 Details = new() { { "userId", user.Id } }
             });
+        }
 
         var lockoutState = await _lockoutManager.GetAsync(user, cancellationToken);
-        if (lockoutState is null) return Results.NotFound("State not found");
+        if (lockoutState is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "State not found"
+            });
+        }
 
         if (lockoutState.Enabled)
-            return Results.BadRequest(new Error
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.AccountLockedOut,
                 Description = "Account is locked out",
                 Details = new() { { "userId", user.Id } }
             });
+        }
 
         if (!await _passwordManager.HasAsync(user, cancellationToken))
-            return Results.BadRequest("User doesn't have a password.");
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "User doesn't have a password."
+            });
+        }
 
         if (!await _passwordManager.CheckAsync(user, passwordPayload.Password, cancellationToken))
         {
@@ -128,7 +169,8 @@ public sealed class PasswordSignInStrategy(
             if (!updateResult.Succeeded) return updateResult;
 
             if (user.FailedLoginAttempts < _signInOptions.MaxFailedLoginAttempts)
-                return Results.BadRequest(new Error
+            {
+                return Results.ClientError(ClientErrorCode.BadRequest, new Error
                 {
                     Code = ErrorCode.FailedLoginAttempt,
                     Description = "The password is not valid.",
@@ -138,6 +180,7 @@ public sealed class PasswordSignInStrategy(
                         { "failedLoginAttempts", user.FailedLoginAttempts },
                     }
                 });
+            }
 
             var deviceBlockResult = await _deviceManager.BlockAsync(device, cancellationToken);
             if (!deviceBlockResult.Succeeded) return deviceBlockResult;
@@ -147,7 +190,7 @@ public sealed class PasswordSignInStrategy(
 
             if (!lockoutResult.Succeeded) return lockoutResult;
 
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.TooManyFailedLoginAttempts,
                 Description = "Account is locked out due to too many failed login attempts",
@@ -165,7 +208,7 @@ public sealed class PasswordSignInStrategy(
 
         if (device.IsBlocked)
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BlockedDevice,
                 Description = "Cannot sign in, device is blocked."
@@ -195,7 +238,7 @@ public sealed class PasswordSignInStrategy(
             var sessionResult = await _authenticationSessionManager.CreateAsync(authenticationSession, cancellationToken);
             if (!sessionResult.Succeeded) return sessionResult;
             
-            return Results.Ok(new SignInResponse()
+            return Results.Success(SuccessCodes.Ok, new SignInResponse()
             {
                 TransactionId = authenticationSession.Id
             });
@@ -217,7 +260,7 @@ public sealed class PasswordSignInStrategy(
             var sessionResult = await _authenticationSessionManager.CreateAsync(authenticationSession, cancellationToken);
             if (!sessionResult.Succeeded) return sessionResult;
             
-            return Results.Ok(new SignInResponse
+            return Results.Success(SuccessCodes.Ok, new SignInResponse
             {
                 TransactionId = authenticationSession.Id,
                 SessionId = session.Id

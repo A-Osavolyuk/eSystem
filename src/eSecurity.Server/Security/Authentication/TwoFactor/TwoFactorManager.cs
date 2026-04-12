@@ -2,6 +2,7 @@
 using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Security.Authentication.TwoFactor;
 
@@ -52,7 +53,7 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         await _context.UserTwoFactorMethods.AddAsync(userProvider, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> UnsubscribeAsync(UserEntity user,
@@ -63,7 +64,7 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         _context.UserTwoFactorMethods.RemoveRange(methods);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> UnsubscribeAsync(UserTwoFactorMethodEntity method,
@@ -72,7 +73,7 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         _context.UserTwoFactorMethods.Remove(method);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> PreferAsync(UserEntity user,
@@ -80,22 +81,42 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
     {
         if (await _context.UserTwoFactorMethods.CountAsync(
                 x => x.UserId == user.Id, cancellationToken) == 1)
-            return Results.BadRequest("Cannot change the only preferred method");
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Cannot change the only preferred method"
+            });
+        }
 
         var currentPreferredMethod = await GetPreferredAsync(user, cancellationToken);
-        if (currentPreferredMethod is null) return Results.BadRequest("Invalid method");
+        if (currentPreferredMethod is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Invalid method"
+            });
+        }
         
         currentPreferredMethod.Preferred = false;
 
         var nextPreferredMethod = await GetAsync(user, method, cancellationToken);
-        if (nextPreferredMethod is null) return Results.NotFound("Method not found");
+        if (nextPreferredMethod is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Method not found"
+            });
+        }
 
         nextPreferredMethod.Preferred = true;
 
         _context.UserTwoFactorMethods.UpdateRange([currentPreferredMethod, nextPreferredMethod]);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<bool> HasMethodAsync(UserEntity user, TwoFactorMethod method,

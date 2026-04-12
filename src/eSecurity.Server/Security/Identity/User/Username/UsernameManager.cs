@@ -1,6 +1,7 @@
 ﻿using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Security.Identity.User.Username;
 
@@ -17,7 +18,7 @@ public class UsernameManager(AuthDbContext context) : IUsernameManager
         _context.Users.Update(user);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> ChangeAsync(UserEntity user, string username,
@@ -30,7 +31,7 @@ public class UsernameManager(AuthDbContext context) : IUsernameManager
         _context.Users.Update(user);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<bool> IsTakenAsync(string username, 

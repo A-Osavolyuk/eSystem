@@ -7,6 +7,7 @@ using eSecurity.Server.Security.Identity.SignUp.Strategies;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.Schemes;
 using eSystem.Core.Utilities.Query;
 using Microsoft.AspNetCore.Authentication;
@@ -49,7 +50,7 @@ public sealed class HandleOAuthLoginCommandHandler(
 
         if (!string.IsNullOrEmpty(request.RemoteError))
         {
-            return Results.Found(QueryBuilder.Create()
+            return Results.Redirect(RedirectionCode.Found, QueryBuilder.Create()
                 .WithUri(request.ReturnUri)
                 .WithQueryParam("error", ErrorCode.ServerError)
                 .WithQueryParam("error_description", request.RemoteError)
@@ -59,7 +60,7 @@ public sealed class HandleOAuthLoginCommandHandler(
         var email = principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
         if (email is null)
         {
-            return Results.Found(QueryBuilder.Create()
+            return Results.Redirect(RedirectionCode.Found, QueryBuilder.Create()
                 .WithUri(request.ReturnUri)
                 .WithQueryParam("error", ErrorCode.InvalidCredentials)
                 .WithQueryParam("error_description", "Email was not provided in credentials.")
@@ -83,7 +84,7 @@ public sealed class HandleOAuthLoginCommandHandler(
             if (signUpResult.Succeeded) return signUpResult;
             
             var signUpError = signUpResult.GetError();
-            return Results.Found(QueryBuilder.Create()
+            return Results.Redirect(RedirectionCode.Found, QueryBuilder.Create()
                 .WithUri(request.ReturnUri)
                 .WithQueryParam("error", signUpError.Code)
                 .WithQueryParam("error_description", signUpError.Description)
@@ -105,7 +106,7 @@ public sealed class HandleOAuthLoginCommandHandler(
         if (signInResult.Succeeded) return signInResult;
         
         var signInError = signInResult.GetError();
-        return Results.Found(QueryBuilder.Create()
+        return Results.Redirect(RedirectionCode.Found, QueryBuilder.Create()
             .WithUri(request.ReturnUri)
             .WithQueryParam("error", signInError.Code)
             .WithQueryParam("error_description", signInError.Description)

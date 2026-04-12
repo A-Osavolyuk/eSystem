@@ -2,6 +2,7 @@
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Cryptography.Keys;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Security.Authentication.TwoFactor.Secret;
 
@@ -23,7 +24,7 @@ public sealed class SecretManager(
     {
         await _context.UserSecret.AddAsync(secret, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
     
     public async ValueTask<Result> UpdateAsync(UserSecretEntity secret,
@@ -31,7 +32,7 @@ public sealed class SecretManager(
     {
         _context.UserSecret.Update(secret);
         await _context.SaveChangesAsync(cancellationToken);
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> RemoveAsync(UserEntity user, CancellationToken cancellationToken = default)
@@ -41,13 +42,17 @@ public sealed class SecretManager(
 
         if (secret is null)
         {
-            return Results.NotFound("Cannot find user secret or doesn't exists");
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "Cannot find user secret or doesn't exists"
+            });
         }
 
         _context.UserSecret.Remove(secret);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public string Generate() => _keyFactory.Create(20);

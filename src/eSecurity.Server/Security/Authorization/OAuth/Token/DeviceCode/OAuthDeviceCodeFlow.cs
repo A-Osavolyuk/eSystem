@@ -3,6 +3,7 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Token.DeviceCode;
@@ -28,7 +29,7 @@ public sealed class OAuthDeviceCodeFlow(
         var client = await _clientManager.FindByIdAsync(context.ClientId, cancellationToken);
         if (client is null || deviceCode.UserId is null)
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Invalid device code"
@@ -45,7 +46,7 @@ public sealed class OAuthDeviceCodeFlow(
         var user = await _userManager.FindByIdAsync(deviceCode.UserId.Value, cancellationToken);
         if (user is null)
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Invalid device code"
@@ -63,12 +64,12 @@ public sealed class OAuthDeviceCodeFlow(
         if (!accessTokenResult.Succeeded)
         {
             var error = accessTokenResult.GetError();
-            return Results.InternalServerError(error);
+            return Results.ServerError(ServerErrorCode.InternalServerError, error);
         }
 
         if (!accessTokenResult.TryGetValue(out var accessToken))
         {
-            return Results.InternalServerError(new Error()
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
             {
                 Code = ErrorCode.ServerError,
                 Description = "Server error"
@@ -84,12 +85,12 @@ public sealed class OAuthDeviceCodeFlow(
             if (!refreshTokenResult.Succeeded)
             {
                 var error = refreshTokenResult.GetError();
-                return Results.InternalServerError(error);
+                return Results.ServerError(ServerErrorCode.InternalServerError, error);
             }
 
             if (!refreshTokenResult.TryGetValue(out var refreshToken))
             {
-                return Results.InternalServerError(new Error()
+                return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
                 {
                     Code = ErrorCode.ServerError,
                     Description = "Server error"
@@ -106,12 +107,12 @@ public sealed class OAuthDeviceCodeFlow(
             if (!loginTokenResult.Succeeded)
             {
                 var error = loginTokenResult.GetError();
-                return Results.InternalServerError(error);
+                return Results.ServerError(ServerErrorCode.InternalServerError, error);
             }
 
             if (!loginTokenResult.TryGetValue(out var loginToken))
             {
-                return Results.InternalServerError(new Error()
+                return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
                 {
                     Code = ErrorCode.ServerError,
                     Description = "Server error"
@@ -121,6 +122,6 @@ public sealed class OAuthDeviceCodeFlow(
             response.LoginTokenHint = loginToken;
         }
         
-        return Results.Ok(response);
+        return Results.Success(SuccessCodes.Ok, response);
     }
 }

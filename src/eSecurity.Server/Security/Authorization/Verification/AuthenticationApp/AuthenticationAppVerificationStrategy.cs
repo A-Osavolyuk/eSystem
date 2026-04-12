@@ -6,6 +6,7 @@ using eSecurity.Server.Security.Authentication.TwoFactor.Secret;
 using eSecurity.Server.Security.Cryptography.Protection.Constants;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Identity.Claims;
 using Microsoft.AspNetCore.DataProtection;
 
@@ -26,22 +27,50 @@ public sealed class AuthenticationAppVerificationStrategy(
     private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
     private readonly VerificationConfiguration _configuration = options.Value;
 
-    public async ValueTask<Result> ExecuteAsync(AuthenticatorAppVerificationContext context, 
+    public async ValueTask<Result> ExecuteAsync(AuthenticatorAppVerificationContext context,
         CancellationToken cancellationToken = default)
     {
         var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
-        if (subjectClaim is null) return Results.BadRequest("Invalid request");
+        if (subjectClaim is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Invalid subject"
+            });
+        }
 
         var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
-        if (user is null) return Results.NotFound("User was not found");
+        if (user is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "User was not found"
+            });
+        }
 
         var secret = await _secretManager.GetAsync(user, cancellationToken);
-        if (secret is null) return Results.BadRequest("Authenticator app is not set up for this user.");
+        if (secret is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Authenticator app is not set up for this user."
+            });
+        }
 
         var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Secret);
         var unprotectedSecret = protector.Unprotect(secret.ProtectedSecret);
         var verified = AuthenticatorUtils.VerifyCode(context.Code, unprotectedSecret);
-        if (!verified) return Results.BadRequest("Invalid code.");
+        if (!verified)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Invalid code."
+            });
+        }
 
         var requestEntity = new VerificationRequestEntity()
         {
@@ -54,11 +83,12 @@ public sealed class AuthenticationAppVerificationStrategy(
             ApprovedAt = DateTimeOffset.UtcNow,
             ExpiredAt = DateTimeOffset.UtcNow.Add(_configuration.Timestamp)
         };
-        
+
         var verificationResult = await _verificationManager.CreateAsync(requestEntity, cancellationToken);
-        if (!verificationResult.Succeeded) return verificationResult;
+        if (!verificationResult.Succeeded) 
+            return verificationResult;
 
         var response = new VerificationResponse { VerificationId = requestEntity.Id };
-        return Results.Ok(response);
+        return Results.Success(SuccessCodes.Ok, response);
     }
 }

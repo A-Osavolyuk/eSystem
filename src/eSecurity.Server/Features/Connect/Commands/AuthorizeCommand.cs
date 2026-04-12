@@ -9,6 +9,7 @@ using eSecurity.Server.Security.Authorization.OAuth.Token.AuthorizationCode;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
@@ -36,7 +37,7 @@ public class AuthorizeCommandHandler(
     {
         if (!_configuration.ResponseTypesSupported.Contains(request.Request.ResponseType))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.UnsupportedResponseType,
                 Description = $"'{request.Request.ResponseType}' is unsupported response type"
@@ -45,7 +46,7 @@ public class AuthorizeCommandHandler(
 
         if (string.IsNullOrWhiteSpace(request.Request.Nonce))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "nonce is required."
@@ -60,14 +61,14 @@ public class AuthorizeCommandHandler(
         {
             if (unsupportedScopes.Count == 1)
             {
-                return Results.BadRequest(new Error
+                return Results.ClientError(ClientErrorCode.BadRequest, new Error
                 {
                     Code = ErrorCode.InvalidScope,
                     Description = $"'{unsupportedScopes.First()}' scope is invalid."
                 });
             }
 
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidScope,
                 Description = $"'{string.Join(" ", unsupportedScopes)}' scopes are invalid."
@@ -77,7 +78,7 @@ public class AuthorizeCommandHandler(
         var client = await _clientManager.FindByIdAsync(request.Request.ClientId, cancellationToken);
         if (client is null)
         {
-            return Results.Unauthorized(new Error
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error
             {
                 Code = ErrorCode.InvalidClient,
                 Description = "Invalid client"
@@ -86,7 +87,7 @@ public class AuthorizeCommandHandler(
 
         if (!client.HasUri(request.Request.RedirectUri, UriType.Redirect))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "redirect_uri is invalid."
@@ -95,7 +96,7 @@ public class AuthorizeCommandHandler(
         
         if (!client.HasScopes(request.Request.Scopes, out var scopes))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidScope,
                 Description = $"'{string.Join(',', scopes)}' are not supported scopes."
@@ -105,24 +106,28 @@ public class AuthorizeCommandHandler(
         if (client is { ClientType: ClientType.Public, RequirePkce: true })
         {
             if (string.IsNullOrEmpty(request.Request.CodeChallenge))
-                return Results.BadRequest(new Error
+            {
+                return Results.ClientError(ClientErrorCode.BadRequest, new Error
                 {
                     Code = ErrorCode.InvalidRequest,
                     Description = "code_challenge is required"
                 });
+            }
 
             if (!request.Request.CodeChallengeMethod.HasValue)
-                return Results.BadRequest(new Error
+            {
+                return Results.ClientError(ClientErrorCode.BadRequest, new Error
                 {
                     Code = ErrorCode.InvalidRequest,
                     Description = "code_challenge_method is required"
                 });
+            }
         }
         
         var session = await _sessionManager.FindByIdAsync(request.Request.SessionId, cancellationToken);
         if (session is null)
         {
-            return Results.InternalServerError(new Error
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error
             {
                 Code = ErrorCode.ServerError,
                 Description = "Invalid authorization session."
@@ -132,7 +137,7 @@ public class AuthorizeCommandHandler(
         var user = await _userManager.FindByIdAsync(session.UserId, cancellationToken);
         if (user is null)
         {
-            return Results.InternalServerError(new Error
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error
             {
                 Code = ErrorCode.ServerError,
                 Description = "Invalid authorization session."
@@ -142,7 +147,7 @@ public class AuthorizeCommandHandler(
         var consent = await _consentManager.FindAsync(user, client, cancellationToken);
         if (consent is null || !consent.HasScopes(request.Request.Scopes, out _))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.ConsentRequired,
                 Description = "User consent is required."
@@ -177,6 +182,6 @@ public class AuthorizeCommandHandler(
             Code = code
         };
 
-        return Results.Ok(response);
+        return Results.Success(SuccessCodes.Ok, response);
     }
 }

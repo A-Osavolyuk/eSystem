@@ -1,4 +1,5 @@
 ﻿using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.SmsSender.Api.Interfaces;
 
 namespace eSystem.SmsSender.Api.Services;
@@ -17,9 +18,13 @@ public class SmsService(IAmazonSimpleNotificationService simpleNotificationServi
 
         if (response.HttpStatusCode != HttpStatusCode.OK)
         {
-            return Results.InternalServerError($"Failed to send SMS with code: {response.HttpStatusCode}");
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+            {
+                Code = ErrorCode.ServerError,
+                Description = $"Failed to send SMS with code: {response.HttpStatusCode}"
+            });
         }
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 }

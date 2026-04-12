@@ -3,6 +3,7 @@ using eSecurity.Server.Security.Cryptography.Hashing;
 using eSystem.Core.Binding;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Revocation;
 
@@ -26,11 +27,11 @@ public class RevokeCommandHandler(
         if (!bindingResult.Succeeded || !bindingResult.TryGetValue(out var revocationRequest))
         {
             var error = bindingResult.GetError();
-            return Results.BadRequest(error);
+            return Results.ClientError(ClientErrorCode.BadRequest, error);
         }
         
         if (string.IsNullOrEmpty(revocationRequest.Token))
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "Token is missing."
@@ -49,7 +50,9 @@ public class RevokeCommandHandler(
             ? await _tokenManager.FindByHashAsync(incomingHash, cancellationToken)
             : await _tokenManager.FindByHashAsync(incomingHash, tokenType.Value, cancellationToken);
 
-        if (token is null || token.Revoked) return Results.Ok();
+        if (token is null || token.Revoked) 
+            return Results.Success(SuccessCodes.Ok);
+        
         return await _tokenManager.RevokeAsync(token, cancellationToken);
     }
 }

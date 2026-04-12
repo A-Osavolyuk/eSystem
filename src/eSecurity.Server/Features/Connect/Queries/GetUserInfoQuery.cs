@@ -11,6 +11,7 @@ using eSystem.Core.Enums;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authentication.OpenIdConnect.User;
 using eSystem.Core.Security.Authorization.OAuth.Token.Validation;
@@ -54,7 +55,7 @@ public class GetUserInfoQueryHandler(
             _httpContext.Response.Headers.Append(HeaderTypes.WwwAuthenticate,
                 $"Bearer error=\"{ErrorCode.InvalidRequest.GetString()}\", error_description=\"{description}\"");
 
-            return Results.Unauthorized(new Error
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = description
@@ -67,7 +68,7 @@ public class GetUserInfoQueryHandler(
             _httpContext.Response.Headers.Append(HeaderTypes.WwwAuthenticate,
                 $"Bearer error=\"{ErrorCode.InvalidToken}\", error_description=\"Invalid token\"");
 
-            return Results.Unauthorized(new Error
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error
             {
                 Code = ErrorCode.InvalidToken,
                 Description = "Invalid token"
@@ -83,7 +84,7 @@ public class GetUserInfoQueryHandler(
             _httpContext.Response.Headers.Append(HeaderTypes.WwwAuthenticate,
                 $"Bearer error=\"{ErrorCode.InvalidRequest}\", error_description=\"{description}\"");
 
-            return Results.Forbidden(new Error
+            return Results.ClientError(ClientErrorCode.Forbidden, new Error
             {
                 Code = ErrorCode.InsufficientScope,
                 Description = description
@@ -99,7 +100,7 @@ public class GetUserInfoQueryHandler(
             _httpContext.Response.Headers.Append(HeaderTypes.WwwAuthenticate,
                 $"Bearer error=\"{ErrorCode.InvalidToken}\", error_description=\"{description}\"");
 
-            return Results.Unauthorized(new Error
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error
             {
                 Code = ErrorCode.InvalidToken,
                 Description = description
@@ -114,7 +115,7 @@ public class GetUserInfoQueryHandler(
             _httpContext.Response.Headers.Append(HeaderTypes.WwwAuthenticate,
                 $"Bearer error=\"{ErrorCode.InvalidToken}\", error_description=\"{description}\"");
 
-            return Results.Unauthorized(new Error
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error
             {
                 Code = ErrorCode.InvalidToken,
                 Description = description
@@ -178,6 +179,6 @@ public class GetUserInfoQueryHandler(
             };
         }
 
-        return Results.Ok(response);
+        return Results.Success(SuccessCodes.Ok, response);
     }
 }

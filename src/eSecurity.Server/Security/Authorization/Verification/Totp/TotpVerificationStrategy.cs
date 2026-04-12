@@ -5,6 +5,7 @@ using eSecurity.Server.Security.Authorization.Codes;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Common.Messaging;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Security.Authorization.Verification.Totp;
@@ -26,13 +27,31 @@ public sealed class TotpVerificationStrategy(
         CancellationToken cancellationToken = default)
     {
         var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
-        if (subjectClaim is null) return Results.BadRequest("Invalid request");
+        if (subjectClaim is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Invalid subject"
+            });
+        }
 
         var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
-        if (user is null) return Results.NotFound("User was not found");
+        if (user is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "User was not found"
+            });
+        }
 
         var code = await _codeManager.FindAsync(user, context.Code, cancellationToken);
-        if (code is null) return Results.BadRequest("Invalid code");
+        if (code is null) return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+        {
+            Code = ErrorCode.BadRequest,
+            Description = "Invalid code"
+        });
         
         var codeResult = await _codeManager.ConsumeAsync(code, cancellationToken);
         if (!codeResult.Succeeded) return codeResult;
@@ -60,6 +79,6 @@ public sealed class TotpVerificationStrategy(
         if (!verificationResult.Succeeded) return verificationResult;
 
         var response = new VerificationResponse { VerificationId = requestEntity.Id };
-        return Results.Ok(response);
+        return Results.Success(SuccessCodes.Ok, response);
     }
 }

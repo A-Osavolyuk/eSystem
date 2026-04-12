@@ -4,6 +4,7 @@ using eSecurity.Server.Security.Authentication.Session;
 using eSecurity.Server.Security.Identity.Options;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Utilities.Query;
 using Microsoft.AspNetCore.Authentication;
@@ -24,11 +25,13 @@ public sealed class OAuthLoginCommandHandler(
     {
         if (!_options.AllowOAuthLogin)
         {
-            return Results.InternalServerError(QueryBuilder.Create()
+            var redirectUri = QueryBuilder.Create()
                 .WithUri(request.ReturnUri)
                 .WithQueryParam("error", ErrorCode.ServerError)
                 .WithQueryParam("error_description", "OAuth is not allowed")
-                .Build());
+                .Build();
+            
+            return Results.Redirect(RedirectionCode.Found, redirectUri);
         }
         
         var builder = QueryBuilder.Create()
@@ -57,7 +60,7 @@ public sealed class OAuthLoginCommandHandler(
             }
         };
         
-        return Results.Ok(new OAuthLoginResponse
+        return Results.Success(SuccessCodes.Ok, new OAuthLoginResponse
         {
             Provider = request.Provider,
             AuthenticationProperties = properties

@@ -5,6 +5,7 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Cryptography.Keys;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
 using eSystem.Core.Security.Authorization.OAuth;
@@ -30,7 +31,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
     {
         if (string.IsNullOrWhiteSpace(request.Request.ClientId))
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "client_id is required"
@@ -40,7 +41,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
         var client = await _clientManager.FindByIdAsync(request.Request.ClientId, cancellationToken);
         if (client is null)
         {
-            return Results.Unauthorized(new Error()
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error()
             {
                 Code = ErrorCode.InvalidClient,
                 Description = "Invalid client"
@@ -49,7 +50,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
 
         if (!client.HasGrantType(GrantType.Ciba))
         {
-            return Results.Unauthorized(new Error()
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error()
             {
                 Code = ErrorCode.UnauthorizedClient,
                 Description = "CIBA grant type is not allowed"
@@ -58,7 +59,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
 
         if (client.NotificationDeliveryMode == NotificationDeliveryMode.None)
         {
-            return Results.Unauthorized(new Error()
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error()
             {
                 Code = ErrorCode.UnauthorizedClient,
                 Description = "Notification delivery mode is not configured"
@@ -68,7 +69,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
         if (client.NotificationDeliveryMode is NotificationDeliveryMode.Ping or NotificationDeliveryMode.Push &&
             !client.HasUri(UriType.NotificationEndpoint))
         {
-            return Results.Unauthorized(new Error()
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error()
             {
                 Code = ErrorCode.UnauthorizedClient,
                 Description = "Client notification endpoint is not configured"
@@ -77,7 +78,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
         
         if (string.IsNullOrWhiteSpace(request.Request.Scope))
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "scope is required"
@@ -87,7 +88,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
         var scopes = request.Request.Scope.Split(' ').ToList();
         if (!scopes.Contains(ScopeTypes.OpenId))
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidScope,
                 Description = "openid scope is mandatory for backchannel authentication"
@@ -96,7 +97,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
 
         if (!client.HasScopes(scopes, out var unsupportedScopes))
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidScope,
                 Description = $"'{string.Join(", ", unsupportedScopes)}' scopes are not allowed for this client"
@@ -110,7 +111,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
 
         if (hintsCount == 0)
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "One of login_hint, login_token_hint or id_token_hint must be provided"
@@ -119,7 +120,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
 
         if (hintsCount > 1)
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "Multiple hints are not allowed"
@@ -136,7 +137,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
 
         if (hint is null)
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "Invalid hint"
@@ -147,12 +148,12 @@ public sealed class BackchannelAuthenticationCommandHandler(
         var resolveResult = await userResolver.ResolveAsync(request.Request, cancellationToken);
         if (!resolveResult.Succeeded)
         {
-            return Results.BadRequest(resolveResult.GetError());
+            return Results.ClientError(ClientErrorCode.BadRequest, resolveResult.GetError());
         }
 
         if (!resolveResult.TryGetValue(out var user))
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.UnknownUserId,
                 Description = "Unknown user"
@@ -163,7 +164,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
             (request.Request.RequestedExpiry > _options.MaxRequestLifetime.TotalSeconds ||
              request.Request.RequestedExpiry < _options.MinRequestLifetime.TotalSeconds))
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = $"requested_expiry must be between {_options.MinRequestLifetime} " +
@@ -177,7 +178,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
 
         if (!string.IsNullOrWhiteSpace(request.Request.BindingMessage) && request.Request.BindingMessage.Length > 255)
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidBindingMessage,
                 Description = "binding_message must not be longer then 255 characters"
@@ -186,7 +187,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
 
         if (client.RequireUserCode && string.IsNullOrWhiteSpace(request.Request.UserCode))
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.MissingUserCode,
                 Description = "user_code is missing"
@@ -197,7 +198,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
             (request.Request.UserCode.Length > _options.UserCodeMaxLength ||
              request.Request.UserCode.Length < _options.UserCodeMinLength))
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidUserCode,
                 Description = $"user_code length must be between {_options.UserCodeMinLength} " +
@@ -224,7 +225,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
         var result = await _cibaRequestManager.CreateAsync(cibaRequest, cancellationToken);
         if (!result.Succeeded) return result;
         
-        return Results.Ok(new BackchannelAuthenticationResponse()
+        return Results.Success(SuccessCodes.Ok, new BackchannelAuthenticationResponse()
         {
             AuthReqId = cibaRequest.AuthReqId,
             Interval = cibaRequest.Interval,

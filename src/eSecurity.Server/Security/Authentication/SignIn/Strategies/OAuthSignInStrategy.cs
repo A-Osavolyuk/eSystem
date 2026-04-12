@@ -10,6 +10,7 @@ using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Utilities.Query;
 
@@ -43,7 +44,7 @@ public sealed class OAuthSignInStrategy(
     {
         if (payload is not OAuthSignInPayload oauthPayload)
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidPayloadType,
                 Description = "Invalid payload"
@@ -53,7 +54,7 @@ public sealed class OAuthSignInStrategy(
         var authenticationSession = await _authenticationSessionManager.FindByIdAsync(oauthPayload.Sid, cancellationToken);
         if (authenticationSession is null)
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidSession,
                 Description = "Invalid session"
@@ -61,7 +62,14 @@ public sealed class OAuthSignInStrategy(
         }
 
         var user = await _userManager.FindByEmailAsync(oauthPayload.Email, cancellationToken);
-        if (user is null) return Results.BadRequest("User not found.");
+        if (user is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotAcceptable, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "User not found."
+            });
+        }
 
         var userAgent = _httpContext.GetUserAgent();
         var ipAddress = _httpContext.GetIpV4();
@@ -88,7 +96,7 @@ public sealed class OAuthSignInStrategy(
 
         if (device.IsBlocked)
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BlockedDevice,
                 Description = "Device is blocked"
@@ -96,7 +104,14 @@ public sealed class OAuthSignInStrategy(
         }
 
         var lockoutState = await _lockoutManager.GetAsync(user, cancellationToken);
-        if (lockoutState is null) return Results.NotFound("State not found");
+        if (lockoutState is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "State not found"
+            });
+        }
         
         var linkedAccount = await _linkedAccountManager.GetAsync(user, oauthPayload.Provider, cancellationToken);
         if (linkedAccount is null)
@@ -126,7 +141,7 @@ public sealed class OAuthSignInStrategy(
             var sessionResult = await _authenticationSessionManager.UpdateAsync(authenticationSession, cancellationToken);
             if (!sessionResult.Succeeded) return sessionResult;
             
-            return Results.Found(QueryBuilder.Create()
+            return Results.Redirect(RedirectionCode.Found, QueryBuilder.Create()
                 .WithUri(oauthPayload.ReturnUri)
                 .WithQueryParam("sid", authenticationSession.Id.ToString())
                 .WithQueryParam("state", oauthPayload.State)
@@ -148,7 +163,7 @@ public sealed class OAuthSignInStrategy(
             var sessionResult = await _authenticationSessionManager.UpdateAsync(authenticationSession, cancellationToken);
             if (!sessionResult.Succeeded) return sessionResult;
             
-            return Results.Found(QueryBuilder.Create()
+            return Results.Redirect(RedirectionCode.Found, QueryBuilder.Create()
                 .WithUri(oauthPayload.ReturnUri)
                 .WithQueryParam("sid", authenticationSession.Id.ToString())
                 .WithQueryParam("state", oauthPayload.State)

@@ -2,6 +2,7 @@
 using eSecurity.Server.Security.Authentication.Session;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Features.Account.Queries;
 
@@ -16,10 +17,18 @@ public sealed class GetAuthenticationSessionQueryHandler(
         CancellationToken cancellationToken = default)
     {
         var authenticationSession = await _authenticationSessionManager.FindByIdAsync(request.Sid, cancellationToken);
-        if (authenticationSession is null) return Results.NotFound("Session not found");
+        if (authenticationSession is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "Session not found"
+            });
+        }
+        
         if (authenticationSession.ExpiredAt < DateTimeOffset.UtcNow)
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.ExpiredAuthenticationSession,
                 Description = "Session is already expired"
@@ -43,6 +52,6 @@ public sealed class GetAuthenticationSessionQueryHandler(
             AllowedMfaMethods = allowedMfaMethods
         };
         
-        return Results.Ok(response);
+        return Results.Success(SuccessCodes.Ok, response);
     }
 }

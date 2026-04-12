@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using eSecurity.Core.Common.DTOs;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
 using eSystem.Core.Security.Cryptography.Encryption;
@@ -20,23 +21,51 @@ public class TokenValidator(
     public async ValueTask<Result> ValidateAsync(string token, CancellationToken cancellationToken = default)
     {
         var keysResult = await _connectService.GetPublicKeysAsync();
-        if (!keysResult.Succeeded) return Results.InternalServerError(keysResult.GetError().Description);
+        if (!keysResult.Succeeded) 
+            return Results.ServerError(ServerErrorCode.InternalServerError, keysResult.GetError());
 
         var handler = new JwtSecurityTokenHandler { MapInboundClaims = false };
         var securityToken = handler.ReadJwtToken(token);
-        if (securityToken is null) return Results.BadRequest("Invalid token.");
-        
+        if (securityToken is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Invalid token."
+            });
+        }
+
         if (!keysResult.TryGetValue<JsonWebKeySet>(out var jsonWebKeySet))
-            return Results.BadRequest("Invalid key.");
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Invalid key."
+            });
+        }
         
         var publicKey = jsonWebKeySet!.Keys.FirstOrDefault(x => x.KeyId == securityToken.Header.Kid);
-        if (publicKey is null) return Results.BadRequest("Invalid key.");
+        if (publicKey is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Invalid key."
+            });
+        }
 
         var openIdResult = await _connectService.GetOpenidConfigurationAsync();
-        if (!openIdResult.Succeeded) return Results.InternalServerError(keysResult.GetError().Description);
+        if (!openIdResult.Succeeded) 
+            return Results.ServerError(ServerErrorCode.InternalServerError, keysResult.GetError());
 
         if (!openIdResult.TryGetValue<OpenIdConfiguration>(out var openIdConfiguration))
-            return Results.InternalServerError("Invalid response");
+        {
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+            {
+                Description = "Invalid response",
+                Code = ErrorCode.ServerError
+            });
+        }
             
         var signingKey = new RsaSecurityKey(RsaConverter.FromJsonWebkey(publicKey));
         var parameters = new TokenValidationParameters
@@ -54,13 +83,21 @@ public class TokenValidator(
         };
         
         var principal = handler.ValidateToken(token, parameters, out _);
-        if (principal is null) return Results.BadRequest("Invalid token.");
+        if (principal is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Invalid token."
+            });
+        }
 
         var claims = principal.Claims.Select(x => new ClaimValue
         {
             Type = x.Type, 
             Value = x.Value
         }).ToList();
-        return Results.Ok(claims);
+        
+        return Results.Success(SuccessCodes.Ok, claims);
     }
 }

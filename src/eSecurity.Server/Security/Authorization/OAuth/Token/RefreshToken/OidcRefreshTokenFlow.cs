@@ -4,6 +4,7 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Token.RefreshToken;
@@ -28,7 +29,7 @@ public sealed class OidcRefreshTokenFlow(
     {
         if (!token.SessionId.HasValue)
         {
-            return Results.NotFound(new Error
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Invalid refresh token."
@@ -38,7 +39,7 @@ public sealed class OidcRefreshTokenFlow(
         var session = await _sessionManager.FindByIdAsync(token.SessionId.Value, cancellationToken);
         if (session is null)
         {
-            return Results.NotFound(new Error
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Invalid refresh token."
@@ -50,7 +51,7 @@ public sealed class OidcRefreshTokenFlow(
             var sessionResult = await _sessionManager.RemoveAsync(session, cancellationToken);
             if (!sessionResult.Succeeded) return sessionResult;
 
-            return Results.NotFound(new Error
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Invalid refresh token."
@@ -60,7 +61,7 @@ public sealed class OidcRefreshTokenFlow(
         var client = await _clientManager.FindByIdAsync(flowContext.ClientId, cancellationToken);
         if (client is null)
         {
-            return Results.Unauthorized(new Error
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error
             {
                 Code = ErrorCode.InvalidClient,
                 Description = "Invalid client."
@@ -69,7 +70,7 @@ public sealed class OidcRefreshTokenFlow(
 
         if (!client.HasGrantType(flowContext.GrantType))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.UnsupportedGrantType,
                 Description = $"'{flowContext.GrantType}' is not supported by client."
@@ -78,7 +79,7 @@ public sealed class OidcRefreshTokenFlow(
 
         if (client.Id != token.ClientId)
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Invalid refresh token"
@@ -87,7 +88,7 @@ public sealed class OidcRefreshTokenFlow(
 
         if (!client.HasScope(ScopeTypes.OfflineAccess))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidScope,
                 Description = "offline_access scope was not originally granted."
@@ -96,7 +97,7 @@ public sealed class OidcRefreshTokenFlow(
 
         if (!client.AllowOfflineAccess)
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Refresh token grant is not allowed for this client."
@@ -106,7 +107,7 @@ public sealed class OidcRefreshTokenFlow(
         var user = await _userManager.FindByIdAsync(Guid.Parse(token.Subject), cancellationToken);
         if (user is null)
         {
-            return Results.NotFound(new Error
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Invalid refresh token."
@@ -126,12 +127,12 @@ public sealed class OidcRefreshTokenFlow(
         if (!accessTokenResult.Succeeded)
         {
             var error = accessTokenResult.GetError();
-            return Results.InternalServerError(error);
+            return Results.ServerError(ServerErrorCode.InternalServerError, error);
         }
 
         if (!accessTokenResult.TryGetValue(out var accessToken))
         {
-            return Results.InternalServerError(new Error()
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
             {
                 Code = ErrorCode.ServerError,
                 Description = "Server error"
@@ -149,12 +150,12 @@ public sealed class OidcRefreshTokenFlow(
             if (!refreshTokenResult.Succeeded)
             {
                 var error = refreshTokenResult.GetError();
-                return Results.InternalServerError(error);
+                return Results.ServerError(ServerErrorCode.InternalServerError, error);
             }
 
             if (!refreshTokenResult.TryGetValue(out var refreshToken))
             {
-                return Results.InternalServerError(new Error()
+                return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
                 {
                     Code = ErrorCode.ServerError,
                     Description = "Server error"
@@ -175,12 +176,12 @@ public sealed class OidcRefreshTokenFlow(
         if (!idTokenResult.Succeeded)
         {
             var error = idTokenResult.GetError();
-            return Results.InternalServerError(error);
+            return Results.ServerError(ServerErrorCode.InternalServerError, error);
         }
 
         if (!idTokenResult.TryGetValue(out var idToken))
         {
-            return Results.InternalServerError(new Error()
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
             {
                 Code = ErrorCode.ServerError,
                 Description = "Server error"
@@ -189,6 +190,6 @@ public sealed class OidcRefreshTokenFlow(
             
         response.IdToken = idToken;
 
-        return Results.Ok(response);
+        return Results.Success(SuccessCodes.Ok, response);
     }
 }

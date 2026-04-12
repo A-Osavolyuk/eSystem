@@ -1,6 +1,7 @@
 ﻿using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 
@@ -27,7 +28,7 @@ public class SessionManager(
         await _context.Sessions.AddAsync(session, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> RemoveAsync(SessionEntity session, CancellationToken cancellationToken = default)
@@ -35,6 +36,6 @@ public class SessionManager(
         _context.Sessions.Remove(session);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 }

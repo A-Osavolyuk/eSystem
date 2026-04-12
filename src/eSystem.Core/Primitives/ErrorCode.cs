@@ -172,7 +172,7 @@ public enum ErrorCode
     [EnumValue("unsupported_media_type")]
     UnsupportedMediaType,
     
-    [EnumValue("unauthotized")]
+    [EnumValue("unauthorized")]
     Unauthorized,
     
     [EnumValue("forbidden")]

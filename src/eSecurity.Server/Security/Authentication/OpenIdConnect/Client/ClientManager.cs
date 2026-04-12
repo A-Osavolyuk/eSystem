@@ -1,6 +1,7 @@
 ﻿using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 
@@ -67,7 +68,7 @@ public class ClientManager(AuthDbContext context) : IClientManager
         await _context.Clients.AddAsync(entity, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> RelateAsync(ClientEntity client, SessionEntity session,
@@ -86,6 +87,6 @@ public class ClientManager(AuthDbContext context) : IClientManager
             await _context.SaveChangesAsync(cancellationToken);
         }
         
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 }

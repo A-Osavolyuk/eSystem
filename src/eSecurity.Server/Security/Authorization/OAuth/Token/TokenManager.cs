@@ -1,6 +1,7 @@
 ﻿using eSecurity.Server.Data;
 using eSecurity.Server.Data.Entities;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token;
 
@@ -41,7 +42,7 @@ public sealed class TokenManager(
         await _context.OpaqueTokens.AddAsync(token, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async Task<bool> IsOpaqueAsync(string token, CancellationToken cancellationToken = default)
@@ -58,7 +59,7 @@ public sealed class TokenManager(
         _context.OpaqueTokens.Update(token);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 
     public async Task<Result> RemoveAsync(OpaqueTokenEntity token, CancellationToken cancellationToken = default)
@@ -66,6 +67,6 @@ public sealed class TokenManager(
         _context.OpaqueTokens.Remove(token);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Results.Ok();
+        return Results.Success(SuccessCodes.Ok);
     }
 }

@@ -9,6 +9,7 @@ using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 
 namespace eSecurity.Server.Security.Authentication.TwoFactor.RecoveryCode;
@@ -48,7 +49,7 @@ public sealed class RecoveryCodeTwoFactorStrategy(
         if (authenticationSession?.UserId is null || 
             authenticationSession.GetMethods(AuthenticationMethodType.AllowedMfa).Count == 0)
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidSession,
                 Description = "Invalid session"
@@ -56,14 +57,21 @@ public sealed class RecoveryCodeTwoFactorStrategy(
         }
 
         var user = await _userManager.FindByIdAsync(authenticationSession.UserId.Value, cancellationToken);
-        if (user is null) return Results.NotFound("User not found.");
+        if (user is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "User not found."
+            });
+        }
 
         var userAgent = _httpContext.GetUserAgent()!;
         var ipAddress = _httpContext.GetIpV4()!;
         var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
         if (device is null || device.IsBlocked)
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidDevice,
                 Description = "Invalid device."
@@ -75,7 +83,8 @@ public sealed class RecoveryCodeTwoFactorStrategy(
         {
             user.FailedLoginAttempts += 1;
             if (user.FailedLoginAttempts < _signInOptions.MaxFailedLoginAttempts)
-                return Results.BadRequest(new Error
+            {
+                return Results.ClientError(ClientErrorCode.BadRequest, new Error
                 {
                     Code = ErrorCode.FailedLoginAttempt,
                     Description = "Invalid recovery code.",
@@ -85,6 +94,7 @@ public sealed class RecoveryCodeTwoFactorStrategy(
                         { "failedLoginAttempts", user.FailedLoginAttempts },
                     }
                 });
+            }
 
             var deviceBlockResult = await _deviceManager.BlockAsync(device, cancellationToken);
             if (!deviceBlockResult.Succeeded) return deviceBlockResult;
@@ -93,7 +103,7 @@ public sealed class RecoveryCodeTwoFactorStrategy(
                 LockoutType.TooManyFailedLoginAttempts, cancellationToken: cancellationToken);
 
             if (!lockoutResult.Succeeded) return lockoutResult;
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.AccountLockedOut,
                 Description = "Account is locked out due to too many failed login attempts",
@@ -132,7 +142,7 @@ public sealed class RecoveryCodeTwoFactorStrategy(
         var sessionResult = await _authenticationSessionManager.UpdateAsync(authenticationSession, cancellationToken);
         if (!sessionResult.Succeeded) return sessionResult;
 
-        return Results.Ok(new SignInResponse
+        return Results.Success(SuccessCodes.Ok, new SignInResponse
         {
             TransactionId = authenticationSession.Id,
             SessionId = session.Id

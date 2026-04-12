@@ -7,6 +7,7 @@ using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.Email.Commands;
@@ -31,15 +32,26 @@ public class ResetEmailCommandHandler(
         var newEmail = request.Request.Email;
 
         var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
-        if (subjectClaim is null) return Results.BadRequest("Invalid request");
+        if (subjectClaim is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Description = "Invalid request",
+                Code = ErrorCode.BadRequest
+            });
+        }
         
         var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
-        if (user is null) return Results.NotFound("User not found.");
+        if (user is null) return Results.ClientError(ClientErrorCode.NotFound, new Error()
+        {
+            Description = "User not found.",
+            Code = ErrorCode.NotFound
+        });
 
         var userCurrentEmail = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
         if (userCurrentEmail is null)
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidEmail,
                 Description = "User's primary email address is missing"
@@ -51,7 +63,7 @@ public class ResetEmailCommandHandler(
             var isTaken = await _emailManager.IsTakenAsync(request.Request.Email, cancellationToken);
             if (isTaken)
             {
-                return Results.BadRequest(new Error
+                return Results.ClientError(ClientErrorCode.BadRequest, new Error
                 {
                     Code = ErrorCode.EmailTaken,
                     Description = "User's primary email address is missing"
@@ -60,8 +72,14 @@ public class ResetEmailCommandHandler(
         }
 
         var verification = await _verificationManager.FindByIdAsync(request.Request.VerificationId, cancellationToken);
-        if (verification?.Status is not VerificationStatus.Approved) 
-            return Results.BadRequest("Unverified request.");
+        if (verification?.Status is not VerificationStatus.Approved)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Unverified request."
+            });
+        }
 
         var verificationResult = await _verificationManager.ConsumeAsync(verification, cancellationToken);
         if (!verificationResult.Succeeded) return verificationResult;

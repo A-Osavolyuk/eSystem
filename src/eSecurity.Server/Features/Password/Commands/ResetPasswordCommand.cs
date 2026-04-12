@@ -5,6 +5,7 @@ using eSecurity.Server.Security.Authorization.Verification;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Server.Features.Password.Commands;
 
@@ -22,11 +23,18 @@ public sealed class ResetPasswordCommandHandler(
     public async Task<Result> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
-        if (user is null) return Results.NotFound("User not found.");
+        if (user is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "User not found."
+            });
+        }
 
         if (!await _passwordManager.HasAsync(user, cancellationToken))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidPassword,
                 Description = "User does not have a password."
@@ -34,8 +42,14 @@ public sealed class ResetPasswordCommandHandler(
         }
 
         var verification = await _verificationManager.FindByIdAsync(request.Request.VerificationId, cancellationToken);
-        if (verification?.Status is not VerificationStatus.Approved) 
-            return Results.BadRequest("Unverified request.");
+        if (verification?.Status is not VerificationStatus.Approved)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Unverified request."
+            });
+        }
         
         var verificationResult = await _verificationManager.ConsumeAsync(verification, cancellationToken);
         if (!verificationResult.Succeeded) return verificationResult;

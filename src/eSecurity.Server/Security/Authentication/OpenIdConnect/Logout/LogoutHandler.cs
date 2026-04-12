@@ -2,6 +2,7 @@
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
 
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Logout;
@@ -22,7 +23,7 @@ public class LogoutHandler(
         var session = await _sessionManager.FindByIdAsync(Guid.Parse(context.Sid), cancellationToken);
         if (session is null)
         {
-            return Results.InternalServerError(new Error
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error
             {
                 Code = ErrorCode.ServerError,
                 Description = "Invalid session."
@@ -32,7 +33,7 @@ public class LogoutHandler(
         var client = await _clientManager.FindByIdAsync(context.Audience, cancellationToken);
         if (client is null)
         {
-            return Results.Unauthorized(new Error
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error
             {
                 Code = ErrorCode.InvalidClient,
                 Description = "Invalid client."
@@ -44,7 +45,7 @@ public class LogoutHandler(
         
         if (postLogoutRedirectUri is null)
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "post_logout_redirect_uri is invalid."
@@ -70,6 +71,6 @@ public class LogoutHandler(
             if (!result.Succeeded) return result;
         }
         
-        return Results.Ok(response);
+        return Results.Success(SuccessCodes.Ok, response);
     }
 }

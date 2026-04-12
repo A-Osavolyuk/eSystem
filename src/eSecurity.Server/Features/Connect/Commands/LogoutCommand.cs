@@ -4,6 +4,7 @@ using eSecurity.Server.Security.Authorization.Constants;
 using eSecurity.Server.Security.Authorization.OAuth.Token.Validation;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authorization.OAuth.Token.Validation;
 using eSystem.Core.Security.Identity.Claims;
 
@@ -22,7 +23,7 @@ public class LogoutCommandHandler(
     {
         if (string.IsNullOrEmpty(request.Request.PostLogoutRedirectUri))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "post_logout_redirect_uri is required."
@@ -31,7 +32,7 @@ public class LogoutCommandHandler(
 
         if (string.IsNullOrEmpty(request.Request.IdTokenHint))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "id_token_hint is required."
@@ -41,7 +42,7 @@ public class LogoutCommandHandler(
         var validationResult = await _validator.ValidateAsync(request.Request.IdTokenHint, cancellationToken);
         if (!validationResult.IsValid || validationResult.ClaimsPrincipal is null)
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "id_token_hint is invalid."
@@ -52,7 +53,7 @@ public class LogoutCommandHandler(
         var sidClaim = principal.Claims.FirstOrDefault(x => x.Type == AppClaimTypes.Sid);
         if (sidClaim is null)
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "id_token_hint is invalid."

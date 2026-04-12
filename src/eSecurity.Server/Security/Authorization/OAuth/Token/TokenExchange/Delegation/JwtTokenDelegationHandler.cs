@@ -3,6 +3,7 @@ using System.Text.Json;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Token.TokenExchange;
 using eSystem.Core.Security.Identity.Claims;
@@ -25,7 +26,7 @@ public sealed class JwtTokenDelegationHandler(
     {
         if (string.IsNullOrEmpty(context.ActorToken))
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "actor_token is required"
@@ -34,7 +35,7 @@ public sealed class JwtTokenDelegationHandler(
 
         if (context.ActorTokenType is null)
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "actor_token_type is required"
@@ -44,7 +45,7 @@ public sealed class JwtTokenDelegationHandler(
         var actorTokenExtractionResult = await _claimsExtractor.ExtractAsync(context.ActorToken, cancellationToken);
         if (!actorTokenExtractionResult.Succeeded || actorTokenExtractionResult.TryGetValue(out var actorClaims))
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Actor token is invalid"
@@ -54,7 +55,7 @@ public sealed class JwtTokenDelegationHandler(
         var subjectTokenExtractionResult = await _claimsExtractor.ExtractAsync(context.SubjectToken, cancellationToken);
         if (!subjectTokenExtractionResult.Succeeded || !subjectTokenExtractionResult.TryGetValue(out var subjectClaims))
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Subject token is invalid"
@@ -66,7 +67,7 @@ public sealed class JwtTokenDelegationHandler(
         if (actorTokenClaims.Any(x => x.Type == AppClaimTypes.Delegated) ||
             subjectTokenClaims.Any(x => x.Type == AppClaimTypes.Delegated))
         {
-            return Results.BadRequest(new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Delegation chaining is not allowed"
@@ -76,7 +77,7 @@ public sealed class JwtTokenDelegationHandler(
         var client = await _clientManager.FindByIdAsync(context.ClientId, cancellationToken);
         if (client is null)
         {
-            return Results.Unauthorized(new Error()
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error()
             {
                 Code = ErrorCode.UnauthorizedClient,
                 Description = "Unauthorized client"
@@ -87,7 +88,7 @@ public sealed class JwtTokenDelegationHandler(
         {
             if (!client.IsValidAudience(context.Audience))
             {
-                return Results.BadRequest(new Error()
+                return Results.ClientError(ClientErrorCode.BadRequest, new Error()
                 {
                     Code = ErrorCode.InvalidTarget,
                     Description = "The requested audience is not an allowed audience for this client."
@@ -105,7 +106,7 @@ public sealed class JwtTokenDelegationHandler(
 
         if (subjectScopes is not null && !scopes.All(s => subjectScopes.Contains(s)))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidScope,
                 Description = "Requested scopes exceed the subject token scopes."
@@ -149,6 +150,6 @@ public sealed class JwtTokenDelegationHandler(
             IssuedAt = long.Parse(subjectTokenClaims.First(x => x.Type == AppClaimTypes.Iat).Value)
         };
 
-        return Results.Ok(response);
+        return Results.Success(SuccessCodes.Ok, response);
     }
 }

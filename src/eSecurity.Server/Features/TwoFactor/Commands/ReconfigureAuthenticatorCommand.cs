@@ -6,6 +6,7 @@ using eSecurity.Server.Security.Cryptography.Protection.Constants;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Identity.Claims;
 using Microsoft.AspNetCore.DataProtection;
 
@@ -29,14 +30,34 @@ public class ReconfigureAuthenticatorCommandHandler(
     public async Task<Result> Handle(ReconfigureAuthenticatorCommand request, CancellationToken cancellationToken)
     {
         var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
-        if (subjectClaim is null) return Results.BadRequest("Invalid request");
-        
+        if (subjectClaim is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Invalid subject"
+            });
+        }
+
         var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
-        if (user is null) return Results.NotFound("User not found.");
+        if (user is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "User not found."
+            });
+        }
 
         var verification = await _verificationManager.FindByIdAsync(request.Request.VerificationId, cancellationToken);
-        if (verification?.Status is not VerificationStatus.Approved) 
-            return Results.BadRequest("Unverified request.");
+        if (verification?.Status is not VerificationStatus.Approved)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Unverified request."
+            });
+        }
 
         var verificationResult = await _verificationManager.ConsumeAsync(verification, cancellationToken);
         if (!verificationResult.Succeeded) return verificationResult;
@@ -44,8 +65,15 @@ public class ReconfigureAuthenticatorCommandHandler(
         var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Secret);
         var protectedSecret = protector.Protect(request.Request.Secret);
         var userSecret = await _secretManager.GetAsync(user, cancellationToken);
-        if (userSecret is null) return Results.NotFound("Secret not found");
-        
+        if (userSecret is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "Secret not found"
+            });
+        }
+
         userSecret.ProtectedSecret = protectedSecret;
 
         var result = await _secretManager.UpdateAsync(userSecret, cancellationToken);

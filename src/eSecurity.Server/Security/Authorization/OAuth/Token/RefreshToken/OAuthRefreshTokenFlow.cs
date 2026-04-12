@@ -3,6 +3,7 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Token.RefreshToken;
 
@@ -27,7 +28,7 @@ public sealed class OAuthRefreshTokenFlow(
         var client = await _clientManager.FindByIdAsync(flowContext.ClientId, cancellationToken);
         if (client is null)
         {
-            return Results.Unauthorized(new Error
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error
             {
                 Code = ErrorCode.InvalidClient,
                 Description = "Invalid client."
@@ -36,7 +37,7 @@ public sealed class OAuthRefreshTokenFlow(
 
         if (!client.HasGrantType(flowContext.GrantType))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.UnsupportedGrantType,
                 Description = $"'{flowContext.GrantType}' is not supported by client."
@@ -45,7 +46,7 @@ public sealed class OAuthRefreshTokenFlow(
 
         if (client.Id != token.ClientId)
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Invalid refresh token"
@@ -54,7 +55,7 @@ public sealed class OAuthRefreshTokenFlow(
 
         if (!client.AllowOfflineAccess)
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Refresh token grant is not allowed for this client."
@@ -64,7 +65,7 @@ public sealed class OAuthRefreshTokenFlow(
         var user = await _userManager.FindByIdAsync(Guid.Parse(token.Subject), cancellationToken);
         if (user is null)
         {
-            return Results.NotFound(new Error
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Invalid refresh token."
@@ -84,12 +85,12 @@ public sealed class OAuthRefreshTokenFlow(
         if (!accessTokenResult.Succeeded)
         {
             var error = accessTokenResult.GetError();
-            return Results.InternalServerError(error);
+            return Results.ServerError(ServerErrorCode.InternalServerError, error);
         }
 
         if (!accessTokenResult.TryGetValue(out var accessToken))
         {
-            return Results.InternalServerError(new Error()
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
             {
                 Code = ErrorCode.ServerError,
                 Description = "Server error"
@@ -107,12 +108,12 @@ public sealed class OAuthRefreshTokenFlow(
             if (!refreshTokenResult.Succeeded)
             {
                 var error = refreshTokenResult.GetError();
-                return Results.InternalServerError(error);
+                return Results.ServerError(ServerErrorCode.InternalServerError, error);
             }
 
             if (!refreshTokenResult.TryGetValue(out var refreshToken))
             {
-                return Results.InternalServerError(new Error()
+                return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
                 {
                     Code = ErrorCode.ServerError,
                     Description = "Server error"
@@ -122,11 +123,11 @@ public sealed class OAuthRefreshTokenFlow(
             response.RefreshToken = refreshToken;
 
             var revokeResult = await _tokenManager.RevokeAsync(token, cancellationToken);
-            return revokeResult.Succeeded ? Results.Ok(response) : revokeResult;
+            return revokeResult.Succeeded ? Results.Success(SuccessCodes.Ok, response) : revokeResult;
         }
 
         response.RefreshToken = flowContext.RefreshToken;
 
-        return Results.Ok(response);
+        return Results.Success(SuccessCodes.Ok, response);
     }
 }

@@ -3,6 +3,7 @@ using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.Claims;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Security.Authorization.OAuth.Token;
 using eSystem.Core.Security.Authorization.OAuth.Token.ClientCredentials;
@@ -34,7 +35,7 @@ public sealed class ClientCredentialsStrategy(
 
         if (string.IsNullOrEmpty(request.ClientSecret))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "client_secret is required"
@@ -43,7 +44,7 @@ public sealed class ClientCredentialsStrategy(
 
         if (string.IsNullOrEmpty(request.Scope))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "scope is required"
@@ -53,7 +54,7 @@ public sealed class ClientCredentialsStrategy(
         var client = await _clientManager.FindByIdAsync(request.ClientId, cancellationToken);
         if (client is null)
         {
-            return Results.Unauthorized(new Error
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error
             {
                 Code = ErrorCode.InvalidClient,
                 Description = "Client was not found."
@@ -62,7 +63,7 @@ public sealed class ClientCredentialsStrategy(
 
         if (!client.HasGrantType(request.GrantType))
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.UnsupportedGrantType,
                 Description = $"'{request.GrantType}' grant is not supported by client."
@@ -75,7 +76,7 @@ public sealed class ClientCredentialsStrategy(
 
         if (allowedScopes.Count == 0)
         {
-            return Results.BadRequest(new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidScope,
                 Description = "None of the requested scopes are allowed for this client."
@@ -96,12 +97,12 @@ public sealed class ClientCredentialsStrategy(
         if (!accessTokenResult.Succeeded)
         {
             var error = accessTokenResult.GetError();
-            return Results.InternalServerError(error);
+            return Results.ServerError(ServerErrorCode.InternalServerError, error);
         }
 
         if (!accessTokenResult.TryGetValue(out var accessToken))
         {
-            return Results.InternalServerError(new Error()
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
             {
                 Code = ErrorCode.ServerError,
                 Description = "Server error"
@@ -110,6 +111,6 @@ public sealed class ClientCredentialsStrategy(
             
         response.AccessToken = accessToken;
 
-        return Results.Ok(response);
+        return Results.Success(SuccessCodes.Ok, response);
     }
 }
