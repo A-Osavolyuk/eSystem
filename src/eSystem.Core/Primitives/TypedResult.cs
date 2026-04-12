@@ -2,13 +2,11 @@
 
 public sealed class TypedResult<TValue>
 {
-    public bool Succeeded { get; private set; }
-    private TValue? Value { get; set; }
-    private Error? Error { get; set; }
+    public bool Succeeded { get; init; }
+    private TValue? Value { get; init; }
+    private Error? Error { get; init; }
 
-    private TypedResult()
-    {
-    }
+    private TypedResult() {}
 
     public static TypedResult<TValue> Success(TValue value) => new() { Value = value, Succeeded = true };
     public static TypedResult<TValue> Fail(Error error) => new() { Error = error, Succeeded = false };
