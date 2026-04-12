@@ -1,9 +1,8 @@
 ﻿using System.Text.Json.Serialization;
-using eSystem.Core.Common.Serialization;
 
 namespace eSystem.Core.Security.Identity.Claims;
 
-public sealed class ActorClaim : IDeep
+public sealed class ActorClaim
 {
     [JsonPropertyName(AppClaimTypes.Sub)]
     public required string Subject { get; set; }
@@ -22,18 +21,4 @@ public sealed class ActorClaim : IDeep
     
     [JsonPropertyName(AppClaimTypes.Act)] 
     public ActorClaim? Actor { get; set; }
-
-    public int GetDepth()
-    {
-        var depth = 0;
-        var actor = Actor;
-        
-        while (actor is not null)
-        {
-            depth++;
-            actor = actor.Actor;
-        }
-        
-        return depth;
-    }
 }
