@@ -131,12 +131,10 @@ public sealed class OAuthSignInStrategy(
         authenticationSession.UserId = user.Id;
         if (await _twoFactorManager.IsEnabledAsync(user, cancellationToken))
         {
-            authenticationSession.Require(AuthenticationMethod.MultiFactorAuthentication);
-            
             var hasPasskey = await _passkeyManager.HasAsync(user, cancellationToken);
             authenticationSession.AllowMfa(hasPasskey
-                ? [AuthenticationMethod.SoftwareKey, AuthenticationMethod.OneTimePassword]
-                : [AuthenticationMethod.OneTimePassword]);
+                ? [AuthenticationMethodReference.SoftwareKey, AuthenticationMethodReference.OneTimePassword]
+                : [AuthenticationMethodReference.OneTimePassword]);
             
             var sessionResult = await _authenticationSessionManager.UpdateAsync(authenticationSession, cancellationToken);
             if (!sessionResult.Succeeded) return sessionResult;
@@ -156,7 +154,7 @@ public sealed class OAuthSignInStrategy(
                 ExpireDate = DateTimeOffset.UtcNow.Add(_options.Timestamp),
             };
             
-            session.AddMethods(authenticationSession.AuthenticationMethods.Select(x => x.Method));
+            session.AddMethods(authenticationSession.AuthenticationMethods.Select(x => x.MethodReference));
             await _sessionManager.CreateAsync(session, cancellationToken);
             
             authenticationSession.SessionId = session.Id;

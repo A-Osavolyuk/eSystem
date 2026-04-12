@@ -88,11 +88,11 @@ public sealed class CompleteSignUpCommandHandler(
             ExpireDate = DateTimeOffset.UtcNow.Add(_options.Timestamp)
         };
 
-        session.AddMethods(AuthenticationMethod.EmailVerification);
+        session.AddMethods(AuthenticationMethodReference.EmailBasedAuthentication);
         await _sessionManager.CreateAsync(session, cancellationToken);
 
         authenticationSession.SessionId = session.Id;
-        authenticationSession.Pass(AuthenticationMethod.EmailVerification);
+        authenticationSession.Pass(AuthenticationMethodReference.EmailBasedAuthentication);
 
         var authenticationSessionResult = await _authenticationSessionManager.UpdateAsync(
             authenticationSession, cancellationToken);

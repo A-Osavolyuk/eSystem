@@ -41,14 +41,14 @@ public sealed class GetAuthenticationSessionQueryHandler(
         
         var allowedMfaMethods = authenticationSession
             .GetMethods(AuthenticationMethodType.AllowedMfa)
-            .Select(x => x.Method);
+            .Select(x => x.MethodReference);
         
         var response = new AuthenticationSessionDto()
         {
             SessionId = authenticationSession.SessionId,
             OAuthFlow =  authenticationSession.OAuthFlow,
             IsCompleted = authenticationSession.GetMethods(AuthenticationMethodType.Required).Count == 0,
-            NextMethod = nextMethod?.Method,
+            NextMethod = nextMethod?.MethodReference,
             AllowedMfaMethods = allowedMfaMethods
         };
         

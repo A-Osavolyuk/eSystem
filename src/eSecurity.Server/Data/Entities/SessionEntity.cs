@@ -15,17 +15,17 @@ public class SessionEntity : Entity
     public ICollection<OpaqueTokenEntity> OpaqueTokens { get; set; } = null!;
     public ICollection<SessionAuthenticationMethodEntity> AuthenticationMethods { get; set; } = null!;
     
-    public void AddMethods(params IEnumerable<AuthenticationMethod> methods)
+    public void AddMethods(params IEnumerable<AuthenticationMethodReference> methods)
     {
         foreach (var method in methods)
         {
-            if (AuthenticationMethods.All(x => x.Method != method))
+            if (AuthenticationMethods.All(x => x.MethodReference != method))
             {
                 AuthenticationMethods.Add(new SessionAuthenticationMethodEntity()
                 {
                     Id = Guid.CreateVersion7(),
                     SessionId = Id,
-                    Method = method
+                    MethodReference = method
                 });
             }
         }

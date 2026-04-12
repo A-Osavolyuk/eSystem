@@ -162,7 +162,7 @@ public sealed class ManualSignUpStrategy(
             ExpiredAt = DateTimeOffset.UtcNow.AddMinutes(10)
         };
         
-        session.Require(AuthenticationMethod.EmailVerification);
+        session.Require(AuthenticationMethodReference.EmailBasedAuthentication);
         
         var sessionResult = await _sessionManager.CreateAsync(session, cancellationToken);
         if (!sessionResult.Succeeded) return sessionResult;

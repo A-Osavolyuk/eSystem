@@ -119,11 +119,10 @@ public sealed class RecoveryCodeTwoFactorStrategy(
             if (!userUpdateResult.Succeeded) return userUpdateResult;
         }
 
-        AuthenticationMethod[] authenticationMethods =
+        AuthenticationMethodReference[] authenticationMethods =
         [
-            ..authenticationSession.AuthenticationMethods.Select(x => x.Method),
-            AuthenticationMethod.MultiFactorAuthentication,
-            AuthenticationMethod.OneTimePassword
+            ..authenticationSession.AuthenticationMethods.Select(x => x.MethodReference),
+            AuthenticationMethodReference.OneTimePassword
         ];
 
         var session = new SessionEntity

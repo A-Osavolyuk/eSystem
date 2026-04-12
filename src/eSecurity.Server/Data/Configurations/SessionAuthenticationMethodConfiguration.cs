@@ -10,7 +10,7 @@ public sealed class SessionAuthenticationMethodConfiguration
     public void Configure(EntityTypeBuilder<SessionAuthenticationMethodEntity> builder)
     {
         builder.HasKey(x => x.Id);
-        builder.Property(x => x.Method).HasEnumConversion();
+        builder.Property(x => x.MethodReference).HasEnumConversion();
         
         builder.HasOne(x => x.Session)
             .WithMany(x => x.AuthenticationMethods)

@@ -121,7 +121,7 @@ public sealed class PasskeySignInStrategy(
             ExpireDate = DateTimeOffset.UtcNow.Add(_options.Timestamp)
         };
         
-        session.AddMethods(AuthenticationMethod.SoftwareKey);
+        session.AddMethods(AuthenticationMethodReference.SoftwareKey);
         await _sessionManager.CreateAsync(session, cancellationToken);
         
         var authenticationSession = new AuthenticationSessionEntity()
@@ -133,7 +133,7 @@ public sealed class PasskeySignInStrategy(
             ExpiredAt = DateTimeOffset.UtcNow.AddMinutes(15)
         };
         
-        authenticationSession.Pass(AuthenticationMethod.SoftwareKey);
+        authenticationSession.Pass(AuthenticationMethodReference.SoftwareKey);
         
         var sessionResult = await _authenticationSessionManager.CreateAsync(authenticationSession, cancellationToken);
         if (!sessionResult.Succeeded) return sessionResult;

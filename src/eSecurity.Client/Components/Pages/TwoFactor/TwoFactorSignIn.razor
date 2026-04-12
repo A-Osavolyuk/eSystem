@@ -95,7 +95,7 @@
                 if (result.Succeeded && result.TryGetValue<AuthenticationSessionDto>(out var session) && 
                     session?.AllowedMfaMethods != null)
                 {
-                    if (session.AllowedMfaMethods.Contains(AuthenticationMethod.SoftwareKey))
+                    if (session.AllowedMfaMethods.Contains(AuthenticationMethodReference.SoftwareKey))
                     {
                         _preferredMethod = TwoFactorMethod.Passkey;
                         _methods = [

@@ -45,7 +45,7 @@ public sealed class OAuthLoginCommandHandler(
             ExpiredAt = DateTimeOffset.UtcNow.AddMinutes(10)
         };
         
-        session.Pass([AuthenticationMethod.Federated, AuthenticationMethod.Social]);
+        session.Pass([AuthenticationMethodReference.OAuth]);
         
         var result = await _authenticationSessionManager.CreateAsync(session, cancellationToken);
         if (!result.Succeeded) return result;

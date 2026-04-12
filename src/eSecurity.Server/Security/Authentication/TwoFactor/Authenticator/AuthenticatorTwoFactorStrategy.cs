@@ -136,11 +136,10 @@ public sealed class AuthenticatorTwoFactorStrategy(
             if (!userUpdateResult.Succeeded) return userUpdateResult;
         }
 
-        AuthenticationMethod[] authenticationMethods =
+        AuthenticationMethodReference[] authenticationMethods =
         [
-            ..authenticationSession.AuthenticationMethods.Select(x => x.Method),
-            AuthenticationMethod.MultiFactorAuthentication,
-            AuthenticationMethod.OneTimePassword
+            ..authenticationSession.AuthenticationMethods.Select(x => x.MethodReference),
+            AuthenticationMethodReference.OneTimePassword
         ];
 
         var session = new SessionEntity
@@ -150,7 +149,7 @@ public sealed class AuthenticatorTwoFactorStrategy(
             ExpireDate = DateTimeOffset.UtcNow.Add(_sessionOptions.Timestamp)
         };
 
-        session.AddMethods(authenticationSession.AuthenticationMethods.Select(x => x.Method));
+        session.AddMethods(authenticationSession.AuthenticationMethods.Select(x => x.MethodReference));
         await _sessionManager.CreateAsync(session, cancellationToken);
 
         authenticationSession.SessionId = session.Id;

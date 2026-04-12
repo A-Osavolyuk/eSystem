@@ -169,7 +169,7 @@ public sealed class OAuthSignUpStrategy(
             ExpireDate = DateTimeOffset.UtcNow.Add(_sessionOptions.Timestamp)
         };
         
-        session.AddMethods(authenticationSession.AuthenticationMethods.Select(x => x.Method));
+        session.AddMethods(authenticationSession.AuthenticationMethods.Select(x => x.MethodReference));
         await _sessionManager.CreateAsync(session, cancellationToken);
         
         authenticationSession.OAuthFlow = OAuthFlow.SignUp;

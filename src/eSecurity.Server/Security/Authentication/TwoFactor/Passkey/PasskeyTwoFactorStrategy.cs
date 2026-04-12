@@ -148,11 +148,10 @@ public sealed class PasskeyTwoFactorStrategy(
             if (!userUpdateResult.Succeeded) return userUpdateResult;
         }
 
-        AuthenticationMethod[] authenticationMethods =
+        AuthenticationMethodReference[] authenticationMethods =
         [
-            ..authenticationSession.AuthenticationMethods.Select(x => x.Method),
-            AuthenticationMethod.MultiFactorAuthentication,
-            AuthenticationMethod.SoftwareKey
+            ..authenticationSession.AuthenticationMethods.Select(x => x.MethodReference),
+            AuthenticationMethodReference.SoftwareKey
         ];
 
         var session = new SessionEntity

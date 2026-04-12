@@ -4,14 +4,11 @@ using eSystem.Core.Enums.Serialization;
 
 namespace eSystem.Core.Security.Authentication.OpenIdConnect;
 
-[JsonConverter(typeof(JsonEnumValueConverter<AuthenticationMethod>))]
-public enum AuthenticationMethod
+[JsonConverter(typeof(JsonEnumValueConverter<AuthenticationMethodReference>))]
+public enum AuthenticationMethodReference
 {
     [EnumValue("pwd")]
     Password,
-    
-    [EnumValue("mfa")]
-    MultiFactorAuthentication,
     
     [EnumValue("otp")]
     OneTimePassword,
@@ -31,7 +28,7 @@ public enum AuthenticationMethod
     [EnumValue("kba")]
     KnowledgeBasedAuthentication,
     
-    [EnumValue("ftp")]
+    [EnumValue("fpt")]
     Fingerprint,
     
     [EnumValue("face")]
@@ -40,12 +37,12 @@ public enum AuthenticationMethod
     [EnumValue("eye")]
     IrisScan,
     
-    [EnumValue("federated")]
-    Federated,
+    [EnumValue("oauth")]
+    OAuth,
     
-    [EnumValue("social")]
-    Social,
+    [EnumValue("oidc")]
+    OpenIdConnect,
     
-    [EnumValue("email")]
-    EmailVerification
+    [EnumValue("ema")]
+    EmailBasedAuthentication
 }

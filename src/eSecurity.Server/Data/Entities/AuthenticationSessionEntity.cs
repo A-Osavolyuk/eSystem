@@ -8,6 +8,7 @@ public sealed class AuthenticationSessionEntity : Entity
 {
     public Guid Id { get; set; }
 
+    public bool RequireMfa { get; set; }
     public string? IdentityProvider { get; set; }
     public OAuthFlow? OAuthFlow { get; set; }
 
@@ -33,11 +34,11 @@ public sealed class AuthenticationSessionEntity : Entity
             .ToList();
     }
 
-    public void Pass(params AuthenticationMethod[] methods)
+    public void Pass(params AuthenticationMethodReference[] methods)
     {
         foreach (var method in methods)
         {
-            var passedMethod = AuthenticationMethods.FirstOrDefault(x => x.Method == method);
+            var passedMethod = AuthenticationMethods.FirstOrDefault(x => x.MethodReference == method);
             if (passedMethod is not null)
             {
                 passedMethod.Type = AuthenticationMethodType.Passed;
@@ -49,13 +50,13 @@ public sealed class AuthenticationSessionEntity : Entity
                     Id = Guid.CreateVersion7(),
                     SessionId = Id,
                     Type = AuthenticationMethodType.Passed,
-                    Method = method
+                    MethodReference = method
                 });
             }
         }
     }
 
-    public void Require(params AuthenticationMethod[] methods)
+    public void Require(params AuthenticationMethodReference[] methods)
     {
         foreach (var method in methods)
         {
@@ -64,12 +65,12 @@ public sealed class AuthenticationSessionEntity : Entity
                 Id = Guid.CreateVersion7(),
                 SessionId = Id,
                 Type = AuthenticationMethodType.Required,
-                Method = method
+                MethodReference = method
             });
         }
     }
 
-    public void AllowMfa(params AuthenticationMethod[] methods)
+    public void AllowMfa(params AuthenticationMethodReference[] methods)
     {
         foreach (var method in methods)
         {
@@ -78,7 +79,7 @@ public sealed class AuthenticationSessionEntity : Entity
                 Id = Guid.CreateVersion7(),
                 SessionId = Id,
                 Type = AuthenticationMethodType.AllowedMfa,
-                Method = method
+                MethodReference = method
             });
         }
     }

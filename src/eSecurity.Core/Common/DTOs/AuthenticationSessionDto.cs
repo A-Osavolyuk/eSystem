@@ -16,11 +16,14 @@ public sealed class AuthenticationSessionDto
     
     [JsonPropertyName("is_completed")]
     public bool IsCompleted { get; set; }
+
+    [JsonPropertyName("require_mfa")]
+    public bool RequireMfa { get; set; }
     
     [JsonPropertyName("next_method")]
-    public AuthenticationMethod? NextMethod { get; set; }
+    public AuthenticationMethodReference? NextMethod { get; set; }
     
     [JsonPropertyName("allowed_mfa_methods")]
-    public IEnumerable<AuthenticationMethod> AllowedMfaMethods { get; set; } = [];
+    public IEnumerable<AuthenticationMethodReference> AllowedMfaMethods { get; set; } = [];
 
 }

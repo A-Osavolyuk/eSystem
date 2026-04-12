@@ -214,8 +214,8 @@ public sealed class PasswordSignInStrategy(
                 Description = "Cannot sign in, device is blocked."
             });
         }
-        
-        var authenticationSession = new AuthenticationSessionEntity()
+
+        var authSession = new AuthenticationSessionEntity()
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
@@ -223,25 +223,28 @@ public sealed class PasswordSignInStrategy(
             ExpiredAt = DateTimeOffset.UtcNow.AddMinutes(15),
         };
 
-        authenticationSession.Pass(AuthenticationMethod.Password);
-        
+        authSession.Pass(AuthenticationMethodReference.Password);
+
         if (await _twoFactorManager.IsEnabledAsync(user, cancellationToken))
         {
-            var hasPasskey = await _passkeyManager.HasAsync(user, cancellationToken);
-            AuthenticationMethod[] authenticationMethods = hasPasskey
-                ? [AuthenticationMethod.SoftwareKey, AuthenticationMethod.OneTimePassword]
-                : [AuthenticationMethod.OneTimePassword];
+            var hasSoftwareKey = await _passkeyManager.HasAsync(user, cancellationToken);
+            AuthenticationMethodReference[] mfaMethods = hasSoftwareKey
+                ? [AuthenticationMethodReference.OneTimePassword, AuthenticationMethodReference.SoftwareKey]
+                : [AuthenticationMethodReference.OneTimePassword];
             
-            authenticationSession.Require(AuthenticationMethod.MultiFactorAuthentication);
-            authenticationSession.AllowMfa(authenticationMethods);
-            
-            var sessionResult = await _authenticationSessionManager.CreateAsync(authenticationSession, cancellationToken);
+            var requiredMfaMethod = hasSoftwareKey
+                ? AuthenticationMethodReference.SoftwareKey
+                : AuthenticationMethodReference.OneTimePassword;
+                
+            authSession.RequireMfa = true;
+            authSession.Require(requiredMfaMethod);
+            authSession.AllowMfa(mfaMethods);
+
+            var sessionResult = await _authenticationSessionManager.CreateAsync(authSession, cancellationToken);
             if (!sessionResult.Succeeded) return sessionResult;
-            
-            return Results.Success(SuccessCodes.Ok, new SignInResponse()
-            {
-                TransactionId = authenticationSession.Id
-            });
+
+            var response = new SignInResponse { TransactionId = authSession.Id };
+            return Results.Success(SuccessCodes.Ok, response);
         }
         else
         {
@@ -252,17 +255,17 @@ public sealed class PasswordSignInStrategy(
                 ExpireDate = DateTimeOffset.UtcNow.Add(_sessionOptions.Timestamp)
             };
 
-            session.AddMethods(AuthenticationMethod.Password);
+            session.AddMethods(AuthenticationMethodReference.Password);
             await _sessionManager.CreateAsync(session, cancellationToken);
-            
-            authenticationSession.SessionId = session.Id;
-            
-            var sessionResult = await _authenticationSessionManager.CreateAsync(authenticationSession, cancellationToken);
+
+            authSession.SessionId = session.Id;
+
+            var sessionResult = await _authenticationSessionManager.CreateAsync(authSession, cancellationToken);
             if (!sessionResult.Succeeded) return sessionResult;
-            
+
             return Results.Success(SuccessCodes.Ok, new SignInResponse
             {
-                TransactionId = authenticationSession.Id,
+                TransactionId = authSession.Id,
                 SessionId = session.Id
             });
         }
