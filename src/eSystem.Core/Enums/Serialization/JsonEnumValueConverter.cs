@@ -1,9 +1,9 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace eSystem.Core.Enums;
+namespace eSystem.Core.Enums.Serialization;
 
-public sealed class JsonPreferredEnumValueConverter<TEnum> : JsonConverter<TEnum> where TEnum : struct, Enum
+public sealed class JsonEnumValueConverter<TEnum> : JsonConverter<TEnum> where TEnum : struct, Enum
 {
     public override TEnum Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
@@ -15,20 +15,11 @@ public sealed class JsonPreferredEnumValueConverter<TEnum> : JsonConverter<TEnum
             throw new JsonException("Value cannot be null or empty");
         
         var enumValue = EnumHelper.FromString<TEnum>(value);
-        if (enumValue is null)
-            throw new JsonException($"Invalid enum value '{value}'");
-        
-        return !enumValue.IsPreferred 
-            ? throw new JsonException("Only preferred value is allowed.") 
-            : enumValue.Value;
+        return enumValue?.Value ?? throw new JsonException($"Invalid enum value '{value}'");
     }
 
     public override void Write(Utf8JsonWriter writer, TEnum value, JsonSerializerOptions options)
     {
-        var stringValue = EnumHelper.GetString(value, true);
-        if (string.IsNullOrEmpty(stringValue))
-            throw new JsonException("Only preferred token type is allowed.");
-        
-        writer.WriteStringValue(stringValue);
+        writer.WriteStringValue(EnumHelper.GetString(value));
     }
 }

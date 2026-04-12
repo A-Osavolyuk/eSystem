@@ -1,4 +1,5 @@
 ﻿using eSystem.Core.Enums;
+using eSystem.Core.Enums.Serialization;
 
 namespace eSecurity.Core.Security.Authentication.TwoFactor;
 
