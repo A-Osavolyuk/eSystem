@@ -85,9 +85,9 @@ public class ClientSecretBasicAuthenticationHandler(
             new(AppClaimTypes.ClientSecret, client.ClientType.ToString())
         };
         
-        var identity = new ClaimsIdentity(claims, ClientSecretBasicAuthenticationDefaults.AuthenticationScheme);
+        var identity = new ClaimsIdentity(claims, AuthenticationSchemes.ClientSecretBasic);
         var principal = new ClaimsPrincipal(identity);
-        var ticket = new AuthenticationTicket(principal, ClientSecretBasicAuthenticationDefaults.AuthenticationScheme);
+        var ticket = new AuthenticationTicket(principal, AuthenticationSchemes.ClientSecretBasic);
         
         return AuthenticateResult.Success(ticket);
     }

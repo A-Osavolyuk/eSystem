@@ -101,10 +101,10 @@ public static class AuthenticationExtensions
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = ExternalAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = AuthenticationSchemes.External;
             })
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie(ExternalAuthenticationDefaults.AuthenticationScheme, options =>
+            .AddCookie(AuthenticationSchemes.External, options =>
             {
                 options.Cookie.Name = DefaultCookies.External;
                 options.Cookie.HttpOnly = true;
@@ -119,7 +119,7 @@ public static class AuthenticationExtensions
                 options.ClientSecret = settings.ClientSecret;
                 options.SaveTokens = settings.SaveTokens;
                 options.CallbackPath = settings.CallbackPath;
-                options.SignInScheme = ExternalAuthenticationDefaults.AuthenticationScheme;
+                options.SignInScheme = AuthenticationSchemes.External;
             })
             .AddFacebook(options =>
             {
@@ -129,7 +129,7 @@ public static class AuthenticationExtensions
                 options.ClientSecret = settings.ClientSecret;
                 options.SaveTokens = settings.SaveTokens;
                 options.CallbackPath = settings.CallbackPath;
-                options.SignInScheme = ExternalAuthenticationDefaults.AuthenticationScheme;
+                options.SignInScheme = AuthenticationSchemes.External;
             })
             .AddMicrosoftAccount(options =>
             {
@@ -139,13 +139,13 @@ public static class AuthenticationExtensions
                 options.ClientSecret = settings.ClientSecret;
                 options.SaveTokens = settings.SaveTokens;
                 options.CallbackPath = settings.CallbackPath;
-                options.SignInScheme = ExternalAuthenticationDefaults.AuthenticationScheme;
+                options.SignInScheme = AuthenticationSchemes.External;
             })
             .AddScheme<JwtAuthenticationSchemeOptions, JwtAuthenticationHandler>(
                 JwtBearerDefaults.AuthenticationScheme, _ => { })
             .AddScheme<ClientSecretBasicAuthenticationSchemeOptions, ClientSecretBasicAuthenticationHandler>(
-                ClientSecretBasicAuthenticationDefaults.AuthenticationScheme, _ => { })
+                AuthenticationSchemes.ClientSecretBasic, _ => { })
             .AddScheme<ClientSecretPostAuthenticationSchemeOptions, ClientSecretPostAuthenticationHandler>(
-                ClientSecretPostAuthenticationDefaults.AuthenticationScheme, _ => { });
+                AuthenticationSchemes.ClientSecretPost, _ => { });
     }
 }

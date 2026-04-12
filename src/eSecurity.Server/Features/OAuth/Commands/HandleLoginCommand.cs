@@ -31,7 +31,7 @@ public sealed class HandleOAuthLoginCommandHandler(
     public async Task<Result> Handle(HandleLoginCommand request,
         CancellationToken cancellationToken)
     {
-        var authenticateResult = await _httpContext.AuthenticateAsync(ExternalAuthenticationDefaults.AuthenticationScheme);
+        var authenticateResult = await _httpContext.AuthenticateAsync(AuthenticationSchemes.External);
         var principal = authenticateResult.Principal ?? throw new NullReferenceException("Principal is null");
         var properties = authenticateResult.Properties ?? throw new NullReferenceException("Properties is null");
         var items = properties.Items;

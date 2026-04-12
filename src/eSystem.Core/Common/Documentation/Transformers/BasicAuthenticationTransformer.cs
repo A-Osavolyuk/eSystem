@@ -11,11 +11,11 @@ public class BasicAuthenticationTransformer : IOpenApiDocumentTransformer
         CancellationToken cancellationToken)
     {
         document.Components ??= new OpenApiComponents();
-        document.Components.SecuritySchemes?.Add(BasicAuthenticationDefaults.AuthenticationScheme,
+        document.Components.SecuritySchemes?.Add(AuthenticationSchemes.Basic,
             new OpenApiSecurityScheme
             {
                 Type = SecuritySchemeType.Http,
-                Scheme = BasicAuthenticationDefaults.AuthenticationScheme.ToLower(),
+                Scheme = AuthenticationSchemes.Basic.ToLower(),
                 Description = "Enter your Basic Authentication value in the format: `Basic {value}`"
             });
 
@@ -27,7 +27,7 @@ public class BasicAuthenticationTransformer : IOpenApiDocumentTransformer
                     Reference = new OpenApiReference
                     {
                         Type = ReferenceType.SecurityScheme,
-                        Id = BasicAuthenticationDefaults.AuthenticationScheme
+                        Id = AuthenticationSchemes.Basic
                     }
                 },[]
             }

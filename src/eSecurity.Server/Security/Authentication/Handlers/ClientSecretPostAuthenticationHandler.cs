@@ -62,9 +62,9 @@ public class ClientSecretPostAuthenticationHandler(
             new(AppClaimTypes.ClientSecret, client.ClientType.ToString())
         };
 
-        var identity = new ClaimsIdentity(claims, ClientSecretPostAuthenticationDefaults.AuthenticationScheme);
+        var identity = new ClaimsIdentity(claims, AuthenticationSchemes.ClientSecretPost);
         var principal = new ClaimsPrincipal(identity);
-        var ticket = new AuthenticationTicket(principal, ClientSecretPostAuthenticationDefaults.AuthenticationScheme);
+        var ticket = new AuthenticationTicket(principal, AuthenticationSchemes.ClientSecretPost);
 
         return AuthenticateResult.Success(ticket);
     }

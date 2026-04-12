@@ -52,15 +52,15 @@ public static class AuthorizationExtensions
             .AddPolicy(AuthorizationPolicies.BasicAuthorization, policy =>
             {
                 policy.AddAuthenticationSchemes(
-                    ClientSecretBasicAuthenticationDefaults.AuthenticationScheme,
-                    ClientSecretPostAuthenticationDefaults.AuthenticationScheme);
+                    AuthenticationSchemes.ClientSecretBasic,
+                    AuthenticationSchemes.ClientSecretPost);
                 policy.RequireAuthenticatedUser();
             })
             .AddPolicy(AuthorizationPolicies.TokenAuthorization, policy =>
             {
                 policy.AddAuthenticationSchemes(
-                    ClientSecretBasicAuthenticationDefaults.AuthenticationScheme,
-                    ClientSecretPostAuthenticationDefaults.AuthenticationScheme);
+                    AuthenticationSchemes.ClientSecretBasic,
+                    AuthenticationSchemes.ClientSecretPost);
                 policy.RequireAuthenticatedUser();
             });
     }
