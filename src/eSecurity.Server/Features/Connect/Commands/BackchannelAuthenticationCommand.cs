@@ -184,27 +184,6 @@ public sealed class BackchannelAuthenticationCommandHandler(
                 Description = "binding_message must not be longer then 255 characters"
             });
         }
-
-        if (client.RequireUserCode && string.IsNullOrWhiteSpace(request.Request.UserCode))
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
-            {
-                Code = ErrorCode.MissingUserCode,
-                Description = "user_code is missing"
-            });
-        }
-
-        if (!string.IsNullOrWhiteSpace(request.Request.UserCode) && 
-            (request.Request.UserCode.Length > _options.UserCodeMaxLength ||
-             request.Request.UserCode.Length < _options.UserCodeMinLength))
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
-            {
-                Code = ErrorCode.InvalidUserCode,
-                Description = $"user_code length must be between {_options.UserCodeMinLength} " +
-                              $"and {_options.UserCodeMaxLength} characters"
-            });
-        }
         
         var cibaRequest = new CibaRequestEntity()
         {
@@ -215,7 +194,6 @@ public sealed class BackchannelAuthenticationCommandHandler(
             State = CibaRequestState.Pending,
             Interval = _options.Interval,
             Scope = request.Request.Scope,
-            UserCode = request.Request.UserCode,
             AcrValues = request.Request.AcrValues,
             BindingMessage = request.Request.BindingMessage,
             CreatedAt = DateTimeOffset.UtcNow,

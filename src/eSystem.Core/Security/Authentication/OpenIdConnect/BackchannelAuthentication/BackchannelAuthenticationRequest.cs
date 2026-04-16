@@ -31,9 +31,6 @@ public sealed class BackchannelAuthenticationRequest
     [FromForm(Name = "binding_message")]
     public string? BindingMessage { get; set; }
     
-    [FromForm(Name = "user_code")]
-    public string? UserCode { get; set; }
-    
     [FromForm(Name = "requested_expiry")]
     public int? RequestedExpiry { get; set; }
     

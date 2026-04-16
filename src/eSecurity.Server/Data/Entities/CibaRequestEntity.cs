@@ -15,7 +15,6 @@ public sealed class CibaRequestEntity : Entity
     public required DateTimeOffset ExpiredAt { get; set; }
     public DateTimeOffset? ConsumedAt { get; set; }
     
-    public string? UserCode { get; set; }
     public string? AcrValues { get; set; }
     public string? BindingMessage { get; set; }
     public string? DeniedReason { get; set; }

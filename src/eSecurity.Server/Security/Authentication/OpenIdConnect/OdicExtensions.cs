@@ -27,8 +27,6 @@ public static class OdicExtensions
             {
                 options.Interval = 5;
                 options.AuthReqIdLength = 32;
-                options.UserCodeMaxLength = 8;
-                options.UserCodeMinLength = 4;
                 options.DefaultRequestLifetime = TimeSpan.FromSeconds(300);
                 options.MinRequestLifetime = TimeSpan.FromSeconds(60);
                 options.MaxRequestLifetime = TimeSpan.FromSeconds(600);
