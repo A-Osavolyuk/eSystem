@@ -35,32 +35,6 @@ public static class HttpRequestMethodExtensions
 
                     break;
                 }
-                case ContentTypes.Multipart.FormData:
-                {
-                    message.Headers.Add(HeaderTypes.Accept, options.ContentType);
-
-                    var content = new MultipartFormDataContent();
-
-                    if (request.Data is not null)
-                    {
-                        if (request.Data is IReadOnlyList<IBrowserFile> files)
-                        {
-                            foreach (var file in files)
-                            {
-                                var fileContent = new StreamContent(file.OpenReadStream());
-                                fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
-                                content.Add(fileContent, "files", file.Name);
-                            }
-                        }
-
-                        var metadata = JsonSerializer.Serialize(request.Metadata);
-                        content.Add(new StringContent(metadata), "metadata");
-
-                        message.Content = content;
-                    }
-
-                    break;
-                }
                 default: throw new NotSupportedException("Unsupported request type");
             }
         }
