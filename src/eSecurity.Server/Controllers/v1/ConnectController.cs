@@ -7,6 +7,7 @@ using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
+using eSystem.Core.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
 using eSystem.Core.Security.Authentication.OpenIdConnect.User;
 using eSystem.Core.Security.Authorization.OAuth.DeviceAuthorization;
 
@@ -160,6 +161,17 @@ public class ConnectController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> DeviceAuthorizationAsync([FromForm] DeviceAuthorizationRequest request)
     {
         var result = await _sender.Send(new DeviceAuthorizationCommand(request));
+        return HttpContext.HandleResult(result);
+    }
+    
+    [EndpointSummary("Backchannel authentication")]
+    [EndpointDescription("Backchannel authentication")]
+    [ProducesResponseType(200)]
+    [Consumes(ContentTypes.Application.XwwwFormUrlEncoded)]
+    [HttpPost("backchannel_authentication")]
+    public async ValueTask<IActionResult> BackchannelAuthenticationAsync([FromForm] BackchannelAuthenticationRequest request)
+    {
+        var result = await _sender.Send(new BackchannelAuthenticationCommand(request));
         return HttpContext.HandleResult(result);
     }
 }
