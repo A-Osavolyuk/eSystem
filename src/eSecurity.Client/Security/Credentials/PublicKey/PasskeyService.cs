@@ -11,7 +11,7 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Passkey/options/request"
             }, new ApiOptions
@@ -25,7 +25,7 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Passkey/options/creation"
             }, new ApiOptions
@@ -38,7 +38,7 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Passkey/create"
             }, new ApiOptions
@@ -51,7 +51,7 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Passkey/change-name"
             }, new ApiOptions
@@ -64,7 +64,7 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Passkey/remove"
             }, new ApiOptions

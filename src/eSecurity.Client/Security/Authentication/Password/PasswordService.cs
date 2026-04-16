@@ -10,7 +10,7 @@ public class PasswordService(IApiClient apiClient) : IPasswordService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Password/add"
             }, new ApiOptions
@@ -23,7 +23,7 @@ public class PasswordService(IApiClient apiClient) : IPasswordService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Password/forgot/request"
             }, new ApiOptions
@@ -36,7 +36,7 @@ public class PasswordService(IApiClient apiClient) : IPasswordService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Password/forgot/confirm"
             }, new ApiOptions
@@ -49,7 +49,7 @@ public class PasswordService(IApiClient apiClient) : IPasswordService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Password/reset"
             }, new ApiOptions
@@ -62,7 +62,7 @@ public class PasswordService(IApiClient apiClient) : IPasswordService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Password/set"
             }, new ApiOptions
@@ -75,7 +75,7 @@ public class PasswordService(IApiClient apiClient) : IPasswordService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Password/change"
             }, new ApiOptions

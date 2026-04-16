@@ -10,7 +10,7 @@ public class LinkedAccountService(IApiClient apiClient) : ILinkedAccountService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/LinkedAccount/disconnect"
             }, new ApiOptions

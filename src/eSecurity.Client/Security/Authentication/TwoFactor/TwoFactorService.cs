@@ -10,7 +10,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Url = "/api/v1/TwoFactor/enable",
                 Data = request
             }, new ApiOptions
@@ -23,7 +23,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Url = "/api/v1/TwoFactor/disable"
             }, new ApiOptions
             {
@@ -35,7 +35,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/TwoFactor/prefer"
             }, new ApiOptions
@@ -48,7 +48,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Url = "/api/v1/TwoFactor/qr-code/generate"
             }, new ApiOptions
             {
@@ -60,7 +60,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Url = "/api/v1/TwoFactor/qr-code/regenerate"
             }, new ApiOptions
             {
@@ -72,7 +72,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/TwoFactor/authenticator/reconfigure"
             }, new ApiOptions
@@ -85,7 +85,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/TwoFactor/authenticator/verify"
             }, new ApiOptions
@@ -98,7 +98,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Url = "/api/v1/TwoFactor/recovery-codes/generate"
             }, new ApiOptions
             {
@@ -110,7 +110,7 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Url = "/api/v1/TwoFactor/recovery-codes/load"
             }, new ApiOptions
             {

@@ -82,7 +82,8 @@ public class ApiClient(
 
     private async Task<HttpRequestMessage> InitializeAsync(ApiRequest apiRequest, ApiOptions apiOptions)
     {
-        var message = new HttpRequestMessage(apiRequest.Method, apiRequest.Url);
+        var httpMethod = HttpHelper.Map(apiRequest.Method);
+        var message = new HttpRequestMessage(httpMethod, apiRequest.Url);
         if (apiOptions.Authentication == AuthenticationType.Bearer)
         {
             var token = _tokenProvider.Get(AuthTokenTypes.AccessToken);

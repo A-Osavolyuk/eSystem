@@ -11,7 +11,7 @@ public class UsernameService(IApiClient apiClient) : IUsernameService
             new ApiRequest
             {
                 Data = request,
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Url = "/api/v1/Username/set"
             }, new ApiOptions
             {
@@ -24,7 +24,7 @@ public class UsernameService(IApiClient apiClient) : IUsernameService
             new ApiRequest
             {
                 Data = request,
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Url = "/api/v1/Username/check"
             }, new ApiOptions
             {

@@ -10,7 +10,7 @@ public class DeviceService(IApiClient apiClient) : IDeviceService
     {
         return await _apiClient.SendAsync(new ApiRequest()
         {
-            Method = HttpMethod.Get,
+            Method = HttpMethods.Get,
             Url = $"/api/v1/Device/device-code/{userCode}",
         }, new ApiOptions()
         {
@@ -23,7 +23,7 @@ public class DeviceService(IApiClient apiClient) : IDeviceService
     {
         return await _apiClient.SendAsync(new ApiRequest()
         {
-            Method = HttpMethod.Post,
+            Method = HttpMethods.Post,
             Url = "/api/v1/Device/device-code/check",
             Data = request
         }, new ApiOptions()
@@ -37,7 +37,7 @@ public class DeviceService(IApiClient apiClient) : IDeviceService
     {
         return await _apiClient.SendAsync(new ApiRequest()
         {
-            Method = HttpMethod.Post,
+            Method = HttpMethods.Post,
             Url = "/api/v1/Device/device-code/approve",
             Data = request
         }, new ApiOptions()
@@ -51,7 +51,7 @@ public class DeviceService(IApiClient apiClient) : IDeviceService
     {
         return await _apiClient.SendAsync(new ApiRequest()
         {
-            Method = HttpMethod.Post,
+            Method = HttpMethods.Post,
             Url = "/api/v1/Device/device-code/deny",
             Data = request
         }, new ApiOptions()

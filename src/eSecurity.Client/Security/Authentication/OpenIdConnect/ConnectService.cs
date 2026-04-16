@@ -11,7 +11,7 @@ public class ConnectService(IApiClient apiClient) : IConnectService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Get,
+                Method = HttpMethods.Get,
                 Url = "/api/v1/Connect/.well-known/jwks.json",
             }, new ApiOptions
             {
@@ -23,7 +23,7 @@ public class ConnectService(IApiClient apiClient) : IConnectService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Get,
+                Method = HttpMethods.Get,
                 Url = "/api/v1/Connect/.well-known/openid-configuration",
             }, new ApiOptions
             {
@@ -35,7 +35,7 @@ public class ConnectService(IApiClient apiClient) : IConnectService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Get,
+                Method = HttpMethods.Get,
                 Url = $"api/v1/Connect/clients/{clientId}",
             }, new ApiOptions
             {
@@ -47,7 +47,7 @@ public class ConnectService(IApiClient apiClient) : IConnectService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Url = "/api/v1/Connect/authorize",
                 Data = request
             }, new ApiOptions
@@ -60,7 +60,7 @@ public class ConnectService(IApiClient apiClient) : IConnectService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Url = "/api/v1/Connect/token",
                 Data = request
             }, new ApiOptions
@@ -73,7 +73,7 @@ public class ConnectService(IApiClient apiClient) : IConnectService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Url = "/api/v1/Connect/logout",
                 Data = request
             }, new ApiOptions

@@ -10,7 +10,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Account/sign-in"
             }, new ApiOptions
@@ -25,7 +25,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Account/sign-up"
             }, new ApiOptions
@@ -40,7 +40,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Account/sign-up/complete"
             }, new ApiOptions
@@ -53,7 +53,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Get,
+                Method = HttpMethods.Get,
                 Url = $"/api/v1/Account/session/{sid}"
             }, new ApiOptions
             {
@@ -66,7 +66,7 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Account/check"
             }, new ApiOptions

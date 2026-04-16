@@ -10,7 +10,7 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Verification/code/send"
             }, new ApiOptions
@@ -23,7 +23,7 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Verification/code/resend"
             }, new ApiOptions
@@ -36,7 +36,7 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Verification/passkey/request-verification"
             }, new ApiOptions

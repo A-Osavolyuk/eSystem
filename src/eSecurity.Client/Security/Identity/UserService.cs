@@ -8,7 +8,7 @@ public class UserService(IApiClient apiClient) : IUserService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Get,
+                Method = HttpMethods.Get,
                 Url = $"/api/v1/User/verification/methods"
             }, new ApiOptions
             {
@@ -21,7 +21,7 @@ public class UserService(IApiClient apiClient) : IUserService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Get,
+                Method = HttpMethods.Get,
                 Url = $"/api/v1/User/emails"
             }, new ApiOptions
             {
@@ -33,7 +33,7 @@ public class UserService(IApiClient apiClient) : IUserService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Get,
+                Method = HttpMethods.Get,
                 Url = $"/api/v1/User/devices"
             }, new ApiOptions
             {
@@ -45,7 +45,7 @@ public class UserService(IApiClient apiClient) : IUserService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Get,
+                Method = HttpMethods.Get,
                 Url = $"/api/v1/User/linked-accounts"
             }, new ApiOptions
             {
@@ -57,7 +57,7 @@ public class UserService(IApiClient apiClient) : IUserService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Get,
+                Method = HttpMethods.Get,
                 Url = $"/api/v1/User/2fa/methods"
             }, new ApiOptions
             {
@@ -69,7 +69,7 @@ public class UserService(IApiClient apiClient) : IUserService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Get,
+                Method = HttpMethods.Get,
                 Url = $"/api/v1/User/login-methods"
             }, new ApiOptions
             {

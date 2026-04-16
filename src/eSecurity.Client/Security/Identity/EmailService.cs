@@ -10,7 +10,7 @@ public class EmailService(IApiClient apiClient) : IEmailService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Email/add"
             }, new ApiOptions
@@ -23,7 +23,7 @@ public class EmailService(IApiClient apiClient) : IEmailService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Email/check"
             }, new ApiOptions
@@ -36,7 +36,7 @@ public class EmailService(IApiClient apiClient) : IEmailService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Email/change"
             }, new ApiOptions
@@ -50,7 +50,7 @@ public class EmailService(IApiClient apiClient) : IEmailService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Email/verify"
             }, new ApiOptions
@@ -63,7 +63,7 @@ public class EmailService(IApiClient apiClient) : IEmailService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Email/manage"
             }, new ApiOptions
@@ -76,7 +76,7 @@ public class EmailService(IApiClient apiClient) : IEmailService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Email/remove"
             }, new ApiOptions
@@ -89,7 +89,7 @@ public class EmailService(IApiClient apiClient) : IEmailService
         => await _apiClient.SendAsync(
             new ApiRequest
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Email/reset"
             }, new ApiOptions
