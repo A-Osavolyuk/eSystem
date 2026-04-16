@@ -36,4 +36,7 @@ public sealed class BackchannelAuthenticationRequest
     
     [FromForm(Name = "acr_values")]
     public string? AcrValues { get; set; }
+
+    [FromForm(Name = "client_notification_token")]
+    public string? ClientNotificationToken { get; set; }
 }

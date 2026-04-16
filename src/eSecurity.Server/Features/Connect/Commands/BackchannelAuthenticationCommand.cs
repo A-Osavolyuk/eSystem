@@ -196,6 +196,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
             Scope = request.Request.Scope,
             AcrValues = request.Request.AcrValues,
             BindingMessage = request.Request.BindingMessage,
+            ClientNotificationToken = request.Request.ClientNotificationToken,
             CreatedAt = DateTimeOffset.UtcNow,
             ExpiredAt = DateTimeOffset.UtcNow.Add(requestedExpiry),
         };

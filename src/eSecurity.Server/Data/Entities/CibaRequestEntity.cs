@@ -18,6 +18,7 @@ public sealed class CibaRequestEntity : Entity
     public string? AcrValues { get; set; }
     public string? BindingMessage { get; set; }
     public string? DeniedReason { get; set; }
+    public string? ClientNotificationToken { get; set; }
 
     public Guid ClientId { get; set; }
     public ClientEntity Client { get; set; } = null!;

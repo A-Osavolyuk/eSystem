@@ -15,6 +15,7 @@ public sealed class CibaRequestConfiguration : IEntityTypeConfiguration<CibaRequ
         builder.Property(x => x.AcrValues).HasMaxLength(100);
         builder.Property(x => x.Scope).HasMaxLength(100);
         builder.Property(x => x.BindingMessage).HasMaxLength(255);
+        builder.Property(x => x.ClientNotificationToken).HasMaxLength(256);
         builder.Property(x => x.DeniedReason).HasMaxLength(500);
         
         builder.HasOne(x => x.Client)
