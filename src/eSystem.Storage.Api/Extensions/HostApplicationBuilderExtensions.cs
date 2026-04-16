@@ -5,7 +5,6 @@ using eSystem.Core.Common.Versioning;
 using eSystem.Core.Mediator;
 using eSystem.ServiceDefaults;
 using eSystem.Storage.Api.Errors;
-using eSystem.Storage.Api.Interfaces;
 
 namespace eSystem.Storage.Api.Extensions;
 
@@ -16,7 +15,6 @@ public static class HostApplicationBuilderExtensions
         public void AddApiServices()
         {
             builder.AddVersioning();
-            builder.AddDependencyInjection();
             builder.AddServiceDefaults();
             builder.AddRedisCache();
             builder.AddAzure();
@@ -32,11 +30,6 @@ public static class HostApplicationBuilderExtensions
         private void AddAzure()
         {
             builder.AddAzureBlobServiceClient("blobs");
-        }
-
-        private void AddDependencyInjection()
-        {
-            builder.Services.AddScoped<IStorageManager, StorageManager>();
         }
     }
 }
