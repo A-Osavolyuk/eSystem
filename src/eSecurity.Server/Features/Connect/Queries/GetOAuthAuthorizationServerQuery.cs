@@ -22,7 +22,7 @@ public sealed class GetOAuthAuthorizationServerQueryHandler : IRequestHandler<Ge
             IntrospectionEndpoint = "https://localhost:6201/api/v1/connect/introspection",
             RevocationEndpoint = "https://localhost:6201/api/v1/connect/revocation",
             JwksUri = "https://localhost:6201/api/v1/connect/.well-known/jwks.json",
-            DeviceAuthorizationEndpoint = "https://localhost:6201/api/v1/connect/device_authorization",
+            DeviceAuthorizationEndpoint = "https://localhost:6201/api/v1/connect/device-authorization",
             ResponseTypesSupported = [ResponseType.Code],
             GrantTypesSupported =
             [

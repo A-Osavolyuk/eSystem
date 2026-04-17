@@ -44,8 +44,8 @@ public static class AuthenticationExtensions
             cfg.IntrospectionEndpoint = "https://localhost:6201/api/v1/connect/introspection";
             cfg.RevocationEndpoint = "https://localhost:6201/api/v1/connect/revocation";
             cfg.JwksUri = "https://localhost:6201/api/v1/connect/.well-known/jwks.json";
-            cfg.DeviceAuthorizationEndpoint = "https://localhost:6201/api/v1/connect/device_authorization";
-            cfg.BackchannelAuthenticationEndpoint = "https://localhost:6201/api/v1/connect/backchannel_authentication";
+            cfg.DeviceAuthorizationEndpoint = "https://localhost:6201/api/v1/connect/device-authorization";
+            cfg.BackchannelAuthenticationEndpoint = "https://localhost:6201/api/v1/connect/backchannel-authentication";
 
             cfg.ResponseTypesSupported = [ResponseType.Code];
             cfg.GrantTypesSupported =

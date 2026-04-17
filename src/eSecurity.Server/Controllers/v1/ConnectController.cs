@@ -157,7 +157,7 @@ public class ConnectController(ISender sender) : ControllerBase
     [EndpointDescription("Device authorization")]
     [ProducesResponseType(200)]
     [Consumes(ContentTypes.Application.XwwwFormUrlEncoded)]
-    [HttpPost("device_authorization")]
+    [HttpPost("device-authorization")]
     public async ValueTask<IActionResult> DeviceAuthorizationAsync([FromForm] DeviceAuthorizationRequest request)
     {
         var result = await _sender.Send(new DeviceAuthorizationCommand(request));
@@ -168,7 +168,7 @@ public class ConnectController(ISender sender) : ControllerBase
     [EndpointDescription("Backchannel authentication")]
     [ProducesResponseType(200)]
     [Consumes(ContentTypes.Application.XwwwFormUrlEncoded)]
-    [HttpPost("backchannel_authentication")]
+    [HttpPost("backchannel-authentication")]
     public async ValueTask<IActionResult> BackchannelAuthenticationAsync([FromForm] BackchannelAuthenticationRequest request)
     {
         var result = await _sender.Send(new BackchannelAuthenticationCommand(request));
