@@ -3,9 +3,11 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authorization.OAuth.Token.DeviceCode;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Cryptography.Keys;
+using eSystem.Core.Enums;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
 using eSystem.Core.Security.Authorization.OAuth.DeviceAuthorization;
 using eSystem.Core.Utilities.Query;
@@ -70,18 +72,51 @@ public sealed class DeviceAuthorizationCommandHandler(
         {
             Id = Guid.CreateVersion7(),
             ClientId = client.Id,
-            DeviceCodeHash = _hasher.Hash(deviceCode),
+            Hash = _hasher.Hash(deviceCode),
             IsFirstPoll = true,
             UserCode = userCode,
-            AcrValues = request.Request.AcrValues,
             DeviceModel = request.Request.DeviceModel,
             DeviceName = request.Request.DeviceName,
-            Scope = request.Request.Scope,
             State = DeviceCodeState.Pending,
             Interval = _deviceAuthorizationOptions.Interval,
             CreatedAt = DateTimeOffset.UtcNow,
             ExpiresAt = DateTimeOffset.UtcNow.Add(_deviceAuthorizationOptions.Timestamp),
         };
+
+        foreach (var scope in scopes)
+        {
+            deviceCodeEntity.Scopes.Add(new DeviceCodeScopeEntity()
+            {
+                Id = Guid.CreateVersion7(),
+                DeviceCodeId = deviceCodeEntity.Id,
+                Scope = scope
+            });
+        }
+
+        if (!string.IsNullOrEmpty(request.Request.AcrValues))
+        {
+            var acrStrings = request.Request.AcrValues.Split(" ").ToList();
+            foreach (var acrString in acrStrings)
+            {
+                var acrValue = EnumHelper.FromString<AuthenticationContextClassReference>(acrString);
+                if (acrValue is null)
+                {
+                    return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+                    {
+                        Code = ErrorCode.InvalidRequest,
+                        Description = $"Invalid ACR value '{acrValue}'"
+                    });
+                }
+                
+                deviceCodeEntity.AcrValues.Add(new DeviceCodeAcrValueEntity()
+                {
+                    Id = Guid.CreateVersion7(),
+                    DeviceCodeId = deviceCodeEntity.Id,
+                    Value = acrValue.Value
+                });
+            }
+            
+        }
 
         var result = await _deviceCodeManager.CreateAsync(deviceCodeEntity, cancellationToken);
         if (!result.Succeeded) return result;

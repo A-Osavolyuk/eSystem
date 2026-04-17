@@ -13,7 +13,7 @@ public sealed class DeviceCodeManager(AuthDbContext context) : IDeviceCodeManage
         CancellationToken cancellationToken = default)
     {
         return await _context.DeviceCodes.FirstOrDefaultAsync(
-            x => x.DeviceCodeHash == deviceCodeHash, cancellationToken);
+            x => x.Hash == deviceCodeHash, cancellationToken);
     }
 
     public async ValueTask<DeviceCodeEntity?> FindByCodeAsync(string userCode,

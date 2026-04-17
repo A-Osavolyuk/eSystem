@@ -9,9 +9,8 @@ public sealed class DeviceCodeConfiguration : IEntityTypeConfiguration<DeviceCod
     public void Configure(EntityTypeBuilder<DeviceCodeEntity> builder)
     {
         builder.HasKey(x => x.Id);
-        builder.Property(x => x.DeviceCodeHash).HasMaxLength(200);
+        builder.Property(x => x.Hash).HasMaxLength(200);
         builder.Property(x => x.UserCode).HasMaxLength(9);
-        builder.Property(x => x.Scope).HasMaxLength(200);
         builder.Property(x => x.DeviceName).HasMaxLength(50);
         builder.Property(x => x.DeviceModel).HasMaxLength(100);
         builder.Property(x => x.State).HasEnumConversion();

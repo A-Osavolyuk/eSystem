@@ -11,7 +11,7 @@ public class DeviceAuthorizationRequest
     public required string Scope { get; set; }
     
     [FromForm(Name = "acr_values")]
-    public string[]? AcrValues { get; set; }
+    public string? AcrValues { get; set; }
     
     [FromForm(Name = "device_name")] 
     public string? DeviceName { get; set; }

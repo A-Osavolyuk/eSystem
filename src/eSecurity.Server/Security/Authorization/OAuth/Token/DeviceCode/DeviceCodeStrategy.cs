@@ -76,7 +76,7 @@ public sealed class DeviceCodeStrategy(
             });
         }
 
-        var scopes = deviceCode.Scope.Split(' ').ToList();
+        var scopes = deviceCode.Scopes.Select(x => x.Scope).ToList();
         var protocol = scopes.Contains(ScopeTypes.OpenId) 
             ? AuthorizationProtocol.OpenIdConnect 
             : AuthorizationProtocol.OAuth;

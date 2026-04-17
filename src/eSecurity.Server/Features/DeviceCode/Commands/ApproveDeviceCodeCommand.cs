@@ -108,7 +108,7 @@ public sealed class ApproveDeviceCodeCommandHandler(
             });
         }
 
-        var scopes = deviceCode.Scope.Split(' ').ToList();
+        var scopes = deviceCode.Scopes.Select(x => x.Scope).ToList();
         var consent = await _consentManager.FindAsync(user, client, cancellationToken);
         if (consent is null)
         {
