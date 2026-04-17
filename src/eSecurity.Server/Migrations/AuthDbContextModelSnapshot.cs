@@ -181,6 +181,10 @@ namespace eSecurity.Server.Migrations
                     b.Property<Guid>("ClientId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("ClientNotificationToken")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
                     b.Property<DateTimeOffset?>("ConsumedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -211,10 +215,6 @@ namespace eSecurity.Server.Migrations
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("UserCode")
-                        .HasMaxLength(12)
-                        .HasColumnType("character varying(12)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -341,9 +341,6 @@ namespace eSecurity.Server.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<bool>("RequirePkce")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("RequireUserCode")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Secret")
@@ -552,14 +549,37 @@ namespace eSecurity.Server.Migrations
                     b.ToTable("Consents", "public");
                 });
 
-            modelBuilder.Entity("eSecurity.Server.Data.Entities.DeviceCodeEntity", b =>
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.DeviceCodeAcrValueEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.PrimitiveCollection<string[]>("AcrValues")
-                        .HasColumnType("text[]");
+                    b.Property<DateTimeOffset?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("DeviceCodeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeviceCodeId");
+
+                    b.ToTable("DeviceCodeAcrValueEntity", "public");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.DeviceCodeEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("ClientId")
                         .HasColumnType("uuid");
@@ -569,11 +589,6 @@ namespace eSecurity.Server.Migrations
 
                     b.Property<DateTimeOffset?>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("DeviceCodeHash")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
 
                     b.Property<string>("DeviceModel")
                         .HasMaxLength(100)
@@ -586,16 +601,16 @@ namespace eSecurity.Server.Migrations
                     b.Property<DateTimeOffset>("ExpiresAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Hash")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
                     b.Property<int>("Interval")
                         .HasColumnType("integer");
 
                     b.Property<bool>("IsFirstPoll")
                         .HasColumnType("boolean");
-
-                    b.Property<string>("Scope")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
 
                     b.Property<Guid?>("SessionId")
                         .HasColumnType("uuid");
@@ -624,6 +639,33 @@ namespace eSecurity.Server.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("DeviceCodes", "public");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.DeviceCodeScopeEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("DeviceCodeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Scope")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeviceCodeId");
+
+                    b.ToTable("DeviceCodeScopeEntity", "public");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.GrantTypeEntity", b =>
@@ -1827,6 +1869,17 @@ namespace eSecurity.Server.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.DeviceCodeAcrValueEntity", b =>
+                {
+                    b.HasOne("eSecurity.Server.Data.Entities.DeviceCodeEntity", "DeviceCode")
+                        .WithMany("AcrValues")
+                        .HasForeignKey("DeviceCodeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DeviceCode");
+                });
+
             modelBuilder.Entity("eSecurity.Server.Data.Entities.DeviceCodeEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
@@ -1850,6 +1903,17 @@ namespace eSecurity.Server.Migrations
                     b.Navigation("Session");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.DeviceCodeScopeEntity", b =>
+                {
+                    b.HasOne("eSecurity.Server.Data.Entities.DeviceCodeEntity", "DeviceCode")
+                        .WithMany("Scopes")
+                        .HasForeignKey("DeviceCodeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DeviceCode");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.GrantedScopeEntity", b =>
@@ -2226,6 +2290,13 @@ namespace eSecurity.Server.Migrations
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ConsentEntity", b =>
                 {
                     b.Navigation("GrantedScopes");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.DeviceCodeEntity", b =>
+                {
+                    b.Navigation("AcrValues");
+
+                    b.Navigation("Scopes");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.OpaqueTokenEntity", b =>

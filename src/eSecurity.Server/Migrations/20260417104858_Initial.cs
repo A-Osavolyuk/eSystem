@@ -57,7 +57,6 @@ namespace eSecurity.Server.Migrations
                     SubjectType = table.Column<string>(type: "text", nullable: false),
                     SectorIdentifierUri = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     NotificationDeliveryMode = table.Column<string>(type: "text", nullable: false),
-                    RequireUserCode = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
@@ -930,10 +929,10 @@ namespace eSecurity.Server.Migrations
                     State = table.Column<string>(type: "text", nullable: false),
                     ExpiredAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     ConsumedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    UserCode = table.Column<string>(type: "character varying(12)", maxLength: 12, nullable: true),
                     AcrValues = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     BindingMessage = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     DeniedReason = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    ClientNotificationToken = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     ClientId = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     SessionId = table.Column<Guid>(type: "uuid", nullable: true),
@@ -1001,15 +1000,13 @@ namespace eSecurity.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    DeviceCodeHash = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Hash = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     UserCode = table.Column<string>(type: "character varying(9)", maxLength: 9, nullable: false),
                     Interval = table.Column<int>(type: "integer", nullable: false),
                     ExpiresAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     ConsumedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     State = table.Column<string>(type: "text", nullable: false),
                     IsFirstPoll = table.Column<bool>(type: "boolean", nullable: false),
-                    Scope = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    AcrValues = table.Column<string[]>(type: "text[]", nullable: true),
                     DeviceModel = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     DeviceName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     ClientId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -1163,6 +1160,52 @@ namespace eSecurity.Server.Migrations
                         column: x => x.SessionId,
                         principalSchema: "public",
                         principalTable: "AuthenticationSessions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DeviceCodeAcrValueEntity",
+                schema: "public",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Value = table.Column<string>(type: "text", nullable: false),
+                    DeviceCodeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DeviceCodeAcrValueEntity", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DeviceCodeAcrValueEntity_DeviceCodes_DeviceCodeId",
+                        column: x => x.DeviceCodeId,
+                        principalSchema: "public",
+                        principalTable: "DeviceCodes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DeviceCodeScopeEntity",
+                schema: "public",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Scope = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
+                    DeviceCodeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DeviceCodeScopeEntity", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DeviceCodeScopeEntity_DeviceCodes_DeviceCodeId",
+                        column: x => x.DeviceCodeId,
+                        principalSchema: "public",
+                        principalTable: "DeviceCodes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -1342,6 +1385,12 @@ namespace eSecurity.Server.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_DeviceCodeAcrValueEntity_DeviceCodeId",
+                schema: "public",
+                table: "DeviceCodeAcrValueEntity",
+                column: "DeviceCodeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_DeviceCodes_ClientId",
                 schema: "public",
                 table: "DeviceCodes",
@@ -1358,6 +1407,12 @@ namespace eSecurity.Server.Migrations
                 schema: "public",
                 table: "DeviceCodes",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DeviceCodeScopeEntity_DeviceCodeId",
+                schema: "public",
+                table: "DeviceCodeScopeEntity",
+                column: "DeviceCodeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_GrantedScopes_ClientScopeId",
@@ -1593,7 +1648,11 @@ namespace eSecurity.Server.Migrations
                 schema: "public");
 
             migrationBuilder.DropTable(
-                name: "DeviceCodes",
+                name: "DeviceCodeAcrValueEntity",
+                schema: "public");
+
+            migrationBuilder.DropTable(
+                name: "DeviceCodeScopeEntity",
                 schema: "public");
 
             migrationBuilder.DropTable(
@@ -1686,6 +1745,10 @@ namespace eSecurity.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "TokenAuthMethods",
+                schema: "public");
+
+            migrationBuilder.DropTable(
+                name: "DeviceCodes",
                 schema: "public");
 
             migrationBuilder.DropTable(
