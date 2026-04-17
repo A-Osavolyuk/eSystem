@@ -43,6 +43,10 @@ public sealed class ApproveDeviceCodeCommandHandler(
 
         if (deviceCode.ExpiresAt < DateTimeOffset.UtcNow)
         {
+            deviceCode.State = DeviceCodeState.Expired;
+            var result = await _deviceCodeManager.UpdateAsync(deviceCode, cancellationToken);
+            if (!result.Succeeded) return result;
+            
             return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.ExpiredToken,
