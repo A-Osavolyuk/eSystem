@@ -20,8 +20,5 @@ public enum DeviceCodeState
     Consumed,
     
     [EnumValue("expired")]
-    Expired,
-    
-    [EnumValue("cancelled")]
-    Cancelled
+    Expired
 }

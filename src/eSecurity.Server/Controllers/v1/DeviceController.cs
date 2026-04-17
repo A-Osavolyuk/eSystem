@@ -35,25 +35,14 @@ public class DeviceController(ISender sender) : ControllerBase
         return HttpContext.HandleResult(result);
     }
     
-    [EndpointSummary("Approve device code")]
-    [EndpointDescription("Approve device code")]
+    [EndpointSummary("Device code decision")]
+    [EndpointDescription("Device code decision")]
     [ProducesResponseType(200)]
-    [HttpPost("device-code/approve")]
+    [HttpPost("device-code/decision")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> ApproveDeviceCode([FromBody] ApproveDeviceCodeRequest request)
+    public async ValueTask<IActionResult> DecisionAsync([FromBody] DeviceCodeDecisionRequest request)
     {
-        var result = await _sender.Send(new ApproveDeviceCodeCommand(request));
-        return HttpContext.HandleResult(result);
-    }
-    
-    [EndpointSummary("Deny device code")]
-    [EndpointDescription("Deny device code")]
-    [ProducesResponseType(200)]
-    [HttpPost("device-code/deny")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> DenyDeviceCode([FromBody] DenyDeviceCodeRequest request)
-    {
-        var result = await _sender.Send(new DenyDeviceCodeCommand(request));
+        var result = await _sender.Send(new DeviceCodeDecisionCommand(request));
         return HttpContext.HandleResult(result);
     }
 }

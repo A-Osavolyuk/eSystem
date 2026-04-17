@@ -3,6 +3,7 @@
 @using eSecurity.Client.Security.Authentication.OpenIdConnect.Session
 @using eSecurity.Client.Security.Authorization.Devices
 @using eSecurity.Core.Common.DTOs
+@using eSystem.Core.Security.Authorization.OAuth.Token.DeviceCode
 @using eSystem.Core.Utilities.State
 
 @inherits PageBase
@@ -130,13 +131,14 @@
     private async Task OnAllowAsync()
     {
         var session = SessionAccessor.Get();
-        var request = new ApproveDeviceCodeRequest()
+        var request = new DeviceCodeDecisionRequest()
         {
             UserCode = _userCode!,
-            SessionId = session?.Id
+            SessionId = session?.Id,
+            Decision = DeviceCodeDecision.Approved
         };
         
-        var result = await DeviceService.ApproveDeviceCodeAsync(request);
+        var result = await DeviceService.SendDecisionAsync(request);
         if (result.Succeeded)
         {
             Snackbar.Add("Device activation was successfully approved", Severity.Success);
@@ -152,13 +154,14 @@
     private async Task OnDenyAsync()
     {
         var session = SessionAccessor.Get();
-        var request = new DenyDeviceCodeRequest()
+        var request = new DeviceCodeDecisionRequest()
         {
             UserCode = _userCode!,
-            SessionId = session?.Id
+            SessionId = session?.Id,
+            Decision = DeviceCodeDecision.Denied
         };
         
-        var result = await DeviceService.DenyDeviceCodeAsync(request);
+        var result = await DeviceService.SendDecisionAsync(request);
         if (result.Succeeded)
         {
             Snackbar.Add("Device activation was successfully denied", Severity.Success);

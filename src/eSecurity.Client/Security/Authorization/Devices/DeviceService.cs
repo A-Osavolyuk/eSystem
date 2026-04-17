@@ -33,26 +33,12 @@ public class DeviceService(IApiClient apiClient) : IDeviceService
         });
     }
 
-    public async ValueTask<ApiResponse> ApproveDeviceCodeAsync(ApproveDeviceCodeRequest request)
+    public async ValueTask<ApiResponse> SendDecisionAsync(DeviceCodeDecisionRequest request)
     {
         return await _apiClient.SendAsync(new ApiRequest()
         {
             Method = HttpMethods.Post,
-            Url = "/api/v1/Device/device-code/approve",
-            Data = request
-        }, new ApiOptions()
-        {
-            Authentication = AuthenticationType.Bearer,
-            ContentType = ContentTypes.Application.Json
-        });
-    }
-
-    public async ValueTask<ApiResponse> DenyDeviceCodeAsync(DenyDeviceCodeRequest request)
-    {
-        return await _apiClient.SendAsync(new ApiRequest()
-        {
-            Method = HttpMethods.Post,
-            Url = "/api/v1/Device/device-code/deny",
+            Url = "/api/v1/Device/device-code/decision",
             Data = request
         }, new ApiOptions()
         {

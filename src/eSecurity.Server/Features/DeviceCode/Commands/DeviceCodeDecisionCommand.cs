@@ -8,28 +8,29 @@ using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Security.Authorization.OAuth.Token.DeviceCode;
 using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.DeviceCode.Commands;
 
-public sealed record ApproveDeviceCodeCommand(ApproveDeviceCodeRequest Request) : IRequest<Result>;
+public sealed record DeviceCodeDecisionCommand(DeviceCodeDecisionRequest Request) : IRequest<Result>;
 
-public sealed class ApproveDeviceCodeCommandHandler(
-    IDeviceCodeManager deviceCodeManager,
-    IUserManager userManager,
-    ISessionManager sessionManager,
-    IConsentManager consentManager,
+public sealed class DeviceCodeDecisionCommandHandler(
     IHttpContextAccessor httpContextAccessor,
-    IClientManager clientManager) : IRequestHandler<ApproveDeviceCodeCommand, Result>
+    IDeviceCodeManager deviceCodeManager,
+    ISessionManager sessionManager,
+    IUserManager userManager,
+    IClientManager clientManager,
+    IConsentManager consentManager) 
+    : RequestHandlerBase<DeviceCodeDecisionCommand, Result>(httpContextAccessor)
 {
     private readonly IDeviceCodeManager _deviceCodeManager = deviceCodeManager;
-    private readonly IUserManager _userManager = userManager;
     private readonly ISessionManager _sessionManager = sessionManager;
-    private readonly IConsentManager _consentManager = consentManager;
-    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
+    private readonly IUserManager _userManager = userManager;
     private readonly IClientManager _clientManager = clientManager;
+    private readonly IConsentManager _consentManager = consentManager;
 
-    public async Task<Result> Handle(ApproveDeviceCodeCommand request, CancellationToken cancellationToken)
+    public override async Task<Result> Handle(DeviceCodeDecisionCommand request, CancellationToken cancellationToken)
     {
         var deviceCode = await _deviceCodeManager.FindByCodeAsync(request.Request.UserCode, cancellationToken);
         if (deviceCode is null)
@@ -37,10 +38,10 @@ public sealed class ApproveDeviceCodeCommandHandler(
             return Results.ClientError(ClientErrorCode.NotFound, new Error()
             {
                 Code = ErrorCode.NotFound,
-                Description = "Device code not found"
+                Description = "Device code was not found"
             });
         }
-
+        
         if (deviceCode.ExpiresAt < DateTimeOffset.UtcNow)
         {
             deviceCode.State = DeviceCodeState.Expired;
@@ -53,7 +54,7 @@ public sealed class ApproveDeviceCodeCommandHandler(
                 Description = "Device code is already expired"
             });
         }
-
+        
         if (deviceCode.State != DeviceCodeState.Pending)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error()
@@ -62,7 +63,7 @@ public sealed class ApproveDeviceCodeCommandHandler(
                 Description = "Device code is not valid"
             });
         }
-
+        
         if (request.Request.SessionId.HasValue)
         {
             var session = await _sessionManager.FindByIdAsync(request.Request.SessionId.Value, cancellationToken);
@@ -77,8 +78,8 @@ public sealed class ApproveDeviceCodeCommandHandler(
 
             deviceCode.SessionId = session.Id;
         }
-
-        var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
+        
+        var subjectClaim = HttpContext.User.FindFirst(AppClaimTypes.Sub);
         if (subjectClaim is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error()
@@ -96,6 +97,18 @@ public sealed class ApproveDeviceCodeCommandHandler(
                 Code = ErrorCode.NotFound,
                 Description = "User not found"
             });
+        }
+
+        deviceCode.UserId = user.Id;
+
+        if (request.Request.Decision == DeviceCodeDecision.Denied)
+        {
+            deviceCode.State = DeviceCodeState.Denied;
+            deviceCode.DeniedAt = DateTimeOffset.UtcNow;
+            deviceCode.DenyReason = request.Request.DenyReason;
+
+            var result = await _deviceCodeManager.UpdateAsync(deviceCode, cancellationToken);
+            return result.Succeeded ? result : Results.Success(SuccessCodes.Ok);
         }
         
         var client = await _clientManager.FindByIdAsync(deviceCode.ClientId, cancellationToken);
@@ -152,9 +165,9 @@ public sealed class ApproveDeviceCodeCommandHandler(
                 if (!consentResult.Succeeded) return consentResult;
             }
         }
-
-        deviceCode.UserId = user.Id;
+        
         deviceCode.State = DeviceCodeState.Approved;
+        deviceCode.ApprovedAt = DateTimeOffset.UtcNow;
         
         return await _deviceCodeManager.UpdateAsync(deviceCode, cancellationToken);
     }

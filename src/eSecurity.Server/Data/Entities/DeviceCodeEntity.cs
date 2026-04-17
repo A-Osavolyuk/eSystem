@@ -12,7 +12,10 @@ public sealed class DeviceCodeEntity : Entity
     public int Interval { get; set; }
     
     public DateTimeOffset ExpiresAt { get; set; }
-    public DateTimeOffset ConsumedAt { get; set; }
+    public DateTimeOffset? ConsumedAt { get; set; }
+    public DateTimeOffset? ApprovedAt { get; set; }
+    public DateTimeOffset? DeniedAt { get; set; }
+    public string? DenyReason { get; set; }
 
     public DeviceCodeState State { get; set; }
     public bool IsFirstPoll { get; set; }
