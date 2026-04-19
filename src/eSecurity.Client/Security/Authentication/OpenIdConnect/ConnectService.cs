@@ -43,19 +43,6 @@ public class ConnectService(IApiClient apiClient) : IConnectService
                 Authentication = AuthenticationType.None
             });
 
-    public async ValueTask<ApiResponse> AuthorizeAsync(AuthorizeRequest request)
-        => await _apiClient.SendAsync(
-            new ApiRequest
-            {
-                Method = HttpMethods.Post,
-                Url = "/api/v1/Connect/authorize",
-                Data = request
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.None
-            });
-
     public async ValueTask<ApiResponse> TokenAsync(TokenRequest request)
         => await _apiClient.SendAsync(
             new ApiRequest

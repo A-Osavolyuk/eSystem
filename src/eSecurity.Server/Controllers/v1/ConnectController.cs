@@ -142,16 +142,6 @@ public class ConnectController(ISender sender) : ControllerBase
         return Ok();
     }
 
-    [EndpointSummary("Authorize")]
-    [EndpointDescription("Authorize")]
-    [ProducesResponseType(200)]
-    [HttpPost("authorize")]
-    public async ValueTask<IActionResult> AuthorizeAsync([FromBody] AuthorizeRequest request)
-    {
-        var result = await _sender.Send(new AuthorizeCommand(request));
-        return HttpContext.HandleResult(result);
-    }
-
     [EndpointSummary("Logout")]
     [EndpointDescription("Logout")]
     [ProducesResponseType(200)]

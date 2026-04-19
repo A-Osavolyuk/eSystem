@@ -1,5 +1,3 @@
-using eSecurity.Client.Security.Authentication.OpenIdConnect.Authorization;
-using eSecurity.Client.Security.Authentication.OpenIdConnect.Prompts;
 using eSecurity.Client.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Client.Security.Authentication.OpenIdConnect.Token;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
@@ -15,13 +13,6 @@ public static class OdicExtensions
         {
             services.AddScoped<ITokenValidator, TokenValidator>();
             services.AddScoped<ISessionAccessor, SessionAccessor>();
-            services.AddScoped<IOpenIdConnectAuthorizationHandler, OpenIdConnectAuthorizationHandler>();
-
-            services.AddScoped<IPromptStrategy, LoginPromptStrategy>();
-            services.AddScoped<IPromptStrategy, ConsentPromptStrategy>();
-            services.AddScoped<IPromptStrategy, SelectAccountPromptStrategy>();
-            services.AddScoped<IPromptStrategy, NonePromptStrategy>();
-
             services.AddClient(cfg =>
             {
                 cfg.ClientAudience = "api://esecurity";
