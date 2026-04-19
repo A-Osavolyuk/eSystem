@@ -73,16 +73,19 @@
             }
             else
             {
-                if (!string.IsNullOrEmpty(session.IdentityProvider) && session.SessionId.HasValue)
+                if (!string.IsNullOrEmpty(session.IdentityProvider) && 
+                    !string.IsNullOrEmpty(session.SessionCookie) &&
+                    session.SessionId.HasValue)
                 {
                     var state = StateBuilder.Create()
-                        .WithData("sid", session.SessionId.Value.ToString())
-                        .WithData("identityProvider", session.IdentityProvider)
+                        .WithData("session_id", session.SessionId.Value.ToString())
+                        .WithData("session_cookie", session.SessionCookie)
+                        .WithData("identity_provider", session.IdentityProvider)
                         .WithData("state", authorizationState)
                         .Build();
 
                     NavigationManager.NavigateTo(QueryBuilder.Create()
-                        .WithUri(Links.Session.TwoFactor)
+                        .WithUri(Links.OAuth.SignUp)
                         .WithQueryParam("state", state)
                         .Build());
                 }

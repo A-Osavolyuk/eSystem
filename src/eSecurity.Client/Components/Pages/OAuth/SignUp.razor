@@ -66,7 +66,8 @@
 
     private string? _provider;
     private string? _authorizationState;
-    private Guid _sid;
+    private string? _sessionCookie;
+    private Guid _sessionId;
 
     private string? _error;
     private bool _showError;
@@ -76,10 +77,13 @@
         if (!string.IsNullOrEmpty(State))
         {
             var stateData = StateParser.Parse(State);
-            if (stateData.TryGetValue("sid", out var sid))
-                _sid = Guid.Parse(sid);
+            if (stateData.TryGetValue("session_cookie", out var sessionCookie))
+                _sessionCookie = sessionCookie;
+            
+            if (stateData.TryGetValue("session_id", out var sessionId))
+                _sessionId = Guid.Parse(sessionId);
 
-            if (stateData.TryGetValue("identityProvider", out var identityProvider))
+            if (stateData.TryGetValue("identity_provider", out var identityProvider))
                 _provider = identityProvider;
 
             if (stateData.TryGetValue("state", out var state))
@@ -95,18 +99,17 @@
         {
             var request = new SetUsernameRequest
             {
-                SessionId = _sid,
+                SessionId = _sessionId,
                 Username = _model.Username
             };
 
             var result = await UsernameService.SetUsernameAsync(request);
             if (result.Succeeded)
             {
-                if (!string.IsNullOrEmpty(_authorizationState))
+                if (!string.IsNullOrEmpty(_authorizationState) &&
+                    !string.IsNullOrEmpty(_sessionCookie))
                 {
-                    //TODO: Implement session cookie generation
-                    
-                    //await AuthenticationManager.SignInAsync(_sid);
+                    await AuthenticationManager.SignInAsync(_sessionCookie);
                     var stateData = StateParser.Parse(_authorizationState);
                     NavigationManager.NavigateTo(stateData["return_url"], true);
                 }
