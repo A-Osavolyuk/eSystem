@@ -26,6 +26,7 @@ public static class OdicExtensions
             services.AddScoped<ILogoutStrategyResolver, LogoutStrategyResolver>();
             services.AddScoped<ILogoutHandler, LogoutHandler>();
             services.AddScoped<ISessionAccessor, SessionAccessor>();
+            services.AddScoped<ISessionCookieFactory, SessionCookieFactory>();
 
             services.AddKeyedScoped<IPromptHandler, LoginPromptHandler>(PromptType.Login);
             services.AddKeyedScoped<IPromptHandler, ConsentPromptHandler>(PromptType.Consent);
