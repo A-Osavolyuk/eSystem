@@ -8,5 +8,4 @@ public class ClientOptions
     public string CallbackUri { get; set; } = string.Empty;
     public string PostLogoutRedirectUri { get; set; } = string.Empty;
     public string[] SupportedScopes { get; set; } = [];
-    public PromptType[] SupportedPrompts { get; set; } = [];
 };

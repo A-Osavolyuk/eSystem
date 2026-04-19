@@ -29,13 +29,6 @@ public static class OdicExtensions
                     ScopeTypes.Profile,
                     ScopeTypes.Address
                 ];
-                cfg.SupportedPrompts =
-                [
-                    PromptType.Login,
-                    PromptType.Consent,
-                    PromptType.SelectAccount,
-                    PromptType.None
-                ];
             });
         }
     }
