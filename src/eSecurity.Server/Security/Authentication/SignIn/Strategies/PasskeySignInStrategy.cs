@@ -1,4 +1,5 @@
-﻿using eSecurity.Core.Common.Responses;
+﻿using System.Text.Json;
+using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Security.Authentication.SignIn;
 using eSecurity.Core.Security.Credentials.PublicKey.Constants;
 using eSecurity.Server.Data.Entities;
@@ -8,11 +9,13 @@ using eSecurity.Server.Security.Authentication.Session;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Credentials.PublicKey.Credentials;
+using eSecurity.Server.Security.Cryptography.Protection.Constants;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Server.Security.Authentication.SignIn.Strategies;
 
@@ -24,7 +27,8 @@ public sealed class PasskeySignInStrategy(
     ILockoutManager lockoutManager,
     IHttpContextAccessor accessor,
     IAuthenticationSessionManager authenticationSessionManager,
-    IOptions<SessionOptions> options) : ISignInStrategy
+    IOptions<SessionOptions> options,
+    IDataProtectionProvider protectionProvider) : ISignInStrategy
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
@@ -32,6 +36,7 @@ public sealed class PasskeySignInStrategy(
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
+    private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
     private readonly SessionOptions _options = options.Value;
     private readonly HttpContext _httpContext = accessor.HttpContext!;
 
@@ -137,11 +142,16 @@ public sealed class PasskeySignInStrategy(
         
         var sessionResult = await _authenticationSessionManager.CreateAsync(authenticationSession, cancellationToken);
         if (!sessionResult.Succeeded) return sessionResult;
+
+        var sessionCookie = new SessionCookie() { SessionId = session.Id };
+        var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Session);
+        var json = JsonSerializer.Serialize(sessionCookie);
+        var protectedCookie = protector.Protect(json);
         
         return Results.Success(SuccessCodes.Ok, new SignInResponse
         {
             TransactionId = authenticationSession.Id,
-            SessionId = session.Id
+            SessionCookie = protectedCookie
         });
     }
 }

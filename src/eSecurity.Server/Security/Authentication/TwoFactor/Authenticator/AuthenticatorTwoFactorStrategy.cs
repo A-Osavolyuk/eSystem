@@ -1,4 +1,5 @@
-﻿using eSecurity.Core.Common.Responses;
+﻿using System.Text.Json;
+using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Security.Authentication.Lockout;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Lockout;
@@ -157,11 +158,16 @@ public sealed class AuthenticatorTwoFactorStrategy(
 
         var sessionResult = await _authenticationSessionManager.UpdateAsync(authenticationSession, cancellationToken);
         if (!sessionResult.Succeeded) return sessionResult;
+        
+        var sessionCookie = new SessionCookie() { SessionId = session.Id };
+        var sessionProtector = _protectionProvider.CreateProtector(ProtectionPurposes.Session);
+        var json = JsonSerializer.Serialize(sessionCookie);
+        var protectedCookie = sessionProtector.Protect(json);
 
         return Results.Success(SuccessCodes.Ok, new SignInResponse
         {
             TransactionId = authenticationSession.Id,
-            SessionId = session.Id
+            SessionCookie = protectedCookie
         });
     }
 }

@@ -1,16 +1,19 @@
-﻿using eSecurity.Core.Common.Requests;
+﻿using System.Text.Json;
+using eSecurity.Core.Common.Requests;
 using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authentication.Session;
 using eSecurity.Server.Security.Authorization.Codes;
+using eSecurity.Server.Security.Cryptography.Protection.Constants;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Server.Features.Account.Commands;
 
@@ -22,13 +25,15 @@ public sealed class CompleteSignUpCommandHandler(
     IUserManager userManager,
     IEmailManager emailManager,
     ICodeManager codeManager,
-    IOptions<SessionOptions> options) : IRequestHandler<CompleteSignUpCommand, Result>
+    IOptions<SessionOptions> options,
+    IDataProtectionProvider protectionProvider) : IRequestHandler<CompleteSignUpCommand, Result>
 {
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IUserManager _userManager = userManager;
     private readonly IEmailManager _emailManager = emailManager;
     private readonly ICodeManager _codeManager = codeManager;
+    private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
     private readonly SessionOptions _options = options.Value;
 
     public async Task<Result> Handle(CompleteSignUpCommand request, CancellationToken cancellationToken = default)
@@ -97,8 +102,14 @@ public sealed class CompleteSignUpCommandHandler(
         var authenticationSessionResult = await _authenticationSessionManager.UpdateAsync(
             authenticationSession, cancellationToken);
 
-        if (!authenticationSessionResult.Succeeded) return authenticationSessionResult;
+        if (!authenticationSessionResult.Succeeded) 
+            return authenticationSessionResult;
+        
+        var sessionCookie = new SessionCookie() { SessionId = session.Id };
+        var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Session);
+        var json = JsonSerializer.Serialize(sessionCookie);
+        var protectedCookie = protector.Protect(json);
 
-        return Results.Success(SuccessCodes.Ok, new CompleteSignUpResponse { SessionId = session.Id });
+        return Results.Success(SuccessCodes.Ok, new CompleteSignUpResponse { SessionCookie = protectedCookie });
     }
 }

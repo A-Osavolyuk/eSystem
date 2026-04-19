@@ -1,17 +1,23 @@
-﻿using eSecurity.Core.Common.DTOs;
+﻿using System.Text.Json;
+using eSecurity.Core.Common.DTOs;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authentication.Session;
+using eSecurity.Server.Security.Cryptography.Protection.Constants;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Server.Features.Account.Queries;
 
 public sealed record GetAuthenticationSessionQuery(Guid Sid) : IRequest<Result>;
 
 public sealed class GetAuthenticationSessionQueryHandler(
-    IAuthenticationSessionManager authenticationSessionManager) : IRequestHandler<GetAuthenticationSessionQuery, Result>
+    IAuthenticationSessionManager authenticationSessionManager,
+    IDataProtectionProvider protectionProvider) : IRequestHandler<GetAuthenticationSessionQuery, Result>
 {
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
+    private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
 
     public async Task<Result> Handle(GetAuthenticationSessionQuery request, 
         CancellationToken cancellationToken = default)
@@ -51,6 +57,15 @@ public sealed class GetAuthenticationSessionQueryHandler(
             NextMethod = nextMethod?.MethodReference,
             AllowedMfaMethods = allowedMfaMethods
         };
+
+        if (authenticationSession.SessionId.HasValue)
+        {
+            var sessionCookie = new SessionCookie() { SessionId = authenticationSession.SessionId.Value };
+            var json = JsonSerializer.Serialize(sessionCookie);
+            var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Session);
+            var protectedCookie = protector.Protect(json);
+            response.SessionCookie = protectedCookie;
+        }
         
         return Results.Success(SuccessCodes.Ok, response);
     }

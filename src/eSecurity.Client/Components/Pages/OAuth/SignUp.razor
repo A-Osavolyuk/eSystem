@@ -104,7 +104,9 @@
             {
                 if (!string.IsNullOrEmpty(_authorizationState))
                 {
-                    await AuthenticationManager.SignInAsync(_sid);
+                    //TODO: Implement session cookie generation
+                    
+                    //await AuthenticationManager.SignInAsync(_sid);
                     var stateData = StateParser.Parse(_authorizationState);
                     NavigationManager.NavigateTo(stateData["return_url"], true);
                 }

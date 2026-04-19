@@ -1,4 +1,5 @@
-﻿using eSecurity.Core.Common.Responses;
+﻿using System.Text.Json;
+using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Security.Authentication.Lockout;
 using eSecurity.Core.Security.Authentication.SignIn;
 using eSecurity.Core.Security.Identity;
@@ -10,6 +11,7 @@ using eSecurity.Server.Security.Authentication.Session;
 using eSecurity.Server.Security.Authentication.TwoFactor;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Credentials.PublicKey;
+using eSecurity.Server.Security.Cryptography.Protection.Constants;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
@@ -17,6 +19,7 @@ using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Server.Security.Authentication.SignIn.Strategies;
 
@@ -32,7 +35,8 @@ public sealed class PasswordSignInStrategy(
     IAuthenticationSessionManager authenticationSessionManager,
     IPasskeyManager passkeyManager,
     IOptions<SignInOptions> signInOptions,
-    IOptions<SessionOptions> sessionOptions) : ISignInStrategy
+    IOptions<SessionOptions> sessionOptions,
+    IDataProtectionProvider protectionProvider) : ISignInStrategy
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IPasswordManager _passwordManager = passwordManager;
@@ -43,6 +47,7 @@ public sealed class PasswordSignInStrategy(
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
+    private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
     private readonly SessionOptions _sessionOptions = sessionOptions.Value;
     private readonly HttpContext _httpContext = accessor.HttpContext!;
     private readonly SignInOptions _signInOptions = signInOptions.Value;
@@ -263,10 +268,15 @@ public sealed class PasswordSignInStrategy(
             var sessionResult = await _authenticationSessionManager.CreateAsync(authSession, cancellationToken);
             if (!sessionResult.Succeeded) return sessionResult;
 
+            var sessionCookie = new SessionCookie() { SessionId = session.Id };
+            var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Session);
+            var json = JsonSerializer.Serialize(sessionCookie);
+            var protectedCookie = protector.Protect(json);
+            
             return Results.Success(SuccessCodes.Ok, new SignInResponse
             {
                 TransactionId = authSession.Id,
-                SessionId = session.Id
+                SessionCookie = protectedCookie
             });
         }
     }

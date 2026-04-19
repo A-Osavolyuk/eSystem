@@ -22,19 +22,16 @@ public class AuthenticationController(IDataProtectionProvider protectionProvider
     [HttpPost("authorize")]
     public IActionResult Authorize([FromBody] SessionCookie cookie)
     {
-        var cookieJson = JsonSerializer.Serialize(cookie);
-        var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Session);
-        var protectedCookie = protector.Protect(cookieJson);
         var cookieOptions = new CookieOptions
         {
             Domain = "localhost",
             HttpOnly = true,
             SameSite = SameSiteMode.Lax,
-            Expires = cookie.ExpiresAt.UtcDateTime,
+            Expires = DateTimeOffset.UtcNow.AddDays(30),
             MaxAge = TimeSpan.FromDays(30)
         };
 
-        Response.Cookies.Append(DefaultCookies.Session, protectedCookie, cookieOptions);
+        Response.Cookies.Append(DefaultCookies.Session, cookie.Cookie, cookieOptions);
         return Ok(Results.Success(SuccessCodes.Ok));
     }
     

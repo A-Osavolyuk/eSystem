@@ -13,7 +13,6 @@
 @attribute [Authorize]
 
 @inject IDeviceService DeviceService
-@inject ISessionAccessor SessionAccessor
 
 <Title Text="Device activation"/>
 
@@ -130,11 +129,9 @@
 
     private async Task OnAllowAsync()
     {
-        var session = SessionAccessor.Get();
         var request = new DeviceCodeDecisionRequest()
         {
             UserCode = _userCode!,
-            SessionId = session?.Id,
             Decision = DeviceCodeDecision.Approved
         };
         
@@ -153,11 +150,9 @@
 
     private async Task OnDenyAsync()
     {
-        var session = SessionAccessor.Get();
         var request = new DeviceCodeDecisionRequest()
         {
             UserCode = _userCode!,
-            SessionId = session?.Id,
             Decision = DeviceCodeDecision.Denied
         };
         

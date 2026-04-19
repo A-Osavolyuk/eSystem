@@ -102,7 +102,7 @@
             var result = await SecurityService.CompleteSignUpAsync(request);
             if (result.Succeeded && result.TryGetValue<CompleteSignUpResponse>(out var response) && response is not null)
             {
-                await AuthenticationManager.SignInAsync(response.SessionId);
+                await AuthenticationManager.SignInAsync(response.SessionCookie);
                 if (!string.IsNullOrEmpty(_state))
                 {
                     var stateData = StateParser.Parse(_state);

@@ -111,20 +111,23 @@ else
             var result = await SecurityService.SignInAsync(request);
             if (result.Succeeded && result.TryGetValue<SignInResponse>(out var response) && response is not null)
             {
-                await AuthenticationManager.SignInAsync(response.SessionId!.Value);
-                var queryParams = QueryParser.GetQueryParameters(NavigationManager.Uri);
-                if (queryParams.TryGetValue("state", out var  state) && !string.IsNullOrEmpty(state))
+                if (!string.IsNullOrEmpty(response.SessionCookie))
                 {
-                    var stateData = StateParser.Parse(state);
-                    if (stateData.TryGetValue("return_url", out var returnUrl))
+                    await AuthenticationManager.SignInAsync(response.SessionCookie);
+                    var queryParams = QueryParser.GetQueryParameters(NavigationManager.Uri);
+                    if (queryParams.TryGetValue("state", out var  state) && !string.IsNullOrEmpty(state))
                     {
-                        NavigationManager.NavigateTo(returnUrl, true);
+                        var stateData = StateParser.Parse(state);
+                        if (stateData.TryGetValue("return_url", out var returnUrl))
+                        {
+                            NavigationManager.NavigateTo(returnUrl, true);
+                        }
                     }
-                }
-                else
-                {
-                    var returnUrl = queryParams.GetValueOrDefault("return_url");
-                    NavigationManager.NavigateTo(AuthenticationManager.GetAuthorizationUri(returnUrl), true);
+                    else
+                    {
+                        var returnUrl = queryParams.GetValueOrDefault("return_url");
+                        NavigationManager.NavigateTo(AuthenticationManager.GetAuthorizationUri(returnUrl), true);
+                    }
                 }
             }
             else

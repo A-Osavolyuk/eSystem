@@ -65,9 +65,9 @@
                         .WithQueryParam("state", state)
                         .Build());
                 }
-                else if (session.SessionId.HasValue)
+                else if (!string.IsNullOrEmpty(session.SessionCookie))
                 {
-                    await AuthenticationManager.SignInAsync(session.SessionId.Value);
+                    await AuthenticationManager.SignInAsync(session.SessionCookie);
                     NavigationManager.NavigateTo(GetRedirectUri(oauthState), true);
                 }
             }

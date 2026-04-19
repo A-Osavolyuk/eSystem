@@ -78,20 +78,13 @@ public sealed class AuthenticationManager(
         await (_authenticationStateProvider as ClaimAuthenticationStateProvider)!.NotifyAsync();
     }
 
-    public async Task SignInAsync(Guid sessionId)
+    public async Task SignInAsync(string cookie)
     {
-        var session = new SessionCookie
-        {
-            Id = sessionId,
-            IssuedAt = DateTimeOffset.UtcNow,
-            ExpiresAt = DateTimeOffset.UtcNow.AddDays(30)
-        };
-
         var fetchOptions = new FetchOptions
         {
             Url = $"{_navigationManager.BaseUri}api/authentication/authorize",
             Method = HttpMethod.Post,
-            Body = session
+            Body = new SessionCookie { Cookie = cookie }
         };
             
         await _fetchClient.FetchAsync(fetchOptions);

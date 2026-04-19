@@ -21,7 +21,8 @@ public sealed class DeviceCodeDecisionCommandHandler(
     ISessionManager sessionManager,
     IUserManager userManager,
     IClientManager clientManager,
-    IConsentManager consentManager) 
+    IConsentManager consentManager,
+    ISessionAccessor sessionAccessor) 
     : RequestHandlerBase<DeviceCodeDecisionCommand, Result>(httpContextAccessor)
 {
     private readonly IDeviceCodeManager _deviceCodeManager = deviceCodeManager;
@@ -29,6 +30,7 @@ public sealed class DeviceCodeDecisionCommandHandler(
     private readonly IUserManager _userManager = userManager;
     private readonly IClientManager _clientManager = clientManager;
     private readonly IConsentManager _consentManager = consentManager;
+    private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
 
     public override async Task<Result> Handle(DeviceCodeDecisionCommand request, CancellationToken cancellationToken)
     {
@@ -63,10 +65,11 @@ public sealed class DeviceCodeDecisionCommandHandler(
                 Description = "Device code is not valid"
             });
         }
-        
-        if (request.Request.SessionId.HasValue)
+
+        var sessionCookie = _sessionAccessor.GetCookie();
+        if (sessionCookie is not null)
         {
-            var session = await _sessionManager.FindByIdAsync(request.Request.SessionId.Value, cancellationToken);
+            var session = await _sessionManager.FindByIdAsync(sessionCookie.SessionId, cancellationToken);
             if (session is null)
             {
                 return Results.ClientError(ClientErrorCode.NotFound, new Error()

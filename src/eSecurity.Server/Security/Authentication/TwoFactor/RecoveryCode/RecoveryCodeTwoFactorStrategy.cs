@@ -1,16 +1,19 @@
-﻿using eSecurity.Core.Common.Responses;
+﻿using System.Text.Json;
+using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Security.Authentication.Lockout;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Lockout;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authentication.Session;
 using eSecurity.Server.Security.Authorization.Devices;
+using eSecurity.Server.Security.Cryptography.Protection.Constants;
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Server.Security.Authentication.TwoFactor.RecoveryCode;
 
@@ -28,7 +31,8 @@ public sealed class RecoveryCodeTwoFactorStrategy(
     ISessionManager sessionManager,
     IRecoverManager recoverManager,
     IOptions<SessionOptions> sessionOptions,
-    IOptions<SignInOptions> signInOptions) : ITwoFactorStrategy<RecoveryCodeTwoFactorContext>
+    IOptions<SignInOptions> signInOptions,
+    IDataProtectionProvider protectionProvider) : ITwoFactorStrategy<RecoveryCodeTwoFactorContext>
 {
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly IUserManager _userManager = userManager;
@@ -36,6 +40,7 @@ public sealed class RecoveryCodeTwoFactorStrategy(
     private readonly ILockoutManager _lockoutManager = lockoutManager;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IRecoverManager _recoverManager = recoverManager;
+    private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
     private readonly SessionOptions _sessionOptions = sessionOptions.Value;
     private readonly SignInOptions _signInOptions = signInOptions.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
@@ -140,11 +145,16 @@ public sealed class RecoveryCodeTwoFactorStrategy(
 
         var sessionResult = await _authenticationSessionManager.UpdateAsync(authenticationSession, cancellationToken);
         if (!sessionResult.Succeeded) return sessionResult;
+        
+        var sessionCookie = new SessionCookie() { SessionId = session.Id };
+        var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Session);
+        var json = JsonSerializer.Serialize(sessionCookie);
+        var protectedCookie = protector.Protect(json);
 
         return Results.Success(SuccessCodes.Ok, new SignInResponse
         {
             TransactionId = authenticationSession.Id,
-            SessionId = session.Id
+            SessionCookie = protectedCookie
         });
     }
 }

@@ -9,9 +9,6 @@ public sealed class DeviceCodeDecisionRequest
     
     [JsonPropertyName("decision")]
     public DeviceCodeDecision Decision { get; set; }
-    
-    [JsonPropertyName("session_id")]
-    public Guid? SessionId { get; set; }
 
     [JsonPropertyName("deny_reason")]
     public string? DenyReason { get; set; }

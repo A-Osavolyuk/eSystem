@@ -7,6 +7,9 @@ public sealed class AuthenticationSessionDto
 {
     [JsonPropertyName("sid")]
     public Guid? SessionId { get; set; }
+
+    [JsonPropertyName("session_cookie")]
+    public string? SessionCookie { get; set; }
     
     [JsonPropertyName("identity_provider")]
     public string? IdentityProvider { get; set; }

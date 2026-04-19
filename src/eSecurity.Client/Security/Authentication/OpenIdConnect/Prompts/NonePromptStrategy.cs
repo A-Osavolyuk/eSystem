@@ -39,7 +39,7 @@ public sealed class NonePromptStrategy(
         
         var request = new AuthorizeRequest
         {
-            SessionId = session.Id,
+            SessionId = Guid.CreateVersion7(),
             ResponseType = context.ResponseType,
             ClientId = context.ClientId,
             RedirectUri = decodedRedirectUri,
