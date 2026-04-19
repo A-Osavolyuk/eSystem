@@ -21,44 +21,18 @@ public class CheckConsentCommandHandler(
     ISessionManager sessionManager,
     IClientManager clientManager,
     IUserManager userManager,
-    IDataProtectionProvider protectionProvider,
-    IHttpContextAccessor httpContextAccessor) : RequestHandlerBase<CheckConsentCommand, Result>(httpContextAccessor)
+    ISessionAccessor sessionAccessor) : IRequestHandler<CheckConsentCommand, Result>
 {
     private readonly IConsentManager _consentManager = consentManager;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IClientManager _clientManager = clientManager;
     private readonly IUserManager _userManager = userManager;
-    private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
+    private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
 
-    public override async Task<Result> Handle(CheckConsentCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(CheckConsentCommand request, CancellationToken cancellationToken)
     {
-        if (!HttpContext.Request.Cookies.TryGetValue(DefaultCookies.Session, out var cookie) ||
-            string.IsNullOrEmpty(cookie))
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
-            {
-                Code = ErrorCode.LoginRequired,
-                Description = "Login required"
-            });
-        }
-
-        SessionCookie? sessionCookie;
-        try
-        {
-            var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Session);
-            var unprotectedCookie = protector.Unprotect(cookie);
-            
-            sessionCookie = JsonSerializer.Deserialize<SessionCookie>(unprotectedCookie);
-            if (sessionCookie is null)
-            {
-                return Results.ClientError(ClientErrorCode.BadRequest, new Error()
-                {
-                    Code = ErrorCode.LoginRequired,
-                    Description = "Login required"
-                });
-            }
-        }
-        catch (Exception)
+        var sessionCookie = _sessionAccessor.GetCookie();
+        if (sessionCookie is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {

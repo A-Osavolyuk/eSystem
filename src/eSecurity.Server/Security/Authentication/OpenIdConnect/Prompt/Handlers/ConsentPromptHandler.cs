@@ -18,52 +18,26 @@ using Microsoft.AspNetCore.DataProtection;
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Prompt.Handlers;
 
 public sealed class ConsentPromptHandler(
-    IHttpContextAccessor httpContextAccessor,
-    IDataProtectionProvider protectionProvider,
     ISessionManager sessionManager,
     IClientManager clientManager,
     IConsentManager consentManager,
     IUserManager userManager,
-    IOptions<OpenIdConfiguration> options) : IPromptHandler
+    IOptions<OpenIdConfiguration> options,
+    ISessionAccessor sessionAccessor) : IPromptHandler
 {
-    private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IClientManager _clientManager = clientManager;
     private readonly IConsentManager _consentManager = consentManager;
     private readonly IUserManager _userManager = userManager;
+    private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
     private readonly OpenIdConfiguration _configuration = options.Value;
-    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     
     public bool CanHandle(PromptType promptType) => promptType == PromptType.Consent;
 
     public async ValueTask<PromptResult> HandleAsync(PromptContext context, CancellationToken cancellationToken)
     {
-        if (!_httpContext.Request.Cookies.TryGetValue(DefaultCookies.Session, out var cookie) ||
-            string.IsNullOrEmpty(cookie))
-        {
-            return PromptResult.Failed(
-                Results.Redirect(RedirectionCode.Found, PromptHelper.GetRedirectUri(context.RedirectUri, 
-                    ErrorCode.LoginRequired, "Login required", context.State)
-                )
-            );
-        }
-
-        var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Session);
-        var unprotectedCookie = protector.Unprotect(cookie);
-        SessionCookie? sessionCookie;
-        try
-        {
-            sessionCookie = JsonSerializer.Deserialize<SessionCookie>(unprotectedCookie);
-            if (sessionCookie is null)
-            {
-                return PromptResult.Failed(
-                    Results.Redirect(RedirectionCode.Found, PromptHelper.GetRedirectUri(context.RedirectUri, 
-                        ErrorCode.LoginRequired, "Login required", context.State)
-                    )
-                );
-            }
-        }
-        catch (Exception)
+        var sessionCookie = _sessionAccessor.GetCookie();
+        if (sessionCookie is null)
         {
             return PromptResult.Failed(
                 Results.Redirect(RedirectionCode.Found, PromptHelper.GetRedirectUri(context.RedirectUri, 

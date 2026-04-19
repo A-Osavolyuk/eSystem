@@ -13,39 +13,21 @@ using Microsoft.AspNetCore.DataProtection;
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Prompt.Handlers;
 
 public sealed class LoginPromptHandler(
-    IHttpContextAccessor httpContextAccessor,
     IOptions<OpenIdConfiguration> options,
-    IDataProtectionProvider protectionProvider,
-    ISessionManager sessionManager) : IPromptHandler
+    ISessionManager sessionManager,
+    ISessionAccessor sessionAccessor) : IPromptHandler
 {
-    private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
     private readonly ISessionManager _sessionManager = sessionManager;
+    private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
     private readonly OpenIdConfiguration _configuration = options.Value;
-    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public bool CanHandle(PromptType promptType) => promptType == PromptType.Login;
 
     public async ValueTask<PromptResult> HandleAsync(PromptContext context, CancellationToken cancellationToken)
     {
-        if (_httpContext.Request.Cookies.TryGetValue(DefaultCookies.Session, out var cookie))
-        {
-            var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Session);
-            var unprotectedCookie = protector.Unprotect(cookie);
-            try
-            {
-                var sessionCookie = JsonSerializer.Deserialize<SessionCookie>(unprotectedCookie);
-                if (sessionCookie is not null)
-                {
-                    var session = await _sessionManager.FindByIdAsync(sessionCookie.SessionId, cancellationToken);
-                    if (session is not null)
-                        return PromptResult.Next();
-                }
-            }
-            catch (Exception)
-            {
-                //TODO: Implement fallback
-            }
-        }
+        var cookie = _sessionAccessor.GetCookie();
+        if (cookie is not null)
+            return PromptResult.Next();
 
         var prompts = context.Prompts
             .Where(x => x != PromptType.Login)
