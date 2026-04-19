@@ -190,7 +190,6 @@
         var request = new CheckConsentRequest
         {
             ClientId = Guid.Parse(_clientId),
-            SessionId = session.Id,
             Scopes = queryParams["scope"].Split(' ').ToList()
         };
 
@@ -263,7 +262,6 @@
         
         var request = new GrantConsentRequest
         {
-            SessionId = session.Id,
             ClientId = Guid.Parse(_clientId),
             Scopes = _scopes
         };

@@ -1,13 +1,17 @@
+using System.Text.Json;
 using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authorization.OAuth.Consents;
+using eSecurity.Server.Security.Cookies;
+using eSecurity.Server.Security.Cryptography.Protection.Constants;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Server.Features.Connect.Commands;
 
@@ -18,17 +22,55 @@ public class GrantConsentCommandHandler(
     IClientManager clientManager,
     IConsentManager consentManager,
     ISessionManager sessionManager,
-    IOptions<OpenIdConfiguration> options) : IRequestHandler<GrantConsentCommand, Result>
+    IHttpContextAccessor httpContextAccessor,
+    IOptions<OpenIdConfiguration> options,
+    IDataProtectionProvider protectionProvider) : RequestHandlerBase<GrantConsentCommand, Result>(httpContextAccessor)
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IClientManager _clientManager = clientManager;
     private readonly IConsentManager _consentManager = consentManager;
     private readonly ISessionManager _sessionManager = sessionManager;
+    private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
     private readonly OpenIdConfiguration _options = options.Value;
 
-    public async Task<Result> Handle(GrantConsentCommand request, CancellationToken cancellationToken)
+    public override async Task<Result> Handle(GrantConsentCommand request, CancellationToken cancellationToken)
     {
-        var session = await _sessionManager.FindByIdAsync(request.Request.SessionId, cancellationToken);
+        if (!HttpContext.Request.Cookies.TryGetValue(DefaultCookies.Session, out var cookie) ||
+            string.IsNullOrEmpty(cookie))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.LoginRequired,
+                Description = "Login required"
+            });
+        }
+
+        SessionCookie? sessionCookie;
+        try
+        {
+            var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Session);
+            var unprotectedCookie = protector.Unprotect(cookie);
+            
+            sessionCookie = JsonSerializer.Deserialize<SessionCookie>(unprotectedCookie);
+            if (sessionCookie is null)
+            {
+                return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+                {
+                    Code = ErrorCode.LoginRequired,
+                    Description = "Login required"
+                });
+            }
+        }
+        catch (Exception)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.LoginRequired,
+                Description = "Login required"
+            });
+        }
+        
+        var session = await _sessionManager.FindByIdAsync(sessionCookie.SessionId, cancellationToken);
         if (session is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error()

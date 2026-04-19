@@ -5,9 +5,6 @@ public sealed class CheckConsentRequest
     [JsonPropertyName("client_id")]
     public required Guid ClientId { get; set; }
     
-    [JsonPropertyName("session_id")]
-    public required Guid SessionId { get; set; }
-    
     [JsonPropertyName("scopes")]
     public required List<string> Scopes { get; set; }
 }

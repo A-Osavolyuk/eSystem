@@ -36,7 +36,6 @@ public sealed class ConsentPromptStrategy(
         var request = new CheckConsentRequest
         {
             ClientId = Guid.Parse(context.ClientId),
-            SessionId = session.Id,
             Scopes = context.Scope.Split(" ").ToList()
         };
 
