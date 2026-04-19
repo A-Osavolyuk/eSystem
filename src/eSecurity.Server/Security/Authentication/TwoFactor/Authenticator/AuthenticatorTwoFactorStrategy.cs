@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using eSecurity.Core.Common.Responses;
+﻿using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Security.Authentication.Lockout;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Lockout;

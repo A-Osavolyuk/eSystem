@@ -1,5 +1,4 @@
-﻿using eSystem.Core.Primitives;
-using eSystem.Core.Security.Authentication.OpenIdConnect;
+﻿using eSystem.Core.Security.Authentication.OpenIdConnect;
 
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Prompt;
 

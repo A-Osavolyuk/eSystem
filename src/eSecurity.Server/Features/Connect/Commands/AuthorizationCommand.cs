@@ -8,7 +8,6 @@ using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
-using eSystem.Core.Utilities.Query;
 
 namespace eSecurity.Server.Features.Connect.Commands;
 

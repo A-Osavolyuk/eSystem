@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using eSecurity.Core.Common.Responses;
+﻿using eSecurity.Core.Common.Responses;
 using eSecurity.Core.Security.Authentication.Lockout;
 using eSecurity.Core.Security.Authentication.SignIn;
 using eSecurity.Core.Security.Identity;
@@ -11,7 +10,6 @@ using eSecurity.Server.Security.Authentication.Session;
 using eSecurity.Server.Security.Authentication.TwoFactor;
 using eSecurity.Server.Security.Authorization.Devices;
 using eSecurity.Server.Security.Credentials.PublicKey;
-using eSecurity.Server.Security.Cryptography.Protection.Constants;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
@@ -19,7 +17,6 @@ using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Server.Security.Authentication.SignIn.Strategies;
 

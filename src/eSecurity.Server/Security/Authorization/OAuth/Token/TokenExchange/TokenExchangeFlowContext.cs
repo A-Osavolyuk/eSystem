@@ -1,5 +1,4 @@
-﻿using eSecurity.Server.Security.Cryptography.Tokens;
-using eSystem.Core.Security.Authorization.OAuth;
+﻿using eSystem.Core.Security.Authorization.OAuth;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange;
 

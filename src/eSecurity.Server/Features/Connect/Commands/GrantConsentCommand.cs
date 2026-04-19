@@ -1,17 +1,13 @@
-using System.Text.Json;
 using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authorization.OAuth.Consents;
-using eSecurity.Server.Security.Cookies;
-using eSecurity.Server.Security.Cryptography.Protection.Constants;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
-using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Server.Features.Connect.Commands;
 

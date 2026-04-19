@@ -1,12 +1,9 @@
-﻿using System.Text.Json;
-using eSecurity.Core.Common.DTOs;
+﻿using eSecurity.Core.Common.DTOs;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Authentication.Session;
-using eSecurity.Server.Security.Cryptography.Protection.Constants;
 using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Server.Features.Account.Queries;
 

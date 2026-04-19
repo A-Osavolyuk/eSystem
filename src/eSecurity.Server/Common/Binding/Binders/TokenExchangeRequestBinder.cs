@@ -1,5 +1,4 @@
-﻿using eSecurity.Server.Security.Cryptography.Tokens;
-using eSystem.Core.Binding;
+﻿using eSystem.Core.Binding;
 using eSystem.Core.Enums;
 using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authentication.OpenIdConnect;

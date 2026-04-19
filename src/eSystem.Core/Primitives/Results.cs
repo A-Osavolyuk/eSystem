@@ -1,5 +1,4 @@
-﻿using System.Net;
-using eSystem.Core.Primitives.Enums;
+﻿using eSystem.Core.Primitives.Enums;
 
 namespace eSystem.Core.Primitives;
 

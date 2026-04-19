@@ -11,7 +11,6 @@ using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Server.Features.Account.Commands;
 
