@@ -2,9 +2,12 @@
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Logout;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Logout.Strategies;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Prompt;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Prompt.Handlers;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Cryptography.Pkce;
 using eSystem.Core.Primitives;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
 
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect;
@@ -22,6 +25,11 @@ public static class OdicExtensions
             services.AddKeyedScoped<ILogoutStrategy<List<string>>, FrontchannelLogoutStrategy>(LogoutFlow.Frontchannel);
             services.AddScoped<ILogoutStrategyResolver, LogoutStrategyResolver>();
             services.AddScoped<ILogoutHandler, LogoutHandler>();
+
+            services.AddKeyedScoped<IPromptHandler, LoginPromptHandler>(PromptType.Login);
+            services.AddKeyedScoped<IPromptHandler, ConsentPromptHandler>(PromptType.Consent);
+            services.AddKeyedScoped<IPromptHandler, SelectAccountPromptHandler>(PromptType.SelectAccount);
+            services.AddKeyedScoped<IPromptHandler, NonePromptHandler>(PromptType.None);
             
             services.AddBackchannelAuthentication(options =>
             {

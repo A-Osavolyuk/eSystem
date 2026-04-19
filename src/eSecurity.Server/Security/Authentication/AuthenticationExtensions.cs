@@ -37,7 +37,7 @@ public static class AuthenticationExtensions
         builder.Services.AddOpenIdConnect(cfg =>
         {
             cfg.Issuer = "https://localhost:6201";
-            cfg.AuthorizationEndpoint = "https://localhost:6501/connect/authorize";
+            cfg.AuthorizationEndpoint = "https://localhost:6201/api/v1/connect/authorize";
             cfg.EndSessionEndpoint = "https://localhost:6501/connect/logout";
             cfg.TokenEndpoint = "https://localhost:6201/api/v1/connect/token";
             cfg.UserinfoEndpoint = "https://localhost:6201/api/v1/connect/userinfo";

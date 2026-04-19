@@ -6,4 +6,5 @@ public static class ProtectionPurposes
     public const string RecoveryCode = "RecoveryCode";
     public const string Password = "Password";
     public const string Certificate = "Certificate";
+    public const string Session = "Session";
 }

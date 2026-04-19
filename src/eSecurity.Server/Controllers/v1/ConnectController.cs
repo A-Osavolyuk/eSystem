@@ -30,7 +30,7 @@ public class ConnectController(ISender sender) : ControllerBase
         var result = await _sender.Send(new GetOpenidConfigurationQuery());
         return HttpContext.HandleResult(result);
     }
-    
+
     [EndpointSummary("OAuth authorization server")]
     [EndpointDescription("OAuth authorization server")]
     [ProducesResponseType(200)]
@@ -60,7 +60,7 @@ public class ConnectController(ISender sender) : ControllerBase
         var result = await _sender.Send(new GetClientInfoQuery(clientId));
         return HttpContext.HandleResult(result);
     }
-    
+
     [EndpointSummary("Userinfo")]
     [EndpointDescription("Userinfo")]
     [ProducesResponseType(200)]
@@ -73,7 +73,7 @@ public class ConnectController(ISender sender) : ControllerBase
             const string description = "GET cannot have form body";
             Response.Headers.Append(HeaderTypes.WwwAuthenticate,
                 $"Bearer error=\"{ErrorCode.InvalidRequest.GetString()}\", error_description=\"{description}\"");
-            
+
             return BadRequest(new Error
             {
                 Code = ErrorCode.InvalidRequest,
@@ -81,11 +81,11 @@ public class ConnectController(ISender sender) : ControllerBase
             });
         }
 
-        
+
         var result = await _sender.Send(new GetUserInfoQuery());
         return HttpContext.HandleResult(result);
     }
-    
+
     [EndpointSummary("Userinfo")]
     [EndpointDescription("Userinfo")]
     [ProducesResponseType(200)]
@@ -136,6 +136,15 @@ public class ConnectController(ISender sender) : ControllerBase
     [EndpointSummary("Authorize")]
     [EndpointDescription("Authorize")]
     [ProducesResponseType(200)]
+    [HttpGet("authorize")]
+    public async ValueTask<IActionResult> AuthorizeAsync([FromQuery] AuthorizationRequest request)
+    {
+        return Ok();
+    }
+
+    [EndpointSummary("Authorize")]
+    [EndpointDescription("Authorize")]
+    [ProducesResponseType(200)]
     [HttpPost("authorize")]
     public async ValueTask<IActionResult> AuthorizeAsync([FromBody] AuthorizeRequest request)
     {
@@ -152,7 +161,7 @@ public class ConnectController(ISender sender) : ControllerBase
         var result = await _sender.Send(new LogoutCommand(request));
         return HttpContext.HandleResult(result);
     }
-    
+
     [EndpointSummary("Device authorization")]
     [EndpointDescription("Device authorization")]
     [ProducesResponseType(200)]
@@ -163,13 +172,14 @@ public class ConnectController(ISender sender) : ControllerBase
         var result = await _sender.Send(new DeviceAuthorizationCommand(request));
         return HttpContext.HandleResult(result);
     }
-    
+
     [EndpointSummary("Backchannel authentication")]
     [EndpointDescription("Backchannel authentication")]
     [ProducesResponseType(200)]
     [Consumes(ContentTypes.Application.XwwwFormUrlEncoded)]
     [HttpPost("backchannel-authentication")]
-    public async ValueTask<IActionResult> BackchannelAuthenticationAsync([FromForm] BackchannelAuthenticationRequest request)
+    public async ValueTask<IActionResult> BackchannelAuthenticationAsync(
+        [FromForm] BackchannelAuthenticationRequest request)
     {
         var result = await _sender.Send(new BackchannelAuthenticationCommand(request));
         return HttpContext.HandleResult(result);
