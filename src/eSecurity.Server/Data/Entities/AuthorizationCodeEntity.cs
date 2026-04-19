@@ -11,9 +11,9 @@ public class AuthorizationCodeEntity : Entity
     public required AuthorizationProtocol Protocol { get; set; }
     
     public required string Code { get; set; }
-    public required string Nonce { get; set; }
     public required string RedirectUri { get; set; }
     
+    public string? Nonce { get; set; }
     public string? CodeChallenge { get; set; }
     public ChallengeMethod? CodeChallengeMethod { get; set; }
     
