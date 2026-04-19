@@ -36,7 +36,7 @@ public sealed class PasswordSignInStrategy(
     IPasskeyManager passkeyManager,
     IOptions<SignInOptions> signInOptions,
     IOptions<SessionOptions> sessionOptions,
-    IDataProtectionProvider protectionProvider) : ISignInStrategy
+    ISessionCookieFactory sessionCookieFactory) : ISignInStrategy
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IPasswordManager _passwordManager = passwordManager;
@@ -47,7 +47,7 @@ public sealed class PasswordSignInStrategy(
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
-    private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
+    private readonly ISessionCookieFactory _sessionCookieFactory = sessionCookieFactory;
     private readonly SessionOptions _sessionOptions = sessionOptions.Value;
     private readonly HttpContext _httpContext = accessor.HttpContext!;
     private readonly SignInOptions _signInOptions = signInOptions.Value;
@@ -267,16 +267,11 @@ public sealed class PasswordSignInStrategy(
 
             var sessionResult = await _authenticationSessionManager.CreateAsync(authSession, cancellationToken);
             if (!sessionResult.Succeeded) return sessionResult;
-
-            var sessionCookie = new SessionCookie() { SessionId = session.Id };
-            var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Session);
-            var json = JsonSerializer.Serialize(sessionCookie);
-            var protectedCookie = protector.Protect(json);
             
             return Results.Success(SuccessCodes.Ok, new SignInResponse
             {
                 TransactionId = authSession.Id,
-                SessionCookie = protectedCookie
+                SessionCookie = _sessionCookieFactory.CreateCookie(session)
             });
         }
     }

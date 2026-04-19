@@ -36,7 +36,7 @@ public sealed class PasskeyTwoFactorStrategy(
     IPasskeyManager passkeyManager,
     IOptions<SessionOptions> sessionOptions,
     IOptions<SignInOptions> signInOptions,
-    IDataProtectionProvider protectionProvider) : ITwoFactorStrategy<PasskeyTwoFactorContext>
+    ISessionCookieFactory sessionCookieFactory) : ITwoFactorStrategy<PasskeyTwoFactorContext>
 {
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly IUserManager _userManager = userManager;
@@ -44,7 +44,7 @@ public sealed class PasskeyTwoFactorStrategy(
     private readonly ILockoutManager _lockoutManager = lockoutManager;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
-    private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
+    private readonly ISessionCookieFactory _sessionCookieFactory = sessionCookieFactory;
     private readonly SessionOptions _sessionOptions = sessionOptions.Value;
     private readonly SignInOptions _signInOptions = signInOptions.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
@@ -174,16 +174,11 @@ public sealed class PasskeyTwoFactorStrategy(
 
         var sessionResult = await _authenticationSessionManager.UpdateAsync(authenticationSession, cancellationToken);
         if (!sessionResult.Succeeded) return sessionResult;
-        
-        var sessionCookie = new SessionCookie() { SessionId = session.Id };
-        var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Session);
-        var json = JsonSerializer.Serialize(sessionCookie);
-        var protectedCookie = protector.Protect(json);
 
         return Results.Success(SuccessCodes.Ok, new SignInResponse
         {
             TransactionId = authenticationSession.Id,
-            SessionCookie = protectedCookie
+            SessionCookie = _sessionCookieFactory.CreateCookie(session)
         });
     }
 }

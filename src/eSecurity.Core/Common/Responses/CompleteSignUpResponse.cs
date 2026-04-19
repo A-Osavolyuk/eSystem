@@ -3,5 +3,5 @@
 public sealed class CompleteSignUpResponse
 {
     [JsonPropertyName("session_cookie")]
-    public string SessionCookie { get; set; }
+    public string? SessionCookie { get; set; }
 }

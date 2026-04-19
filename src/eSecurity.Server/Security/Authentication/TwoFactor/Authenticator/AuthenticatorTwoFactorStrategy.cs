@@ -32,6 +32,7 @@ public sealed class AuthenticatorTwoFactorStrategy(
     ISessionManager sessionManager,
     ISecretManager secretManager,
     IDataProtectionProvider protectionProvider,
+    ISessionCookieFactory sessionCookieFactory,
     IOptions<SessionOptions> sessionOptions,
     IOptions<SignInOptions> signInOptions) : ITwoFactorStrategy<AuthenticatorTwoFactorContext>
 {
@@ -42,6 +43,7 @@ public sealed class AuthenticatorTwoFactorStrategy(
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly ISecretManager _secretManager = secretManager;
     private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
+    private readonly ISessionCookieFactory _sessionCookieFactory = sessionCookieFactory;
     private readonly SignInOptions _signInOptions = signInOptions.Value;
     private readonly SessionOptions _sessionOptions = sessionOptions.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
@@ -158,16 +160,11 @@ public sealed class AuthenticatorTwoFactorStrategy(
 
         var sessionResult = await _authenticationSessionManager.UpdateAsync(authenticationSession, cancellationToken);
         if (!sessionResult.Succeeded) return sessionResult;
-        
-        var sessionCookie = new SessionCookie() { SessionId = session.Id };
-        var sessionProtector = _protectionProvider.CreateProtector(ProtectionPurposes.Session);
-        var json = JsonSerializer.Serialize(sessionCookie);
-        var protectedCookie = sessionProtector.Protect(json);
 
         return Results.Success(SuccessCodes.Ok, new SignInResponse
         {
             TransactionId = authenticationSession.Id,
-            SessionCookie = protectedCookie
+            SessionCookie = _sessionCookieFactory.CreateCookie(session)
         });
     }
 }

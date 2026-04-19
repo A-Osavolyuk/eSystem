@@ -14,10 +14,12 @@ public sealed record GetAuthenticationSessionQuery(Guid Sid) : IRequest<Result>;
 
 public sealed class GetAuthenticationSessionQueryHandler(
     IAuthenticationSessionManager authenticationSessionManager,
-    IDataProtectionProvider protectionProvider) : IRequestHandler<GetAuthenticationSessionQuery, Result>
+    ISessionManager sessionManager,
+    ISessionCookieFactory sessionCookieFactory) : IRequestHandler<GetAuthenticationSessionQuery, Result>
 {
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
-    private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
+    private readonly ISessionManager _sessionManager = sessionManager;
+    private readonly ISessionCookieFactory _sessionCookieFactory = sessionCookieFactory;
 
     public async Task<Result> Handle(GetAuthenticationSessionQuery request, 
         CancellationToken cancellationToken = default)
@@ -60,11 +62,17 @@ public sealed class GetAuthenticationSessionQueryHandler(
 
         if (authenticationSession.SessionId.HasValue)
         {
-            var sessionCookie = new SessionCookie() { SessionId = authenticationSession.SessionId.Value };
-            var json = JsonSerializer.Serialize(sessionCookie);
-            var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Session);
-            var protectedCookie = protector.Protect(json);
-            response.SessionCookie = protectedCookie;
+            var session = await _sessionManager.FindByIdAsync(authenticationSession.SessionId.Value, cancellationToken);
+            if (session is null)
+            {
+                return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+                {
+                    Code = ErrorCode.InvalidSession,
+                    Description = "Invalid session"
+                });
+            }
+            
+            response.SessionCookie = _sessionCookieFactory.CreateCookie(session);
         }
         
         return Results.Success(SuccessCodes.Ok, response);

@@ -28,7 +28,7 @@ public sealed class PasskeySignInStrategy(
     IHttpContextAccessor accessor,
     IAuthenticationSessionManager authenticationSessionManager,
     IOptions<SessionOptions> options,
-    IDataProtectionProvider protectionProvider) : ISignInStrategy
+    ISessionCookieFactory sessionCookieFactory) : ISignInStrategy
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
@@ -36,7 +36,7 @@ public sealed class PasskeySignInStrategy(
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
-    private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
+    private readonly ISessionCookieFactory _sessionCookieFactory = sessionCookieFactory;
     private readonly SessionOptions _options = options.Value;
     private readonly HttpContext _httpContext = accessor.HttpContext!;
 
@@ -142,16 +142,11 @@ public sealed class PasskeySignInStrategy(
         
         var sessionResult = await _authenticationSessionManager.CreateAsync(authenticationSession, cancellationToken);
         if (!sessionResult.Succeeded) return sessionResult;
-
-        var sessionCookie = new SessionCookie() { SessionId = session.Id };
-        var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Session);
-        var json = JsonSerializer.Serialize(sessionCookie);
-        var protectedCookie = protector.Protect(json);
         
         return Results.Success(SuccessCodes.Ok, new SignInResponse
         {
             TransactionId = authenticationSession.Id,
-            SessionCookie = protectedCookie
+            SessionCookie = _sessionCookieFactory.CreateCookie(session)
         });
     }
 }
