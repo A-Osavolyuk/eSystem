@@ -18,9 +18,13 @@
     <Project Path="src\eSystem.Telegram.Bot\eSystem.Telegram.Bot.csproj" />
   </Folder>
   <Folder Name="/src/eSecurity/">
-    <Project Path="src\eSecurity.Client\eSecurity.Client.csproj" />
     <Project Path="src\eSecurity.Core\eSecurity.Core.csproj" />
+  </Folder>
+  <Folder Name="/src/eSecurity/Backend/">
     <Project Path="src\eSecurity.Server\eSecurity.Server.csproj" />
+  </Folder>
+  <Folder Name="/src/eSecurity/Frontend/">
+    <Project Path="src\eSecurity.Client\eSecurity.Client.csproj" />
   </Folder>
   <Folder Name="/src/eStorage/">
     <Project Path="src\eSystem.Storage.Api\eSystem.Storage.Api.csproj" />
