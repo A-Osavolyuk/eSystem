@@ -33,8 +33,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="8.2.5" />
-      <PackageReference Include="MudBlazor" Version="8.14.0" />
+      <PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="9.0.5" />
+      <PackageReference Include="MudBlazor" Version="9.4.0" />
     </ItemGroup>
 
 </Project>
