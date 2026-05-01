@@ -1,6 +1,7 @@
 ﻿using eSecurity.Core.Common.Requests;
 using eSecurity.Server.Features.Connect.Commands;
 using eSecurity.Server.Features.Connect.Queries;
+using eSecurity.Server.Security.Authentication.OpenIdConnect.Logout;
 using eSecurity.Server.Security.Authorization.Constants;
 using eSystem.Core.Enums;
 using eSystem.Core.Http.Constants;
@@ -141,6 +142,15 @@ public class ConnectController(ISender sender) : ControllerBase
     {
         var result = await _sender.Send(new AuthorizationCommand(request));
         return HttpContext.HandleResult(result);
+    }
+    
+    [EndpointSummary("End session")]
+    [EndpointDescription("End session")]
+    [ProducesResponseType(200)]
+    [HttpGet("end-session")]
+    public async ValueTask<IActionResult> EndSessionAsync([FromQuery] EndSessionRequest request)
+    {
+        return Ok();
     }
 
     [EndpointSummary("Logout")]
