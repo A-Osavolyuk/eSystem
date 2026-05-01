@@ -1,6 +1,6 @@
 ﻿namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Logout;
 
-public sealed class LogoutRequest
+public sealed class EndSessionRequest
 {
     [FromQuery(Name = "id_token_hint")]
     public string? IdTokenHint { get; set; }
