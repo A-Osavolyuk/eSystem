@@ -139,7 +139,8 @@ public class ConnectController(ISender sender) : ControllerBase
     [HttpGet("authorize")]
     public async ValueTask<IActionResult> AuthorizeAsync([FromQuery] AuthorizationRequest request)
     {
-        return Ok();
+        var result = await _sender.Send(new AuthorizationCommand(request));
+        return HttpContext.HandleResult(result);
     }
 
     [EndpointSummary("Logout")]
