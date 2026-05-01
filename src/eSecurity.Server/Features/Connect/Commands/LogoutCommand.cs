@@ -7,6 +7,7 @@ using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authorization.OAuth.Token.Validation;
 using eSystem.Core.Security.Identity.Claims;
+using LogoutRequest = eSecurity.Core.Common.Requests.LogoutRequest;
 
 namespace eSecurity.Server.Features.Connect.Commands;
 
