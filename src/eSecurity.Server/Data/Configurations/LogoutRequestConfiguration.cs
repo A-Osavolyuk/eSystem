@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace eSecurity.Server.Data.Configurations;
 
-public sealed class LogoutRequestConfiguration : IEntityTypeConfiguration<LogoutRequestEntity>
+public sealed class LogoutRequestConfiguration : IEntityTypeConfiguration<EndSessionRequestEntity>
 {
-    public void Configure(EntityTypeBuilder<LogoutRequestEntity> builder)
+    public void Configure(EntityTypeBuilder<EndSessionRequestEntity> builder)
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.IdTokenHint).HasMaxLength(1000);

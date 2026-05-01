@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace eSecurity.Server.Data.Configurations;
 
-public sealed class LogoutRequestUiLocaleConfiguration : IEntityTypeConfiguration<LogoutRequestUiLocaleEntity>
+public sealed class LogoutRequestUiLocaleConfiguration : IEntityTypeConfiguration<EndSessionRequestUiLocaleEntity>
 {
-    public void Configure(EntityTypeBuilder<LogoutRequestUiLocaleEntity> builder)
+    public void Configure(EntityTypeBuilder<EndSessionRequestUiLocaleEntity> builder)
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Locale).HasMaxLength(32);

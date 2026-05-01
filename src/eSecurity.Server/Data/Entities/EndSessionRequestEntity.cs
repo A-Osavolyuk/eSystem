@@ -3,7 +3,7 @@ using eSystem.Core.Data.Entities;
 
 namespace eSecurity.Server.Data.Entities;
 
-public sealed class LogoutRequestEntity : Entity
+public sealed class EndSessionRequestEntity : Entity
 {
     public Guid Id { get; set; }
 
@@ -22,5 +22,5 @@ public sealed class LogoutRequestEntity : Entity
     public Guid UserId { get; set; }
     public UserEntity User { get; set; } = null!;
 
-    public ICollection<LogoutRequestUiLocaleEntity> UiLocales { get; set; } = null!;
+    public ICollection<EndSessionRequestUiLocaleEntity> UiLocales { get; set; } = null!;
 }
