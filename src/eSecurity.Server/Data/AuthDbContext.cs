@@ -48,6 +48,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<AuthenticationMethodEntity> AuthenticationMethods { get; set; }
     public DbSet<PublicSubjectEntity> PublicSubjects { get; set; }
     public DbSet<VerificationRequestEntity> VerificationRequests { get; set; }
+    public DbSet<LogoutRequestEntity> LogoutRequest { get; set; }
+    public DbSet<LogoutRequestUiLocaleEntity> LogoutRequestUiLocales { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
