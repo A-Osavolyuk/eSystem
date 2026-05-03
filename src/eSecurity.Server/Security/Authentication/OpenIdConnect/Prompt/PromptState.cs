@@ -1,10 +1,11 @@
 ﻿using System.Text.Json.Serialization;
 using eSystem.Core.Data.Conversion;
 using eSystem.Core.Enums;
+using eSystem.Core.Enums.Serialization;
 
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Prompt;
 
-[JsonConverter(typeof(EnumValueConverter<PromptState>))]
+[JsonConverter(typeof(JsonEnumValueConverter<PromptState>))]
 public enum PromptState
 {
     [EnumValue("success")]

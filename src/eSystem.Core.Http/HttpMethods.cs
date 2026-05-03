@@ -1,10 +1,11 @@
 ﻿using System.Text.Json.Serialization;
 using eSystem.Core.Data.Conversion;
 using eSystem.Core.Enums;
+using eSystem.Core.Enums.Serialization;
 
 namespace eSystem.Core.Http;
 
-[JsonConverter(typeof(EnumValueConverter<HttpMethods>))]
+[JsonConverter(typeof(JsonEnumValueConverter<HttpMethods>))]
 public enum HttpMethods
 {
     [EnumValue("GET")]
