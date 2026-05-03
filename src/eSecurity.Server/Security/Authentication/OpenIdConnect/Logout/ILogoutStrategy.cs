@@ -2,7 +2,7 @@
 
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Logout;
 
-public interface ILogoutStrategy<TResult> where TResult : class, new()
+public interface ILogoutStrategy<TResult>
 {
     public ValueTask<TResult> ExecuteAsync(SessionEntity session, CancellationToken cancellationToken);
 }

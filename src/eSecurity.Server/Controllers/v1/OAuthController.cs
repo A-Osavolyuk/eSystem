@@ -3,6 +3,8 @@ using eSecurity.Server.Features.OAuth.Commands;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Mediator;
+using eSystem.Core.Primitives;
+using RedirectResult = eSystem.Core.Primitives.RedirectResult;
 
 namespace eSecurity.Server.Controllers.v1;
 
@@ -23,13 +25,16 @@ public class OAuthController(ISender sender) : ControllerBase
     {
         var result = await _sender.Send(new OAuthLoginCommand(provider, returnUri, state));
 
-        return result.Match<IActionResult>(
-            s =>
-            {
-                var response = s.Value! as OAuthLoginResponse;
-                return Challenge(response!.AuthenticationProperties, response.Provider);
-            },
-            f => Redirect(f.Value!.ToString()!));
+        if (result is ValueResult objectResult)
+        {
+            var response = objectResult.GetValue<OAuthLoginResponse>();
+            return Challenge(response.AuthenticationProperties, response.Provider);
+        }
+
+        if (result is RedirectResult redirectResult)
+            return Redirect(redirectResult.Uri);
+
+        return HttpContext.HandleResult(result);
     }
 
     [EndpointSummary("Handle OAuth login")]

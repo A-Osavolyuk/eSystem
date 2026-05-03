@@ -4,6 +4,6 @@ public class LogoutStrategyResolver(IServiceProvider serviceProvider) : ILogoutS
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
 
-    public ILogoutStrategy<TResult> Resolve<TResult>(LogoutFlow flow) where TResult : class, new()
+    public ILogoutStrategy<TResult> Resolve<TResult>(LogoutFlow flow)
         => _serviceProvider.GetRequiredKeyedService<ILogoutStrategy<TResult>>(flow);
 }

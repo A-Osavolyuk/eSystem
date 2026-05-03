@@ -3,6 +3,7 @@ using eSystem.Core.Primitives;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using UAParser;
+using RedirectResult = eSystem.Core.Primitives.RedirectResult;
 
 namespace eSystem.Core.Http.Extensions;
 
@@ -57,25 +58,36 @@ public static class HttpContextExtensions
         public IActionResult HandleResult(Result result)
         {
             var statusCode = (int)result.StatusCode;
-            if (statusCode is >= 200 and < 300)
+            if (result is ValueResult valueResult)
             {
-                context.Response.StatusCode = statusCode;
-                return new ObjectResult(result.Value);
+                return new ObjectResult(valueResult.Value)
+                {
+                    StatusCode = statusCode
+                };
             }
 
-            if (new[] { 300, 304, 305 }.Contains(statusCode))
+            if (result is RedirectResult redirectResult)
             {
+                if (new[] { 301, 302, 303, 307, 308 }.Contains(statusCode))
+                    context.Response.Headers.Location = redirectResult.Uri;
+                
                 return new StatusCodeResult(statusCode);
             }
 
-            if (new[] { 301, 302, 303, 307, 308 }.Contains(statusCode))
+            if (result is HtmlResult contentResult)
             {
-                context.Response.Headers.Location = result.Uri!;
-                return new StatusCodeResult(statusCode);
+                return new ContentResult
+                {
+                    StatusCode = statusCode,
+                    Content = contentResult.Html,
+                    ContentType = ContentTypes.Text.Html
+                };
             }
-
-            context.Response.StatusCode = statusCode;
-            return new ObjectResult(result.GetError());
+            
+            return new ObjectResult(result.GetError())
+            {
+                StatusCode = statusCode
+            };
         }
     }
 }

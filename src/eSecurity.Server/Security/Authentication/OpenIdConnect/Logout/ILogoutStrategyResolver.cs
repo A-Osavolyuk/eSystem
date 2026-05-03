@@ -2,5 +2,5 @@
 
 public interface ILogoutStrategyResolver
 {
-    public ILogoutStrategy<TResult> Resolve<TResult>(LogoutFlow flow) where TResult : class, new();
+    public ILogoutStrategy<TResult> Resolve<TResult>(LogoutFlow flow);
 }
