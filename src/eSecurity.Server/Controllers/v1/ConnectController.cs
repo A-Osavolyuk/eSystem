@@ -150,7 +150,8 @@ public class ConnectController(ISender sender) : ControllerBase
     [HttpGet("end-session")]
     public async ValueTask<IActionResult> EndSessionAsync([FromQuery] EndSessionRequest request)
     {
-        return Ok();
+        var result = await _sender.Send(new EndSessionCommand(request));
+        return HttpContext.HandleResult(result);
     }
 
     [EndpointSummary("Logout")]
