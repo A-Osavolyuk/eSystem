@@ -101,7 +101,7 @@ else
                 
                 var tokenIdentity = new SignIdentity
                 {
-                    Claims = tokenResult.Get<List<ClaimValue>>(),
+                    Claims = tokenResult.Claims,
                     Tokens =
                     [
                         new AuthenticationToken { Name = TokenTypes.AccessToken, Value = response.AccessToken! },
