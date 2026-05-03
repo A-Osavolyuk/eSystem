@@ -14,7 +14,6 @@ public sealed class LogoutRequestConfiguration : IEntityTypeConfiguration<EndSes
         builder.Property(x => x.State).HasMaxLength(1000);
         builder.Property(x => x.ClientId).HasMaxLength(36);
         builder.Property(x => x.LogoutHint).HasMaxLength(64);
-        builder.Property(x => x.UiLocales).HasMaxLength(100);
         builder.Property(x => x.Status).HasEnumConversion();
 
         builder.HasOne(x => x.User)
