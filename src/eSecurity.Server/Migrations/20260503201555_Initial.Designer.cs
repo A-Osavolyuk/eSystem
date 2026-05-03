@@ -12,7 +12,7 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20260417104858_Initial")]
+    [Migration("20260503201555_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -21,7 +21,7 @@ namespace eSecurity.Server.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("public")
-                .HasAnnotation("ProductVersion", "10.0.0")
+                .HasAnnotation("ProductVersion", "10.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -131,7 +131,6 @@ namespace eSecurity.Server.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Nonce")
-                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
@@ -584,14 +583,24 @@ namespace eSecurity.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTimeOffset?>("ApprovedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid>("ClientId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTimeOffset>("ConsumedAt")
+                    b.Property<DateTimeOffset?>("ConsumedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTimeOffset?>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("DeniedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DenyReason")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("DeviceModel")
                         .HasMaxLength(100)
@@ -669,6 +678,91 @@ namespace eSecurity.Server.Migrations
                     b.HasIndex("DeviceCodeId");
 
                     b.ToTable("DeviceCodeScopeEntity", "public");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.EndSessionRequestEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("ApprovedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("CancelledAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ClientId")
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)");
+
+                    b.Property<DateTimeOffset?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("DeniedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("ExpiredAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("IdTokenHint")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("LogoutHint")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("PostLogoutRedirectUri")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("State")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("EndSessionRequests", "public");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.EndSessionRequestUiLocaleEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Locale")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<Guid>("RequestId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RequestId");
+
+                    b.ToTable("EndSessionRequestUiLocales", "public");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.GrantTypeEntity", b =>
@@ -1919,6 +2013,28 @@ namespace eSecurity.Server.Migrations
                     b.Navigation("DeviceCode");
                 });
 
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.EndSessionRequestEntity", b =>
+                {
+                    b.HasOne("eSecurity.Server.Data.Entities.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.EndSessionRequestUiLocaleEntity", b =>
+                {
+                    b.HasOne("eSecurity.Server.Data.Entities.EndSessionRequestEntity", "Request")
+                        .WithMany("UiLocales")
+                        .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Request");
+                });
+
             modelBuilder.Entity("eSecurity.Server.Data.Entities.GrantedScopeEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.ClientAllowedScopeEntity", "ClientScope")
@@ -2300,6 +2416,11 @@ namespace eSecurity.Server.Migrations
                     b.Navigation("AcrValues");
 
                     b.Navigation("Scopes");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.EndSessionRequestEntity", b =>
+                {
+                    b.Navigation("UiLocales");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.OpaqueTokenEntity", b =>

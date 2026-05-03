@@ -337,8 +337,8 @@ namespace eSecurity.Server.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Protocol = table.Column<string>(type: "text", nullable: false),
                     Code = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
-                    Nonce = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     RedirectUri = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Nonce = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     CodeChallenge = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     CodeChallengeMethod = table.Column<int>(type: "integer", maxLength: 16, nullable: true),
                     Used = table.Column<bool>(type: "boolean", nullable: false),
@@ -418,6 +418,38 @@ namespace eSecurity.Server.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Consents_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "public",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EndSessionRequests",
+                schema: "public",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    IdTokenHint = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    PostLogoutRedirectUri = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    State = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    ClientId = table.Column<string>(type: "character varying(36)", maxLength: 36, nullable: true),
+                    LogoutHint = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
+                    Status = table.Column<string>(type: "text", nullable: false),
+                    ExpiredAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    ApprovedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    DeniedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    CancelledAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EndSessionRequests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EndSessionRequests_Users_UserId",
                         column: x => x.UserId,
                         principalSchema: "public",
                         principalTable: "Users",
@@ -882,6 +914,29 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "EndSessionRequestUiLocales",
+                schema: "public",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Locale = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
+                    RequestId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EndSessionRequestUiLocales", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EndSessionRequestUiLocales_EndSessionRequests_RequestId",
+                        column: x => x.RequestId,
+                        principalSchema: "public",
+                        principalTable: "EndSessionRequests",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AuthenticationSessions",
                 schema: "public",
                 columns: table => new
@@ -1004,7 +1059,10 @@ namespace eSecurity.Server.Migrations
                     UserCode = table.Column<string>(type: "character varying(9)", maxLength: 9, nullable: false),
                     Interval = table.Column<int>(type: "integer", nullable: false),
                     ExpiresAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    ConsumedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    ConsumedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    ApprovedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    DeniedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    DenyReason = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     State = table.Column<string>(type: "text", nullable: false),
                     IsFirstPoll = table.Column<bool>(type: "boolean", nullable: false),
                     DeviceModel = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
@@ -1415,6 +1473,18 @@ namespace eSecurity.Server.Migrations
                 column: "DeviceCodeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_EndSessionRequests_UserId",
+                schema: "public",
+                table: "EndSessionRequests",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EndSessionRequestUiLocales_RequestId",
+                schema: "public",
+                table: "EndSessionRequestUiLocales",
+                column: "RequestId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_GrantedScopes_ClientScopeId",
                 schema: "public",
                 table: "GrantedScopes",
@@ -1656,6 +1726,10 @@ namespace eSecurity.Server.Migrations
                 schema: "public");
 
             migrationBuilder.DropTable(
+                name: "EndSessionRequestUiLocales",
+                schema: "public");
+
+            migrationBuilder.DropTable(
                 name: "GrantedScopes",
                 schema: "public");
 
@@ -1749,6 +1823,10 @@ namespace eSecurity.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "DeviceCodes",
+                schema: "public");
+
+            migrationBuilder.DropTable(
+                name: "EndSessionRequests",
                 schema: "public");
 
             migrationBuilder.DropTable(
