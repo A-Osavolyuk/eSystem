@@ -23,8 +23,8 @@ namespace eCinema.Server.Migrations
                     SessionKey = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Sid = table.Column<string>(type: "character varying(36)", maxLength: 36, nullable: false),
                     UserId = table.Column<string>(type: "character varying(36)", maxLength: 36, nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -40,8 +40,8 @@ namespace eCinema.Server.Migrations
                     SessionId = table.Column<Guid>(type: "uuid", nullable: false),
                     Type = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Value = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
-                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -67,8 +67,8 @@ namespace eCinema.Server.Migrations
                     IsPersistent = table.Column<bool>(type: "boolean", nullable: false),
                     AllowRefresh = table.Column<bool>(type: "boolean", nullable: true),
                     RedirectUri = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -92,8 +92,8 @@ namespace eCinema.Server.Migrations
                     TokenType = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     EncryptedValue = table.Column<string>(type: "character varying(3000)", maxLength: 3000, nullable: false),
                     ExpiresUtc = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    CreateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    UpdateDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {

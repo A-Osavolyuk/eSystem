@@ -12,7 +12,7 @@ using eCinema.Server.Data;
 namespace eCinema.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260131223939_Initial")]
+    [Migration("20260503202121_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -21,7 +21,7 @@ namespace eCinema.Server.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("public")
-                .HasAnnotation("ProductVersion", "10.0.2")
+                .HasAnnotation("ProductVersion", "10.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -32,7 +32,7 @@ namespace eCinema.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTimeOffset?>("CreateDate")
+                    b.Property<DateTimeOffset?>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("SessionId")
@@ -43,7 +43,7 @@ namespace eCinema.Server.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<DateTimeOffset?>("UpdateDate")
+                    b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Value")
@@ -64,7 +64,7 @@ namespace eCinema.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTimeOffset?>("CreateDate")
+                    b.Property<DateTimeOffset?>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("SessionKey")
@@ -77,7 +77,7 @@ namespace eCinema.Server.Migrations
                         .HasMaxLength(36)
                         .HasColumnType("character varying(36)");
 
-                    b.Property<DateTimeOffset?>("UpdateDate")
+                    b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("UserId")
@@ -106,7 +106,7 @@ namespace eCinema.Server.Migrations
                     b.Property<bool?>("AllowRefresh")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTimeOffset?>("CreateDate")
+                    b.Property<DateTimeOffset?>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTimeOffset?>("ExpiresUtc")
@@ -125,7 +125,7 @@ namespace eCinema.Server.Migrations
                     b.Property<Guid>("SessionId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTimeOffset?>("UpdateDate")
+                    b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
@@ -142,7 +142,7 @@ namespace eCinema.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTimeOffset?>("CreateDate")
+                    b.Property<DateTimeOffset?>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("EncryptedValue")
@@ -161,7 +161,7 @@ namespace eCinema.Server.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<DateTimeOffset?>("UpdateDate")
+                    b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
