@@ -6,6 +6,7 @@ using eSecurity.Client.Common.State;
 using eSecurity.Client.Security;
 using eSystem.Core.Common.Cache.Redis;
 using eSystem.Core.Common.Gateway;
+using eSystem.Core.Common.Versioning;
 using eSystem.Core.Validation;
 using eSystem.ServiceDefaults;
 using MudBlazor;
@@ -23,6 +24,7 @@ public static class HostApplicationBuilderExtensions
             builder.AddServiceDefaults();
             builder.AddValidation<IAssemblyMarker>();
             builder.AddRedisCache();
+            builder.AddVersioning();
             
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddHttpClient<IApiClient, ApiClient>(client =>
