@@ -1,0 +1,13 @@
+﻿@page "/connect/logout/fallback"
+
+@inherits PageBase
+
+<Title Text="Logout fallback"/>
+
+@code {
+    [SupplyParameterFromQuery(Name = "error")]
+    public string? Error { get; set; }
+    
+    [SupplyParameterFromQuery(Name = "error_description")]
+    public string? ErrorDescription { get; set; }
+}
