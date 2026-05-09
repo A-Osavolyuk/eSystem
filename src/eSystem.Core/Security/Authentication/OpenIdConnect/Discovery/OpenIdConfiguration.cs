@@ -138,8 +138,11 @@ public sealed class OpenIdConfiguration
     
     [JsonPropertyName("display_values_supported")]
     public string[]? DisplayValuesSupported { get; set; }
-    
 
+    
+    [JsonPropertyName("pushed_authorization_request_endpoint")]
+    public string? PushedAuthorizationRequestEndpoint { get; set; }
+    
     [JsonPropertyName("request_parameter_supported")]
     public bool? RequestParameterSupported { get; set; }
     

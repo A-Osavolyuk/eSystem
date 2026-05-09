@@ -47,6 +47,11 @@ public static class AuthenticationExtensions
             cfg.DeviceAuthorizationEndpoint = "https://localhost:6201/api/v1/connect/device-authorization";
             cfg.BackchannelAuthenticationEndpoint = "https://localhost:6201/api/v1/connect/backchannel-authentication";
 
+            // Pushed Authorization Request
+            cfg.PushedAuthorizationRequestEndpoint = "https://localhost:6201/api/v1/connect/par";
+            cfg.RequestUriParameterSupported = true;
+            cfg.RequireRequestUriRegistration = false;
+
             cfg.ResponseTypesSupported = [ResponseType.Code];
             cfg.GrantTypesSupported =
             [
