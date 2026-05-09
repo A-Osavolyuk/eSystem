@@ -1133,10 +1133,11 @@ namespace eSecurity.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("ClientId")
-                        .IsRequired()
-                        .HasMaxLength(36)
-                        .HasColumnType("character varying(36)");
+                    b.Property<DateTimeOffset?>("CancelledAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("CodeChallenge")
                         .HasMaxLength(100)
@@ -1145,7 +1146,13 @@ namespace eSecurity.Server.Migrations
                     b.Property<string>("CodeChallengeMethod")
                         .HasColumnType("text");
 
+                    b.Property<DateTimeOffset?>("ConsumedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTimeOffset?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("ExpiredAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Nonce")
@@ -1165,10 +1172,16 @@ namespace eSecurity.Server.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
 
                     b.ToTable("PushedAuthorizationRequest", "public");
                 });
@@ -2319,6 +2332,17 @@ namespace eSecurity.Server.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.PushedAuthorizationRequestEntity", b =>
+                {
+                    b.HasOne("eSecurity.Server.Data.Entities.ClientEntity", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
                 });
 
             modelBuilder.Entity("eSecurity.Server.Data.Entities.PushedAuthorizationRequestPromptEntity", b =>

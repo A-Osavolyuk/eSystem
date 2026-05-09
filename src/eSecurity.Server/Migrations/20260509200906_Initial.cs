@@ -81,27 +81,6 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PushedAuthorizationRequest",
-                schema: "public",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ResponseType = table.Column<string>(type: "text", nullable: false),
-                    ClientId = table.Column<string>(type: "character varying(36)", maxLength: 36, nullable: false),
-                    RedirectUri = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
-                    Nonce = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    State = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    CodeChallenge = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    CodeChallengeMethod = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PushedAuthorizationRequest", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ResponseTypes",
                 schema: "public",
                 columns: table => new
@@ -234,6 +213,38 @@ namespace eSecurity.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PushedAuthorizationRequest",
+                schema: "public",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ResponseType = table.Column<string>(type: "text", nullable: false),
+                    RedirectUri = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
+                    Nonce = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    State = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    CodeChallenge = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    CodeChallengeMethod = table.Column<string>(type: "text", nullable: true),
+                    Status = table.Column<string>(type: "text", nullable: false),
+                    ExpiredAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    ConsumedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    CancelledAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PushedAuthorizationRequest", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PushedAuthorizationRequest_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalSchema: "public",
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ClientGrantTypes",
                 schema: "public",
                 columns: table => new
@@ -258,52 +269,6 @@ namespace eSecurity.Server.Migrations
                         column: x => x.GrantId,
                         principalSchema: "public",
                         principalTable: "GrantTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PushedAuthorizationRequestPrompts",
-                schema: "public",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Prompt = table.Column<string>(type: "text", nullable: false),
-                    RequestId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PushedAuthorizationRequestPrompts", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PushedAuthorizationRequestPrompts_PushedAuthorizationReques~",
-                        column: x => x.RequestId,
-                        principalSchema: "public",
-                        principalTable: "PushedAuthorizationRequest",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PushedAuthorizationRequestScopes",
-                schema: "public",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Scope = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    RequestId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PushedAuthorizationRequestScopes", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PushedAuthorizationRequestScopes_PushedAuthorizationRequest~",
-                        column: x => x.RequestId,
-                        principalSchema: "public",
-                        principalTable: "PushedAuthorizationRequest",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -946,6 +911,52 @@ namespace eSecurity.Server.Migrations
                         column: x => x.UserId,
                         principalSchema: "public",
                         principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PushedAuthorizationRequestPrompts",
+                schema: "public",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Prompt = table.Column<string>(type: "text", nullable: false),
+                    RequestId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PushedAuthorizationRequestPrompts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PushedAuthorizationRequestPrompts_PushedAuthorizationReques~",
+                        column: x => x.RequestId,
+                        principalSchema: "public",
+                        principalTable: "PushedAuthorizationRequest",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PushedAuthorizationRequestScopes",
+                schema: "public",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Scope = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    RequestId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PushedAuthorizationRequestScopes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PushedAuthorizationRequestScopes_PushedAuthorizationRequest~",
+                        column: x => x.RequestId,
+                        principalSchema: "public",
+                        principalTable: "PushedAuthorizationRequest",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -1668,6 +1679,12 @@ namespace eSecurity.Server.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_PushedAuthorizationRequest_ClientId",
+                schema: "public",
+                table: "PushedAuthorizationRequest",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PushedAuthorizationRequestPrompts_RequestId",
                 schema: "public",
                 table: "PushedAuthorizationRequestPrompts",
@@ -1949,11 +1966,11 @@ namespace eSecurity.Server.Migrations
                 schema: "public");
 
             migrationBuilder.DropTable(
-                name: "Clients",
+                name: "Sessions",
                 schema: "public");
 
             migrationBuilder.DropTable(
-                name: "Sessions",
+                name: "Clients",
                 schema: "public");
 
             migrationBuilder.DropTable(
