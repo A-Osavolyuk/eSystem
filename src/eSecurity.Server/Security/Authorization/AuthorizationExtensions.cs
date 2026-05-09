@@ -7,6 +7,7 @@ using eSecurity.Server.Security.Authorization.OAuth.LinkedAccount;
 using eSecurity.Server.Security.Authorization.OAuth.Token;
 using eSecurity.Server.Security.Authorization.OAuth.Token.DeviceCode;
 using eSecurity.Server.Security.Authorization.OAuth.Token.Validation;
+using eSecurity.Server.Security.Authorization.Par;
 using eSecurity.Server.Security.Authorization.Roles;
 using eSecurity.Server.Security.Authorization.Verification;
 using eSystem.Core.Security.Authentication.Schemes;
@@ -47,6 +48,7 @@ public static class AuthorizationExtensions
         builder.Services.AddKeyedScoped<IJwtTokenValidator, IdTokenValidator>(JwtTokenType.IdToken);
         builder.Services.AddKeyedScoped<IJwtTokenValidator, AccessTokenValidator>(JwtTokenType.AccessToken);
         builder.Services.AddKeyedScoped<IJwtTokenValidator, GenericJwtTokenValidator>(JwtTokenType.Generic);
+        builder.Services.AddTransient<IParManager, ParManager>();
 
         builder.Services.AddAuthorizationBuilder()
             .AddPolicy(AuthorizationPolicies.BasicAuthorization, policy =>
