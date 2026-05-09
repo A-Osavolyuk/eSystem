@@ -144,6 +144,17 @@ public class ConnectController(ISender sender) : ControllerBase
         return HttpContext.HandleResult(result);
     }
     
+    [EndpointSummary("Pushed authorization request")]
+    [EndpointDescription("Pushed authorization request")]
+    [ProducesResponseType(200)]
+    [HttpPost("par")]
+    [Consumes(ContentTypes.Application.XwwwFormUrlEncoded)]
+    public async ValueTask<IActionResult> PushedAuthorizationRequestAsync([FromForm] IFormCollection form)
+    {
+        var result = await _sender.Send(new PushedAuthorizationRequestCommand(form));
+        return HttpContext.HandleResult(result);
+    }
+
     [EndpointSummary("End session")]
     [EndpointDescription("End session")]
     [ProducesResponseType(200)]
