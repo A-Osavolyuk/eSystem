@@ -1,4 +1,5 @@
 ﻿using eSecurity.Server.Common.Binding.Binders;
+using eSecurity.Server.Security.Authorization.Par;
 using eSystem.Core.Binding;
 using eSystem.Core.Security.Authorization.OAuth.Introspection;
 using eSystem.Core.Security.Authorization.OAuth.Revocation;
@@ -26,5 +27,6 @@ public static class BindingExtensions
         services.AddTransient<IFormBinder<CibaRequest>, CibaRequestBinder>();
         services.AddTransient<IFormBinder<RevocationRequest>, RevocationRequestBinder>();
         services.AddTransient<IFormBinder<IntrospectionRequest>, IntrospectionRequestBinder>();
+        services.AddTransient<IFormBinder<PushedAuthorizationRequest>, ParBinder>();
     }
 }
