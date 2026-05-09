@@ -68,10 +68,10 @@ public static class HttpContextExtensions
 
             if (result is RedirectResult redirectResult)
             {
-                if (new[] { 301, 302, 303, 307, 308 }.Contains(statusCode))
-                    context.Response.Headers.Location = redirectResult.Uri;
-                
-                return new StatusCodeResult(statusCode);
+                context.Response.StatusCode = statusCode;
+                context.Response.Headers.Location = redirectResult.Uri;
+
+                return new EmptyResult();
             }
 
             if (result is HtmlResult contentResult)
