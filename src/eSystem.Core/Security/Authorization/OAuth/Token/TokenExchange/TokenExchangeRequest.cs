@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using eSystem.Core.Enums;
+using Microsoft.AspNetCore.Mvc;
 
 namespace eSystem.Core.Security.Authorization.OAuth.Token.TokenExchange;
 
@@ -24,4 +25,31 @@ public sealed class TokenExchangeRequest : TokenRequest
     
     [FromForm(Name = "audience")]
     public string? Audience { get; set; }
+
+    public override Dictionary<string, string> GetForm()
+    {
+        var form = base.GetForm();
+        if (!string.IsNullOrEmpty(ActorToken))
+            form["actor_token"] = ActorToken;
+        
+        if (ActorTokenType.HasValue)
+            form["actor_token_type"] = ActorTokenType.Value.GetString();
+        
+        if (!string.IsNullOrEmpty(SubjectToken))
+            form["subject_token"] = SubjectToken;
+        
+        if (SubjectTokenType.HasValue)
+            form["subject_token_type"] = SubjectTokenType.Value.GetString();
+        
+        if (RequestTokenType.HasValue)
+            form["request_token_type"] = RequestTokenType.Value.GetString();
+        
+        if (!string.IsNullOrEmpty(Scope))
+            form["scope"] = Scope;
+        
+        if (!string.IsNullOrEmpty(Audience))
+            form["audience"] = Audience;
+        
+        return form;
+    }
 }
