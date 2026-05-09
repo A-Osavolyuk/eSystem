@@ -50,6 +50,9 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<VerificationRequestEntity> VerificationRequests { get; set; }
     public DbSet<EndSessionRequestEntity> EndSessionRequests { get; set; }
     public DbSet<EndSessionRequestUiLocaleEntity> EndSessionRequestUiLocales { get; set; }
+    public DbSet<PushedAuthorizationRequestEntity> PushedAuthorizationRequest { get; set; }
+    public DbSet<PushedAuthorizationRequestPromptEntity> PushedAuthorizationRequestPrompts { get; set; }
+    public DbSet<PushedAuthorizationRequestScopeEntity> PushedAuthorizationRequestScopes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

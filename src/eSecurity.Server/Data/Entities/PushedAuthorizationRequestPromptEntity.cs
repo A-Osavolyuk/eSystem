@@ -1,0 +1,14 @@
+﻿using eSystem.Core.Data.Entities;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
+
+namespace eSecurity.Server.Data.Entities;
+
+public sealed class PushedAuthorizationRequestPromptEntity : Entity
+{
+    public Guid Id { get; set; }
+
+    public PromptType Prompt { get; set; }
+
+    public Guid RequestId { get; set; }
+    public PushedAuthorizationRequestEntity Request { get; set; } = null!;
+}
