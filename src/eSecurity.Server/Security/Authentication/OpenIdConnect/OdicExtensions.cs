@@ -28,10 +28,10 @@ public static class OdicExtensions
             services.AddScoped<ISessionAccessor, SessionAccessor>();
             services.AddScoped<ISessionCookieFactory, SessionCookieFactory>();
 
-            services.AddKeyedScoped<IPromptHandler, LoginPromptHandler>(PromptType.Login);
-            services.AddKeyedScoped<IPromptHandler, ConsentPromptHandler>(PromptType.Consent);
-            services.AddKeyedScoped<IPromptHandler, SelectAccountPromptHandler>(PromptType.SelectAccount);
-            services.AddKeyedScoped<IPromptHandler, NonePromptHandler>(PromptType.None);
+            services.AddScoped<IPromptHandler, LoginPromptHandler>();
+            services.AddScoped<IPromptHandler, ConsentPromptHandler>();
+            services.AddScoped<IPromptHandler, SelectAccountPromptHandler>();
+            services.AddScoped<IPromptHandler, NonePromptHandler>();
             
             services.AddBackchannelAuthentication(options =>
             {
