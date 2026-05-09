@@ -12,8 +12,8 @@ public class SessionEntity : Entity
     public Guid UserId { get; set; }
     public UserEntity User { get; set; } = null!;
     
-    public ICollection<OpaqueTokenEntity> OpaqueTokens { get; set; } = null!;
-    public ICollection<SessionAuthenticationMethodEntity> AuthenticationMethods { get; set; } = null!;
+    public ICollection<OpaqueTokenEntity> OpaqueTokens { get; set; } = [];
+    public ICollection<SessionAuthenticationMethodEntity> AuthenticationMethods { get; set; } = [];
     
     public void AddMethods(params IEnumerable<AuthenticationMethodReference> methods)
     {
