@@ -37,6 +37,8 @@ public class ClientManager(AuthDbContext context) : IClientManager
             .ThenInclude(x => x.Grant)
             .Include(x => x.PairwiseSubjects)
             .Include(x => x.Audiences)
+            .Include(x => x.ResponseTypes)
+            .ThenInclude(x => x.ResponseType)
             .FirstOrDefaultAsync(cancellationToken);
     }
 
@@ -52,6 +54,8 @@ public class ClientManager(AuthDbContext context) : IClientManager
             .ThenInclude(x => x.Grant)
             .Include(x => x.PairwiseSubjects)
             .Include(x => x.Audiences)
+            .Include(x => x.ResponseTypes)
+            .ThenInclude(x => x.ResponseType)
             .FirstOrDefaultAsync(cancellationToken);
     }
 
