@@ -174,9 +174,8 @@
         
         _clientId = queryParams["client_id"];
         _redirectUri = queryParams["redirect_uri"];
-
-        var session = SessionAccessor.Get();
-        if (session is null)
+        
+        if (!SessionAccessor.Exists())
         {
             NavigationManager.NavigateTo(QueryBuilder.Create()
                 .WithUri(_redirectUri)
@@ -248,8 +247,7 @@
 
     private async Task OnAllowAsync()
     {
-        var session = SessionAccessor.Get();
-        if (session is null)
+        if (!SessionAccessor.Exists())
         {
             NavigationManager.NavigateTo(QueryBuilder.Create()
                 .WithUri(_redirectUri)

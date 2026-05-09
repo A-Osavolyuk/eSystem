@@ -13,15 +13,5 @@ public class SessionAccessor(
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly IDataProtector _protector = protectionProvider.CreateProtector(ProtectionPurposes.Session);
 
-    public SessionCookie? Get()
-    {
-        if (!_httpContext.Request.Cookies.TryGetValue(DefaultCookies.Session, out var value))
-            return null;
-        
-        if (string.IsNullOrEmpty(value))
-            return null;
-        
-        var json = _protector.Unprotect(value);
-        return JsonSerializer.Deserialize<SessionCookie>(json);
-    }
+    public bool Exists() => _httpContext.Request.Cookies.ContainsKey(DefaultCookies.Session);
 }
