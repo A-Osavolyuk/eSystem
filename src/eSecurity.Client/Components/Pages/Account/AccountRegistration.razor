@@ -85,21 +85,14 @@
     {
         if (string.IsNullOrEmpty(State))
         {
-            NavigationManager.NavigateTo(QueryBuilder.Create()
-                .WithUri(Links.Common.SignUp)
-                .WithQueryParam("state", AuthenticationManager.GetAuthorizationState())
-                .Build());
+            NavigationManager.NavigateTo(Links.Common.SignUp);
         }
         else
         {
             var stateData = StateParser.Parse(State);
             if (!stateData.TryGetValue("email", out var email))
             {
-                NavigationManager.NavigateTo(QueryBuilder.Create()
-                    .WithUri(Links.Common.SignUp)
-                    .WithQueryParam("state", State)
-                    .Build());
-
+                NavigationManager.NavigateTo(Links.Common.SignUp);
                 return;
             }
 
@@ -112,7 +105,7 @@
 
     private async Task OnContinueAsync()
     {
-        await _form.Validate();
+        await _form.ValidateAsync();
 
         if (_form.IsValid)
         {
@@ -128,20 +121,17 @@
             {
                 _error = null;
                 _showError = false;
-                    
-                var authorizationState = string.IsNullOrEmpty(_authorizationState)
-                    ? AuthenticationManager.GetAuthorizationState()
-                    : _authorizationState;
 
-                var state = StateBuilder.Create()
+                var stateBuilder = StateBuilder.Create()
                     .WithData("transactionId", response.TransactionId.ToString())
-                    .WithData("email", _model.Email)
-                    .WithData("state", authorizationState)
-                    .Build();
+                    .WithData("email", _model.Email);
+                
+                if (!string.IsNullOrEmpty(_authorizationState))
+                    stateBuilder.WithData("state", _authorizationState);
                 
                 NavigationManager.NavigateTo(QueryBuilder.Create()
                     .WithUri(Links.Common.EmailVerification)
-                    .WithQueryParam("state", state)
+                    .WithQueryParam("state", stateBuilder.Build())
                     .Build());
             }
             else
@@ -162,13 +152,11 @@
 
     private string OnLogin()
     {
-        var state = string.IsNullOrEmpty(_authorizationState)
-            ? AuthenticationManager.GetAuthorizationState()
-            : _authorizationState;
-
         var builder = QueryBuilder.Create()
-            .WithUri(Links.Common.Login)
-            .WithQueryParam("state", state);
+            .WithUri(Links.Common.Login);
+
+        if (!string.IsNullOrEmpty(_authorizationState))
+            builder.WithQueryParam("state", _authorizationState);
 
         return builder.Build();
     }

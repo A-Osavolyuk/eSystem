@@ -126,7 +126,8 @@ else
                     else
                     {
                         var returnUrl = queryParams.GetValueOrDefault("return_url");
-                        NavigationManager.NavigateTo(AuthenticationManager.GetAuthorizationUri(returnUrl), true);
+                        var redirectUri = AuthenticationManager.GetAuthorizationUri(returnUrl);
+                        NavigationManager.NavigateTo(redirectUri, true);
                     }
                 }
             }

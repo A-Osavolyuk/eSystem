@@ -1,3 +1,4 @@
+using eSecurity.Client.Common.Configurations;
 using eSecurity.Client.Common.JS.Fetch;
 using eSecurity.Client.Security.Cookies;
 using eSecurity.Core.Common.Routing;
@@ -15,36 +16,31 @@ public sealed class AuthenticationManager(
     NavigationManager navigationManager,
     AuthenticationStateProvider authenticationStateProvider,
     IFetchClient fetchClient,
-    IOptions<ClientOptions> clientOptions)
+    IOptions<ClientOptions> clientOptions,
+    IOptions<BackendOptions> backendOptions)
 {
     private readonly NavigationManager _navigationManager = navigationManager;
     private readonly AuthenticationStateProvider _authenticationStateProvider = authenticationStateProvider;
     private readonly IFetchClient _fetchClient = fetchClient;
+    private readonly BackendOptions _backendOptions = backendOptions.Value;
     private readonly ClientOptions _clientOptions = clientOptions.Value;
     
     public string GetAuthorizationUri(string? returnUrl = null)
     {
-        var builder = QueryBuilder.Create().WithUri(Links.Connect.Authorize)
+        var builder = QueryBuilder.Create()
+            .WithUri($"{_backendOptions.Uri}/api/v1/connect/authorize")
             .WithQueryParam("prompt", PromptType.Consent)
             .WithQueryParam("response_type", ResponseType.Code)
             .WithQueryParam("client_id", _clientOptions.ClientId)
             .WithQueryParam("redirect_uri", _clientOptions.CallbackUri)
             .WithQueryParam("scope", string.Join(" ", _clientOptions.SupportedScopes))
             .WithQueryParam("state", Guid.NewGuid())
-            .WithQueryParam("nonce", Guid.NewGuid())
-            .WithQueryParam("prompt", PromptType.Consent);
+            .WithQueryParam("nonce", Guid.NewGuid());
 
         if (!string.IsNullOrEmpty(returnUrl))
             builder.WithQueryParam("return_url", returnUrl);
 
         return builder.Build();
-    }
-
-    public string GetAuthorizationState(string? returnUrl = null)
-    {
-        return StateBuilder.Create()
-            .WithData("return_url", GetAuthorizationUri(returnUrl))
-            .Build();
     }
 
     public async Task SignOutAsync()

@@ -149,7 +149,8 @@
                 }
             }
 
-            NavigationManager.NavigateTo(AuthenticationManager.GetAuthorizationUri(ReturnUrl));
+            var redirectUri = AuthenticationManager.GetAuthorizationUri(ReturnUrl);
+            NavigationManager.NavigateTo(redirectUri);
         }
         else
         {

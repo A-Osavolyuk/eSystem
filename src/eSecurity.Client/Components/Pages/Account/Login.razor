@@ -82,10 +82,21 @@
 
     private string? _error;
     private bool _showError;
+    private string? _authorizationState;
+
+    protected override void OnInitialized()
+    {
+        if (!string.IsNullOrEmpty(State))
+        {
+            var stateData = StateParser.Parse(State);
+            if (stateData.TryGetValue("state", out var state))
+                _authorizationState = state;
+        }
+    }
 
     private async Task OnContinueAsync()
     {
-        await _form.Validate();
+        await _form.ValidateAsync();
         if (_form.IsValid)
         {
             var request = new CheckAccountRequest { Login = _model.Login };
@@ -103,16 +114,15 @@
                 _error = null;
                 _showError = false;
 
-                var state = StateBuilder.Create()
-                    .WithData("login", _model.Login)
-                    .WithData("state", string.IsNullOrEmpty(State) 
-                        ? AuthenticationManager.GetAuthorizationState(ReturnUrl) 
-                        : State)
-                    .Build();
+                var stateBuilder = StateBuilder.Create()
+                    .WithData("login", _model.Login);
+
+                if (!string.IsNullOrEmpty(_authorizationState))
+                    stateBuilder.WithData("state", _authorizationState);
                 
                 NavigationManager.NavigateTo(QueryBuilder.Create()
                     .WithUri(Links.Common.PasswordSignIn)
-                    .WithQueryParam("state", state)
+                    .WithQueryParam("state", stateBuilder.Build())
                     .Build());
             }
             else
@@ -125,13 +135,11 @@
 
     private string OnSignUp()
     {
-        var state = string.IsNullOrEmpty(State)
-            ? AuthenticationManager.GetAuthorizationState(ReturnUrl)
-            : State;
-        
         var builder = QueryBuilder.Create()
-            .WithUri(Links.Common.SignUp)
-            .WithQueryParam("state", state);
+            .WithUri(Links.Common.SignUp);
+
+        if (!string.IsNullOrEmpty(_authorizationState))
+            builder.WithQueryParam("state", _authorizationState);
 
         return builder.Build();
     }

@@ -89,7 +89,7 @@
 
     private async Task OnVerifyEmailAsync()
     {
-        await _form.Validate();
+        await _form.ValidateAsync();
 
         if (_form.IsValid)
         {
@@ -102,18 +102,23 @@
             var result = await SecurityService.CompleteSignUpAsync(request);
             if (result.Succeeded && result.TryGetValue<CompleteSignUpResponse>(out var response) && response is not null)
             {
-                await AuthenticationManager.SignInAsync(response.SessionCookie);
-                if (!string.IsNullOrEmpty(_state))
+                if (!string.IsNullOrEmpty(response.SessionCookie))
                 {
-                    var stateData = StateParser.Parse(_state);
-                    if (stateData.TryGetValue("return_url", out var url))
+                                    
+                    await AuthenticationManager.SignInAsync(response.SessionCookie);
+                    if (!string.IsNullOrEmpty(_state))
                     {
-                        NavigationManager.NavigateTo(url, true);
-                        return;
+                        var stateData = StateParser.Parse(_state);
+                        if (stateData.TryGetValue("return_url", out var url))
+                        {
+                            NavigationManager.NavigateTo(url, true);
+                            return;
+                        }
                     }
+
+                    var redirectUri = AuthenticationManager.GetAuthorizationUri();
+                    NavigationManager.NavigateTo(redirectUri, true);
                 }
-            
-                NavigationManager.NavigateTo(AuthenticationManager.GetAuthorizationUri(), true);
             }
             else
             {

@@ -102,7 +102,7 @@
                 .WithQueryParam("id_token_hint", idToken)
                 .WithQueryParam("post_logout_redirect_uri", ClientOptions.Value.PostLogoutRedirectUri)
                 .WithQueryParam("client_id", ClientOptions.Value.ClientId)
-                .WithQueryParam("state", AuthenticationManager.GetAuthorizationState())
+                .WithQueryParam("state", Guid.CreateVersion7())
                 .Build());
             
             DrawerToggle();
