@@ -1,11 +1,12 @@
 using System.Text;
 using System.Text.Json;
+using eSystem.Core.Form;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Security.Cryptography.Encoding;
 
 namespace eSystem.Core.Http.Extensions;
 
-public static class HttpRequestMethodExtensions
+public static class HttpRequestMessageExtensions
 {
     extension(HttpRequestMessage message)
     {
@@ -27,7 +28,12 @@ public static class HttpRequestMethodExtensions
                 {
                     if (request.Data is not null)
                     {
-                        var content = FormUrl.Encode(request.Data);
+                        var content = request.Data switch
+                        {
+                            IFormRequest formRequest => formRequest.GetForm(),
+                            _ => FormUrl.Encode(request.Data)
+                        };
+                        
                         message.Content = new FormUrlEncodedContent(content);
                     }
 
