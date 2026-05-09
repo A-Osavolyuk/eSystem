@@ -1,4 +1,5 @@
 using eSecurity.Client.Common.Cache;
+using eSecurity.Client.Common.Configurations;
 using eSecurity.Client.Common.Confirmation;
 using eSecurity.Client.Common.Http;
 using eSecurity.Client.Common.JS;
@@ -33,6 +34,7 @@ public static class HostApplicationBuilderExtensions
                 client.BaseAddress = new Uri(gatewayUrl ?? throw new NullReferenceException("Gateway URI is empty."));
             });
             
+            builder.Services.Configure<BackendOptions>(builder.Configuration.GetSection("Backend"));
             builder.Services.AddScoped<ICacheService, CacheService>();
             builder.Services.AddSecurity();
             builder.Services.AddConfirmation();
