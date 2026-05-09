@@ -12,7 +12,7 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20260503201555_Initial")]
+    [Migration("20260509185251_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -1130,6 +1130,105 @@ namespace eSecurity.Server.Migrations
                     b.ToTable("PublicSubjects", "public");
                 });
 
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.PushedAuthorizationRequestEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ClientId")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)");
+
+                    b.Property<string>("CodeChallenge")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("CodeChallengeMethod")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Nonce")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("RedirectUri")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("ResponseType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("State")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PushedAuthorizationRequest", "public");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.PushedAuthorizationRequestPromptEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Prompt")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("RequestId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RequestId");
+
+                    b.ToTable("PushedAuthorizationRequestPrompts", "public");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.PushedAuthorizationRequestScopeEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("RequestId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Scope")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RequestId");
+
+                    b.ToTable("PushedAuthorizationRequestScopes", "public");
+                });
+
             modelBuilder.Entity("eSecurity.Server.Data.Entities.ResponseTypeEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2225,6 +2324,28 @@ namespace eSecurity.Server.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.PushedAuthorizationRequestPromptEntity", b =>
+                {
+                    b.HasOne("eSecurity.Server.Data.Entities.PushedAuthorizationRequestEntity", "Request")
+                        .WithMany("Prompts")
+                        .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Request");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.PushedAuthorizationRequestScopeEntity", b =>
+                {
+                    b.HasOne("eSecurity.Server.Data.Entities.PushedAuthorizationRequestEntity", "Request")
+                        .WithMany("Scopes")
+                        .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Request");
+                });
+
             modelBuilder.Entity("eSecurity.Server.Data.Entities.SessionAuthenticationMethodEntity", b =>
                 {
                     b.HasOne("eSecurity.Server.Data.Entities.SessionEntity", "Session")
@@ -2426,6 +2547,13 @@ namespace eSecurity.Server.Migrations
             modelBuilder.Entity("eSecurity.Server.Data.Entities.OpaqueTokenEntity", b =>
                 {
                     b.Navigation("Audiences");
+
+                    b.Navigation("Scopes");
+                });
+
+            modelBuilder.Entity("eSecurity.Server.Data.Entities.PushedAuthorizationRequestEntity", b =>
+                {
+                    b.Navigation("Prompts");
 
                     b.Navigation("Scopes");
                 });
