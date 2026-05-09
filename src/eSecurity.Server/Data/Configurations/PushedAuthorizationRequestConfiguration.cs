@@ -11,12 +11,17 @@ public sealed class PushedAuthorizationRequestConfiguration : IEntityTypeConfigu
         builder.HasKey(x => x.Id);
         builder.Property(x => x.ResponseType).HasEnumConversion();
         builder.Property(x => x.RedirectUri).HasMaxLength(1000);
-        builder.Property(x => x.ClientId).HasMaxLength(36);
         builder.Property(x => x.Nonce).HasMaxLength(100);
         builder.Property(x => x.State).HasMaxLength(1000);
         builder.Property(x => x.CodeChallenge).HasMaxLength(100);
         builder.Property(x => x.CodeChallengeMethod).HasEnumConversion();
+        builder.Property(x => x.Status).HasEnumConversion();
 
+        builder.HasOne(x => x.Client)
+            .WithMany()
+            .HasForeignKey(x => x.ClientId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
         builder.HasMany(x => x.Prompts)
             .WithOne(x => x.Request)
             .HasForeignKey(x => x.RequestId)
