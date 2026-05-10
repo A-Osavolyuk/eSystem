@@ -178,6 +178,7 @@ public sealed class PushedAuthorizationRequestCommandHandler(
         var parEntity = new PushedAuthorizationRequestEntity()
         {
             Id = Guid.CreateVersion7(),
+            RequestUri = ParHelper.GetRequestUri(),
             ResponseType = par.ResponseType,
             ClientId = client.Id,
             RedirectUri = redirectUri,
@@ -198,8 +199,8 @@ public sealed class PushedAuthorizationRequestCommandHandler(
 
         var response = new PushedAuthorizationResponse()
         {
-            ClientId = par.ClientId,
-            RequestUri = ParHelper.GetRequestUri(parEntity.Id)
+            ClientId = parEntity.ClientId.ToString(),
+            RequestUri = parEntity.RequestUri
         };
 
         return Results.Success(SuccessCodes.Ok, response);

@@ -7,7 +7,7 @@ namespace eSecurity.Server.Data.Entities;
 public sealed class PushedAuthorizationRequestEntity : Entity
 {
     public Guid Id { get; init; }
-    
+    public required string RequestUri { get; set; }
     public required ResponseType ResponseType { get; init; }
     public required string RedirectUri { get; init; }
     public string? Nonce { get; init; }

@@ -9,6 +9,7 @@ public sealed class PushedAuthorizationRequestConfiguration : IEntityTypeConfigu
     public void Configure(EntityTypeBuilder<PushedAuthorizationRequestEntity> builder)
     {
         builder.HasKey(x => x.Id);
+        builder.Property(x => x.RequestUri).HasMaxLength(70);
         builder.Property(x => x.ResponseType).HasEnumConversion();
         builder.Property(x => x.RedirectUri).HasMaxLength(1000);
         builder.Property(x => x.Nonce).HasMaxLength(100);
