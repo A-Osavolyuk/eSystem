@@ -24,6 +24,8 @@
     <Project Path="src\eSecurity.Server\eSecurity.Server.csproj" />
   </Folder>
   <Folder Name="/src/eSecurity/Frontend/">
+    <Project Path="src/eSecurity.Client.BFF/eSecurity.Client.BFF.csproj" />
+    <Project Path="src/eSecurity.Client.UI/eSecurity.Client.UI.csproj" />
     <Project Path="src\eSecurity.Client\eSecurity.Client.csproj" />
   </Folder>
   <Folder Name="/src/eStorage/">
