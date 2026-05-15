@@ -1,5 +1,4 @@
-﻿using eSystem.Core.Common.Cache.Redis;
-using eSystem.Core.Common.Documentation;
+﻿using eSystem.Core.Common.Documentation;
 using eSystem.Core.Common.Error;
 using eSystem.Core.Common.Versioning;
 using eSystem.Core.Mediator;
@@ -21,7 +20,6 @@ public static class HostApplicationBuilderExtensions
             builder.AddValidation();
             builder.AddDependencyInjection();
             builder.AddMessageBus();
-            builder.AddRedisCache();
             builder.AddDocumentation();
             builder.AddExceptionHandling<GlobalExceptionHandler>();
             

@@ -1,11 +1,9 @@
-using eSecurity.Client.Common.Cache;
 using eSecurity.Client.Common.Configurations;
 using eSecurity.Client.Common.Confirmation;
 using eSecurity.Client.Common.Http;
 using eSecurity.Client.Common.JS;
 using eSecurity.Client.Common.State;
 using eSecurity.Client.Security;
-using eSystem.Core.Common.Cache.Redis;
 using eSystem.Core.Common.Gateway;
 using eSystem.Core.Common.Versioning;
 using eSystem.Core.Validation;
@@ -24,7 +22,6 @@ public static class HostApplicationBuilderExtensions
         {
             builder.AddServiceDefaults();
             builder.AddValidation<IAssemblyMarker>();
-            builder.AddRedisCache();
             builder.AddVersioning();
             
             builder.Services.AddHttpContextAccessor();
@@ -35,7 +32,6 @@ public static class HostApplicationBuilderExtensions
             });
             
             builder.Services.Configure<BackendOptions>(builder.Configuration.GetSection("Backend"));
-            builder.Services.AddScoped<ICacheService, CacheService>();
             builder.Services.AddSecurity();
             builder.Services.AddConfirmation();
             builder.Services.AddJs();

@@ -9,7 +9,6 @@ using eSecurity.Server.Common.Storage;
 using eSecurity.Server.Security;
 using eSecurity.Server.Conventions;
 using eSecurity.Server.Data;
-using eSystem.Core.Common.Cache.Redis;
 using eSystem.Core.Common.Documentation;
 using eSystem.Core.Common.Error;
 using eSystem.Core.Common.Versioning;
@@ -30,7 +29,6 @@ public static class HostApplicationBuilderExtensions
             builder.AddValidation<IAssemblyMarker>();
             builder.AddServiceDefaults();
             builder.AddSecurity();
-            builder.AddRedisCache();
             builder.AddDatabase();
             builder.AddDocumentation();
             builder.AddStorage();

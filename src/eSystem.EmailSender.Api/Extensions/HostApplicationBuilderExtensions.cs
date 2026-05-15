@@ -1,5 +1,4 @@
-﻿using eSystem.Core.Common.Cache.Redis;
-using eSystem.Core.Common.Documentation;
+﻿using eSystem.Core.Common.Documentation;
 using eSystem.Core.Common.Error;
 using eSystem.EmailSender.Api.Consumers;
 using eSystem.EmailSender.Api.Errors;
@@ -17,7 +16,6 @@ public static class HostApplicationBuilderExtensions
             builder.AddMessageBus();
             builder.AddDependencyInjection();
             builder.AddDocumentation();
-            builder.AddRedisCache();
             builder.AddExceptionHandling<GlobalExceptionHandler>();
         }
 
