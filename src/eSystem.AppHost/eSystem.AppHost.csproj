@@ -9,26 +9,25 @@
         <Nullable>enable</Nullable>
         <IsAspireHost>true</IsAspireHost>
         <UserSecretsId>25917b55-256a-4dcc-95c1-ae526ad964ba</UserSecretsId>
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <LangVersion>14</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Aspire.Hosting" Version="13.2.4" />
-        <PackageReference Include="Aspire.Hosting.AppHost" Version="13.2.4" />
-        <PackageReference Include="Aspire.Hosting.Azure.Storage" Version="13.2.4" />
-        <PackageReference Include="Aspire.Hosting.MongoDB" Version="13.2.4" />
+        <PackageReference Include="Aspire.Hosting" Version="13.3.3" />
+        <PackageReference Include="Aspire.Hosting.AppHost" Version="13.3.3" />
+        <PackageReference Include="Aspire.Hosting.Azure.Storage" Version="13.3.3" />
+        <PackageReference Include="Aspire.Hosting.MongoDB" Version="13.3.3" />
         <PackageReference Include="Aspire.Hosting.NodeJs" Version="9.5.2" />
-        <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="13.2.4" />
-        <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="13.2.4" />
-        <PackageReference Include="Aspire.Hosting.Redis" Version="13.2.4" />
-        <PackageReference Include="Aspire.Hosting.SqlServer" Version="13.2.4" />
-        <PackageReference Include="Aspire.Hosting.Yarp" Version="13.2.4" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.7">
+        <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="13.3.3" />
+        <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="13.3.3" />
+        <PackageReference Include="Aspire.Hosting.Redis" Version="13.3.3" />
+        <PackageReference Include="Aspire.Hosting.SqlServer" Version="13.3.3" />
+        <PackageReference Include="Aspire.Hosting.Yarp" Version="13.3.3" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.8">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.7">
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.8">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
