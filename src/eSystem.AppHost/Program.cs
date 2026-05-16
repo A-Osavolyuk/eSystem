@@ -19,6 +19,7 @@ var postgres = builder.AddPostgres()
     .WithDataVolume();
 
 var eSecurityDb = postgres.AddDatabase("e-security-db", "e-security-db");
+var eSecurityBffDb = postgres.AddDatabase("e-security-bff-db", "e-security-bff-db");
 var eCinemaDb = postgres.AddDatabase("e-cinema-db", "e-cinema-db");
 
 var rabbitMq = builder.AddRabbitMq()
@@ -65,6 +66,14 @@ builder.AddProject<Projects.eSecurity_Client>("e-security-client")
     .WithReference(redisCache)
     .WithReference(proxy).WaitFor(proxy);
 
+var eSecurityBff = builder.AddProject<Projects.eSecurity_Client_BFF>("e-security-bff")
+    .WithReference(redisCache)
+    .WithReference(eSecurityBffDb)
+    .WithReference(proxy).WaitFor(proxy);
+
+var eSecurityUi = builder.AddProject<Projects.eSecurity_Client_UI>("e-security-ui")
+    .WithReference(eSecurityBff);
+
 var eCinemaServer = builder.AddProject<Projects.eCinema_Server>("e-cinema-server")
     .WaitFor(eSecurityServer)
     .WithReference(eCinemaDb).WaitFor(eCinemaDb)
@@ -77,6 +86,4 @@ builder.AddNpmApp("e-cinema-client", "../eCinema.Client")
     .WithExternalHttpEndpoints()
     .PublishAsDockerFile();
 
-var app = builder.Build();
-
-app.Run();
+builder.Build().Run();
