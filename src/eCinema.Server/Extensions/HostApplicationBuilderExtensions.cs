@@ -77,7 +77,7 @@ public static class HostApplicationBuilderExtensions
                             ClusterId = "proxy-cluster",
                             Destinations = new Dictionary<string, DestinationConfig>
                             {
-                                ["security-destination"] = new()
+                                ["proxy-destination"] = new()
                                 {
                                     Address = builder.Configuration["PROXY_HTTPS"]!
                                 }
