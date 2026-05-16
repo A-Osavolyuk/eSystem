@@ -54,11 +54,8 @@ public static class AuthenticationExtensions
 
                     options.ClientId = oauthOptions.ClientId;
                     options.ClientSecret = oauthOptions.ClientSecret;
-                    options.ResponseType = ResponseType.Code.GetString();
-                    options.UsePkce = true;
-
-                    options.MapInboundClaims = false;
-                    options.GetClaimsFromUserInfoEndpoint = true;
+                    options.MapInboundClaims = oauthOptions.MapInboundClaims;
+                    options.GetClaimsFromUserInfoEndpoint = oauthOptions.GetClaimsFromUserInfoEndpoint;
                     options.SaveTokens = oauthOptions.SaveTokens;
                     options.CallbackPath = oauthOptions.CallbackPath;
                     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -71,8 +68,10 @@ public static class AuthenticationExtensions
                         NameClaimType = AppClaimTypes.PreferredUsername,
                         RoleClaimType = AppClaimTypes.Role
                     };
-
-                    options.Prompt = "login consent";
+                    
+                    options.ResponseType = oauthOptions.ResponseType;
+                    options.Prompt = oauthOptions.Prompt;
+                    options.UsePkce = oauthOptions.UsePkce;
 
                     options.Scope.Clear();
                     options.Scope.Add(ScopeTypes.OpenId);
