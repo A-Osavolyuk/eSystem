@@ -6,6 +6,7 @@ using eSecurity.Client.BFF.Security.Authentication;
 using eSecurity.Client.BFF.Security.Cors;
 using eSystem.Core.Common.Gateway;
 using eSystem.Core.Data;
+using eSystem.Core.Server.Bff;
 using eSystem.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,7 @@ builder.AddSqlDb("e-security-bff-db");
 builder.AddProxy();
 builder.AddCors();
 builder.AddAuthentication();
+builder.AddBff();
 
 builder.Services.AddGateway();
 builder.Services.AddHttpContextAccessor();

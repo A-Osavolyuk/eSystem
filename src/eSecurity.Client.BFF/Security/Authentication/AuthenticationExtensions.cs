@@ -6,6 +6,7 @@ using eSecurity.Client.BFF.Security.Authentication.OpenIdConnect.Token.Validatio
 using eSecurity.Client.BFF.Security.Authentication.Session;
 using eSecurity.Client.BFF.Security.Authentication.Ticket;
 using eSecurity.Client.BFF.Security.Authentication.Token;
+using eSecurity.Client.BFF.Security.Cookies;
 using eSecurity.Client.BFF.Security.Identity;
 using eSystem.Core.Common.Configuration;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
@@ -39,7 +40,7 @@ public static class AuthenticationExtensions
             })
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
             {
-                options.Cookie.Name = "eSecurity.Authentication.State";
+                options.Cookie.Name = DefaultCookies.State;
                 options.Cookie.HttpOnly = true;
                 options.Cookie.SameSite = SameSiteMode.Lax;
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;

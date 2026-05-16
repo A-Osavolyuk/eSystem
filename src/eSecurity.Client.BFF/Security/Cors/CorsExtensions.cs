@@ -1,4 +1,7 @@
-﻿namespace eSecurity.Client.BFF.Security.Cors;
+﻿using eSystem.Core.Common.Configuration;
+using eSystem.Core.Server.Bff;
+
+namespace eSecurity.Client.BFF.Security.Cors;
 
 public static class CorsExtensions
 {
@@ -6,9 +9,10 @@ public static class CorsExtensions
     {
         builder.Services.AddCors(options =>
         {
+            var bffOptions = builder.Configuration.Get<BffOptions>("Bff");
             options.AddPolicy(CorsPolicies.SpaOnly, policy =>
             {
-                policy.WithOrigins("https://localhost:6521");
+                policy.WithOrigins(bffOptions.FrontendUri);
                 policy.AllowAnyHeader();
                 policy.AllowAnyMethod();
                 policy.AllowCredentials();
