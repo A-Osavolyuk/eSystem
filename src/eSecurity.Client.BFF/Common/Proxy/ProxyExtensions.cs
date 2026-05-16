@@ -1,4 +1,8 @@
-﻿using Yarp.ReverseProxy.Configuration;
+﻿using System.Net.Http.Headers;
+using eSecurity.Client.BFF.Security.Authentication.Token;
+using eSystem.Core.Http.Constants;
+using Yarp.ReverseProxy.Configuration;
+using Yarp.ReverseProxy.Transforms;
 
 namespace eSecurity.Client.BFF.Common.Proxy;
 
@@ -27,6 +31,23 @@ public static class ProxyExtensions
                             }
                         }
                     }
-                ]);
+                ]
+            ).AddTransforms(context =>
+            {
+                context.AddRequestTransform(async request =>
+                {
+                    var httpContent = request.HttpContext;
+                    if (httpContent.User.Identity?.IsAuthenticated == true)
+                    {
+                        var tokenHandler = httpContent.RequestServices.GetRequiredService<ITokenHandler>();
+                        var accessToken = await tokenHandler.GetTokenAsync();
+                        if (!string.IsNullOrEmpty(accessToken))
+                        {
+                            var header = new AuthenticationHeaderValue(AuthenticationTypes.Bearer, accessToken);
+                            request.ProxyRequest.Headers.Authorization = header;
+                        }
+                    }
+                });
+            });
     }
 }

@@ -7,7 +7,7 @@ public sealed class SessionClaimEntity : Entity
 {
     public Guid Id { get; set; }
     
-    public required string Name { get; set; }
+    public required string Type { get; set; }
     public required string Value { get; set; }
 
     public Guid SessionId { get; set; }

@@ -10,7 +10,7 @@ public sealed class SessionClaimConfiguration : IEntityTypeConfiguration<Session
     {
         builder.HasKey(x => x.Id);
         
-        builder.Property(x => x.Name)
+        builder.Property(x => x.Type)
             .HasMaxLength(50)
             .IsRequired();
 

@@ -10,7 +10,7 @@ public sealed class SessionEntity : Entity
     public required string UserId { get; set; }
     public required string Sid { get; set; }
 
-    public required SessionPropertiesEntity Properties { get; set; }
-    public required ICollection<SessionClaimEntity> Claim { get; set; }
-    public required ICollection<SessionTokenEntity> Tokens { get; set; }
+    public SessionPropertiesEntity Properties { get; set; } = null!;
+    public ICollection<SessionClaimEntity> Claims { get; set; } = [];
+    public ICollection<SessionTokenEntity> Tokens { get; set; } = [];
 }

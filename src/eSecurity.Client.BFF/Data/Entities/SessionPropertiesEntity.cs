@@ -7,8 +7,8 @@ public sealed class SessionPropertiesEntity : Entity
 {
     public Guid Id { get; set; }
     
-    public DateTimeOffset IssuedAt { get; set; }
-    public DateTimeOffset ExpiredAt { get; set; }
+    public DateTimeOffset? IssuedAt { get; set; }
+    public DateTimeOffset? ExpiredAt { get; set; }
     
     public bool IsPersistent { get; set; }
     public bool? AllowRefresh { get; set; }

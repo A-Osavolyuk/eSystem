@@ -27,7 +27,7 @@ public sealed class SessionConfiguration : IEntityTypeConfiguration<SessionEntit
             .HasForeignKey<SessionPropertiesEntity>(x => x.SessionId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasMany(x => x.Claim)
+        builder.HasMany(x => x.Claims)
             .WithOne(x => x.Session)
             .HasForeignKey(x => x.SessionId)
             .OnDelete(DeleteBehavior.Cascade);

@@ -8,6 +8,7 @@
 
     <ItemGroup>
         <PackageReference Include="Aspire.StackExchange.Redis" Version="13.3.3" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.8" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.8" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.8">
           <PrivateAssets>all</PrivateAssets>
@@ -23,10 +24,10 @@
 
     <ItemGroup>
       <Folder Include="Controllers\" />
-      <Folder Include="Security\Authentication\" />
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\eSystem.Core.Http\eSystem.Core.Http.csproj" />
       <ProjectReference Include="..\eSystem.Core\eSystem.Core.csproj" />
       <ProjectReference Include="..\eSystem.ServiceDefaults\eSystem.ServiceDefaults.csproj" />
     </ItemGroup>
