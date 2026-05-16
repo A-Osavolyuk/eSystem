@@ -1,11 +1,10 @@
 ﻿using eSecurity.Client.BFF.Data;
 using eSecurity.Client.BFF.Data.Entities;
-using eSecurity.Client.BFF.Security.Authentication.OpenIdConnect.Session;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using Microsoft.EntityFrameworkCore;
 
-namespace eSecurity.Client.BFF.Security.Authentication.Session;
+namespace eSecurity.Client.BFF.Security.Authentication.OpenIdConnect.Session;
 
 public sealed class SessionManager(AppDbContext context) : ISessionManager
 {

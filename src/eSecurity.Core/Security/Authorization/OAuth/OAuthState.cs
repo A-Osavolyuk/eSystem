@@ -1,4 +1,4 @@
-﻿using eSystem.Core.Security.Authentication.OpenIdConnect;
+﻿using eSystem.Core.Server.Security.Authentication.OpenIdConnect;
 
 namespace eSecurity.Core.Security.Authorization.OAuth;
 

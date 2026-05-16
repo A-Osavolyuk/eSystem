@@ -1,7 +1,7 @@
-﻿using eSystem.Core.Common.Documentation;
-using eSystem.Core.Common.Error;
-using eSystem.Core.Common.Versioning;
-using eSystem.Core.Mediator;
+﻿using eSystem.Core.Server.Mediator;
+using eSystem.Core.Server.Documentation;
+using eSystem.Core.Server.Errors;
+using eSystem.Core.Server.Versioning;
 using eSystem.SmsSender.Api.Consumers;
 using eSystem.SmsSender.Api.Errors;
 using eSystem.SmsSender.Api.Interfaces;

@@ -4,9 +4,9 @@ using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Authentication.OpenIdConnect;
-using eSystem.Core.Security.Authorization.OAuth;
-using eSystem.Core.Security.Authorization.OAuth.Token.DeviceCode;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Server.Security.Authorization.OAuth;
+using eSystem.Core.Server.Security.Authorization.OAuth.Token.DeviceCode;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.DeviceCode;
 

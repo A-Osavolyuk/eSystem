@@ -2,7 +2,6 @@
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Identity.User;
 using eSecurity.Server.Security.Identity.User.Username;
-using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 

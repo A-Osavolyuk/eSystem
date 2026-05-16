@@ -2,11 +2,11 @@
 using eSystem.Core.Enums;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Authentication.OpenIdConnect;
-using eSystem.Core.Security.Authorization.OAuth;
-using eSystem.Core.Security.Authorization.OAuth.Token;
-using eSystem.Core.Security.Authorization.OAuth.Token.TokenExchange;
-using eSystem.Core.Security.Identity.Claims;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Server.Security.Authorization.OAuth;
+using eSystem.Core.Server.Security.Authorization.OAuth.Token;
+using eSystem.Core.Server.Security.Authorization.OAuth.Token.TokenExchange;
+using eSystem.Core.Server.Security.Identity.Claims;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange;
 

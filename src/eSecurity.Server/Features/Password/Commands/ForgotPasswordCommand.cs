@@ -4,10 +4,9 @@ using eSecurity.Server.Common.Messaging.Messages.Email;
 using eSecurity.Server.Security.Authentication.Password;
 using eSecurity.Server.Security.Authorization.Codes;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Common.Messaging;
-using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Server.Messaging;
 
 namespace eSecurity.Server.Features.Password.Commands;
 

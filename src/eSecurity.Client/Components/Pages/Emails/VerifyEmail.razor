@@ -4,6 +4,7 @@
 @using eSecurity.Client.Security.Authorization.Access.Verification
 @using eSecurity.Core.Security.Authorization.Verification
 @using eSecurity.Core.Common.Responses
+@using eSystem.Core.Server.Messaging
 @using eSecurity.Client.Security.Identity
 @inherits PageBase
 
@@ -188,7 +189,7 @@
 
     private async Task OnVerifyEmailAsync()
     {
-        await _form.Validate();
+        await _form.ValidateAsync();
 
         if (_form.IsValid)
         {

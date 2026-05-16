@@ -1,11 +1,11 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Text.Json;
 using eSecurity.Client.BFF.Security.Authentication.OpenIdConnect.Discovery;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Logout;
-using eSystem.Core.Security.Authorization.OAuth;
-using eSystem.Core.Security.Authorization.OAuth.Token.Validation;
-using eSystem.Core.Security.Cryptography.Encryption;
-using eSystem.Core.Security.Identity.Claims;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect.Logout;
+using eSystem.Core.Server.Security.Authorization.OAuth;
+using eSystem.Core.Server.Security.Authorization.OAuth.Token.Validation;
+using eSystem.Core.Server.Security.Cryptography.Encryption;
+using eSystem.Core.Server.Security.Identity.Claims;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 

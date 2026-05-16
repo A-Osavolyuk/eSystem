@@ -11,9 +11,9 @@ using eSecurity.Server.Security.Authorization.Roles;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Extensions;
-using eSystem.Core.Common.Messaging;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Server.Messaging;
 using eSystem.Core.Utilities.Query;
 
 namespace eSecurity.Server.Security.Identity.SignUp.Strategies;

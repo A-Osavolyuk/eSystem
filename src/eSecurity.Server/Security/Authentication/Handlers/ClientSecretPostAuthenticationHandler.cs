@@ -5,9 +5,9 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Enums;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Primitives;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
-using eSystem.Core.Security.Authentication.Schemes;
-using eSystem.Core.Security.Identity.Claims;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect.Client;
+using eSystem.Core.Server.Security.Authentication.Schemes;
+using eSystem.Core.Server.Security.Identity.Claims;
 using Microsoft.AspNetCore.Authentication;
 
 namespace eSecurity.Server.Security.Authentication.Handlers;

@@ -4,12 +4,11 @@ using eSecurity.Server.Security.Authorization.OAuth.Token.DeviceCode;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Cryptography.Keys;
 using eSystem.Core.Enums;
-using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Authentication.OpenIdConnect;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
-using eSystem.Core.Security.Authorization.OAuth.DeviceAuthorization;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect.Discovery;
+using eSystem.Core.Server.Security.Authorization.OAuth.DeviceAuthorization;
 using eSystem.Core.Utilities.Query;
 
 namespace eSecurity.Server.Features.Connect.Commands;

@@ -3,7 +3,7 @@ using eSecurity.Server.Security.Authentication.Subject;
 using eSecurity.Server.Security.Identity.Claims;
 using eSecurity.Server.Security.Identity.Claims.Factories;
 using eSystem.Core.Primitives;
-using eSystem.Core.Security.Authorization.OAuth;
+using eSystem.Core.Server.Security.Authorization.OAuth;
 
 namespace eSecurity.Server.Security.Cryptography.Tokens;
 

@@ -7,10 +7,9 @@ using eSecurity.Server.Security.Authentication.Session;
 using eSecurity.Server.Security.Authorization.Codes;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect;
 
 namespace eSecurity.Server.Features.Account.Commands;
 

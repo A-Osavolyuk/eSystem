@@ -1,5 +1,5 @@
-﻿using eSystem.Core.Common.Gateway;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
+﻿using eSystem.Core.Gateway;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect.Discovery;
 using Microsoft.Extensions.Options;
 
 namespace eCinema.Server.Security.Authentication.OpenIdConnect.Discovery;

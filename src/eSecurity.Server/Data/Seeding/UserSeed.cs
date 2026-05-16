@@ -1,7 +1,7 @@
 ﻿using eSecurity.Server.Data.Entities;
-using eSystem.Core.Common.Localization.Locale;
-using eSystem.Core.Common.Localization.Time;
-using eSystem.Core.Data.Seeding;
+using eSystem.Core.Localization.Locale;
+using eSystem.Core.Localization.Time;
+using eSystem.Core.Server.Data.Seeding;
 
 namespace eSecurity.Server.Data.Seeding;
 

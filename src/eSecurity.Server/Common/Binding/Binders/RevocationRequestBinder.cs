@@ -1,8 +1,8 @@
-﻿using eSystem.Core.Binding;
-using eSystem.Core.Enums;
+﻿using eSystem.Core.Enums;
 using eSystem.Core.Primitives;
-using eSystem.Core.Security.Authorization.OAuth;
-using eSystem.Core.Security.Authorization.OAuth.Revocation;
+using eSystem.Core.Server.Binding;
+using eSystem.Core.Server.Security.Authorization.OAuth;
+using eSystem.Core.Server.Security.Authorization.OAuth.Revocation;
 
 namespace eSecurity.Server.Common.Binding.Binders;
 

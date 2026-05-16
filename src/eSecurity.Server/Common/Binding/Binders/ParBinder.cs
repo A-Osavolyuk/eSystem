@@ -1,8 +1,8 @@
 ﻿using eSecurity.Server.Security.Authorization.Par;
-using eSystem.Core.Binding;
 using eSystem.Core.Enums;
 using eSystem.Core.Primitives;
-using eSystem.Core.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Server.Binding;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect;
 
 namespace eSecurity.Server.Common.Binding.Binders;
 

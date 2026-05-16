@@ -1,5 +1,5 @@
-﻿using eSystem.Core.Data.Entities;
-using eSystem.Core.Security.Authorization.OAuth;
+﻿using eSystem.Core.Server.Data.Entities;
+using eSystem.Core.Server.Security.Authorization.OAuth;
 
 namespace eSecurity.Server.Data.Entities;
 

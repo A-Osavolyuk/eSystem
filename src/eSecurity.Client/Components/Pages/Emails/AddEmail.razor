@@ -55,7 +55,7 @@
 
     private async Task OnAddAsync()
     {
-        await _form.Validate();
+        await _form.ValidateAsync();
 
         if (_form is { IsValid: true, IsTouched: true })
         {

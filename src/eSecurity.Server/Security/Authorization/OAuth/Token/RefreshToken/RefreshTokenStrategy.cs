@@ -2,9 +2,9 @@ using eSecurity.Server.Security.Authorization.OAuth.Protocol;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Authentication.OpenIdConnect;
-using eSystem.Core.Security.Authorization.OAuth.Token;
-using eSystem.Core.Security.Authorization.OAuth.Token.RefreshToken;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Server.Security.Authorization.OAuth.Token;
+using eSystem.Core.Server.Security.Authorization.OAuth.Token.RefreshToken;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.RefreshToken;
 

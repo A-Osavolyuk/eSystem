@@ -1,4 +1,4 @@
-﻿using eSystem.Core.Security.Authorization.OAuth.Token.DeviceCode;
+﻿using eSystem.Core.Server.Security.Authorization.OAuth.Token.DeviceCode;
 
 namespace eSecurity.Core.Common.Requests;
 

@@ -2,14 +2,13 @@
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Authorization.OAuth.Scopes;
 using eSecurity.Server.Security.Authorization.Par;
-using eSystem.Core.Binding;
 using eSystem.Core.Enums;
-using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Authentication.OpenIdConnect;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
-using eSystem.Core.Security.Authorization.OAuth.Par;
+using eSystem.Core.Server.Binding;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect.Discovery;
+using eSystem.Core.Server.Security.Authorization.OAuth.Par;
 
 namespace eSecurity.Server.Features.Connect.Commands;
 

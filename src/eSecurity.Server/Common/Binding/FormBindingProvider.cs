@@ -1,4 +1,4 @@
-﻿using eSystem.Core.Binding;
+﻿using eSystem.Core.Server.Binding;
 
 namespace eSecurity.Server.Common.Binding;
 

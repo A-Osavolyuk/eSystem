@@ -6,8 +6,8 @@ using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Enums;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Authentication.OpenIdConnect;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect.Discovery;
 using eSystem.Core.Utilities.Query;
 using eSystem.Core.Utilities.State;
 

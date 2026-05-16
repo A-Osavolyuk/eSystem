@@ -7,7 +7,7 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.Prompt.Handlers;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Server.Security.Cryptography.Pkce;
 using eSystem.Core.Primitives;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect.Discovery;
 
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect;
 

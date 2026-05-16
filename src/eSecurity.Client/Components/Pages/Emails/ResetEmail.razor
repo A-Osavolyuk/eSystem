@@ -3,6 +3,7 @@
 @using eSecurity.Client.Security.Authorization.Access.Verification
 @using eSecurity.Core.Security.Authorization.Verification
 @using eSecurity.Core.Common.Responses
+@using eSystem.Core.Server.Messaging
 @using eSecurity.Client.Security.Identity
 @inherits PageBase
 
@@ -190,7 +191,7 @@
 
     private async Task OnSendCodeAsync()
     {
-        await _resetForm.Validate();
+        await _resetForm.ValidateAsync();
 
         if (_resetForm.IsValid)
         {
@@ -221,7 +222,7 @@
 
     private async Task OnVerifyAsync()
     {
-        await _confirmForm.Validate();
+        await _confirmForm.ValidateAsync();
 
         if (_confirmForm.IsValid)
         {

@@ -6,8 +6,8 @@ using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Phone;
 using eSecurity.Server.Security.Identity.Privacy;
-using eSystem.Core.Security.Authentication.OpenIdConnect;
-using eSystem.Core.Security.Identity.Claims;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Server.Security.Identity.Claims;
 
 namespace eSecurity.Server.Security.Identity.Claims.Factories;
 

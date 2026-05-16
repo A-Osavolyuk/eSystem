@@ -1,4 +1,4 @@
-﻿using eSystem.Core.Common.Configuration;
+﻿using eSystem.Core.Configuration;
 using eSystem.Core.Server.Bff;
 
 namespace eSecurity.Client.BFF.Security.Cors;

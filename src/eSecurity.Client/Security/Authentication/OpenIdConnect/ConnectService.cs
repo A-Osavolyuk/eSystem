@@ -1,5 +1,5 @@
 using eSecurity.Core.Common.Requests;
-using eSystem.Core.Security.Authorization.OAuth.Token;
+using eSystem.Core.Server.Security.Authorization.OAuth.Token;
 
 namespace eSecurity.Client.Security.Authentication.OpenIdConnect;
 

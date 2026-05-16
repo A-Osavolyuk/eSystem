@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Options;
 
-namespace eCinema.Server.Security.Authentication.Ticket;
+namespace eSecurity.Client.BFF.Security.Authentication.Ticket;
 
 public class CookiePostConfigurator(ITicketStore ticketStore) : IPostConfigureOptions<CookieAuthenticationOptions>
 {

@@ -1,12 +1,10 @@
-﻿using eSecurity.Core.Common.Requests;
-using eSecurity.Server.Security.Authentication.OpenIdConnect.Logout;
+﻿using eSecurity.Server.Security.Authentication.OpenIdConnect.Logout;
 using eSecurity.Server.Security.Authorization.Constants;
 using eSecurity.Server.Security.Authorization.OAuth.Token.Validation;
-using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Authorization.OAuth.Token.Validation;
-using eSystem.Core.Security.Identity.Claims;
+using eSystem.Core.Server.Security.Authorization.OAuth.Token.Validation;
+using eSystem.Core.Server.Security.Identity.Claims;
 using LogoutRequest = eSecurity.Core.Common.Requests.LogoutRequest;
 
 namespace eSecurity.Server.Features.Connect.Commands;

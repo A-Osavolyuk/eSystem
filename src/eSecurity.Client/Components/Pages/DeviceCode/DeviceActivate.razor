@@ -71,7 +71,7 @@
 
     private async Task OnContinueAsync()
     {
-        await _form.Validate();
+        await _form.ValidateAsync();
         if (_form.IsValid)
         {
             var request = new CheckDeviceCodeRequest() { UserCode = _model.UserCode };

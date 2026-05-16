@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using eSecurity.Client.Common.State.States;
-using eSystem.Core.Security.Identity.Claims;
+using eSystem.Core.Server.Security.Identity.Claims;
 using Microsoft.AspNetCore.Components.Authorization;
 
 namespace eSecurity.Client.Security.Authentication;

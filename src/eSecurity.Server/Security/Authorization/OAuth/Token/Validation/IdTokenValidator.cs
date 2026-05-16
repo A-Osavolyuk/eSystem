@@ -4,8 +4,8 @@ using System.Security.Cryptography.X509Certificates;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Cryptography.Signing.Certificates;
 using eSecurity.Server.Security.Cryptography.Tokens;
-using eSystem.Core.Security.Identity.Claims;
-using TokenValidationResult = eSystem.Core.Security.Authorization.OAuth.Token.Validation.TokenValidationResult;
+using eSystem.Core.Server.Security.Identity.Claims;
+using TokenValidationResult = eSystem.Core.Server.Security.Authorization.OAuth.Token.Validation.TokenValidationResult;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.Validation;
 

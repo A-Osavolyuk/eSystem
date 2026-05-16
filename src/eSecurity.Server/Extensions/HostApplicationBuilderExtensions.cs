@@ -9,10 +9,10 @@ using eSecurity.Server.Common.Storage;
 using eSecurity.Server.Security;
 using eSecurity.Server.Conventions;
 using eSecurity.Server.Data;
-using eSystem.Core.Common.Documentation;
-using eSystem.Core.Common.Error;
-using eSystem.Core.Common.Versioning;
-using eSystem.Core.Mediator;
+using eSystem.Core.Server.Documentation;
+using eSystem.Core.Server.Errors;
+using eSystem.Core.Server.Validation;
+using eSystem.Core.Server.Versioning;
 using eSystem.Core.Validation;
 
 namespace eSecurity.Server.Extensions;

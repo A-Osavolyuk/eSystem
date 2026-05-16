@@ -1,8 +1,8 @@
 ﻿using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
-using eSystem.Core.Data.Entities;
-using eSystem.Core.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
-using eSystem.Core.Security.Authorization.OAuth;
+using eSystem.Core.Server.Data.Entities;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect.Client;
+using eSystem.Core.Server.Security.Authorization.OAuth;
 
 namespace eSecurity.Server.Data.Entities;
 

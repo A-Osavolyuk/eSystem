@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using eSystem.Core.Data.Entities;
+﻿using eSystem.Core.Server.Data.Entities;
 
 namespace eSecurity.Client.BFF.Data.Entities;
 

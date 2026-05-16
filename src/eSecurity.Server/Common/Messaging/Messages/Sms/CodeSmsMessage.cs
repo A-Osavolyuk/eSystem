@@ -1,4 +1,4 @@
-﻿using eSystem.Core.Common.Messaging;
+﻿using eSystem.Core.Server.Messaging;
 
 namespace eSecurity.Server.Common.Messaging.Messages.Sms;
 

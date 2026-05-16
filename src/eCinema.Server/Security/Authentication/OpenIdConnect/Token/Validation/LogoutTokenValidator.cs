@@ -1,10 +1,10 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Text.Json;
 using eCinema.Server.Security.Authentication.OpenIdConnect.Discovery;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Logout;
-using eSystem.Core.Security.Authorization.OAuth.Token.Validation;
-using eSystem.Core.Security.Cryptography.Encryption;
-using eSystem.Core.Security.Identity.Claims;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect.Logout;
+using eSystem.Core.Server.Security.Authorization.OAuth.Token.Validation;
+using eSystem.Core.Server.Security.Cryptography.Encryption;
+using eSystem.Core.Server.Security.Identity.Claims;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -20,25 +20,25 @@ public sealed class LogoutTokenValidator(
     public async Task<TokenValidationResult> ValidateAsync(string token, CancellationToken cancellationToken = default)
     {
         var handler = new JwtSecurityTokenHandler();
-        if (!handler.CanReadToken(token)) return TokenValidationResult.Fail();
+        if (!handler.CanReadToken(token)) return eSystem.Core.Server.Security.Authorization.OAuth.Token.Validation.TokenValidationResult.Fail();
         
         var securityToken = handler.ReadJwtToken(token);
-        if (securityToken is null) return TokenValidationResult.Fail();
+        if (securityToken is null) return eSystem.Core.Server.Security.Authorization.OAuth.Token.Validation.TokenValidationResult.Fail();
         
         var eventsClaim = securityToken.Claims.FirstOrDefault(x => x.Type == AppClaimTypes.Events);
-        if (eventsClaim is null) return TokenValidationResult.Fail();
+        if (eventsClaim is null) return eSystem.Core.Server.Security.Authorization.OAuth.Token.Validation.TokenValidationResult.Fail();
         
         var events = JsonSerializer.Deserialize<Dictionary<string, object>>(eventsClaim.Value);
-        if (events is null || !events.ContainsKey(LogoutEvents.BackChannelLogout)) return TokenValidationResult.Fail();
+        if (events is null || !events.ContainsKey(LogoutEvents.BackChannelLogout)) return eSystem.Core.Server.Security.Authorization.OAuth.Token.Validation.TokenValidationResult.Fail();
         
         var openIdDiscovery = await _discoveryProvider.GetOpenIdDiscoveryAsync(cancellationToken);
-        if (openIdDiscovery is null) return TokenValidationResult.Fail();
+        if (openIdDiscovery is null) return eSystem.Core.Server.Security.Authorization.OAuth.Token.Validation.TokenValidationResult.Fail();
 
         var jsonWebKeySet = await _discoveryProvider.GetJsonWebKeySetAsync(cancellationToken);
-        if (jsonWebKeySet is null) return TokenValidationResult.Fail();
+        if (jsonWebKeySet is null) return eSystem.Core.Server.Security.Authorization.OAuth.Token.Validation.TokenValidationResult.Fail();
 
         var key = jsonWebKeySet.Keys.FirstOrDefault(x => x.Kid == securityToken.Header.Kid);
-        if (key is null) return TokenValidationResult.Fail();
+        if (key is null) return eSystem.Core.Server.Security.Authorization.OAuth.Token.Validation.TokenValidationResult.Fail();
 
         var publicKey = RsaConverter.FromJsonWebkey(key);
         var validationParameters = new TokenValidationParameters()
@@ -55,6 +55,6 @@ public sealed class LogoutTokenValidator(
         };
         
         var principal = handler.ValidateToken(token, validationParameters, out _);
-        return principal is null ? TokenValidationResult.Fail() : TokenValidationResult.Success(principal);
+        return principal is null ? eSystem.Core.Server.Security.Authorization.OAuth.Token.Validation.TokenValidationResult.Fail() : eSystem.Core.Server.Security.Authorization.OAuth.Token.Validation.TokenValidationResult.Success(principal);
     }
 }

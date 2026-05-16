@@ -4,6 +4,7 @@
 @using eSecurity.Client.Security.Identity
 @using eSecurity.Core.Common.Responses
 @using eSecurity.Core.Security.Authorization.Verification
+@using eSystem.Core.Server.Messaging
 @using eSecurity.Core.Security.Identity
 
 @inherits PageBase
@@ -238,7 +239,7 @@
 
     private async Task OnSendCode()
     {
-        await _changeForm.Validate();
+        await _changeForm.ValidateAsync();
 
         if (_changeForm.IsValid)
         {
@@ -288,7 +289,7 @@
 
     private async Task OnChangeAsync()
     {
-        await _confirmForm.Validate();
+        await _confirmForm.ValidateAsync();
 
         if (_confirmForm.IsValid)
         {

@@ -4,8 +4,8 @@ using eSecurity.Server.Security.Authorization.OAuth.Token.Validation;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSystem.Core.Enums;
 using eSystem.Core.Primitives;
-using eSystem.Core.Security.Authorization.OAuth;
-using eSystem.Core.Security.Identity.Claims;
+using eSystem.Core.Server.Security.Authorization.OAuth;
+using eSystem.Core.Server.Security.Identity.Claims;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Delegation;
 

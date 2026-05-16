@@ -1,6 +1,5 @@
 ﻿using eSecurity.Core.Common.DTOs;
 using eSecurity.Server.Security.Credentials.PublicKey;
-using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 

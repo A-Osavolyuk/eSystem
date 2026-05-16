@@ -1,11 +1,9 @@
 using eSecurity.Client.Common.Configurations;
 using eSecurity.Client.Common.JS.Fetch;
 using eSecurity.Client.Security.Cookies;
-using eSecurity.Core.Common.Routing;
-using eSystem.Core.Security.Authentication.OpenIdConnect;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Utilities.Query;
-using eSystem.Core.Utilities.State;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Options;

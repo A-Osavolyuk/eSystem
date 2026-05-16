@@ -3,12 +3,11 @@ using eSecurity.Server.Security.Authentication.OpenIdConnect.BackchannelAuthenti
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Ciba;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Server.Security.Cryptography.Keys;
-using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Authentication.OpenIdConnect;
-using eSystem.Core.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
-using eSystem.Core.Security.Authorization.OAuth;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
+using eSystem.Core.Server.Security.Authorization.OAuth;
 
 namespace eSecurity.Server.Features.Connect.Commands;
 

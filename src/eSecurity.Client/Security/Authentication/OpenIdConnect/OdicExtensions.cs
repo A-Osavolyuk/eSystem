@@ -1,7 +1,7 @@
 using eSecurity.Client.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Client.Security.Authentication.OpenIdConnect.Token;
-using eSystem.Core.Security.Authentication.OpenIdConnect;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect.Client;
 
 namespace eSecurity.Client.Security.Authentication.OpenIdConnect;
 

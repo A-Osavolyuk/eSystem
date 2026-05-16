@@ -1,10 +1,9 @@
-﻿using eSecurity.Client.BFF.Security.Authentication.OpenIdConnect.Discovery;
-using eSystem.Core.Common.Gateway;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
-using eSystem.Core.Security.Authorization.OAuth;
+﻿using eSystem.Core.Gateway;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect.Discovery;
+using eSystem.Core.Server.Security.Authorization.OAuth;
 using Microsoft.Extensions.Options;
 
-namespace eSecurity.Client.BFF.Security.Authentication.OpenIdConnect;
+namespace eSecurity.Client.BFF.Security.Authentication.OpenIdConnect.Discovery;
 
 public sealed class OpenIdDiscoveryProvider(
     IHttpClientFactory httpClientFactory, 

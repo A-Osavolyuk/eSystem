@@ -10,6 +10,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\eSystem.Core.Http\eSystem.Core.Http.csproj" />
+        <ProjectReference Include="..\eSystem.Core.Server\eSystem.Core.Server.csproj" />
         <ProjectReference Include="..\eSystem.Core\eSystem.Core.csproj" />
         <ProjectReference Include="..\eSystem.ServiceDefaults\eSystem.ServiceDefaults.csproj" />
     </ItemGroup>

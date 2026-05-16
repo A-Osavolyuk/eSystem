@@ -4,7 +4,6 @@ using eSecurity.Server.Security.Authorization.Verification;
 using eSecurity.Server.Security.Authorization.Verification.AuthenticationApp;
 using eSecurity.Server.Security.Authorization.Verification.Passkey;
 using eSecurity.Server.Security.Authorization.Verification.Totp;
-using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 

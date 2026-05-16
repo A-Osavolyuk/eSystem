@@ -2,9 +2,9 @@
 using System.Text.Json;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Cryptography.Tokens;
-using eSystem.Core.Security.Authorization.OAuth.Token.Validation;
-using eSystem.Core.Security.Identity.Claims;
-using TokenValidationResult = eSystem.Core.Security.Authorization.OAuth.Token.Validation.TokenValidationResult;
+using eSystem.Core.Server.Security.Authorization.OAuth.Token.Validation;
+using eSystem.Core.Server.Security.Identity.Claims;
+using TokenValidationResult = eSystem.Core.Server.Security.Authorization.OAuth.Token.Validation.TokenValidationResult;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.Validation;
 

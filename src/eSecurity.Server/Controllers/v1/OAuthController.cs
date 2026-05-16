@@ -2,7 +2,6 @@
 using eSecurity.Server.Features.OAuth.Commands;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
-using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
 using RedirectResult = eSystem.Core.Primitives.RedirectResult;
 

@@ -1,4 +1,4 @@
-﻿using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
+﻿using eSystem.Core.Server.Security.Authentication.OpenIdConnect.Discovery;
 
 namespace eCinema.Server.Security.Authentication.OpenIdConnect.Discovery;
 

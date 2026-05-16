@@ -4,8 +4,8 @@ using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Cryptography.Tokens;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Authorization.OAuth;
-using eSystem.Core.Security.Authorization.OAuth.Token.TokenExchange;
+using eSystem.Core.Server.Security.Authorization.OAuth;
+using eSystem.Core.Server.Security.Authorization.OAuth.Token.TokenExchange;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.TokenExchange.Delegation;
 

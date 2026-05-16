@@ -1,5 +1,5 @@
-﻿using eSystem.Core.Common.Documentation;
-using eSystem.Core.Common.Error;
+﻿using eSystem.Core.Server.Documentation;
+using eSystem.Core.Server.Errors;
 using eSystem.EmailSender.Api.Consumers;
 using eSystem.EmailSender.Api.Errors;
 using eSystem.EmailSender.Api.Services;

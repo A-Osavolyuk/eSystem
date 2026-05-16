@@ -1,6 +1,6 @@
 ﻿using eSecurity.Server.Security.Authorization.Codes;
-using eSystem.Core.Common.Messaging;
-using eSystem.Core.Data.Entities;
+using eSystem.Core.Server.Data.Entities;
+using eSystem.Core.Server.Messaging;
 
 namespace eSecurity.Server.Data.Entities;
 

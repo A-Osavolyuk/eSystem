@@ -4,7 +4,6 @@ using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Security.Authentication.Lockout;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 

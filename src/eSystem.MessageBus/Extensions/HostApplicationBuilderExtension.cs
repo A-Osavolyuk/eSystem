@@ -1,4 +1,4 @@
-﻿using eSystem.Core.Common.Error;
+﻿using eSystem.Core.Server.Errors;
 using eSystem.MessageBus.Consumers;
 using eSystem.MessageBus.Errors;
 using eSystem.ServiceDefaults;

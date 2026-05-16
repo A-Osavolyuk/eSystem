@@ -6,11 +6,10 @@ using eSecurity.Server.Security.Authorization.Constants;
 using eSystem.Core.Enums;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
-using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
-using eSystem.Core.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
-using eSystem.Core.Security.Authentication.OpenIdConnect.User;
-using eSystem.Core.Security.Authorization.OAuth.DeviceAuthorization;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect.User;
+using eSystem.Core.Server.Security.Authorization.OAuth.DeviceAuthorization;
 
 namespace eSecurity.Server.Controllers.v1;
 

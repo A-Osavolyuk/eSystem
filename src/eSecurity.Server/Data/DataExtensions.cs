@@ -1,5 +1,5 @@
 using eSecurity.Server.Data.Interceptors;
-using eSystem.Core.Data;
+using eSystem.Core.Server.Data;
 
 namespace eSecurity.Server.Data;
 

@@ -1,6 +1,6 @@
 ﻿using eSecurity.Server.Data.Entities;
 using eSystem.Core.Primitives;
-using eSystem.Core.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
 
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
 

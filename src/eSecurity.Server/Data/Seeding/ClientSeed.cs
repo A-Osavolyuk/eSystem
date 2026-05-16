@@ -1,7 +1,7 @@
 ﻿using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
-using eSystem.Core.Data.Seeding;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
+using eSystem.Core.Server.Data.Seeding;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect.Client;
 
 namespace eSecurity.Server.Data.Seeding;
 

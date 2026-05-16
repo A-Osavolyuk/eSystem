@@ -4,7 +4,7 @@ using eSecurity.Server.Security.Credentials;
 using eSecurity.Server.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Server.Security.Cryptography;
 using eSecurity.Server.Security.Identity;
-using eSystem.Core.Common.Configuration;
+using eSystem.Core.Configuration;
 
 namespace eSecurity.Server.Security;
 

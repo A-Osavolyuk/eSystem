@@ -1,9 +1,9 @@
-﻿using eSystem.Core.Binding;
-using eSystem.Core.Enums;
+﻿using eSystem.Core.Enums;
 using eSystem.Core.Primitives;
-using eSystem.Core.Security.Authentication.OpenIdConnect;
-using eSystem.Core.Security.Authorization.OAuth;
-using eSystem.Core.Security.Authorization.OAuth.Token.AuthorizationCode;
+using eSystem.Core.Server.Binding;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Server.Security.Authorization.OAuth;
+using eSystem.Core.Server.Security.Authorization.OAuth.Token.AuthorizationCode;
 
 namespace eSecurity.Server.Common.Binding.Binders;
 

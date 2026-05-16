@@ -5,10 +5,9 @@ using eCinema.Server.Data;
 using eCinema.Server.Security.Authentication;
 using eCinema.Server.Security.Authentication.OpenIdConnect.Token;
 using eCinema.Server.Security.Cors;
-using eSystem.Core.Common.Documentation;
-using eSystem.Core.Common.Error;
-using eSystem.Core.Common.Gateway;
+using eSystem.Core.Gateway;
 using eSystem.Core.Http.Constants;
+using eSystem.Core.Server.Errors;
 using eSystem.ServiceDefaults;
 using Yarp.ReverseProxy.Configuration;
 using Yarp.ReverseProxy.Transforms;
@@ -27,7 +26,6 @@ public static class HostApplicationBuilderExtensions
             
             builder.AddDatabase();
             builder.AddServiceDefaults();
-            builder.AddDocumentation();
             builder.AddExceptionHandling<GlobalExceptionHandler>();
             builder.AddProxy();
             builder.AddAuthentication();

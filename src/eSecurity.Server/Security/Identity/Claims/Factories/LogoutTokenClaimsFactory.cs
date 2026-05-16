@@ -2,8 +2,8 @@
 using System.Text.Json;
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Cryptography.Tokens;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Logout;
-using eSystem.Core.Security.Identity.Claims;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect.Logout;
+using eSystem.Core.Server.Security.Identity.Claims;
 
 namespace eSecurity.Server.Security.Identity.Claims.Factories;
 

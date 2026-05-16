@@ -1,5 +1,5 @@
-﻿using eSystem.Core.Data.Entities;
-using eSystem.Core.Security.Authentication.OpenIdConnect;
+﻿using eSystem.Core.Server.Data.Entities;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect;
 
 namespace eSecurity.Server.Data.Entities;
 

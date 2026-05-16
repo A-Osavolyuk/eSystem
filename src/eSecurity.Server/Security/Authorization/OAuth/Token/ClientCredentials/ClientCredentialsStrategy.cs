@@ -4,9 +4,9 @@ using eSecurity.Server.Security.Cryptography.Tokens;
 using eSecurity.Server.Security.Identity.Claims;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Authorization.OAuth;
-using eSystem.Core.Security.Authorization.OAuth.Token;
-using eSystem.Core.Security.Authorization.OAuth.Token.ClientCredentials;
+using eSystem.Core.Server.Security.Authorization.OAuth;
+using eSystem.Core.Server.Security.Authorization.OAuth.Token;
+using eSystem.Core.Server.Security.Authorization.OAuth.Token.ClientCredentials;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.ClientCredentials;
 

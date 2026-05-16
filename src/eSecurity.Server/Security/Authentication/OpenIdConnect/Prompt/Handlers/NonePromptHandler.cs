@@ -8,7 +8,7 @@ using eSecurity.Server.Security.Authorization.OAuth.Token.AuthorizationCode;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Utilities.Query;
 
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect.Prompt.Handlers;

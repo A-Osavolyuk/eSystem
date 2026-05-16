@@ -84,7 +84,7 @@
 
     private async Task OnSignInAsync()
     {
-        await _form.Validate();
+        await _form.ValidateAsync();
 
         if (_form.IsValid)
         {

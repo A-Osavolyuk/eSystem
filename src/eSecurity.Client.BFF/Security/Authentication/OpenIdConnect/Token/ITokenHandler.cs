@@ -1,4 +1,4 @@
-﻿namespace eSecurity.Client.BFF.Security.Authentication.Token;
+﻿namespace eSecurity.Client.BFF.Security.Authentication.OpenIdConnect.Token;
 
 public interface ITokenHandler
 {

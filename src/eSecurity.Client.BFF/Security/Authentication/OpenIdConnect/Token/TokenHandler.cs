@@ -1,15 +1,14 @@
-﻿using eSecurity.Client.BFF.Security.Authentication.OpenIdConnect;
-using eSecurity.Client.BFF.Security.Authentication.OpenIdConnect.Discovery;
-using eSystem.Core.Common.Gateway;
+﻿using eSecurity.Client.BFF.Security.Authentication.OpenIdConnect.Discovery;
+using eSystem.Core.Gateway;
 using eSystem.Core.Http.Extensions;
-using eSystem.Core.Security.Authorization.OAuth;
-using eSystem.Core.Security.Authorization.OAuth.Token.RefreshToken;
-using eSystem.Core.Security.Cryptography.Encoding;
+using eSystem.Core.Server.Security.Authorization.OAuth;
+using eSystem.Core.Server.Security.Authorization.OAuth.Token.RefreshToken;
+using eSystem.Core.Server.Security.Cryptography.Encoding;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Options;
 
-namespace eSecurity.Client.BFF.Security.Authentication.Token;
+namespace eSecurity.Client.BFF.Security.Authentication.OpenIdConnect.Token;
 
 public sealed class TokenHandler (
     IHttpContextAccessor httpContextAccessor,

@@ -2,7 +2,7 @@
 using eSecurity.Client.BFF.Data.Entities;
 using eSecurity.Client.BFF.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Client.BFF.Security.Cryptography.Protection.Constants;
-using eSystem.Core.Security.Identity.Claims;
+using eSystem.Core.Server.Security.Identity.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;

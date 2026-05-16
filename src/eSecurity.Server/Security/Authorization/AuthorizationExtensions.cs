@@ -10,9 +10,9 @@ using eSecurity.Server.Security.Authorization.OAuth.Token.Validation;
 using eSecurity.Server.Security.Authorization.Par;
 using eSecurity.Server.Security.Authorization.Roles;
 using eSecurity.Server.Security.Authorization.Verification;
-using eSystem.Core.Security.Authentication.Schemes;
-using eSystem.Core.Security.Authorization.OAuth;
-using eSystem.Core.Security.Authorization.OAuth.Token.Validation;
+using eSystem.Core.Server.Security.Authentication.Schemes;
+using eSystem.Core.Server.Security.Authorization.OAuth;
+using eSystem.Core.Server.Security.Authorization.OAuth.Token.Validation;
 
 namespace eSecurity.Server.Security.Authorization;
 

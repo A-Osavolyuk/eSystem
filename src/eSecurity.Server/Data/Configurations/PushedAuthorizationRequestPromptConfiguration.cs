@@ -1,5 +1,5 @@
 ﻿using eSecurity.Server.Data.Entities;
-using eSystem.Core.Data.Conversion;
+using eSystem.Core.Server.Data.Conversion;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace eSecurity.Server.Data.Configurations;

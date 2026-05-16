@@ -5,7 +5,6 @@ using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authorization.Codes;
 using eSecurity.Server.Security.Authorization.Verification;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 

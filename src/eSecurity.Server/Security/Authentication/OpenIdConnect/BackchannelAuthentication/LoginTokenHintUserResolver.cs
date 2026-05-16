@@ -3,7 +3,7 @@ using eSecurity.Server.Security.Authorization.OAuth.Token;
 using eSecurity.Server.Security.Cryptography.Hashing;
 using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Primitives;
-using eSystem.Core.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
 
 namespace eSecurity.Server.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
 

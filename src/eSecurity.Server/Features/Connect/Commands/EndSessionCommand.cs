@@ -1,5 +1,4 @@
 ﻿using eSecurity.Server.Security.Authentication.OpenIdConnect.Logout;
-using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
 
 namespace eSecurity.Server.Features.Connect.Commands;

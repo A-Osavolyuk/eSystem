@@ -1,7 +1,7 @@
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Authorization.OAuth.Token;
-using eSystem.Core.Security.Authorization.OAuth.Token.AuthorizationCode;
+using eSystem.Core.Server.Security.Authorization.OAuth.Token;
+using eSystem.Core.Server.Security.Authorization.OAuth.Token.AuthorizationCode;
 
 namespace eSecurity.Server.Security.Authorization.OAuth.Token.AuthorizationCode;
 

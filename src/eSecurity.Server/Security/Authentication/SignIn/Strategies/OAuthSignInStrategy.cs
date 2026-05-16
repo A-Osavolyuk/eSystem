@@ -11,7 +11,7 @@ using eSecurity.Server.Security.Identity.User;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Utilities.Query;
 
 namespace eSecurity.Server.Security.Authentication.SignIn.Strategies;

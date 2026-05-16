@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-using eSecurity.Client.Security.Cookies;
-using eSecurity.Client.Security.Cookies.Constants;
+﻿using eSecurity.Client.Security.Cookies.Constants;
 using eSecurity.Client.Security.Cryptography.Protection.Constants;
 using Microsoft.AspNetCore.DataProtection;
 

@@ -1,5 +1,5 @@
 ﻿using eSecurity.Server.Security.Authentication.OpenIdConnect.Logout;
-using eSystem.Core.Data.Entities;
+using eSystem.Core.Server.Data.Entities;
 
 namespace eSecurity.Server.Data.Entities;
 

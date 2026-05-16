@@ -1,6 +1,6 @@
 ﻿using eSecurity.Core.Security.Identity;
 using eSecurity.Server.Data.Entities;
-using eSystem.Core.Data.Seeding;
+using eSystem.Core.Server.Data.Seeding;
 
 namespace eSecurity.Server.Data.Seeding;
 

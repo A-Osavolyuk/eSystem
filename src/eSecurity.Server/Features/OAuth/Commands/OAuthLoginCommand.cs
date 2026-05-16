@@ -2,10 +2,9 @@
 using eSecurity.Server.Data.Entities;
 using eSecurity.Server.Security.Authentication.Session;
 using eSecurity.Server.Security.Identity.Options;
-using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Utilities.Query;
 using Microsoft.AspNetCore.Authentication;
 

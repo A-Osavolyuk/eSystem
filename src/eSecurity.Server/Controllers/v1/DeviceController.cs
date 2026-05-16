@@ -3,7 +3,6 @@ using eSecurity.Server.Features.DeviceCode.Commands;
 using eSecurity.Server.Features.DeviceCode.Queries;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
-using eSystem.Core.Mediator;
 
 namespace eSecurity.Server.Controllers.v1;
 

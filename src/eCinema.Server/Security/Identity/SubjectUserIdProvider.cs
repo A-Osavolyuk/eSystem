@@ -1,4 +1,4 @@
-﻿using eSystem.Core.Security.Identity.Claims;
+﻿using eSystem.Core.Server.Security.Identity.Claims;
 using Microsoft.AspNetCore.SignalR;
 
 namespace eCinema.Server.Security.Identity;

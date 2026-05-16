@@ -1,5 +1,5 @@
 ﻿using System.Net.Http.Headers;
-using eSecurity.Client.BFF.Security.Authentication.Token;
+using eSecurity.Client.BFF.Security.Authentication.OpenIdConnect.Token;
 using eSystem.Core.Http.Constants;
 using Yarp.ReverseProxy.Configuration;
 using Yarp.ReverseProxy.Transforms;

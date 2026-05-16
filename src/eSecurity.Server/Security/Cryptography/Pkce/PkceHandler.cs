@@ -1,5 +1,5 @@
 using System.Security.Cryptography;
-using eSystem.Core.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.WebUtilities;
 
 namespace eSecurity.Server.Security.Cryptography.Pkce;

@@ -5,10 +5,10 @@ using eSecurity.Client.Security.Authentication;
 using eSecurity.Client.Security.Authentication.OpenIdConnect.Token;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
-using eSystem.Core.Security.Authorization.OAuth;
-using eSystem.Core.Security.Authorization.OAuth.Token.RefreshToken;
-using eSystem.Core.Security.Cryptography.Encoding;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect.Client;
+using eSystem.Core.Server.Security.Authorization.OAuth;
+using eSystem.Core.Server.Security.Authorization.OAuth.Token.RefreshToken;
+using eSystem.Core.Server.Security.Cryptography.Encoding;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 

@@ -1,5 +1,5 @@
 ﻿using eSecurity.Server.Security.Authentication.OpenIdConnect.Client;
-using eSystem.Core.Data.Entities;
+using eSystem.Core.Server.Data.Entities;
 
 namespace eSecurity.Server.Data.Entities;
 

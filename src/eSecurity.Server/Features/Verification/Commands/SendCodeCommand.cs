@@ -4,11 +4,10 @@ using eSecurity.Server.Common.Messaging.Messages.Email;
 using eSecurity.Server.Common.Messaging.Messages.Sms;
 using eSecurity.Server.Security.Authorization.Codes;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Common.Messaging;
-using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Identity.Claims;
+using eSystem.Core.Server.Messaging;
+using eSystem.Core.Server.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.Verification.Commands;
 

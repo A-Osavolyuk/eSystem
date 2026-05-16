@@ -2,7 +2,7 @@
 using eCinema.Server.Data.Entities;
 using eCinema.Server.Security.Authentication.OpenIdConnect.Session;
 using eCinema.Server.Security.Cryptography.Protection.Constants;
-using eSystem.Core.Security.Identity.Claims;
+using eSystem.Core.Server.Security.Identity.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;

@@ -9,10 +9,9 @@ using eSecurity.Server.Security.Credentials.PublicKey;
 using eSecurity.Server.Security.Identity.Email;
 using eSecurity.Server.Security.Identity.Options;
 using eSecurity.Server.Security.Identity.User;
-using eSystem.Core.Mediator;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Identity.Claims;
+using eSystem.Core.Server.Security.Identity.Claims;
 
 namespace eSecurity.Server.Features.Passkeys.Commands;
 

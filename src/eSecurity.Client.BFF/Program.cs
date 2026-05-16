@@ -4,9 +4,9 @@ using eSecurity.Client.BFF.Common.Proxy;
 using eSecurity.Client.BFF.Data;
 using eSecurity.Client.BFF.Security.Authentication;
 using eSecurity.Client.BFF.Security.Cors;
-using eSystem.Core.Common.Gateway;
-using eSystem.Core.Data;
+using eSystem.Core.Gateway;
 using eSystem.Core.Server.Bff;
+using eSystem.Core.Server.Data;
 using eSystem.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);

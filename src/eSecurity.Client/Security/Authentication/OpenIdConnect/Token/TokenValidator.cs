@@ -1,10 +1,9 @@
 using System.IdentityModel.Tokens.Jwt;
 using eSecurity.Core.Common.DTOs;
 using eSystem.Core.Primitives;
-using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
-using eSystem.Core.Security.Authentication.OpenIdConnect.Discovery;
-using eSystem.Core.Security.Cryptography.Encryption;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect.Client;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect.Discovery;
+using eSystem.Core.Server.Security.Cryptography.Encryption;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using JsonWebKeySet = Microsoft.IdentityModel.Tokens.JsonWebKeySet;

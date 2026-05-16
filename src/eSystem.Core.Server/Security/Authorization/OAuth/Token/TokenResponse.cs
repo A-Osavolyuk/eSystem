@@ -1,0 +1,15 @@
+﻿using System.Text.Json.Serialization;
+
+namespace eSystem.Core.Server.Security.Authorization.OAuth.Token;
+
+public abstract class TokenResponse
+{
+    [JsonPropertyName("token_type")]
+    public required ResponseTokenType TokenType { get; set; }
+    
+    [JsonPropertyName("expires_in")]
+    public required int ExpiresIn { get; set; }
+    
+    [JsonPropertyName("access_token")]
+    public string? AccessToken { get; set; }
+}
