@@ -1,6 +1,6 @@
 ﻿using eSystem.Core.Security.Authentication.Schemes;
 using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace eSystem.Core.Common.Documentation.Transformers;
 
@@ -18,18 +18,19 @@ public class BasicAuthenticationTransformer : IOpenApiDocumentTransformer
                 Scheme = AuthenticationSchemes.Basic.ToLower(),
                 Description = "Enter your Basic Authentication value in the format: `Basic {value}`"
             });
-
-        document.SecurityRequirements?.Add(new OpenApiSecurityRequirement
+        
+        document.Security?.Add(new OpenApiSecurityRequirement()
         {
             {
-                new OpenApiSecurityScheme
+                new OpenApiSecuritySchemeReference(AuthenticationSchemes.Basic)
                 {
-                    Reference = new OpenApiReference
+                    Reference = new OpenApiReferenceWithDescription()
                     {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = AuthenticationSchemes.Basic
+                        Id = AuthenticationSchemes.Basic,
+                        Type = ReferenceType.SecurityScheme
                     }
-                },[]
+                },
+                []
             }
         });
 
