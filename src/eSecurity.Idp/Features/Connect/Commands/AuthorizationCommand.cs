@@ -155,11 +155,12 @@ public sealed class AuthorizationCommandHandler(
                 prompts.Add(prompt.Value);
             }
         }
-
-        ChallengeMethod? codeChallengeMethod = null;
+        
+        var hasCodeChallenge = !string.IsNullOrEmpty(request.Request.CodeChallenge);
+        var hasCodeChallengeMethod = !string.IsNullOrEmpty(request.Request.CodeChallengeMethod);
         if (client.RequirePkce)
         {
-            if (string.IsNullOrEmpty(request.Request.CodeChallenge))
+            if (!hasCodeChallenge)
             {
                 var uri = PromptHelper.GetRedirectUri(redirectUri, ErrorCode.InvalidRequest,
                     "code_challenge is required", request.Request.State);
@@ -167,19 +168,41 @@ public sealed class AuthorizationCommandHandler(
                 return Results.Redirect(RedirectionCode.Found, uri);
             }
 
-            if (string.IsNullOrEmpty(request.Request.CodeChallengeMethod))
+            if (!hasCodeChallengeMethod)
             {
                 var uri = PromptHelper.GetRedirectUri(redirectUri, ErrorCode.InvalidRequest,
                     "code_challenge_method is required", request.Request.State);
 
                 return Results.Redirect(RedirectionCode.Found, uri);
             }
+        }
+        else
+        {
+            if (hasCodeChallenge ^ hasCodeChallengeMethod)
+            {
+                var uri = PromptHelper.GetRedirectUri(redirectUri, ErrorCode.InvalidRequest,
+                    "code_challenge and code_challenge_method must be provided together",
+                    request.Request.State);
 
+                return Results.Redirect(RedirectionCode.Found, uri);
+            }
+        }
+
+        ChallengeMethod? codeChallengeMethod = null;
+        if (hasCodeChallenge && hasCodeChallengeMethod)
+        {
             var challengeMethod = EnumHelper.FromString<ChallengeMethod>(
                 request.Request.CodeChallengeMethod);
 
-            if (challengeMethod is null ||
-                !_configuration.CodeChallengeMethodsSupported.Contains(challengeMethod.Value))
+            if (challengeMethod is null)
+            {
+                var uri = PromptHelper.GetRedirectUri(redirectUri, ErrorCode.InvalidRequest,
+                    "code_challenge_method is invalid", request.Request.State);
+
+                return Results.Redirect(RedirectionCode.Found, uri);
+            }
+
+            if (!_configuration.CodeChallengeMethodsSupported.Contains(challengeMethod.Value))
             {
                 var uri = PromptHelper.GetRedirectUri(redirectUri, ErrorCode.InvalidRequest,
                     "Unsupported code_challenge_method", request.Request.State);

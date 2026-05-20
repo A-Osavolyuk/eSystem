@@ -147,11 +147,12 @@ public sealed class PushedAuthorizationRequestCommandHandler(
                 prompts.Add(prompt.Value);
             }
         }
-
-        ChallengeMethod? codeChallengeMethod = null;
+        
+        var hasCodeChallenge = !string.IsNullOrEmpty(par.CodeChallenge);
+        var hasCodeChallengeMethod = par.CodeChallengeMethod is not null;
         if (client.RequirePkce)
         {
-            if (string.IsNullOrEmpty(par.CodeChallenge))
+            if (!hasCodeChallenge)
             {
                 return Results.ClientError(ClientErrorCode.BadRequest, new Error()
                 {
@@ -160,10 +161,33 @@ public sealed class PushedAuthorizationRequestCommandHandler(
                 });
             }
 
-            if (par.CodeChallengeMethod is null ||
-                !_configuration.CodeChallengeMethodsSupported.Contains(par.CodeChallengeMethod.Value))
+            if (!hasCodeChallengeMethod)
             {
                 return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+                {
+                    Code = ErrorCode.InvalidRequest,
+                    Description = "code_challenge_method is required"
+                });
+            }
+        }
+        else
+        {
+            if (hasCodeChallenge ^ hasCodeChallengeMethod)
+            {
+                return Results.ClientError(ClientErrorCode.BadRequest, new Error
+                {
+                    Code = ErrorCode.InvalidRequest,
+                    Description = "code_challenge and code_challenge_method must be provided together"
+                });
+            }
+        }
+
+        ChallengeMethod? codeChallengeMethod = null;
+        if (hasCodeChallenge && hasCodeChallengeMethod)
+        {
+            if (!_configuration.CodeChallengeMethodsSupported.Contains(par.CodeChallengeMethod!.Value))
+            {
+                return Results.ClientError(ClientErrorCode.BadRequest, new Error
                 {
                     Code = ErrorCode.InvalidRequest,
                     Description = "Unsupported code_challenge_method"
