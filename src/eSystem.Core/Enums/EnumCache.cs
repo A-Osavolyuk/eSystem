@@ -2,7 +2,7 @@
 
 namespace eSystem.Core.Enums;
 
-public static class EnumCache<TEnum> where TEnum : struct, Enum
+public static class EnumCache<TEnum> where TEnum : Enum
 {
     public static readonly Dictionary<TEnum, List<EnumAlias>> To;
     public static readonly Dictionary<string, EnumValue<TEnum>> From;
