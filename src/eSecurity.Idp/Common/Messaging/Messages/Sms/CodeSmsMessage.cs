@@ -1,0 +1,17 @@
+﻿using eSystem.Core.Server.Messaging;
+
+namespace eSecurity.Idp.Common.Messaging.Messages.Sms;
+
+public class CodeSmsMessage : Message
+{
+    public override string Build()
+    {
+        return $"Your verification code {Payload["Code"]}";
+    }
+
+    public override void Initialize(Dictionary<string, string> payload)
+    {
+        Credentials["To"] = payload["To"];
+        Payload = payload;
+    }
+}

@@ -1,0 +1,16 @@
+using System.Text.Json.Serialization;
+using eSecurity.Core.Security.Identity;
+
+namespace eSecurity.Core.Requests;
+
+public sealed class ChangeEmailRequest
+{
+    [JsonPropertyName("verification_id")]
+    public required Guid VerificationId { get; set; }
+    
+    [JsonPropertyName("email")]
+    public required string Email { get; set; }
+    
+    [JsonPropertyName("type")]
+    public required EmailType Type { get; set; }
+}

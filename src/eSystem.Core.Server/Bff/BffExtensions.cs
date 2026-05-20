@@ -7,6 +7,6 @@ public static class BffExtensions
 {
     public static void AddBff(this IHostApplicationBuilder builder)
     {
-        builder.Services.Configure<BffOptions>(builder.Configuration.GetSection("OAuth"));
+        builder.Services.Configure<BffOptions>(builder.Configuration.GetSection("Bff"));
     }
 }

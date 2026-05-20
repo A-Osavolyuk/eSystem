@@ -1,0 +1,66 @@
+﻿using eSecurity.Idp.Common.Messaging;
+using eSecurity.Idp.Common.Messaging.Messages.Email;
+using eSecurity.Idp.Security.Authentication.Password;
+using eSecurity.Idp.Security.Authorization.Codes;
+using eSecurity.Idp.Security.Identity.User;
+using eSecurity.Core.Requests;
+using eSystem.Core.Messaging;
+using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
+
+namespace eSecurity.Idp.Features.Password.Commands;
+
+public sealed record ForgotPasswordCommand(ForgotPasswordRequest Request) : IRequest<Result>;
+
+public sealed class ForgotPasswordCommandHandler(
+    IUserManager userManager,
+    IPasswordManager passwordManager,
+    ICodeManager codeManager,
+    IMessageService messageService) : IRequestHandler<ForgotPasswordCommand, Result>
+{
+    private readonly IUserManager _userManager = userManager;
+    private readonly IPasswordManager _passwordManager = passwordManager;
+    private readonly ICodeManager _codeManager = codeManager;
+    private readonly IMessageService _messageService = messageService;
+
+    public async Task<Result> Handle(ForgotPasswordCommand request,
+        CancellationToken cancellationToken)
+    {
+        var user = await _userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
+        if (user is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "User not found."
+            });
+        }
+
+        if (!await _passwordManager.HasAsync(user, cancellationToken))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
+            {
+                Code = ErrorCode.InvalidPassword,
+                Description = "Password was not provided."
+            });
+        }
+
+        var code = await _codeManager.CreateAsync(user, SenderType.Email, cancellationToken);
+        var message = new CodeEmailMessage()
+        {
+            Credentials = new Dictionary<string, string>
+            {
+                { "To", request.Request.Email },
+                { "Subject", "Forgot password" },
+            },
+            Payload = new()
+            {
+                { "Code", code }
+            }
+        };
+        
+        await _messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
+        
+        return Results.Success(SuccessCodes.Ok);
+    }
+}

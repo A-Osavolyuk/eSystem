@@ -1,0 +1,135 @@
+﻿using System.Security.Cryptography;
+using eSecurity.Idp.Common.Storage.Session;
+using eSecurity.Idp.Data.Entities;
+using eSecurity.Idp.Security.Authentication.TwoFactor;
+using eSecurity.Idp.Security.Authorization.Devices;
+using eSecurity.Idp.Security.Credentials.PublicKey;
+using eSecurity.Idp.Security.Credentials.PublicKey.Credentials;
+using eSecurity.Idp.Security.Identity.User;
+using eSecurity.Core.Requests;
+using eSecurity.Core.Security.Authentication.TwoFactor;
+using eSecurity.WebAuthN.Constants;
+using eSystem.Core.Http.Extensions;
+using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Security.Identity.Claims;
+
+namespace eSecurity.Idp.Features.Passkeys.Commands;
+
+public record CreatePasskeyCommand(CreatePasskeyRequest Request) : IRequest<Result>;
+
+public class CreatePasskeyCommandHandler(
+    IUserManager userManager,
+    IPasskeyManager passkeyManager,
+    ITwoFactorManager twoFactorManager,
+    IHttpContextAccessor httpContextAccessor,
+    ISessionStorage sessionStorage,
+    IDeviceManager deviceManager,
+    IOptions<CredentialOptions> options) : IRequestHandler<CreatePasskeyCommand, Result>
+{
+    private readonly IUserManager _userManager = userManager;
+    private readonly IPasskeyManager _passkeyManager = passkeyManager;
+    private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
+    private readonly ISessionStorage _sessionStorage = sessionStorage;
+    private readonly IDeviceManager _deviceManager = deviceManager;
+    private readonly CredentialOptions _credentialOptions = options.Value;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
+
+    public async Task<Result> Handle(CreatePasskeyCommand request,
+        CancellationToken cancellationToken)
+    {
+        var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
+        if (subjectClaim is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Invalid request"
+            });
+        }
+        
+        var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
+        if (user is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "User not found"
+            });
+        }
+
+        var userAgent = _httpContext.GetUserAgent();
+        var ipAddress = _httpContext.GetIpV4();
+        var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
+        if (device is null || device.IsBlocked)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
+            {
+                Code = ErrorCode.InvalidDevice,
+                Description = "Invalid device."
+            });
+        }
+
+        var credentialResponse = request.Request.Response;
+        var clientData = ClientData.Parse(credentialResponse.Response.ClientDataJson);
+        if (clientData is null || clientData.Type != ClientDataTypes.Create)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
+            {
+                Code = ErrorCode.InvalidCredentials,
+                Description = "Invalid credentials."
+            });
+        }
+
+        var base64Challenge = CredentialUtils.ToBase64String(clientData.Challenge);
+        var savedChallenge = _sessionStorage.Get(ChallengeSessionKeys.Attestation);
+        if (savedChallenge != base64Challenge)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
+            {
+                Code = ErrorCode.InvalidChallenge,
+                Description = "Challenge mismatch"
+            });
+        }
+
+        var authData = AuthenticationData.Parse(credentialResponse.Response.AttestationObject);
+        var source = Encoding.UTF8.GetBytes(_credentialOptions.Domain.ToArray());
+        var rpHash = SHA256.HashData(source);
+        if (!authData.RpIdHash.SequenceEqual(rpHash))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
+            {
+                Code = ErrorCode.InvalidRp,
+                Description = "Invalid RP ID"
+            });
+        }
+
+        var passkey = new PasskeyEntity
+        {
+            Id = Guid.CreateVersion7(),
+            AuthenticatorId = new Guid(authData.AaGuid),
+            DeviceId = device.Id,
+            DisplayName = request.Request.DisplayName,
+            Domain = clientData.Origin,
+            CredentialId = Convert.ToBase64String(authData.CredentialId),
+            PublicKey = authData.CredentialPublicKey,
+            SignCount = authData.SignCount,
+            Type = request.Request.Response.Type
+        };
+
+        var result = await _passkeyManager.CreateAsync(passkey, cancellationToken);
+        if (!result.Succeeded) 
+            return result;
+
+        if (!await _twoFactorManager.HasMethodAsync(user, TwoFactorMethod.Passkey, cancellationToken))
+        {
+            var twoFactorResult = await _twoFactorManager.SubscribeAsync(user,
+                TwoFactorMethod.Passkey, cancellationToken: cancellationToken);
+
+            if (!twoFactorResult.Succeeded) 
+                return twoFactorResult;
+        }
+        
+        return Results.Success(SuccessCodes.Ok);
+    }
+}

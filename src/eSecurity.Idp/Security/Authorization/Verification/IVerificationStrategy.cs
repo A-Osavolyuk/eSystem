@@ -1,0 +1,8 @@
+﻿using eSystem.Core.Primitives;
+
+namespace eSecurity.Idp.Security.Authorization.Verification;
+
+public interface IVerificationStrategy<in TContext> where TContext : VerificationContext
+{
+    public ValueTask<Result> ExecuteAsync(TContext context, CancellationToken cancellationToken = default);
+}

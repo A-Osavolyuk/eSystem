@@ -1,0 +1,22 @@
+﻿using eSecurity.Idp.Data.Entities;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace eSecurity.Idp.Data.Configurations;
+
+public sealed class OpaqueTokenScopeConfiguration : IEntityTypeConfiguration<OpaqueTokenScopeEntity>
+{
+    public void Configure(EntityTypeBuilder<OpaqueTokenScopeEntity> builder)
+    {
+        builder.HasKey(x => x.Id);
+            
+        builder.HasOne(x => x.Token)
+            .WithMany(x => x.Scopes)
+            .HasForeignKey(x => x.TokenId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.HasOne(x => x.ClientScope)
+            .WithMany()
+            .HasForeignKey(x => x.ScopeId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+}

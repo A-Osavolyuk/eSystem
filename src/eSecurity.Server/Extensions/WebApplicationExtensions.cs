@@ -1,56 +1,22 @@
-using eSecurity.Server.Common.Middlewares;
-using eSecurity.Server.Data;
-using eSystem.Core.Http.Constants;
-using eSystem.Core.Primitives;
+﻿using eSecurity.Server.Data;
+using eSecurity.Server.Security.Cors;
 using eSystem.Core.Server.Data;
+using eSystem.ServiceDefaults;
 
 namespace eSecurity.Server.Extensions;
 
 public static class WebApplicationExtensions
 {
-    extension(WebApplication app)
+    public static async Task MapServices(this WebApplication app)
     {
-        public async Task MapServicesAsync()
-        {
-            app.UseExceptionHandler();
-            app.UseStatusCodePages(async context =>
-            {
-                var response = context.HttpContext.Response;
-                if (response.StatusCode == StatusCodes.Status405MethodNotAllowed)
-                {
-                    response.ContentType = ContentTypes.Application.Json;
-                    var error = new Error
-                    {
-                        Code = ErrorCode.MethodNotAllowed,
-                        Description = "Method not allowed"
-                    };
-                    
-                    await response.WriteAsJsonAsync(error);
-                }
-                else if (response.StatusCode == StatusCodes.Status415UnsupportedMediaType)
-                {
-                    response.ContentType = ContentTypes.Application.Json;
-                    var error = new Error
-                    {
-                        Code = ErrorCode.UnsupportedMediaType,
-                        Description = "Unsupported media type"
-                    };
-                    
-                    await response.WriteAsJsonAsync(error);
-                }
-            });
-            app.UseStaticFiles();
-            app.UseRouting();
-            app.UseSession();
-            app.UseMiddleware<RequestBufferingMiddleware>();
-            app.UseAuthentication();
-            app.UseAuthorization();
-            app.MapControllers();
-            app.MapOpenApi();
-            app.MapScalarApiReference();
-            app.MapDefaultEndpoints();
+        await app.ConfigureDatabaseAsync<AppDbContext>();
 
-            await app.ConfigureDatabaseAsync<AuthDbContext>();
-        }
+        app.UseRouting(); 
+        app.UseCors(CorsPolicies.SpaOnly);
+        app.UseAuthentication();
+        app.UseAuthorization();
+        app.MapReverseProxy();
+        app.MapControllers();
+        app.MapDefaultEndpoints();
     }
 }

@@ -1,0 +1,100 @@
+﻿@using eSecurity.Client.Common.Confirmation
+@using eSecurity.Client.Security.Identity
+@inject ISnackbar Snackbar
+@inject IUserService UserService
+
+@if (_confirmed)
+{
+    @AccessConfirmed
+}
+else
+{
+    if (_model is not null)
+    {
+        <MudGrid Justify="Justify.Center">
+            <MudItem xs="3" Style="margin-top: 50px">
+                <MudPaper Elevation="4" Class="pa-10">
+                    <MudStack Spacing="3">
+                        <MudStack AlignItems="AlignItems.Center">
+                            <MudIcon Style="font-size: 5rem" Icon="@Icons.Material.Filled.Lock"/>
+                        </MudStack>
+                        <MudTextM3 Typo="TypoM3.Headline" Size="Size.Medium" Align="Align.Center">
+                            Confirm access
+                        </MudTextM3>
+                        @switch (_model.PreferredMethod)
+                        {
+                            case VerificationMethod.EmailOtp:
+                            {
+                                <EmailConfirmation
+                                    Model="_model"
+                                    Context="Context"
+                                    OnMethodChanged="ChangeMethodAsync"
+                                    OnAccessConfirmed="ConfirmAccessAsync"/>
+                                break;
+                            }
+                            case VerificationMethod.Passkey:
+                            {
+                                <PasskeyConfirmation
+                                    Model="_model"
+                                    Context="Context"
+                                    OnMethodChanged="ChangeMethodAsync"
+                                    OnAccessConfirmed="ConfirmAccessAsync"/>
+                                break;
+                            }
+                            case VerificationMethod.AuthenticatorApp:
+                            {
+                                <AuthenticatorConfirmation
+                                    Model="_model"
+                                    Context="Context"
+                                    OnMethodChanged="ChangeMethodAsync"
+                                    OnAccessConfirmed="ConfirmAccessAsync"/>
+                                break;
+                            }
+                        }
+                    </MudStack>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+    }
+}
+
+@code {
+    [Parameter] public ConfirmationContext Context { get; set; } = null!;
+    [Parameter] public RenderFragment AccessConfirmed { get; set; } = null!;
+
+    private UserVerificationData? _model;
+    private bool _confirmed;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    private async Task ChangeMethodAsync(VerificationMethod method)
+    {
+        await InvokeAsync(StateHasChanged);
+        _model?.PreferredMethod = method;
+    }
+
+    private async Task ConfirmAccessAsync()
+    {
+        _confirmed = true;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task LoadAsync()
+    {
+        var result = await UserService.GetUserVerificationMethodsAsync();
+
+        if (result.Succeeded && result.TryGetValue<UserVerificationData>(out var value))
+        {
+            _model = value;
+        }
+        else
+        {
+            var error = result.GetError();
+            Snackbar.Add(error.Description, Severity.Error);
+        }
+    }
+
+}

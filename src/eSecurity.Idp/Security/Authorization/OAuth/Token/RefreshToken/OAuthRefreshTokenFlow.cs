@@ -1,0 +1,133 @@
+﻿using eSecurity.Idp.Data.Entities;
+using eSecurity.Idp.Security.Authentication.OpenIdConnect.Client;
+using eSecurity.Idp.Security.Cryptography.Tokens;
+using eSecurity.Idp.Security.Identity.User;
+using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Security.Authorization.OAuth;
+using eSystem.Core.Server.Security.Authorization.OAuth.Token.RefreshToken;
+
+namespace eSecurity.Idp.Security.Authorization.OAuth.Token.RefreshToken;
+
+public sealed class OAuthRefreshTokenFlow(
+    IClientManager clientManager,
+    ITokenManager tokenManager,
+    IUserManager userManager,
+    ITokenFactoryProvider tokenFactoryProvider,
+    IOptions<TokenConfigurations> options) : IRefreshTokenFlow
+{
+    private readonly IClientManager _clientManager = clientManager;
+    private readonly ITokenManager _tokenManager = tokenManager;
+    private readonly IUserManager _userManager = userManager;
+    private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
+    private readonly TokenConfigurations _tokenConfigurations = options.Value;
+
+    public async ValueTask<Result> ExecuteAsync(OpaqueTokenEntity token, RefreshTokenFlowContext flowContext,
+        CancellationToken cancellationToken = default)
+    {
+        var client = await _clientManager.FindByIdAsync(flowContext.ClientId, cancellationToken);
+        if (client is null)
+        {
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error
+            {
+                Code = ErrorCode.InvalidClient,
+                Description = "Invalid client."
+            });
+        }
+
+        if (!client.HasGrantType(flowContext.GrantType))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
+            {
+                Code = ErrorCode.UnsupportedGrantType,
+                Description = $"'{flowContext.GrantType}' is not supported by client."
+            });
+        }
+
+        if (client.Id != token.ClientId)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
+            {
+                Code = ErrorCode.InvalidGrant,
+                Description = "Invalid refresh token"
+            });
+        }
+
+        if (!client.AllowOfflineAccess)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
+            {
+                Code = ErrorCode.InvalidGrant,
+                Description = "Refresh token grant is not allowed for this client."
+            });
+        }
+
+        var user = await _userManager.FindBySubjectAsync(token.Subject, cancellationToken);
+        if (user is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
+            {
+                Code = ErrorCode.InvalidGrant,
+                Description = "Invalid refresh token."
+            });
+        }
+
+        var response = new RefreshTokenResponse
+        {
+            ExpiresIn = (int)_tokenConfigurations.DefaultAccessTokenLifetime.TotalSeconds,
+            TokenType = ResponseTokenType.Bearer,
+        };
+
+        var accessTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.AccessToken);
+        var accessTokenResult = await accessTokenFactory.CreateAsync(client, 
+            user, cancellationToken: cancellationToken);
+        
+        if (!accessTokenResult.Succeeded)
+        {
+            var error = accessTokenResult.GetError();
+            return Results.ServerError(ServerErrorCode.InternalServerError, error);
+        }
+
+        if (!accessTokenResult.TryGetValue(out var accessToken))
+        {
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+            {
+                Code = ErrorCode.ServerError,
+                Description = "Server error"
+            });
+        }
+            
+        response.AccessToken = accessToken;
+
+        if (client.RefreshTokenRotationEnabled)
+        {
+            var refreshTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.RefreshToken);
+            var refreshTokenResult = await refreshTokenFactory.CreateAsync(client, 
+                user, cancellationToken: cancellationToken);
+            
+            if (!refreshTokenResult.Succeeded)
+            {
+                var error = refreshTokenResult.GetError();
+                return Results.ServerError(ServerErrorCode.InternalServerError, error);
+            }
+
+            if (!refreshTokenResult.TryGetValue(out var refreshToken))
+            {
+                return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+                {
+                    Code = ErrorCode.ServerError,
+                    Description = "Server error"
+                });
+            }
+            
+            response.RefreshToken = refreshToken;
+
+            var revokeResult = await _tokenManager.RevokeAsync(token, cancellationToken);
+            return revokeResult.Succeeded ? Results.Success(SuccessCodes.Ok, response) : revokeResult;
+        }
+
+        response.RefreshToken = flowContext.RefreshToken;
+
+        return Results.Success(SuccessCodes.Ok, response);
+    }
+}

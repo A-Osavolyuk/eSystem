@@ -1,0 +1,7 @@
+﻿namespace eSecurity.Idp.Security.Cookies;
+
+public static class DefaultCookies
+{
+    public const string External = "eSecurity.OAuth.State";
+    public const string Session = "eSecurity.OIDC.Session";
+}

@@ -1,0 +1,21 @@
+﻿using eSecurity.Idp.Data.Entities;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace eSecurity.Idp.Data.Configurations;
+
+public sealed class PublicSubjectConfiguration : IEntityTypeConfiguration<PublicSubjectEntity>
+{
+    public void Configure(EntityTypeBuilder<PublicSubjectEntity> builder)
+    {
+        builder.HasKey(p => p.Id);
+        builder.Property(x => x.Subject).HasMaxLength(36);
+        
+        builder.HasIndex(x => x.Subject)
+            .HasDatabaseName("IX_PublicSubject_Subject")
+            .IsUnique();
+        
+        builder.HasOne(x => x.User)
+            .WithOne(x => x.PublicSubject)
+            .HasForeignKey<PublicSubjectEntity>(x => x.UserId);
+    }
+}

@@ -1,0 +1,18 @@
+﻿using System.Text.Json.Serialization;
+using eSystem.Core.Enums;
+using eSystem.Core.Enums.Serialization;
+
+namespace eSecurity.Idp.Security.Cryptography.Hashing;
+
+[JsonConverter(typeof(JsonEnumValueConverter<HashAlgorithm>))]
+public enum HashAlgorithm
+{
+    [EnumValue("pbkdf2")]
+    Pbkdf2,
+    
+    [EnumValue("sha256")]
+    Sha256,
+    
+    [EnumValue("sha512")]
+    Sha512
+}

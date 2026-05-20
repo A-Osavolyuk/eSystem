@@ -1,0 +1,30 @@
+﻿using eSecurity.Idp.Data.Entities;
+using eSystem.Core.Server.Data.Conversion;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace eSecurity.Idp.Data.Configurations;
+
+public sealed class AuthorizationCodeConfiguration : IEntityTypeConfiguration<AuthorizationCodeEntity>
+{
+    public void Configure(EntityTypeBuilder<AuthorizationCodeEntity> builder)
+    {
+        builder.HasKey(x => x.Id);
+        builder.Property(x => x.RedirectUri).HasMaxLength(200);
+        builder.Property(x => x.CodeChallenge).HasMaxLength(200);
+        builder.Property(x => x.CodeChallengeMethod).HasMaxLength(16);
+        builder.Property(x => x.Protocol).HasEnumConversion();
+        
+        builder.Property(x => x.Code).HasMaxLength(20);
+        builder.Property(x => x.Nonce).HasMaxLength(200);
+
+        builder.HasOne(x => x.User)
+            .WithMany()
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);;
+
+        builder.HasOne(x => x.Client)
+            .WithMany()
+            .HasForeignKey(x => x.ClientId)
+            .OnDelete(DeleteBehavior.Cascade);;
+    }
+}

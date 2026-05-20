@@ -1,0 +1,43 @@
+@page "/connect/logout"
+
+@inherits PageBase
+
+<PageTitle>Logout from eSystem Account</PageTitle>
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="3" Style="margin-top: 50px;">
+        <MudStack Spacing="2">
+            <MudPaper Elevation="4" Class="px-5 py-4">
+                <MudStack Spacing="3">
+                    <MudGrid>
+                        <MudItem xs="1">
+                            <MudAvatar Size="Size.Medium">
+                                <MudImage
+                                    Src="/images/avatar.jpg"
+                                    Alt="Avatar"
+                                    FallbackSrc="/images/avatar.jpg"/>
+                            </MudAvatar>
+                        </MudItem>
+                        <MudItem xs="10">
+                            <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+                                <MudTextM3 Class="pt-2">
+                                    Signed-in as <strong>@UserState.Username</strong>
+                                </MudTextM3>
+                            </MudStack>
+                        </MudItem>
+                    </MudGrid>
+                    <MudButton
+                        Size="Size.Large"
+                        Color="Color.Error"
+                        Variant="Variant.Outlined"
+                        ButtonType="ButtonType.Button">
+                        Sign out
+                    </MudButton>
+                </MudStack>
+            </MudPaper>
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@code {
+}

@@ -1,0 +1,172 @@
+﻿using eSecurity.Idp.Data.Entities;
+using eSecurity.Idp.Security.Authentication.Lockout;
+using eSecurity.Idp.Security.Authentication.OpenIdConnect.Session;
+using eSecurity.Idp.Security.Authentication.Session;
+using eSecurity.Idp.Security.Authentication.TwoFactor;
+using eSecurity.Idp.Security.Authorization.Devices;
+using eSecurity.Idp.Security.Authorization.OAuth.LinkedAccount;
+using eSecurity.Idp.Security.Credentials.PublicKey;
+using eSecurity.Idp.Security.Identity.User;
+using eSecurity.Core.Security.Authentication.SignIn;
+using eSystem.Core.Http.Extensions;
+using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Utilities.Query;
+using Session_SessionOptions = eSecurity.Idp.Security.Authentication.OpenIdConnect.Session.SessionOptions;
+
+namespace eSecurity.Idp.Security.Authentication.SignIn.Strategies;
+
+public sealed class OAuthSignInStrategy(
+    IUserManager userManager,
+    IDeviceManager deviceManager,
+    ILockoutManager lockoutManager,
+    IHttpContextAccessor httpContextAccessor,
+    ILinkedAccountManager linkedAccountManager,
+    ITwoFactorManager twoFactorManager,
+    ISessionManager sessionManager,
+    IPasskeyManager passkeyManager,
+    IAuthenticationSessionManager authenticationSessionManager,
+    IOptions<Session_SessionOptions> options) : ISignInStrategy
+{
+    private readonly IUserManager _userManager = userManager;
+    private readonly IDeviceManager _deviceManager = deviceManager;
+    private readonly ILockoutManager _lockoutManager = lockoutManager;
+    private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
+    private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
+    private readonly ISessionManager _sessionManager = sessionManager;
+    private readonly IPasskeyManager _passkeyManager = passkeyManager;
+    private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
+    private readonly Session_SessionOptions _options = options.Value;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
+
+    public async ValueTask<Result> ExecuteAsync(SignInPayload payload,
+        CancellationToken cancellationToken = default)
+    {
+        if (payload is not OAuthSignInPayload oauthPayload)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
+            {
+                Code = ErrorCode.InvalidPayloadType,
+                Description = "Invalid payload"
+            });
+        }
+
+        var authenticationSession = await _authenticationSessionManager.FindByIdAsync(oauthPayload.Sid, cancellationToken);
+        if (authenticationSession is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
+            {
+                Code = ErrorCode.InvalidSession,
+                Description = "Invalid session"
+            });
+        }
+
+        var user = await _userManager.FindByEmailAsync(oauthPayload.Email, cancellationToken);
+        if (user is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotAcceptable, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "User not found."
+            });
+        }
+
+        var userAgent = _httpContext.GetUserAgent();
+        var ipAddress = _httpContext.GetIpV4();
+        var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
+        if (device is null)
+        {
+            var clientInfo = _httpContext.GetClientInfo();
+            device = new UserDeviceEntity
+            {
+                Id = Guid.CreateVersion7(),
+                UserId = user.Id,
+                UserAgent = userAgent,
+                IpAddress = ipAddress,
+                Browser = clientInfo.UA.ToString(),
+                Os = clientInfo.OS.ToString(),
+                Device = clientInfo.Device.ToString(),
+                IsBlocked = false,
+                FirstSeenAt = DateTimeOffset.UtcNow
+            };
+
+            var result = await _deviceManager.CreateAsync(device, cancellationToken);
+            if (!result.Succeeded) return result;
+        }
+
+        if (device.IsBlocked)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
+            {
+                Code = ErrorCode.BlockedDevice,
+                Description = "Device is blocked"
+            });
+        }
+
+        var lockoutState = await _lockoutManager.GetAsync(user, cancellationToken);
+        if (lockoutState is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "State not found"
+            });
+        }
+        
+        var linkedAccount = await _linkedAccountManager.GetAsync(user, oauthPayload.Provider, cancellationToken);
+        if (linkedAccount is null)
+        {
+            linkedAccount = new UserLinkedAccountEntity
+            {
+                Id = Guid.CreateVersion7(),
+                UserId = user.Id,
+                Type = oauthPayload.Provider
+            };
+            
+            var connectResult = await _linkedAccountManager.CreateAsync(linkedAccount, cancellationToken);
+            if (!connectResult.Succeeded) return connectResult;
+        }
+        
+        authenticationSession.OAuthFlow = OAuthFlow.SignIn;
+        authenticationSession.UserId = user.Id;
+        if (await _twoFactorManager.IsEnabledAsync(user, cancellationToken))
+        {
+            var hasPasskey = await _passkeyManager.HasAsync(user, cancellationToken);
+            authenticationSession.AllowMfa(hasPasskey
+                ? [AuthenticationMethodReference.SoftwareKey, AuthenticationMethodReference.OneTimePassword]
+                : [AuthenticationMethodReference.OneTimePassword]);
+            
+            var sessionResult = await _authenticationSessionManager.UpdateAsync(authenticationSession, cancellationToken);
+            if (!sessionResult.Succeeded) return sessionResult;
+            
+            return Results.Redirect(RedirectionCode.Found, QueryBuilder.Create()
+                .WithUri(oauthPayload.ReturnUri)
+                .WithQueryParam("sid", authenticationSession.Id.ToString())
+                .WithQueryParam("state", oauthPayload.State)
+                .Build());
+        }
+        else
+        {
+            var session = new SessionEntity
+            {
+                Id = Guid.CreateVersion7(),
+                UserId = user.Id,
+                ExpireDate = DateTimeOffset.UtcNow.Add(_options.Timestamp),
+            };
+            
+            session.AddMethods(authenticationSession.AuthenticationMethods.Select(x => x.MethodReference));
+            await _sessionManager.CreateAsync(session, cancellationToken);
+            
+            authenticationSession.SessionId = session.Id;
+            var sessionResult = await _authenticationSessionManager.UpdateAsync(authenticationSession, cancellationToken);
+            if (!sessionResult.Succeeded) return sessionResult;
+            
+            return Results.Redirect(RedirectionCode.Found, QueryBuilder.Create()
+                .WithUri(oauthPayload.ReturnUri)
+                .WithQueryParam("sid", authenticationSession.Id.ToString())
+                .WithQueryParam("state", oauthPayload.State)
+                .Build());
+        }
+    }
+}

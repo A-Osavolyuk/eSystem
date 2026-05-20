@@ -4,12 +4,51 @@
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <LangVersion>14</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\eSystem.Core.Server\eSystem.Core.Server.csproj" />
+      <ProjectReference Include="..\eSecurity.WebAuthN\eSecurity.WebAuthN.csproj" />
+      <ProjectReference Include="..\eSystem.Core.Security\eSystem.Core.Security.csproj" />
       <ProjectReference Include="..\eSystem.Core\eSystem.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Update="Requests\Pages\AccessDenied.razor">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      </Content>
+      <Content Update="Requests\Pages\NotFound.razor">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      </Content>
+      <Content Update="Requests\Pages\Settings.razor">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      </Content>
+      <Content Update="Requests\Pages\Profile.razor">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      </Content>
+      <Content Update="Requests\Pages\Account\AccountLocked.razor">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      </Content>
+      <Content Update="Requests\Pages\Account\AccountRegistration.razor">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      </Content>
+      <Content Update="Requests\Pages\Account\EmailVerification.razor">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      </Content>
+      <Content Update="Requests\Pages\Account\ForgotPassword.razor">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      </Content>
+      <Content Update="Requests\Pages\Account\Login.razor">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      </Content>
+      <Content Update="Requests\Pages\Account\PasskeySignIn.razor">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      </Content>
+      <Content Update="Requests\Pages\Account\PasswordSignIn.razor">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      </Content>
+      <Content Update="Requests\Pages\Account\SignUp.razor">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      </Content>
     </ItemGroup>
 
 </Project>

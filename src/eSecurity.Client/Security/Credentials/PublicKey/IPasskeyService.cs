@@ -1,4 +1,5 @@
-using eSecurity.Core.Common.Requests;
+using eSecurity.Client.Common.Http;
+using eSecurity.Core.Requests;
 
 namespace eSecurity.Client.Security.Credentials.PublicKey;
 

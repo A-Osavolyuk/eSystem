@@ -1,0 +1,63 @@
+﻿using eSecurity.Idp.Data.Entities;
+using eSecurity.Idp.Security.Authorization.OAuth.Token;
+using eSecurity.Idp.Security.Cryptography.Hashing;
+using eSecurity.Idp.Security.Identity.User;
+using eSystem.Core.Primitives;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
+
+namespace eSecurity.Idp.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
+
+public sealed class LoginTokenHintUserResolver(
+    ITokenManager tokenManager,
+    IHasherProvider hasherProvider,
+    IUserManager userManager) : IUserResolver
+{
+    private readonly ITokenManager _tokenManager = tokenManager;
+    private readonly IUserManager _userManager = userManager;
+    private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
+
+    public async Task<TypedResult<UserEntity>> ResolveAsync(BackchannelAuthenticationRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrEmpty(request.LoginTokenHint))
+        {
+            return TypedResult<UserEntity>.Fail(new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "login_token_hint is invalid"
+            });
+        }
+        
+        var hash = _hasher.Hash(request.LoginTokenHint);
+        var token = await _tokenManager.FindByHashAsync(hash, cancellationToken);
+        if (token?.TokenType is not OpaqueTokenType.LoginToken)
+        {
+            return TypedResult<UserEntity>.Fail(new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "login_token_hint is invalid"
+            });
+        }
+
+        if (token.ExpiredAt < DateTimeOffset.UtcNow)
+        {
+            return TypedResult<UserEntity>.Fail(new Error()
+            {
+                Code = ErrorCode.ExpiredLoginTokenHint,
+                Description = "login_token_hint is expired"
+            });
+        }
+
+        var user = await _userManager.FindByIdAsync(Guid.Parse(token.Subject), cancellationToken);
+        if (user is null)
+        {
+            return TypedResult<UserEntity>.Fail(new Error()
+            {
+                Code = ErrorCode.UnknownUserId,
+                Description = "Unknown user"
+            });
+        }
+        
+        return TypedResult<UserEntity>.Success(user);
+    }
+}

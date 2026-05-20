@@ -1,0 +1,151 @@
+﻿@using eSecurity.Client.Common.Confirmation
+@using eSecurity.Client.Common.JS.WebAuthN
+@using eSecurity.Client.Security.Authorization.Verification
+@using eSecurity.Client.Security.Credentials.PublicKey
+@using eSecurity.WebAuthN
+
+@inject WebAuthNManager WebAuthNManager
+@inject ISnackbar Snackbar
+@inject IVerificationService VerificationService
+@inject IPasskeyService PasskeyService
+
+<MudStack Spacing="3">
+    <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+            When you are ready, authenticate using the button below.
+        </MudTextM3>
+        @if (_isLoading)
+        {
+            <MudStack Row="true" Justify="Justify.Center" AlignItems="AlignItems.Center">
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" Color="Color.Primary"/>
+                <MudTextM3 Typo="TypoM3.Body" Size="Size.Small" Class="opacity-50">
+                    Waiting for input from browser interaction...
+                </MudTextM3>
+            </MudStack>
+        }
+        else
+        {
+            if (_showError)
+            {
+                <MudButton
+                    ButtonType="ButtonType.Button"
+                    Variant="Variant.Filled"
+                    Color="Color.Primary"
+                    Size="Size.Large"
+                    FullWidth="true"
+                    OnClick="@(async () => await OnVerifyAsync())">
+                    Retry passkey
+                </MudButton>
+                <MudAlert
+                    Severity="Severity.Error"
+                    Variant="Variant.Outlined"
+                    Class="w-100"
+                    Dense="true"
+                    ContentAlignment="HorizontalAlignment.Center">
+                    <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Align="Align.Center" Class="w-100">
+                        Failed on using passkey
+                    </MudTextM3>
+                </MudAlert>
+            }
+            else
+            {
+                <MudButton
+                    ButtonType="ButtonType.Button"
+                    Variant="Variant.Filled"
+                    Color="Color.Primary"
+                    Size="Size.Large"
+                    FullWidth="true"
+                    OnClick="@(async () => await OnVerifyAsync())">
+                    Use passkey
+                </MudButton>
+            }
+        }
+    </MudStack>
+    <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center" Justify="Justify.Center">
+        <MudDivider Style="max-width: 45%"/>
+        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">OR</MudTextM3>
+        <MudDivider Style="max-width: 45%"/>
+    </MudStack>
+    <MudStack Spacing="2">
+        <MudButton
+            Color="Color.Primary"
+            Size="Size.Large"
+            Variant="Variant.Filled"
+            OnClick="@(async () => await OnMethodChanged.InvokeAsync(VerificationMethod.EmailOtp))">
+            Continue with email
+        </MudButton>
+        @if (Model.AuthenticatorEnabled)
+        {
+            <MudButton
+                Color="Color.Primary"
+                Size="Size.Large"
+                Variant="Variant.Filled"
+                OnClick="@(async () => await OnMethodChanged.InvokeAsync(VerificationMethod.AuthenticatorApp))">
+                Continue with authenticator app
+            </MudButton>
+        }
+    </MudStack>
+</MudStack>
+
+@code {
+    [Parameter] public EventCallback<Guid> OnAccessConfirmed { get; set; }
+
+    [Parameter] public EventCallback<VerificationMethod> OnMethodChanged { get; set; }
+
+    [Parameter] public ConfirmationContext Context { get; set; } = null!;
+
+    [Parameter] public UserVerificationData Model { get; set; } = new();
+
+    private bool _isLoading;
+    private bool _showError;
+
+    private async Task OnVerifyAsync()
+    {
+        _isLoading = true;
+        _showError = false;
+        var request = new GenerateRequestOptionsRequest();
+        var result = await PasskeyService.GenerateRequestOptionsAsync(request);
+
+        if (result.Succeeded && result.TryGetValue<PublicKeyCredentialRequestOptions>(out var value))
+        {
+            await VerifyAsync(value!);
+        }
+        else
+        {
+            _showError = true;
+            _isLoading = false;
+            Snackbar.Add(result.GetError().Description, Severity.Error);
+        }
+    }
+
+    private async Task VerifyAsync(PublicKeyCredentialRequestOptions options)
+    {
+        var authenticateResult = await WebAuthNManager.AuthenticateAsync(options);
+        if (authenticateResult.Success)
+        {
+            var credential = authenticateResult.Get<PublicKeyCredential>();
+            var request = new VerificationRequest()
+            {
+                Action = Context.Action,
+                Purpose = Context.Purpose,
+                Method = VerificationMethod.Passkey,
+                Payload = new PasskeyVerificationPayload()
+                {
+                    Credential = credential,
+                }
+            };
+            
+            var result = await VerificationService.VerifyAsync(request);
+            if (result.Succeeded && result.TryGetValue<VerificationResponse>(out var response) && response is not null)
+            {
+                _showError = false;
+                await OnAccessConfirmed.InvokeAsync(response.VerificationId);
+            }
+            else Snackbar.Add(result.GetError().Description, Severity.Error);
+        }
+        else _showError = true;
+
+        _isLoading = false;
+    }
+
+}

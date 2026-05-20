@@ -1,0 +1,100 @@
+﻿@using eSecurity.Client.Common.JS.WebAuthN
+@using eSecurity.Client.Security.Credentials.PublicKey
+@using eSecurity.Core.Security.Authentication.TwoFactor
+@using eSecurity.WebAuthN
+
+@inject WebAuthNManager WebAuthNManager
+@inject ISnackbar Snackbar
+@inject IPasskeyService PasskeyService
+
+<MudStack Spacing="3">
+    <MudStack Spacing="4" Class="w-100">
+        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Align="Align.Center">
+            Authenticate using your passkey.
+        </MudTextM3>
+        <MudStack Spacing="2">
+            <MudButton
+                FullWidth="true"
+                Size="Size.Large"
+                Color="Color.Primary"
+                Variant="Variant.Filled"
+                ButtonType="ButtonType.Button"
+                OnClick="@(async () => await OnSignInAsync())">
+                Use passkey
+            </MudButton>
+        </MudStack>
+    </MudStack>
+    <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center" Justify="Justify.Center">
+        <MudDivider Style="max-width: 45%"/>
+        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">OR</MudTextM3>
+        <MudDivider Style="max-width: 45%"/>
+    </MudStack>
+    <MudStack Spacing="2">
+        <MudButton
+            FullWidth="true"
+            Color="Color.Primary"
+            Variant="Variant.Filled"
+            ButtonType="ButtonType.Button"
+            Size="Size.Large"
+            OnClick="@(async () => await OnChangeMethod.InvokeAsync(TwoFactorMethod.AuthenticatorApp))">
+            Authenticator app
+        </MudButton>
+        @if (Methods.Any(x => x == TwoFactorMethod.Sms))
+        {
+            <MudButton
+                Color="Color.Primary"
+                Variant="Variant.Filled"
+                ButtonType="ButtonType.Button"
+                Size="Size.Large"
+                OnClick="@(async () => await OnChangeMethod.InvokeAsync(TwoFactorMethod.Sms))">
+                SMS
+            </MudButton>
+        }
+        <MudButton
+            FullWidth="true"
+            Color="Color.Error"
+            Variant="Variant.Filled"
+            ButtonType="ButtonType.Button"
+            Size="Size.Large"
+            OnClick="@(async () => await OnChangeMethod.InvokeAsync(TwoFactorMethod.RecoveryCode))">
+            Recovery codes
+        </MudButton>
+    </MudStack>
+</MudStack>
+
+@code {
+    [Parameter] 
+    public EventCallback<TwoFactorMethod> OnChangeMethod { get; set; }
+
+    [Parameter] 
+    public EventCallback<TwoFactorPayload> OnSignIn { get; set; }
+
+    [Parameter] 
+    public List<TwoFactorMethod> Methods { get; set; } = [];
+
+    private async Task OnSignInAsync()
+    {
+        var request = new GenerateRequestOptionsRequest();
+        var result = await PasskeyService.GenerateRequestOptionsAsync(request);
+
+        if (result.Succeeded && result.TryGetValue<PublicKeyCredentialRequestOptions>(out var options))
+        {
+            var authenticateResult = await WebAuthNManager.AuthenticateAsync(options!);
+            if (authenticateResult.Success)
+            {
+                var credential = authenticateResult.Get<PublicKeyCredential>();
+                await SignInAsync(credential);
+            }
+        }
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
+    }
+
+    private async Task SignInAsync(PublicKeyCredential credential)
+    {
+        await OnSignIn.InvokeAsync(new PasskeyTwoFactorPayload()
+        {
+            Credential = credential
+        });
+    }
+
+}

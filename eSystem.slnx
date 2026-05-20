@@ -3,6 +3,7 @@
   <Folder Name="/src/" />
   <Folder Name="/src/Core/">
     <Project Path="src/eSystem.Core.Http/eSystem.Core.Http.csproj" />
+    <Project Path="src/eSystem.Core.Security/eSystem.Core.Security.csproj" />
     <Project Path="src/eSystem.Core.Server/eSystem.Core.Server.csproj" />
     <Project Path="src\eSystem.Core\eSystem.Core.csproj" />
   </Folder>
@@ -19,15 +20,11 @@
     <Project Path="src\eSystem.Telegram.Bot\eSystem.Telegram.Bot.csproj" />
   </Folder>
   <Folder Name="/src/eSecurity/">
-    <Project Path="src\eSecurity.Core\eSecurity.Core.csproj" />
-  </Folder>
-  <Folder Name="/src/eSecurity/Backend/">
-    <Project Path="src\eSecurity.Server\eSecurity.Server.csproj" />
-  </Folder>
-  <Folder Name="/src/eSecurity/Frontend/">
-    <Project Path="src/eSecurity.Client.BFF/eSecurity.Client.BFF.csproj" />
-    <Project Path="src/eSecurity.Client.UI/eSecurity.Client.UI.csproj" />
-    <Project Path="src\eSecurity.Client\eSecurity.Client.csproj" />
+    <Project Path="src/eSecurity.Client/eSecurity.Client.csproj" />
+    <Project Path="src/eSecurity.Core/eSecurity.Core.csproj" />
+    <Project Path="src/eSecurity.Idp/eSecurity.Idp.csproj" />
+    <Project Path="src/eSecurity.Server/eSecurity.Server.csproj" />
+    <Project Path="src/eSecurity.WebAuthN/eSecurity.WebAuthN.csproj" />
   </Folder>
   <Folder Name="/src/eStorage/">
     <Project Path="src\eSystem.Storage.Api\eSystem.Storage.Api.csproj" />

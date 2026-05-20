@@ -1,4 +1,4 @@
-﻿using eSecurity.Core.Common.DTOs;
+﻿using eSecurity.Core.DTOs;
 
 namespace eSecurity.Client.Common.Models;
 

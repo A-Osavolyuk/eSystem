@@ -1,0 +1,18 @@
+﻿using eSecurity.Idp.Data.Entities;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace eSecurity.Idp.Data.Configurations;
+
+public sealed class UserSecretConfiguration : IEntityTypeConfiguration<UserSecretEntity>
+{
+    public void Configure(EntityTypeBuilder<UserSecretEntity> builder)
+    {
+        builder.HasKey(x => x.Id);
+        builder.Property(x => x.ProtectedSecret).HasMaxLength(200);
+        
+        builder.HasOne(x => x.User)
+            .WithOne()
+            .HasForeignKey<UserSecretEntity>(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+}

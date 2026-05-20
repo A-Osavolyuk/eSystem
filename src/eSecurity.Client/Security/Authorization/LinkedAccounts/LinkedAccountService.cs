@@ -1,4 +1,5 @@
-using eSecurity.Core.Common.Requests;
+using eSecurity.Client.Common.Http;
+using eSecurity.Core.Requests;
 
 namespace eSecurity.Client.Security.Authorization.LinkedAccounts;
 
@@ -13,9 +14,5 @@ public class LinkedAccountService(IApiClient apiClient) : ILinkedAccountService
                 Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/LinkedAccount/disconnect"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.Bearer
             });
 }

@@ -1,0 +1,206 @@
+﻿using eSecurity.Idp.Data;
+using eSecurity.Idp.Data.Entities;
+using eSecurity.Core.Security.Identity;
+using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
+
+namespace eSecurity.Idp.Security.Identity.Phone;
+
+public class PhoneManager(AuthDbContext context) : IPhoneManager
+{
+    private readonly AuthDbContext _context = context;
+
+    public async ValueTask<List<UserPhoneNumberEntity>> GetAllAsync(UserEntity user,
+        CancellationToken cancellationToken)
+    {
+        return await _context.UserPhoneNumbers
+            .Where(x => x.UserId == user.Id)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async ValueTask<List<UserPhoneNumberEntity>> GetAllAsync(UserEntity user, PhoneNumberType type,
+        CancellationToken cancellationToken)
+    {
+        return await _context.UserPhoneNumbers
+            .Where(x => x.UserId == user.Id && x.Type == type)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async ValueTask<UserPhoneNumberEntity?> FindByTypeAsync(UserEntity user, PhoneNumberType type,
+        CancellationToken cancellationToken)
+    {
+        return await _context.UserPhoneNumbers.FirstOrDefaultAsync(
+            x => x.UserId == user.Id && x.Type == type, cancellationToken);
+    }
+
+    public async ValueTask<UserPhoneNumberEntity?> FindByPhoneAsync(UserEntity user, string phone,
+        CancellationToken cancellationToken)
+    {
+        return await _context.UserPhoneNumbers.FirstOrDefaultAsync(
+            x => x.UserId == user.Id && x.PhoneNumber == phone, cancellationToken);
+    }
+
+    public async ValueTask<Result> SetAsync(UserEntity user, string phoneNumber, PhoneNumberType type,
+        CancellationToken cancellationToken = default)
+    {
+        if (await ExistsAsync(phoneNumber, cancellationToken))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Phone number is already taken"
+            });
+        }
+
+        var userPhoneNumber = new UserPhoneNumberEntity
+        {
+            Id = Guid.CreateVersion7(),
+            UserId = user.Id,
+            PhoneNumber = phoneNumber,
+            Type = type,
+            IsVerified = true,
+            VerifiedAt = DateTimeOffset.UtcNow
+        };
+
+        await _context.UserPhoneNumbers.AddAsync(userPhoneNumber, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return Results.Success(SuccessCodes.Ok);
+    }
+
+    public async ValueTask<Result> VerifyAsync(UserEntity user, string phoneNumber,
+        CancellationToken cancellationToken = default)
+    {
+        var userPhoneNumber = await _context.UserPhoneNumbers.FirstOrDefaultAsync(
+            x => x.UserId == user.Id && x.PhoneNumber == phoneNumber, cancellationToken);
+
+        if (userPhoneNumber == null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "Phone number not found"
+            });
+        }
+
+        userPhoneNumber.IsVerified = true;
+        userPhoneNumber.VerifiedAt = DateTimeOffset.UtcNow;
+
+        _context.UserPhoneNumbers.Update(userPhoneNumber);
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return Results.Success(SuccessCodes.Ok);
+    }
+
+    public async ValueTask<Result> ResetAsync(UserEntity user, string currentEmail, string newPhoneNumber,
+        CancellationToken cancellationToken = default)
+    {
+        var userPhoneNumber = await _context.UserPhoneNumbers.FirstOrDefaultAsync(
+            x => x.UserId == user.Id && x.PhoneNumber == currentEmail, cancellationToken);
+
+        if (userPhoneNumber is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "Phone number not found"
+            });
+        }
+
+        userPhoneNumber.PhoneNumber = newPhoneNumber;
+        userPhoneNumber.IsVerified = true;
+        userPhoneNumber.VerifiedAt = DateTimeOffset.UtcNow;
+
+        _context.UserPhoneNumbers.Update(userPhoneNumber);
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return Results.Success(SuccessCodes.Ok);
+    }
+
+    public async ValueTask<Result> RemoveAsync(UserEntity user, string phoneNumber,
+        CancellationToken cancellationToken = default)
+    {
+        var userPhoneNumber = await _context.UserPhoneNumbers.FirstOrDefaultAsync(
+            x => x.UserId == user.Id && x.PhoneNumber == phoneNumber, cancellationToken);
+
+        if (userPhoneNumber == null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "Phone number not found"
+            });
+        }
+
+        _context.UserPhoneNumbers.Remove(userPhoneNumber);
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return Results.Success(SuccessCodes.Ok);
+    }
+
+    public async ValueTask<Result> ChangeAsync(UserEntity user, string currentPhoneNumber,
+        string newPhoneNumber,
+        CancellationToken cancellationToken = default)
+    {
+        var userPhoneNumber = await _context.UserPhoneNumbers.FirstOrDefaultAsync(
+            x => x.UserId == user.Id && x.PhoneNumber == currentPhoneNumber, cancellationToken);
+
+        if (userPhoneNumber is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "Phone number not found"
+            });
+        }
+
+        userPhoneNumber.PhoneNumber = newPhoneNumber;
+        userPhoneNumber.IsVerified = true;
+        userPhoneNumber.VerifiedAt = DateTimeOffset.UtcNow;
+
+        _context.UserPhoneNumbers.Update(userPhoneNumber);
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return Results.Success(SuccessCodes.Ok);
+    }
+
+    public async ValueTask<Result> AddAsync(UserEntity user, string phoneNumber, PhoneNumberType type,
+        CancellationToken cancellationToken = default)
+    {
+        if (await ExistsAsync(phoneNumber, cancellationToken))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Phone number is already taken"
+            });
+        }
+
+        var userPhoneNumber = new UserPhoneNumberEntity
+        {
+            Id = Guid.CreateVersion7(),
+            UserId = user.Id,
+            Type = type,
+            PhoneNumber = phoneNumber,
+        };
+
+        _context.Users.Update(user);
+        await _context.UserPhoneNumbers.AddAsync(userPhoneNumber, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return Results.Success(SuccessCodes.Ok);
+    }
+
+    public async ValueTask<bool> IsTakenAsync(string phoneNumber,
+        CancellationToken cancellationToken = default) => await ExistsAsync(phoneNumber, cancellationToken);
+
+    public async ValueTask<bool> HasAsync(UserEntity user, PhoneNumberType type,
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.UserPhoneNumbers.AnyAsync(
+            x => x.UserId == user.Id && x.Type == PhoneNumberType.Primary, cancellationToken);
+    }
+
+    private async ValueTask<bool> ExistsAsync(string phoneNumber, CancellationToken cancellationToken = default)
+        => await _context.UserPhoneNumbers.AnyAsync(x => x.PhoneNumber == phoneNumber, cancellationToken);
+}

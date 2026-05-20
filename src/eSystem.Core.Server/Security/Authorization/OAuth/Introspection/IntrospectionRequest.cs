@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using eSystem.Core.Security.Authorization.OAuth;
+using Microsoft.AspNetCore.Mvc;
 
 namespace eSystem.Core.Server.Security.Authorization.OAuth.Introspection;
 

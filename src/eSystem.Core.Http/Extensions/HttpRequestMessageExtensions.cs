@@ -2,7 +2,7 @@ using System.Text;
 using System.Text.Json;
 using eSystem.Core.Form;
 using eSystem.Core.Http.Constants;
-using eSystem.Core.Server.Security.Cryptography.Encoding;
+using eSystem.Core.Server.Encoding;
 
 namespace eSystem.Core.Http.Extensions;
 

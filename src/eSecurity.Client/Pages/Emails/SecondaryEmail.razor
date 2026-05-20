@@ -1,0 +1,141 @@
+﻿@using eSecurity.Client.Common.Confirmation
+@using eSecurity.Client.Security.Identity
+@using eSecurity.Core.Security.Identity.Constants
+
+@inject ISnackbar Snackbar
+
+@inject ConfirmationManager ConfirmationManager
+@inject IEmailService EmailService
+
+<MudPaper Elevation="4" Class="pa-5">
+    <MudStack Spacing="0">
+        <MudStack Row="true" Spacing="1">
+            <MudTextM3 Class="pt-1" Typo="TypoM3.Body" Size="Size.Large">
+                @Email.Email
+            </MudTextM3>
+            <MudChip
+                T="string"
+                Class="mx-0"
+                Color="Color.Secondary"
+                Variant="Variant.Outlined"
+                Size="Size.Small">
+                Secondary
+            </MudChip>
+            @if (Email.IsVerified && Email.VerifiedAt.HasValue)
+            {
+                <MudTooltip
+                    Text="@($"Verified at: {Email.VerifiedAt?.ToString("MM/dd/yyyy HH:mm")}")">
+                    <MudChip
+                        T="string"
+                        Class="mx-0"
+                        Color="Color.Success"
+                        Variant="Variant.Outlined"
+                        Size="Size.Small">
+                        Verified
+                    </MudChip>
+                </MudTooltip>
+            }
+            else
+            {
+                <MudTooltip Text="This email address is not verified">
+                    <MudChip
+                        T="string"
+                        Class="mx-0"
+                        Color="Color.Error"
+                        Variant="Variant.Outlined"
+                        Size="Size.Small">
+                        Unverified
+                    </MudChip>
+                </MudTooltip>
+            }
+            @if (Email.UpdatedAt.HasValue)
+            {
+                <MudTooltip
+                    Text="@($"Last change: {Email.UpdatedAt?.ToString("MM/dd/yyyy HH:mm")}")">
+                    <MudChip
+                        T="string"
+                        Class="mx-0"
+                        Color="Color.Warning"
+                        Variant="Variant.Outlined"
+                        Size="Size.Small">
+                        Changed
+                    </MudChip>
+                </MudTooltip>
+            }
+            <MudSpacer/>
+            <MudMenu
+                Dense="true">
+                <ActivatorContent>
+                    <MudIcon Icon="@Icons.Material.Filled.MoreHoriz"/>
+                </ActivatorContent>
+                <ChildContent>
+                    @if (!Email.IsVerified)
+                    {
+                        <MudMenuItem Href=@(OnVerify())>
+                            <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                                Verify email
+                            </MudTextM3>
+                        </MudMenuItem>
+                    }
+                    else
+                    {
+                        <MudMenuItem OnClick=@(async () => await OnRemove(Email.Email))>
+                            <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Color="Color.Error">
+                                Remove email
+                            </MudTextM3>
+                        </MudMenuItem>
+                    }
+                </ChildContent>
+            </MudMenu>
+        </MudStack>
+        <MudTextM3 Class="opacity-50" Typo="TypoM3.Body" Size="Size.Small">
+            These email address are additional.
+            You can change their roles or just use in your personal purposes.
+        </MudTextM3>
+    </MudStack>
+</MudPaper>
+
+
+@code {
+    [Parameter] 
+    public UserEmailDto Email { get; set; } = new();
+
+    [Parameter] 
+    public EventCallback OnRefresh { get; set; }
+
+    private string OnVerify()
+    {
+        return QueryBuilder.Create()
+            .WithUri(Links.Account.EmailVerifyPage)
+            .WithQueryParam("email", Email.Email)
+            .WithQueryParam("type", EmailTypes.Secondary)
+            .WithQueryParam("return_url", Links.Settings.Emails)
+            .Build();
+    }
+
+    private async Task OnRemove(string email)
+    {
+        var confirmationResult = await ConfirmationManager.InitiateAsync(PurposeType.Email, ActionType.Remove);
+        if (!confirmationResult!.Canceled)
+        {
+            var verificationId = confirmationResult.Data as Guid? ?? Guid.Empty;
+            var request = new RemoveEmailRequest
+            {
+                VerificationId = verificationId,
+                Email = email
+            };
+            
+            var result = await EmailService.RemoveEmailAsync(request);
+            if (result.Succeeded)
+            {
+                Snackbar.Add("Email was successfully removed", Severity.Success);
+                await OnRefresh.InvokeAsync();
+            }
+            else
+            {
+                Snackbar.Add(result.GetError().Description, Severity.Error);
+            }
+        }
+    }
+
+}

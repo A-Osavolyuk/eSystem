@@ -1,0 +1,157 @@
+﻿@page "/session/two-factor"
+
+@using eSecurity.Client.Security
+@using eSecurity.Client.Security.Authentication
+@using eSecurity.Core.Security.Authentication.SignIn
+@using eSecurity.Core.Security.Authentication.TwoFactor
+@using eSystem.Core.Security.Authentication.OpenIdConnect
+
+@inherits PageBase
+
+@layout AuthenticationLayout
+
+@inject ISecurityService SecurityService
+@inject SignInManager SignInManager
+
+<PageTitle>Two-factor authentication</PageTitle>
+
+@if (_methods.Any())
+{
+    <MudGrid Justify="Justify.Center">
+        <MudItem xs="3" Style="margin-top: 50px">
+            <MudPaper Class="pa-10" Elevation="4">
+                <MudStack Spacing="3">
+                    <MudStack Spacing="3" Justify="Justify.Center" AlignItems="AlignItems.Center">
+                        <MudIcon Style="font-size: 5rem" Icon="@Icons.Material.Outlined.LockPerson"/>
+                        @if (_preferredMethod != TwoFactorMethod.RecoveryCode)
+                        {
+                            <MudTextM3 Typo="TypoM3.Headline" Size="Size.Small">
+                                Two-factor authentication
+                            </MudTextM3>
+                        }
+                        else
+                        {
+                            <MudTextM3 Typo="TypoM3.Headline" Size="Size.Small">
+                                Two-factor recovery
+                            </MudTextM3>
+                        }
+                    </MudStack>
+                    @switch (_preferredMethod)
+                    {
+                        case TwoFactorMethod.AuthenticatorApp:
+                        {
+                            <AuthenticatorMethod
+                                Methods="_methods"
+                                OnSignIn="@(async payload => await OnSignInAsync(payload))"
+                                OnChangeMethod="@(method => _preferredMethod = method)"/>
+                            break;
+                        }
+                        case TwoFactorMethod.Passkey:
+                        {
+                            <PasskeyMethod
+                                Methods="_methods"
+                                OnSignIn="@(async payload => await OnSignInAsync(payload))"
+                                OnChangeMethod="@(method => _preferredMethod = method)"/>
+                            break;
+                        }
+                        case TwoFactorMethod.RecoveryCode:
+                        {
+                            <RecoveryCodeMethod
+                                Methods="_methods"
+                                OnSignIn="@(async payload => await OnSignInAsync(payload))"
+                                OnChangeMethod="@(method => _preferredMethod = method)"/>
+                            break;
+                        }
+                    }
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+}
+
+@code {
+
+    [SupplyParameterFromQuery(Name = "state")]
+    public string? State { get; set; }
+
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string? ReturnUrl { get; set; } = string.Empty;
+
+    private List<TwoFactorMethod> _methods = [];
+    private TwoFactorMethod _preferredMethod;
+    private string? _returnUrl;
+    private Guid _transactionId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!string.IsNullOrEmpty(State))
+        {
+            var stateData = StateParser.Parse(State);
+            if (stateData.TryGetValue("transactionId", out var userId))
+            {
+                _transactionId = Guid.Parse(userId);
+                
+                var result = await SecurityService.GetAuthenticationSessionAsync(_transactionId);
+                if (result.Succeeded && result.TryGetValue<AuthenticationSessionDto>(out var session) && 
+                    session?.AllowedMfaMethods != null)
+                {
+                    if (session.AllowedMfaMethods.Contains(AuthenticationMethodReference.SoftwareKey))
+                    {
+                        _preferredMethod = TwoFactorMethod.Passkey;
+                        _methods = [
+                            TwoFactorMethod.Passkey, 
+                            TwoFactorMethod.AuthenticatorApp, 
+                            TwoFactorMethod.RecoveryCode
+                        ];
+                    }
+                    else
+                    {
+                        _preferredMethod = TwoFactorMethod.AuthenticatorApp;
+                        _methods = [
+                            TwoFactorMethod.AuthenticatorApp, 
+                            TwoFactorMethod.RecoveryCode
+                        ];
+                    }
+                }
+                else
+                {
+                    var error = result.GetError();
+                    Snackbar.Add(error.Description, Severity.Error);
+                }
+            }
+
+            if (stateData.TryGetValue("return_url", out var returnUrl))
+                _returnUrl = returnUrl;
+        }
+    }
+
+    private async Task OnSignInAsync(TwoFactorPayload payload)
+    {
+        var request = new SignInRequest
+        {
+            Payload = new TwoFactorSignInPayload
+            {
+                TransactionId = _transactionId,
+                Payload = payload
+            }
+        };
+
+        var result = await SecurityService.SignInAsync(request);
+        if (result.Succeeded)
+        {
+            if (!string.IsNullOrEmpty(_returnUrl))
+            {
+                NavigationManager.NavigateTo(_returnUrl);
+                return;
+            }
+
+            SignInManager.SignIn();
+        }
+        else
+        {
+            var error = result.GetError();
+            Snackbar.Add(error.Description, Severity.Error);
+        }
+    }
+
+}

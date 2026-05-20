@@ -1,0 +1,112 @@
+﻿@page "/settings/emails"
+@using eSecurity.Client.Security.Identity
+@using eSecurity.Core.Security.Identity
+
+@inherits PageBase
+
+@attribute [Authorize]
+
+@inject IUserService UserService
+
+<PageTitle>Emails</PageTitle>
+
+@if (_model is not null)
+{
+    <MudGrid Justify="Justify.Center">
+        <MudItem xs="6">
+            <MudStack Spacing="3">
+                <MudTextM3 Typo="TypoM3.Title" Size="Size.Large">
+                    Emails
+                </MudTextM3>
+                <MudDivider/>
+                @if (_model.Emails.All(x => x.Type != EmailType.Recovery))
+                {
+                    <MudAlert Elevation="4" Severity="Severity.Warning">
+                        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium">
+                            Your don't have a recovery email.
+                            Add a recovery email to be able to recover an access to the account
+                        </MudTextM3>
+                    </MudAlert>
+                }
+                @foreach (var email in _model.Emails.OrderBy(email => email.Type))
+                {
+                    switch (email.Type)
+                    {
+                        case EmailType.Primary:
+                        {
+                            <PrimaryEmail 
+                                OnRefresh="RefreshAsync"
+                                Email="email"
+                                LinkedAccountData="_linkedAccountsData"/> 
+                            break;
+                        }
+                        case EmailType.Recovery:
+                        {
+                            <RecoveryEmail 
+                                OnRefresh="RefreshAsync" 
+                                Email="email"/> 
+                            break;
+                        }
+                        case EmailType.Secondary:
+                        {
+                            <SecondaryEmail
+                                OnRefresh="RefreshAsync" 
+                                Email="email"/> 
+                            break;
+                        }
+                    }
+                }
+                <AddEmail OnRefresh="RefreshAsync"/>
+                <PreferredPrimaryEmail Model="_model"/>
+                <PreferredRecoveryEmail Model="_model"/>
+            </MudStack>
+        </MudItem>
+    </MudGrid>
+}
+
+@code {
+    private UserEmailsModel? _model;
+    private UserLinkedAccountData? _linkedAccountsData;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadEmailsAsync();
+            await LoadLinkedAccountsAsync();
+            StateHasChanged();
+        }
+    }
+
+    private async Task RefreshAsync()
+    {
+        await LoadEmailsAsync();
+        await LoadLinkedAccountsAsync();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task LoadEmailsAsync()
+    {
+        var result = await UserService.GetUserEmailsAsync();
+        if (result.Succeeded && result.TryGetValue<List<UserEmailDto>>(out var emails))
+        {
+            _model = new()
+            {
+                Emails = emails!,
+                PrimaryEmail = emails!.FirstOrDefault(x => x.Type == EmailType.Primary),
+                RecoveryEmail = emails!.FirstOrDefault(x => x.Type == EmailType.Recovery)
+            };
+        }
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
+    }
+
+    private async Task LoadLinkedAccountsAsync()
+    {
+        var result = await UserService.GetUserLinkedAccountsAsync();
+        if (result.Succeeded && result.TryGetValue<UserLinkedAccountData>(out var data))
+        {
+            _linkedAccountsData = data;
+        }
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
+    }
+}

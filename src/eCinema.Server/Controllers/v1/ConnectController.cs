@@ -1,9 +1,9 @@
 ﻿using eCinema.Server.Hubs;
 using eCinema.Server.Security.Authentication.OpenIdConnect.Session;
 using eSystem.Core.Http.Constants;
+using eSystem.Core.Security.Identity.Claims;
 using eSystem.Core.Server.Security.Authentication.OpenIdConnect.Logout;
 using eSystem.Core.Server.Security.Authorization.OAuth.Token.Validation;
-using eSystem.Core.Server.Security.Identity.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;

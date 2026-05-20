@@ -1,5 +1,5 @@
 ﻿using System.Text.Json.Serialization;
-using eSystem.Core.Server.Security.Identity.Claims;
+using eSystem.Core.Security.Identity.Claims;
 
 namespace eSystem.Core.Server.Security.Authentication.OpenIdConnect.User;
 

@@ -1,0 +1,28 @@
+﻿using eSecurity.Idp.Security.Identity.User.Username;
+using eSecurity.Core.Requests;
+using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
+
+namespace eSecurity.Idp.Features.Username.Commands;
+
+public record CheckUsernameCommand(CheckUsernameRequest Request) : IRequest<Result>;
+
+public class CheckUsernameCommandHandler(
+    IUsernameManager usernameManager) : IRequestHandler<CheckUsernameCommand, Result>
+{
+    private readonly IUsernameManager _usernameManager = usernameManager;
+    
+    public async Task<Result> Handle(CheckUsernameCommand request, CancellationToken cancellationToken)
+    {
+        if (await _usernameManager.IsTakenAsync(request.Request.Username, cancellationToken))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
+            {
+                Code = ErrorCode.UsernameTaken,
+                Description = "The username is already taken."
+            });
+        }
+        
+        return Results.Success(SuccessCodes.Ok);
+    }
+}

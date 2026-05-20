@@ -1,0 +1,31 @@
+﻿using eSystem.Core.Server.Data.Entities;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
+
+namespace eSecurity.Idp.Data.Entities;
+
+public sealed class CibaRequestEntity : Entity
+{
+    public Guid Id { get; set; }
+    
+    public required string AuthReqId { get; set; }
+    public required string Scope { get; set; }
+    public required int Interval { get; set; }
+    public required CibaRequestState State { get; set; }
+    
+    public required DateTimeOffset ExpiredAt { get; set; }
+    public DateTimeOffset? ConsumedAt { get; set; }
+    
+    public string? AcrValues { get; set; }
+    public string? BindingMessage { get; set; }
+    public string? DeniedReason { get; set; }
+    public string? ClientNotificationToken { get; set; }
+
+    public Guid ClientId { get; set; }
+    public ClientEntity Client { get; set; } = null!;
+    
+    public Guid UserId { get; set; }
+    public UserEntity User { get; set; } = null!;
+    
+    public Guid? SessionId { get; set; }
+    public SessionEntity? Session { get; set; }
+}

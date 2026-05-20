@@ -1,0 +1,14 @@
+@page "/connect/select-account"
+
+@inherits PageBase
+
+@layout AuthenticationLayout
+
+<PageTitle>Select account</PageTitle>
+
+@code {
+
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string ReturnUrl { get; set; } = string.Empty;
+
+}

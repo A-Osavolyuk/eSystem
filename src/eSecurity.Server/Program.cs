@@ -6,6 +6,6 @@ builder.AddServices();
 
 var app = builder.Build();
 
-await app.MapServicesAsync();
+await app.MapServices();
 
 app.Run();

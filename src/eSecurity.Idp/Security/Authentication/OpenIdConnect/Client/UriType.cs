@@ -1,0 +1,30 @@
+﻿using System.Text.Json.Serialization;
+using eSystem.Core.Enums;
+using eSystem.Core.Enums.Serialization;
+
+namespace eSecurity.Idp.Security.Authentication.OpenIdConnect.Client;
+
+[JsonConverter(typeof(JsonEnumValueConverter<UriType>))]
+public enum UriType
+{
+    [EnumValue("redirect")]
+    Redirect,
+    
+    [EnumValue("post_logout_redirect")]
+    PostLogoutRedirect,
+    
+    [EnumValue("frontchannel_logout")]
+    FrontChannelLogout,
+    
+    [EnumValue("backchannel_logout")]
+    BackChannelLogout,
+    
+    [EnumValue("notification_endpoint")]
+    NotificationEndpoint,
+    
+    [EnumValue("logo_uri")]
+    LogoUri,
+    
+    [EnumValue("client_uri")]
+    ClientUri
+}

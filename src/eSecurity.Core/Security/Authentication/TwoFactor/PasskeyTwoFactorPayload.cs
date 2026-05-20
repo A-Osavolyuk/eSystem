@@ -1,4 +1,4 @@
-﻿using eSecurity.Core.Security.Credentials.PublicKey;
+﻿using eSecurity.WebAuthN;
 
 namespace eSecurity.Core.Security.Authentication.TwoFactor;
 

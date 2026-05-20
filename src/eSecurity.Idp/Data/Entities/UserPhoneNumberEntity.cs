@@ -1,0 +1,18 @@
+﻿using eSecurity.Core.Security.Identity;
+using eSystem.Core.Server.Data.Entities;
+
+namespace eSecurity.Idp.Data.Entities;
+
+public class UserPhoneNumberEntity : Entity
+{
+    public Guid Id { get; set; }
+    
+    public string PhoneNumber { get; set; } = string.Empty;
+    public PhoneNumberType Type { get; set; }
+    public bool IsVerified { get; set; }
+    
+    public DateTimeOffset? VerifiedAt { get; set; }
+    
+    public Guid UserId { get; set; }
+    public UserEntity User { get; set; } = null!;
+}

@@ -36,10 +36,9 @@
     <ItemGroup>
         <ProjectReference Include="..\eCinema.Client\eCinema.Client.esproj" />
         <ProjectReference Include="..\eCinema.Server\eCinema.Server.csproj" />
-        <ProjectReference Include="..\eSecurity.Client.BFF\eSecurity.Client.BFF.csproj" />
-        <ProjectReference Include="..\eSecurity.Client.UI\eSecurity.Client.UI.csproj" />
-        <ProjectReference Include="..\eSecurity.Client\eSecurity.Client.csproj" />
         <ProjectReference Include="..\eSecurity.Server\eSecurity.Server.csproj" />
+        <ProjectReference Include="..\eSecurity.Client\eSecurity.Client.csproj" />
+        <ProjectReference Include="..\eSecurity.Idp\eSecurity.Idp.csproj" />
         <ProjectReference Include="..\eSystem.EmailSender.Api\eSystem.EmailSender.Api.csproj" />
         <ProjectReference Include="..\eSystem.Proxy\eSystem.Proxy.csproj" />
         <ProjectReference Include="..\eSystem.Storage.Api\eSystem.Storage.Api.csproj" />

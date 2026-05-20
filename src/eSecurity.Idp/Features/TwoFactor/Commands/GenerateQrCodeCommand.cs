@@ -1,0 +1,87 @@
+﻿using eSecurity.Idp.Data.Entities;
+using eSecurity.Idp.Security.Authentication.TwoFactor.Authenticator;
+using eSecurity.Idp.Security.Authentication.TwoFactor.Secret;
+using eSecurity.Idp.Security.Cryptography.Protection.Constants;
+using eSecurity.Idp.Security.Identity.Email;
+using eSecurity.Idp.Security.Identity.User;
+using eSecurity.Core.Security.Identity;
+using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Security.Identity.Claims;
+using Microsoft.AspNetCore.DataProtection;
+
+namespace eSecurity.Idp.Features.TwoFactor.Commands;
+
+public record GenerateQrCodeCommand() : IRequest<Result>;
+
+public class GenerateQrCodeCommandHandler(
+    IUserManager userManager,
+    IQrCodeFactory qrCodeFactory,
+    ISecretManager secretManager,
+    IEmailManager emailManager,
+    IHttpContextAccessor httpContextAccessor,
+    IDataProtectionProvider protectionProvider) : IRequestHandler<GenerateQrCodeCommand, Result>
+{
+    private readonly IUserManager _userManager = userManager;
+    private readonly IQrCodeFactory _qrCodeFactory = qrCodeFactory;
+    private readonly ISecretManager _secretManager = secretManager;
+    private readonly IEmailManager _emailManager = emailManager;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
+    private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
+
+    public async Task<Result> Handle(GenerateQrCodeCommand request, CancellationToken cancellationToken)
+    {
+        var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Secret);
+        
+        var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
+        if (subjectClaim is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Invalid request"
+            });
+        }
+        
+        var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
+        if (user is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "User not found."
+            });
+        }
+        
+        var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
+        if (email is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "Email not found"
+            });
+        }
+
+        var userSecret = await _secretManager.GetAsync(user, cancellationToken);
+        if (userSecret is null)
+        {
+            var secret = _secretManager.Generate();
+            var protectedSecret = protector.Protect(secret);
+            userSecret = new UserSecretEntity
+            {
+                Id = Guid.CreateVersion7(),
+                UserId = user.Id,
+                ProtectedSecret = protectedSecret
+            };
+            
+            var secretResult = await _secretManager.AddAsync(userSecret, cancellationToken);
+            if (!secretResult.Succeeded) return secretResult;
+        }
+
+        var unprotectedSecret = protector.Unprotect(userSecret.ProtectedSecret);
+        var qrCode = _qrCodeFactory.Create(unprotectedSecret, email.Email, QrCodeConfiguration.Issuer);
+
+        return Results.Success(SuccessCodes.Ok, qrCode);
+    }
+}

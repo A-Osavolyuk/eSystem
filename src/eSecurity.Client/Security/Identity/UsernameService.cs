@@ -1,4 +1,5 @@
-﻿using eSecurity.Core.Common.Requests;
+﻿using eSecurity.Client.Common.Http;
+using eSecurity.Core.Requests;
 
 namespace eSecurity.Client.Security.Identity;
 
@@ -13,10 +14,6 @@ public class UsernameService(IApiClient apiClient) : IUsernameService
                 Data = request,
                 Method = HttpMethods.Post,
                 Url = "/api/v1/Username/set"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.None
             });
 
     public async ValueTask<ApiResponse> CheckUsernameAsync(CheckUsernameRequest request)
@@ -26,9 +23,5 @@ public class UsernameService(IApiClient apiClient) : IUsernameService
                 Data = request,
                 Method = HttpMethods.Post,
                 Url = "/api/v1/Username/check"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.None
             });
 }

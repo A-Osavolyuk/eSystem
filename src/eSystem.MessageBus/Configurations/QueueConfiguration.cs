@@ -1,4 +1,4 @@
-﻿using eSystem.Core.Server.Messaging;
+﻿using eSystem.Core.Messaging;
 
 namespace eSystem.MessageBus.Configurations;
 

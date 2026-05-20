@@ -1,0 +1,12 @@
+﻿global using System.Text;
+global using eSystem.Core.Server.Mediator;
+global using eSystem.ServiceDefaults;
+global using Microsoft.AspNetCore.Authentication.JwtBearer;
+global using Microsoft.AspNetCore.Authorization;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.Options;
+global using Microsoft.IdentityModel.Tokens;
+global using OAuthFlow = eSecurity.Core.Security.Authorization.OAuth.OAuthFlow;
+global using Results = eSystem.Core.Primitives.Results;
+global using SessionOptions = eSecurity.Idp.Security.Authentication.OpenIdConnect.Session.SessionOptions;

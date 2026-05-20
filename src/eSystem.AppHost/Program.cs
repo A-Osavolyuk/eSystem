@@ -45,37 +45,33 @@ var eMessageServer = builder.AddProject<Projects.eSystem_MessageBus>("message-bu
     .WaitFor(smsService)
     .WaitFor(telegramService);
 
-var eSecurityServer = builder.AddProject<Projects.eSecurity_Server>("e-security-server")
+var eSecurityIdp = builder.AddProject<Projects.eSecurity_Idp>("e-security-idp")
     .WithReference(eSecurityDb).WaitFor(eSecurityDb)
     .WithReference(redisCache).WaitFor(redisCache)
     .WithReference(rabbitMq).WaitFor(rabbitMq)
     .WaitFor(eMessageServer).WithRelationship(eMessageServer.Resource, "Messaging");
 
 var eStorageServer = builder.AddProject<Projects.eSystem_Storage_Api>("storage-api")
-    .WaitFor(eSecurityServer).WithRelationship(eSecurityServer.Resource, "Authentication")
+    .WaitFor(eSecurityIdp).WithRelationship(eSecurityIdp.Resource, "Authentication")
     .WaitFor(eMessageServer).WithRelationship(eMessageServer.Resource, "Messaging")
     .WithReference(rabbitMq).WaitFor(rabbitMq)
     .WithReference(redisCache).WaitFor(redisCache)
     .WithReference(blobs).WaitFor(blobs);
 
 var proxy = builder.AddProject<Projects.eSystem_Proxy>("proxy")
-    .WithReference(eSecurityServer).WaitFor(eSecurityServer)
+    .WithReference(eSecurityIdp).WaitFor(eSecurityIdp)
     .WithReference(eStorageServer).WaitFor(eStorageServer);
 
-builder.AddProject<Projects.eSecurity_Client>("e-security-client")
-    .WithReference(redisCache)
-    .WithReference(proxy).WaitFor(proxy);
-
-var eSecurityBff = builder.AddProject<Projects.eSecurity_Client_BFF>("e-security-bff")
+var eSecurityServer = builder.AddProject<Projects.eSecurity_Server>("e-security-server")
     .WithReference(redisCache)
     .WithReference(eSecurityBffDb)
     .WithReference(proxy).WaitFor(proxy);
 
-var eSecurityUi = builder.AddProject<Projects.eSecurity_Client_UI>("e-security-ui")
-    .WithReference(eSecurityBff);
+builder.AddProject<Projects.eSecurity_Client>("e-security-client")
+    .WithReference(eSecurityServer);
 
 var eCinemaServer = builder.AddProject<Projects.eCinema_Server>("e-cinema-server")
-    .WaitFor(eSecurityServer)
+    .WaitFor(eSecurityIdp)
     .WithReference(eCinemaDb).WaitFor(eCinemaDb)
     .WithReference(redisCache).WaitFor(redisCache)
     .WithReference(proxy).WaitFor(proxy);

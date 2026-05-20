@@ -1,4 +1,5 @@
-﻿using eSecurity.Core.Common.Requests;
+﻿using eSecurity.Client.Common.Http;
+using eSecurity.Core.Requests;
 
 namespace eSecurity.Client.Security.Identity;
 
@@ -13,10 +14,6 @@ public class EmailService(IApiClient apiClient) : IEmailService
                 Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Email/add"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.Bearer
             });
 
     public async ValueTask<ApiResponse> CheckEmailAsync(CheckEmailRequest request)
@@ -26,10 +23,6 @@ public class EmailService(IApiClient apiClient) : IEmailService
                 Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Email/check"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.None
             });
 
     public async ValueTask<ApiResponse> ChangeEmailAsync(ChangeEmailRequest request)
@@ -39,11 +32,6 @@ public class EmailService(IApiClient apiClient) : IEmailService
                 Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Email/change"
-            }, new ApiOptions
-            {
-
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.Bearer
             });
 
     public async ValueTask<ApiResponse> VerifyEmailAsync(VerifyEmailRequest request)
@@ -53,10 +41,6 @@ public class EmailService(IApiClient apiClient) : IEmailService
                 Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Email/verify"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.Bearer
             });
 
     public async ValueTask<ApiResponse> ManageEmailAsync(ManageEmailRequest request)
@@ -66,10 +50,6 @@ public class EmailService(IApiClient apiClient) : IEmailService
                 Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Email/manage"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.Bearer
             });
 
     public async ValueTask<ApiResponse> RemoveEmailAsync(RemoveEmailRequest request)
@@ -79,10 +59,6 @@ public class EmailService(IApiClient apiClient) : IEmailService
                 Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Email/remove"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.Bearer
             });
 
     public async ValueTask<ApiResponse> ResetEmailAsync(ResetEmailRequest request)
@@ -92,9 +68,5 @@ public class EmailService(IApiClient apiClient) : IEmailService
                 Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Email/reset"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.Bearer
             });
 }

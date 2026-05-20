@@ -1,4 +1,5 @@
-using eSecurity.Core.Common.Requests;
+using eSecurity.Client.Common.Http;
+using eSecurity.Core.Requests;
 
 namespace eSecurity.Client.Security.Authorization.Devices;
 
@@ -12,10 +13,6 @@ public class DeviceService(IApiClient apiClient) : IDeviceService
         {
             Method = HttpMethods.Get,
             Url = $"/api/v1/Device/device-code/{userCode}",
-        }, new ApiOptions()
-        {
-            Authentication = AuthenticationType.None,
-            ContentType = ContentTypes.Application.Json
         });
     }
 
@@ -26,10 +23,6 @@ public class DeviceService(IApiClient apiClient) : IDeviceService
             Method = HttpMethods.Post,
             Url = "/api/v1/Device/device-code/check",
             Data = request
-        }, new ApiOptions()
-        {
-            Authentication = AuthenticationType.None,
-            ContentType = ContentTypes.Application.Json
         });
     }
 
@@ -40,10 +33,6 @@ public class DeviceService(IApiClient apiClient) : IDeviceService
             Method = HttpMethods.Post,
             Url = "/api/v1/Device/device-code/decision",
             Data = request
-        }, new ApiOptions()
-        {
-            Authentication = AuthenticationType.Bearer,
-            ContentType = ContentTypes.Application.Json
         });
     }
 }

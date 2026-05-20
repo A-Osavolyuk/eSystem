@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using eSystem.Core.Enums.Serialization;
+using eSystem.Core.Security.Authorization.OAuth;
 
 namespace eSystem.Core.Server.Security.Authorization.OAuth.Introspection;
 

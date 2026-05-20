@@ -1,40 +1,106 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <LangVersion>14</LangVersion>
+        <OverrideHtmlAssetPlaceholders>true</OverrideHtmlAssetPlaceholders>
     </PropertyGroup>
 
     <ItemGroup>
-      <_ContentIncludedByDefault Remove="Components\App.razor" />
-      <_ContentIncludedByDefault Remove="Components\Layout\MainLayout.razor" />
-      <_ContentIncludedByDefault Remove="Components\Pages\Error.razor" />
-      <_ContentIncludedByDefault Remove="Components\Pages\Home.razor" />
-      <_ContentIncludedByDefault Remove="Components\Routes.razor" />
-      <_ContentIncludedByDefault Remove="Components\_Imports.razor" />
-      <_ContentIncludedByDefault Remove="wwwroot\app.css" />
-      <_ContentIncludedByDefault Remove="Components\DeviceCode\DeviceActivate.razor" />
-      <_ContentIncludedByDefault Remove="Components\DeviceCode\DeviceActivation.razor" />
+        <PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="9.1.0" />
+        <PackageReference Include="CodeBeam.MudBlazor.Extensions.Qr" Version="9.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="10.0.8" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.8" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.8" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.7" />
+        <PackageReference Include="MudBlazor" Version="9.4.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\css\app.css" />
+      <_ContentIncludedByDefault Remove="Pages\Connect\Callback.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Connect\Consents.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Connect\SelectAccount.razor" />
+      <_ContentIncludedByDefault Remove="Components\Connect\Consents.razor" />
+      <_ContentIncludedByDefault Remove="Components\Connect\SelectAccount.razor" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\eSecurity.Core\eSecurity.Core.csproj" />
-      <ProjectReference Include="..\eSystem.Core.Http\eSystem.Core.Http.csproj" />
+      <ProjectReference Include="..\eSecurity.WebAuthN\eSecurity.WebAuthN.csproj" />
+      <ProjectReference Include="..\eSystem.Core.Security\eSystem.Core.Security.csproj" />
       <ProjectReference Include="..\eSystem.Core\eSystem.Core.csproj" />
-      <ProjectReference Include="..\eSystem.ServiceDefaults\eSystem.ServiceDefaults.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <AdditionalFiles Include="Components\Pages\Connect\Consents.razor" />
-      <AdditionalFiles Include="Components\Pages\Devices\Devices.razor" />
+      <AdditionalFiles Include="Components\Access\AccessConfirmation.razor" />
+      <AdditionalFiles Include="Components\Access\AccessConfirmationDialog.razor" />
+      <AdditionalFiles Include="Components\Access\AuthenticatorConfirmation.razor" />
+      <AdditionalFiles Include="Components\Access\EmailConfirmation.razor" />
+      <AdditionalFiles Include="Components\Access\PasskeyConfirmation.razor" />
+      <AdditionalFiles Include="Pages\Account\AccountLocked.razor" />
+      <AdditionalFiles Include="Pages\Account\AccountRegistration.razor" />
+      <AdditionalFiles Include="Pages\Account\EmailVerification.razor" />
+      <AdditionalFiles Include="Pages\Account\ForgotPassword.razor" />
+      <AdditionalFiles Include="Pages\Account\Login.razor" />
+      <AdditionalFiles Include="Pages\Account\PasskeySignIn.razor" />
+      <AdditionalFiles Include="Pages\Account\PasswordSignIn.razor" />
+      <AdditionalFiles Include="Pages\Account\SignUp.razor" />
+      <AdditionalFiles Include="Pages\Connect\Consents.razor" />
+      <AdditionalFiles Include="Pages\DeviceCode\DeviceActivate.razor" />
+      <AdditionalFiles Include="Pages\DeviceCode\DeviceActivation.razor" />
+      <AdditionalFiles Include="Pages\Devices\DevicesSection.razor" />
+      <AdditionalFiles Include="Pages\Emails\AddEmail.razor" />
+      <AdditionalFiles Include="Pages\Emails\ChangeEmail.razor" />
+      <AdditionalFiles Include="Pages\Emails\Emails.razor" />
+      <AdditionalFiles Include="Pages\Emails\ManageEmail.razor" />
+      <AdditionalFiles Include="Pages\Emails\PreferredPrimaryEmail.razor" />
+      <AdditionalFiles Include="Pages\Emails\PreferredRecoveryEmail.razor" />
+      <AdditionalFiles Include="Pages\Emails\PrimaryEmail.razor" />
+      <AdditionalFiles Include="Pages\Emails\RecoveryEmail.razor" />
+      <AdditionalFiles Include="Pages\Emails\ResetEmail.razor" />
+      <AdditionalFiles Include="Pages\Emails\SecondaryEmail.razor" />
+      <AdditionalFiles Include="Pages\Emails\VerifyEmail.razor" />
+      <AdditionalFiles Include="Pages\Logout\LoggedOut.razor" />
+      <AdditionalFiles Include="Pages\Logout\Logout.razor" />
+      <AdditionalFiles Include="Pages\Logout\LogoutCallback.razor" />
+      <AdditionalFiles Include="Pages\Logout\LogoutFallback.razor" />
+      <AdditionalFiles Include="Pages\OAuth\Error.razor" />
+      <AdditionalFiles Include="Pages\OAuth\Handle.razor" />
+      <AdditionalFiles Include="Pages\OAuth\Providers.razor" />
+      <AdditionalFiles Include="Pages\OAuth\SignUp.razor" />
+      <AdditionalFiles Include="Pages\Passkey\AddPasskey.razor" />
+      <AdditionalFiles Include="Pages\Passkey\Passkey.razor" />
+      <AdditionalFiles Include="Pages\Password\AddPasswordDialog.razor" />
+      <AdditionalFiles Include="Pages\Password\ChangePasswordDialog.razor" />
+      <AdditionalFiles Include="Pages\Password\SetPassword.razor" />
+      <AdditionalFiles Include="Pages\Security\AuthenticatorAppConfiguration.razor" />
+      <AdditionalFiles Include="Pages\Security\Methods\AuthenticatorMethod.razor" />
+      <AdditionalFiles Include="Pages\Security\Methods\PasskeyMethod.razor" />
+      <AdditionalFiles Include="Pages\Security\Methods\RecoveryCodesMethod.razor" />
+      <AdditionalFiles Include="Pages\Security\Methods\SmsMethod.razor" />
+      <AdditionalFiles Include="Pages\Security\Sections\LinkedAccountsSection.razor" />
+      <AdditionalFiles Include="Pages\Security\Sections\PasskeysSection.razor" />
+      <AdditionalFiles Include="Pages\Security\Sections\PasswordSection.razor" />
+      <AdditionalFiles Include="Pages\Security\Sections\TwoFactorSection.razor" />
+      <AdditionalFiles Include="Pages\Security\Security.razor" />
+      <AdditionalFiles Include="Pages\Security\TwoFactorMethods.razor" />
+      <AdditionalFiles Include="Pages\Security\TwoFactorPreferredMethod.razor" />
+      <AdditionalFiles Include="Pages\TwoFactor\AdditionalMethods.razor" />
+      <AdditionalFiles Include="Pages\TwoFactor\AuthenticatorMethod.razor" />
+      <AdditionalFiles Include="Pages\TwoFactor\AuthenticatorSecretDialog.razor" />
+      <AdditionalFiles Include="Pages\TwoFactor\EnableTwoFactor.razor" />
+      <AdditionalFiles Include="Pages\TwoFactor\PasskeyMethod.razor" />
+      <AdditionalFiles Include="Pages\TwoFactor\RecoveryCodeMethod.razor" />
+      <AdditionalFiles Include="Pages\TwoFactor\RecoveryCodes.razor" />
+      <AdditionalFiles Include="Pages\TwoFactor\RecoveryCodesPrint.razor" />
+      <AdditionalFiles Include="Pages\TwoFactor\RecoveryCodesView.razor" />
+      <AdditionalFiles Include="Pages\TwoFactor\TwoFactorSignIn.razor" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="9.1.0" />
-      <PackageReference Include="CodeBeam.MudBlazor.Extensions.Qr" Version="9.0.0" />
-      <PackageReference Include="MudBlazor" Version="9.4.0" />
+      <Folder Include="Common\" />
     </ItemGroup>
 
 </Project>

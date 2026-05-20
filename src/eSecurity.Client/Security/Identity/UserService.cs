@@ -1,3 +1,5 @@
+using eSecurity.Client.Common.Http;
+
 namespace eSecurity.Client.Security.Identity;
 
 public class UserService(IApiClient apiClient) : IUserService
@@ -10,10 +12,6 @@ public class UserService(IApiClient apiClient) : IUserService
             {
                 Method = HttpMethods.Get,
                 Url = $"/api/v1/User/verification/methods"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.Bearer
             });
     
 
@@ -23,10 +21,6 @@ public class UserService(IApiClient apiClient) : IUserService
             {
                 Method = HttpMethods.Get,
                 Url = $"/api/v1/User/emails"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.Bearer
             });
 
     public async ValueTask<ApiResponse> GetUserDevicesAsync()
@@ -35,10 +29,6 @@ public class UserService(IApiClient apiClient) : IUserService
             {
                 Method = HttpMethods.Get,
                 Url = $"/api/v1/User/devices"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.Bearer
             });
 
     public async ValueTask<ApiResponse> GetUserLinkedAccountsAsync()
@@ -47,10 +37,6 @@ public class UserService(IApiClient apiClient) : IUserService
             {
                 Method = HttpMethods.Get,
                 Url = $"/api/v1/User/linked-accounts"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.Bearer
             });
 
     public async ValueTask<ApiResponse> GetUserTwoFactorMethodsAsync()
@@ -59,10 +45,6 @@ public class UserService(IApiClient apiClient) : IUserService
             {
                 Method = HttpMethods.Get,
                 Url = $"/api/v1/User/2fa/methods"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.Bearer
             });
 
     public async ValueTask<ApiResponse> GetUserLoginMethodsAsync()
@@ -71,9 +53,5 @@ public class UserService(IApiClient apiClient) : IUserService
             {
                 Method = HttpMethods.Get,
                 Url = $"/api/v1/User/login-methods"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.Bearer
             });
 }

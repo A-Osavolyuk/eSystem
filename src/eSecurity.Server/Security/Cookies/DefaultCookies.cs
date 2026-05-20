@@ -2,6 +2,5 @@
 
 public static class DefaultCookies
 {
-    public const string External = "eSecurity.OAuth.State";
-    public const string Session = "eSecurity.OIDC.Session";
+    public const string State = "eSecurity.Authentication.State";
 }

@@ -1,0 +1,44 @@
+﻿using eSecurity.Idp.Data;
+using eSecurity.Idp.Data.Entities;
+using eSecurity.Idp.Security.Cryptography.Keys;
+using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
+
+namespace eSecurity.Idp.Security.Authorization.OAuth.Token.AuthorizationCode;
+
+public class AuthorizationCodeManager(
+    AuthDbContext context,
+    IKeyFactory keyFactory) : IAuthorizationCodeManager
+{
+    private readonly AuthDbContext _context = context;
+    private readonly IKeyFactory _keyFactory = keyFactory;
+
+    public async ValueTask<AuthorizationCodeEntity?> FindByCodeAsync(string code, 
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.AuthorizationCodes.FirstOrDefaultAsync(
+            c => c.Code == code, cancellationToken);
+    }
+
+    public async ValueTask<Result> CreateAsync(AuthorizationCodeEntity code, 
+        CancellationToken cancellationToken = default)
+    {
+        await _context.AuthorizationCodes.AddAsync(code, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+        
+        return Results.Success(SuccessCodes.Ok);
+    }
+
+    public async ValueTask<Result> UseAsync(AuthorizationCodeEntity code, 
+        CancellationToken cancellationToken = default)
+    {
+        code.Used = true;
+        
+        _context.AuthorizationCodes.Update(code);
+        await _context.SaveChangesAsync(cancellationToken);
+        
+        return Results.Success(SuccessCodes.Ok);
+    }
+
+    public string Generate() => _keyFactory.Create(20);
+}

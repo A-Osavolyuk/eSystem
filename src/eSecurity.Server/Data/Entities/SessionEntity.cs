@@ -1,33 +1,16 @@
 ﻿using eSystem.Core.Server.Data.Entities;
-using eSystem.Core.Server.Security.Authentication.OpenIdConnect;
 
 namespace eSecurity.Server.Data.Entities;
 
-public class SessionEntity : Entity
+public sealed class SessionEntity : Entity
 {
     public Guid Id { get; set; }
+    
+    public required string Key { get; set; }
+    public required string UserId { get; set; }
+    public required string Sid { get; set; }
 
-    public DateTimeOffset? ExpireDate { get; set; }
-    
-    public Guid UserId { get; set; }
-    public UserEntity User { get; set; } = null!;
-    
-    public ICollection<OpaqueTokenEntity> OpaqueTokens { get; set; } = [];
-    public ICollection<SessionAuthenticationMethodEntity> AuthenticationMethods { get; set; } = [];
-    
-    public void AddMethods(params IEnumerable<AuthenticationMethodReference> methods)
-    {
-        foreach (var method in methods)
-        {
-            if (AuthenticationMethods.All(x => x.MethodReference != method))
-            {
-                AuthenticationMethods.Add(new SessionAuthenticationMethodEntity()
-                {
-                    Id = Guid.CreateVersion7(),
-                    SessionId = Id,
-                    MethodReference = method
-                });
-            }
-        }
-    }
+    public SessionPropertiesEntity Properties { get; set; } = null!;
+    public ICollection<SessionClaimEntity> Claims { get; set; } = [];
+    public ICollection<SessionTokenEntity> Tokens { get; set; } = [];
 }

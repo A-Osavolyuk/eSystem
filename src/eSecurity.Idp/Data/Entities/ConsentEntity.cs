@@ -1,0 +1,21 @@
+﻿using eSystem.Core.Server.Data.Entities;
+
+namespace eSecurity.Idp.Data.Entities;
+
+public class ConsentEntity : Entity
+{
+    public Guid Id { get; set; }
+
+    public Guid UserId { get; set; }
+    public UserEntity User { get; set; } = null!;
+    
+    public Guid ClientId { get; set; }
+    public ClientEntity Client { get; set; } = null!;
+    public ICollection<GrantedScopeEntity> GrantedScopes { get; set; } = null!;
+
+    public bool HasScopes(IEnumerable<string> scopes, out IEnumerable<string> remainingScopes)
+    {
+        remainingScopes = GrantedScopes.Select(x => x.ClientScope.Scope.Value).Except(scopes);
+        return !remainingScopes.Any();
+    }
+}

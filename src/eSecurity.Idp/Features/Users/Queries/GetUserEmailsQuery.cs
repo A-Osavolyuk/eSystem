@@ -1,0 +1,57 @@
+﻿using eSecurity.Idp.Security.Identity.Email;
+using eSecurity.Idp.Security.Identity.User;
+using eSecurity.Core.DTOs;
+using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Security.Identity.Claims;
+
+namespace eSecurity.Idp.Features.Users.Queries;
+
+public record GetUserEmailsQuery : IRequest<Result>;
+
+public class GetUserEmailsQueryHandler(
+    IUserManager userManager,
+    IEmailManager emailManager,
+    IHttpContextAccessor httpContextAccessor) : IRequestHandler<GetUserEmailsQuery, Result>
+{
+    private readonly IUserManager _userManager = userManager;
+    private readonly IEmailManager _emailManager = emailManager;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
+
+    public async Task<Result> Handle(GetUserEmailsQuery request, CancellationToken cancellationToken)
+    {
+        var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
+        if (subjectClaim is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest, 
+                Description = "Invalid subject."
+            });
+        }
+
+        var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
+        if (user is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "User not found"
+            });
+        }
+
+        var emails = await _emailManager.GetAllAsync(user, cancellationToken);
+        var response = emails.Select(email => new UserEmailDto
+        {
+            Id = email.Id,
+            Email = email.Email,
+            NormalizedEmail = email.NormalizedEmail,
+            Type = email.Type,
+            IsVerified = email.IsVerified,
+            VerifiedAt = email.VerifiedAt,
+            UpdatedAt = email.UpdatedAt
+        });
+
+        return Results.Success(SuccessCodes.Ok, response);
+    }
+}

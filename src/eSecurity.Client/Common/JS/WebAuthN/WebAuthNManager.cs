@@ -1,5 +1,4 @@
-﻿using eSecurity.Client.Common.JS.Fetch;
-using eSecurity.Core.Security.Credentials.PublicKey;
+﻿using eSecurity.WebAuthN;
 using Microsoft.JSInterop;
 
 namespace eSecurity.Client.Common.JS.WebAuthN;

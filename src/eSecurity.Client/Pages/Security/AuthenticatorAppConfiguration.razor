@@ -1,0 +1,234 @@
+﻿@using eSecurity.Client.Common.Validation.Validators
+@using eSecurity.Client.Pages.TwoFactor
+@using eSecurity.Client.Security.Authentication.TwoFactor
+
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@inject ITwoFactorService TwoFactorService
+@inject CodeModelValidator Validator
+
+<MudStack Spacing="3">
+    <MudStack Spacing="0">
+        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Class="opacity-50">
+            Authenticator apps and browser extensions like
+            <MudLink
+                Typo="Typo.caption"
+                Class="text-decoration-underline"
+                Color="Color.Default"
+                Href="@ExternalLinks.OnePassword">
+                1Password
+            </MudLink>
+            ,
+            <MudLink
+                Typo="Typo.caption"
+                Class="text-decoration-underline"
+                Color="Color.Default"
+                Href="@ExternalLinks.Authy">
+                Authy
+            </MudLink>
+            ,
+            <MudLink
+                Typo="Typo.caption"
+                Class="text-decoration-underline"
+                Color="Color.Default"
+                Href="@ExternalLinks.MicrosoftAuthenticator">
+                Microsoft Authenticator
+            </MudLink>
+            ,
+            etc. generate one-time
+            passwords that are used as a second factor to verify your
+            identity when prompted during sign-in.
+        </MudTextM3>
+    </MudStack>
+    <MudStack Spacing="0">
+        <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium">
+            Scan QR code with your app/browser extension
+        </MudTextM3>
+        <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Class="opacity-50">
+            Use an authenticator app or browser extension to scan QR
+            code.
+        </MudTextM3>
+    </MudStack>
+    <MudStack>
+        <MudBarcode
+            BarcodeFormat="BarcodeFormat.QR_CODE"
+            @bind-Value="_qrCode.Value"
+            Height="200"
+            Width="200"/>
+    </MudStack>
+    <div>
+        <MudTextM3
+            Typo="TypoM3.Body"
+            Size="Size.Medium"
+            Class="opacity-50"
+            Inline="true">
+            Unable to scan? You can use the
+        </MudTextM3>
+        <MudLink
+            Color="Color.Info"
+            Typo="Typo.body2"
+            OnClick="@(async () => await ShowSetupKeyAsync())">
+            setup key
+        </MudLink>
+        <MudTextM3
+            Typo="TypoM3.Body"
+            Size="Size.Medium"
+            Class="opacity-50"
+            Inline="true">
+            to manually configure your authenticator app.
+        </MudTextM3>
+    </div>
+    <MudStack Spacing="1">
+        <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium">
+            Verify the code from the app
+        </MudTextM3>
+        <MudForm
+            @ref="_form"
+            Model="_model"
+            Validation="Validator.ValidateValue">
+            <MudStack Row="true" AlignItems="AlignItems.Center">
+                <MudStack Row="true" Style="width: 300px">
+                    <MudTextFieldExtended
+                        Variant="Variant.Outlined"
+                        Margin="Margin.Dense"
+                        Immediate="true"
+                        Mask="@_mask"
+                        Placeholder="XXXXXX"
+                        @bind-Value="_model.Code"
+                        Disabled="_codeValid"/>
+                </MudStack>
+                @if (_codeValid)
+                {
+                    <MudIcon Size="Size.Medium" Color="Color.Success" Icon="@Icons.Material.Filled.Check"/>
+                }
+            </MudStack>
+        </MudForm>
+        <MudStack Spacing="2">
+            @if (_showError)
+            {
+                <MudAlert Dense="true" Severity="Severity.Error" Variant="Variant.Outlined">
+                    Invalid code
+                </MudAlert>
+            }
+            <MudStack Row="true" Spacing="2">
+                @if (_codeValid)
+                {
+                    <MudButton
+                        Size="Size.Small"
+                        Color="Color.Success"
+                        Variant="Variant.Filled"
+                        ButtonType="ButtonType.Button"
+                        OnClick="@(async () => await OnSaveAsync())">
+                        Save
+                    </MudButton>
+                }
+                else
+                {
+                    <MudButton
+                        Size="Size.Small"
+                        Color="Color.Success"
+                        Variant="Variant.Filled"
+                        ButtonType="ButtonType.Button"
+                        Disabled="@(_model.Code.Length < 6)"
+                        OnClick="@(async () => await OnVerifyCodeAsync())">
+                        Verify
+                    </MudButton>
+                }
+                <MudButton
+                    Variant="Variant.Text"
+                    Color="Color.Info"
+                    ButtonType="ButtonType.Button"
+                    Size="Size.Medium"
+                    OnClick="@(async () => await OnClose.InvokeAsync())">
+                    Cancel
+                </MudButton>
+            </MudStack>
+        </MudStack>
+    </MudStack>
+</MudStack>
+
+@code {
+    [Parameter] 
+    public EventCallback OnClose { get; set; }
+    
+    [Parameter] 
+    public Guid Verification { get; set; }
+
+    private readonly CodeModel _model = new();
+    private QrCode _qrCode = new();
+
+    private MudForm _form = new();
+    private readonly PatternMask _mask = new("000000");
+    private bool _codeValid;
+    private bool _showError;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await OnGenerateQrCodeAsync();
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnGenerateQrCodeAsync()
+    {
+        var result = await TwoFactorService.RegenerateQrCodeAsync();
+        if (result.Succeeded && result.TryGetValue<QrCode>(out var qrCode))
+        {
+            _qrCode = qrCode!;
+        }
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
+    }
+
+    private async Task ShowSetupKeyAsync()
+    {
+        var options = new DialogOptions
+        {
+            BackdropClick = true,
+            CloseButton = true,
+            CloseOnEscapeKey = true,
+            MaxWidth = MaxWidth.ExtraExtraLarge
+        };
+
+        var parameters = new DialogParameters<AuthenticatorSecretDialog>
+        {
+            { dialog => dialog.Secret, _qrCode.Secret }
+        };
+
+        await DialogService.ShowAsync<AuthenticatorSecretDialog>("Your two-factor secret", parameters, options);
+    }
+
+    private async Task OnVerifyCodeAsync()
+    {
+        _showError = false;
+        var request = new VerifyAuthenticatorRequest
+        {
+            Code = _model.Code,
+            Secret = _qrCode.Secret
+        };
+
+        var result = await TwoFactorService.VerifyAuthenticatorAsync(request);
+
+        if (result.Succeeded) _codeValid = true;
+        else _showError = true;
+    }
+
+    private async Task OnSaveAsync()
+    {
+        var request = new ReconfigureAuthenticatorRequest
+        {
+            VerificationId = Verification,
+            Secret = _qrCode.Secret
+        };
+        var result = await TwoFactorService.ReconfigureAuthenticatorAsync(request);
+
+        if (result.Succeeded)
+        {
+            Snackbar.Add("Authenticator app was successfully configured.", Severity.Success);
+            await OnClose.InvokeAsync();
+        }
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
+    }
+
+}

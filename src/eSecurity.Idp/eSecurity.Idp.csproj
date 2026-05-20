@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>2fde9022-8d0d-4ca9-bdd2-c61bccefc593</UserSecretsId>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <LangVersion>14</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Aspire.StackExchange.Redis" Version="13.3.3" />
+        <PackageReference Include="Azure.Storage.Blobs" Version="12.28.0" />
+        <PackageReference Include="Azure.Storage.Files.Shares" Version="12.26.0" />
+        <PackageReference Include="Azure.Storage.Queues" Version="12.26.0" />
+        <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="10.0.8" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.Twitter" Version="10.0.8" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.8">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="MassTransit.AspNetCore" Version="7.3.1" />
+        <PackageReference Include="MassTransit.RabbitMQ" Version="9.1.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="10.0.8" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="10.0.8" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.8">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.Azure" Version="1.14.0" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
+        <PackageReference Include="Otp.NET" Version="1.4.1" />
+        <PackageReference Include="PeterO.Cbor" Version="4.5.5" />
+        <PackageReference Include="Scalar.AspNetCore" Version="2.14.14" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\eSecurity.Core\eSecurity.Core.csproj" />
+        <ProjectReference Include="..\eSecurity.WebAuthN\eSecurity.WebAuthN.csproj" />
+        <ProjectReference Include="..\eSystem.Core.Http\eSystem.Core.Http.csproj" />
+        <ProjectReference Include="..\eSystem.Core.Server\eSystem.Core.Server.csproj" />
+        <ProjectReference Include="..\eSystem.Core\eSystem.Core.csproj" />
+        <ProjectReference Include="..\eSystem.ServiceDefaults\eSystem.ServiceDefaults.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Features\OAuth\Queries\" />
+    </ItemGroup>
+</Project>

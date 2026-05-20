@@ -1,0 +1,37 @@
+﻿using eSecurity.Idp.Security.Authorization.OAuth.Token.DeviceCode;
+using eSystem.Core.Server.Data.Entities;
+
+namespace eSecurity.Idp.Data.Entities;
+
+public sealed class DeviceCodeEntity : Entity
+{
+    public Guid Id { get; set; }
+
+    public required string Hash { get; set; }
+    public required string UserCode { get; set; }
+    public int Interval { get; set; }
+    
+    public DateTimeOffset ExpiresAt { get; set; }
+    public DateTimeOffset? ConsumedAt { get; set; }
+    public DateTimeOffset? ApprovedAt { get; set; }
+    public DateTimeOffset? DeniedAt { get; set; }
+    public string? DenyReason { get; set; }
+
+    public DeviceCodeState State { get; set; }
+    public bool IsFirstPoll { get; set; }
+    
+    public string? DeviceModel { get; set; }
+    public string? DeviceName { get; set; }
+    
+    public Guid ClientId { get; set; }
+    public ClientEntity Client { get; set; } = null!;
+
+    public Guid? UserId { get; set; }
+    public UserEntity? User { get; set; }
+    
+    public Guid? SessionId { get; set; }
+    public SessionEntity? Session { get; set; }
+
+    public ICollection<DeviceCodeScopeEntity> Scopes { get; set; } = [];
+    public ICollection<DeviceCodeAcrValueEntity> AcrValues { get; set; } = [];
+}

@@ -1,0 +1,175 @@
+using eSecurity.Idp.Common.Messaging;
+using eSecurity.Idp.Common.Messaging.Messages.Email;
+using eSecurity.Idp.Data.Entities;
+using eSecurity.Idp.Security.Authentication.Password;
+using eSecurity.Idp.Security.Authentication.Session;
+using eSecurity.Idp.Security.Authorization.Codes;
+using eSecurity.Idp.Security.Authorization.Devices;
+using eSecurity.Idp.Security.Authorization.Roles;
+using eSecurity.Idp.Security.Identity.Email;
+using eSecurity.Idp.Security.Identity.Options;
+using eSecurity.Idp.Security.Identity.User;
+using eSecurity.Idp.Security.Identity.User.Username;
+using eSecurity.Core.Responses;
+using eSecurity.Core.Security.Identity;
+using eSystem.Core.Http.Extensions;
+using eSystem.Core.Messaging;
+using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
+
+namespace eSecurity.Idp.Security.Identity.SignUp.Strategies;
+
+public sealed class ManualSignUpPayload : SignUpPayload
+{
+    public required string Username { get; set; }
+    public required string Password { get; set; }
+    public required string Email { get; set; }
+}
+
+public sealed class ManualSignUpStrategy(
+    IUserManager userManager,
+    IUsernameManager usernameManager,
+    IPasswordManager passwordManager,
+    IRoleManager roleManager,
+    IDeviceManager deviceManager,
+    IEmailManager emailManager,
+    IHttpContextAccessor httpContextAccessor,
+    IMessageService messageService,
+    ICodeManager codeManager,
+    IAuthenticationSessionManager sessionManager,
+    IOptions<AccountOptions> options) : ISignUpStrategy
+{
+    private readonly IUserManager _userManager = userManager;
+    private readonly IUsernameManager _usernameManager = usernameManager;
+    private readonly IPasswordManager _passwordManager = passwordManager;
+    private readonly IRoleManager _roleManager = roleManager;
+    private readonly IDeviceManager _deviceManager = deviceManager;
+    private readonly IEmailManager _emailManager = emailManager;
+    private readonly IMessageService _messageService = messageService;
+    private readonly ICodeManager _codeManager = codeManager;
+    private readonly IAuthenticationSessionManager _sessionManager = sessionManager;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
+    private readonly AccountOptions _options = options.Value;
+
+    public async ValueTask<Result> ExecuteAsync(SignUpPayload payload,
+        CancellationToken cancellationToken = default)
+    {
+        if (payload is not ManualSignUpPayload manualPayload)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Incorrect payload type"
+            });
+        }
+        
+        if (_options.RequireUniqueUsername && 
+            await _usernameManager.IsTakenAsync(manualPayload.Username, cancellationToken))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
+            {
+                Code = ErrorCode.UsernameTaken,
+                Description = "This username is already taken"
+            });
+        }
+
+        if (_options.RequireUniqueEmail && 
+            await _emailManager.IsTakenAsync(manualPayload.Email, cancellationToken))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
+            {
+                Code = ErrorCode.EmailTaken,
+                Description = "This email is already taken."
+            });
+        }
+
+        var user = new UserEntity
+        {
+            Id = Guid.CreateVersion7(),
+            Username = manualPayload.Username,
+            NormalizedUsername = manualPayload.Username.ToUpperInvariant(),
+            Locale = _httpContext.GetLocale()!,
+            ZoneInfo = _httpContext.GetTimeZone()!,
+        };
+
+        var createResult = await _userManager.CreateAsync(user, cancellationToken);
+        if (!createResult.Succeeded) return createResult;
+
+        var passwordResult = await _passwordManager.AddAsync(user, manualPayload.Password, cancellationToken);
+        if (!passwordResult.Succeeded) return passwordResult;
+
+        var setResult = await _emailManager.SetAsync(user, manualPayload.Email,
+            EmailType.Primary, cancellationToken);
+
+        if (!setResult.Succeeded) return setResult;
+
+        var role = await _roleManager.FindByNameAsync("User", cancellationToken);
+        if (role is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "Cannot find role with name User"
+            });
+        }
+
+        var assignRoleResult = await _roleManager.AssignAsync(user, role, cancellationToken);
+        if (!assignRoleResult.Succeeded) return assignRoleResult;
+
+        var userAgent = _httpContext.GetUserAgent();
+        var ipAddress = _httpContext.GetIpV4();
+        var clientInfo = _httpContext.GetClientInfo();
+
+        var newDevice = new UserDeviceEntity
+        {
+            Id = Guid.CreateVersion7(),
+            UserId = user.Id,
+            UserAgent = userAgent,
+            IpAddress = ipAddress,
+            Browser = clientInfo.UA.ToString(),
+            Os = clientInfo.OS.ToString(),
+            Device = clientInfo.Device.ToString(),
+            IsBlocked = false,
+            FirstSeenAt = DateTimeOffset.UtcNow
+        };
+
+        var deviceResult = await _deviceManager.CreateAsync(newDevice, cancellationToken);
+        if (!deviceResult.Succeeded) return deviceResult;
+
+        var code = await _codeManager.CreateAsync(user, SenderType.Email, cancellationToken);
+        
+        var message = new CodeEmailMessage()
+        {
+            Credentials = new Dictionary<string, string>
+            {
+                { "To", manualPayload.Email },
+                { "Subject", "Sign Up" },
+            },
+            Payload = new()
+            {
+                { "Code", code }
+            }
+        };
+
+        await _messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
+
+        var session = new AuthenticationSessionEntity()
+        {
+            Id = Guid.CreateVersion7(),
+            UserId = user.Id,
+            CreatedAt = DateTimeOffset.UtcNow,
+            ExpiredAt = DateTimeOffset.UtcNow.AddMinutes(10)
+        };
+        
+        session.Require(AuthenticationMethodReference.EmailBasedAuthentication);
+        
+        var sessionResult = await _sessionManager.CreateAsync(session, cancellationToken);
+        if (!sessionResult.Succeeded) return sessionResult;
+
+        return Results.Success(SuccessCodes.Ok, new SignUpResponse
+        {
+            TransactionId = session.Id
+        });
+    }
+}

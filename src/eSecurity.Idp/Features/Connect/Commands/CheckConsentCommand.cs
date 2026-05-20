@@ -1,0 +1,96 @@
+﻿using eSecurity.Idp.Security.Authentication.OpenIdConnect.Client;
+using eSecurity.Idp.Security.Authentication.OpenIdConnect.Session;
+using eSecurity.Idp.Security.Authorization.OAuth.Consents;
+using eSecurity.Idp.Security.Identity.User;
+using eSecurity.Core.Requests;
+using eSecurity.Core.Responses;
+using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
+
+namespace eSecurity.Idp.Features.Connect.Commands;
+
+public record CheckConsentCommand(CheckConsentRequest Request) : IRequest<Result>;
+
+public class CheckConsentCommandHandler(
+    IConsentManager consentManager,
+    ISessionManager sessionManager,
+    IClientManager clientManager,
+    IUserManager userManager,
+    ISessionAccessor sessionAccessor) : IRequestHandler<CheckConsentCommand, Result>
+{
+    private readonly IConsentManager _consentManager = consentManager;
+    private readonly ISessionManager _sessionManager = sessionManager;
+    private readonly IClientManager _clientManager = clientManager;
+    private readonly IUserManager _userManager = userManager;
+    private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
+
+    public async Task<Result> Handle(CheckConsentCommand request, CancellationToken cancellationToken)
+    {
+        var sessionCookie = _sessionAccessor.GetCookie();
+        if (sessionCookie is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.LoginRequired,
+                Description = "Login required"
+            });
+        }
+        
+        var session = await _sessionManager.FindByIdAsync(sessionCookie.SessionId, cancellationToken);
+        if (session is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "Session not found"
+            });
+        }
+        
+        var user = await _userManager.FindByIdAsync(session.UserId, cancellationToken);
+        if (user is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "User not found"
+            });
+        }
+
+        var client = await _clientManager.FindByIdAsync(request.Request.ClientId, cancellationToken);
+        if (client is null)
+        {
+            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            {
+                Code = ErrorCode.NotFound,
+                Description = "Client not found"
+            });
+        }
+
+        var consent = await _consentManager.FindAsync(user, client, cancellationToken);
+        if (consent is null)
+        {
+            return Results.Success(SuccessCodes.Ok, new CheckConsentResponse
+            {
+                IsGranted = false,
+                UserHint = user.Username,
+                RemainingScopes = request.Request.Scopes
+            });
+        }
+
+        if (!consent.HasScopes(request.Request.Scopes, out var remainingScopes))
+        {
+            return Results.Success(SuccessCodes.Ok, new CheckConsentResponse
+            {
+                IsGranted = false,
+                UserHint = user.Username,
+                RemainingScopes = remainingScopes.ToList()
+            });
+        }
+        
+        return Results.Success(SuccessCodes.Ok, new CheckConsentResponse
+        {
+            IsGranted = true, 
+            UserHint = user.Username,
+        });
+    }
+}

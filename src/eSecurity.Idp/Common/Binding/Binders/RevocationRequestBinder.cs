@@ -1,0 +1,32 @@
+﻿using eSystem.Core.Enums;
+using eSystem.Core.Primitives;
+using eSystem.Core.Security.Authorization.OAuth;
+using eSystem.Core.Server.Binding;
+using eSystem.Core.Server.Security.Authorization.OAuth.Revocation;
+
+namespace eSecurity.Idp.Common.Binding.Binders;
+
+public sealed class RevocationRequestBinder : IFormBinder<RevocationRequest>
+{
+    public Task<TypedResult<RevocationRequest>> BindAsync(
+        IFormCollection form, CancellationToken cancellationToken = default)
+    {
+        if (!form.TryGetValue("token", out var token))
+        {
+            return Task.FromResult(TypedResult<RevocationRequest>.Fail(new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "token is required"
+            }));
+        }
+
+        var tokenTypeHintString = form["token_type_hint"];
+        var result = new RevocationRequest()
+        {
+            Token = token.ToString(),
+            TokenTypeHint = EnumHelper.FromString<TokenTypeHint>(tokenTypeHintString)?.Value
+        };
+        
+        return Task.FromResult(TypedResult<RevocationRequest>.Success(result));
+    }
+}

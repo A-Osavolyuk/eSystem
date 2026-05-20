@@ -1,4 +1,5 @@
-using eSecurity.Core.Common.Requests;
+using eSecurity.Client.Common.Http;
+using eSecurity.Core.Requests;
 
 namespace eSecurity.Client.Security.Authentication.TwoFactor;
 
@@ -13,10 +14,6 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
                 Method = HttpMethods.Post,
                 Url = "/api/v1/TwoFactor/enable",
                 Data = request
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.Bearer
             });
 
     public async ValueTask<ApiResponse> DisableAsync()
@@ -25,10 +22,6 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
             {
                 Method = HttpMethods.Post,
                 Url = "/api/v1/TwoFactor/disable"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.Bearer
             });
 
     public async ValueTask<ApiResponse> PreferAsync(PreferTwoFactorMethodRequest request)
@@ -38,10 +31,6 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
                 Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/TwoFactor/prefer"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.Bearer
             });
 
     public async ValueTask<ApiResponse> GenerateQrCodeAsync()
@@ -50,10 +39,6 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
             {
                 Method = HttpMethods.Post,
                 Url = "/api/v1/TwoFactor/qr-code/generate"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.Bearer
             });
 
     public async ValueTask<ApiResponse> RegenerateQrCodeAsync()
@@ -62,10 +47,6 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
             {
                 Method = HttpMethods.Post,
                 Url = "/api/v1/TwoFactor/qr-code/regenerate"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.Bearer
             });
 
     public async ValueTask<ApiResponse> ReconfigureAuthenticatorAsync(ReconfigureAuthenticatorRequest request)
@@ -75,10 +56,6 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
                 Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/TwoFactor/authenticator/reconfigure"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.Bearer
             });
 
     public async ValueTask<ApiResponse> VerifyAuthenticatorAsync(VerifyAuthenticatorRequest request)
@@ -88,10 +65,6 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
                 Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/TwoFactor/authenticator/verify"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.Bearer
             });
 
     public async ValueTask<ApiResponse> GenerateRecoveryCodesAsync()
@@ -100,10 +73,6 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
             {
                 Method = HttpMethods.Post,
                 Url = "/api/v1/TwoFactor/recovery-codes/generate"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.Bearer
             });
 
     public async ValueTask<ApiResponse> LoadRecoveryCodesAsync()
@@ -112,9 +81,5 @@ public class TwoFactorService(IApiClient apiClient) : ITwoFactorService
             {
                 Method = HttpMethods.Post,
                 Url = "/api/v1/TwoFactor/recovery-codes/load"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.Bearer
             });
 }

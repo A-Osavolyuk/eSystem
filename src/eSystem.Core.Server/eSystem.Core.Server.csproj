@@ -24,6 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\eSystem.Core.Security\eSystem.Core.Security.csproj" />
         <ProjectReference Include="..\eSystem.Core\eSystem.Core.csproj"/>
     </ItemGroup>
 

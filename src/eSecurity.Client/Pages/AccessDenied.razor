@@ -1,0 +1,39 @@
+﻿@page "/access-denied"
+
+@inherits PageBase
+
+<PageTitle> Access denied </PageTitle>
+
+<MudStack AlignItems="AlignItems.Center" Justify="Justify.Center">
+    <MudText Align="Align.Center" Typo="Typo.h4">
+        Access denied
+    </MudText>
+    <MudText Align="Align.Center" Typo="Typo.h5">
+        You do not have access to this resource.
+    </MudText>
+    @if (string.IsNullOrEmpty(ReturnUrl))
+    {
+        <MudLink
+            Style="text-align:center"
+            Class="d-block"
+            Typo="Typo.h5"
+            Href="@Links.Common.Profile">
+            To main page
+        </MudLink>
+    }
+    else
+    {
+        <MudLink
+            Style="text-align:center"
+            Class="d-block"
+            Typo="Typo.h5"
+            Href="@(ReturnUrl)">
+            Go back
+        </MudLink>
+    }
+</MudStack>
+
+@code {
+    [SupplyParameterFromQuery(Name = "return_url")]
+    public string? ReturnUrl { get; set; }
+}

@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
-using eSystem.Core.Server.Security.Authentication.OpenIdConnect.Client;
-using eSystem.Core.Server.Security.Authorization.OAuth;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
+using eSystem.Core.Security.Authorization.OAuth;
 
 namespace eSystem.Core.Server.Security.Authentication.OpenIdConnect.Discovery;
 

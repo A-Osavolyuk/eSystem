@@ -1,3 +1,5 @@
+using eSecurity.Client.Common.Http;
+
 namespace eSecurity.Client.Security.Identity;
 
 public interface IUserService

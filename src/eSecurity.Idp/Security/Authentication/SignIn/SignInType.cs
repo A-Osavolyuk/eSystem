@@ -1,0 +1,21 @@
+﻿using System.Text.Json.Serialization;
+using eSystem.Core.Enums;
+using eSystem.Core.Enums.Serialization;
+
+namespace eSecurity.Idp.Security.Authentication.SignIn;
+
+[JsonConverter(typeof(JsonEnumValueConverter<SignInType>))]
+public enum SignInType
+{
+    [EnumValue("password")]
+    Password,
+    
+    [EnumValue("passkey")]
+    Passkey,
+    
+    [EnumValue("oauth")]
+    OAuth,
+    
+    [EnumValue("two_factor")]
+    TwoFactor
+}

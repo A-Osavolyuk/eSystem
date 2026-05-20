@@ -1,0 +1,22 @@
+﻿@page "/oauth/handle"
+
+@inherits PageBase
+
+@layout AuthenticationLayout
+
+<PageTitle>Handling OAuth session...</PageTitle>
+
+@code {
+
+    [SupplyParameterFromQuery(Name = "state")]
+    public string State { get; set; } = string.Empty;
+
+    [SupplyParameterFromQuery(Name = "sid")]
+    public Guid SessionId { get; set; }
+
+    [SupplyParameterFromQuery(Name = "error")]
+    public string? ErrorCode { get; set; }
+
+    [SupplyParameterFromQuery(Name = "error_description")]
+    public string? ErrorDescription { get; set; }
+}

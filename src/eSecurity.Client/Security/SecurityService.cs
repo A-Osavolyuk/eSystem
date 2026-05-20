@@ -1,4 +1,5 @@
-using eSecurity.Core.Common.Requests;
+using eSecurity.Client.Common.Http;
+using eSecurity.Core.Requests;
 
 namespace eSecurity.Client.Security;
 
@@ -13,12 +14,6 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Account/sign-in"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.None,
-                WithLocale = true,
-                WithTimezone = true
             });
 
     public async ValueTask<ApiResponse> SignUpAsync(SignUpRequest request)
@@ -28,12 +23,6 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Account/sign-up"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.None,
-                WithLocale = true,
-                WithTimezone = true
             });
 
     public async ValueTask<ApiResponse> CompleteSignUpAsync(CompleteSignUpRequest request)
@@ -43,10 +32,6 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Account/sign-up/complete"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.None
             });
 
     public async ValueTask<ApiResponse> GetAuthenticationSessionAsync(Guid sid)
@@ -55,10 +40,6 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
             {
                 Method = HttpMethods.Get,
                 Url = $"/api/v1/Account/session/{sid}"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.None
             });
 
 
@@ -69,9 +50,5 @@ public class SecurityService(IApiClient apiClient) : ISecurityService
                 Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Account/check"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.None
             });
 }

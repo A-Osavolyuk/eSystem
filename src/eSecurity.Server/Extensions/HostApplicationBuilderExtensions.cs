@@ -1,64 +1,38 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using eSecurity.Server.Common.Binding;
-using eSecurity.Server.Common.Errors;
-using eSecurity.Server.Common.Mapping;
-using eSecurity.Server.Common.Messaging;
-using eSecurity.Server.Common.Middlewares;
-using eSecurity.Server.Common.Storage;
-using eSecurity.Server.Security;
-using eSecurity.Server.Conventions;
+﻿using System.Text.Json.Serialization;
+using eSecurity.Server.Common.Proxy;
 using eSecurity.Server.Data;
-using eSystem.Core.Server.Documentation;
-using eSystem.Core.Server.Errors;
-using eSystem.Core.Server.Validation;
-using eSystem.Core.Server.Versioning;
-using eSystem.Core.Validation;
+using eSecurity.Server.Security.Authentication;
+using eSecurity.Server.Security.Cors;
+using eSecurity.Server.Common.Cache;
+using eSystem.Core.Gateway;
+using eSystem.Core.Server.Bff;
+using eSystem.ServiceDefaults;
 
 namespace eSecurity.Server.Extensions;
 
 public static class HostApplicationBuilderExtensions
 {
-    extension(IHostApplicationBuilder builder)
+    public static void AddServices(this IHostApplicationBuilder builder)
     {
-        public void AddServices()
-        {
-            builder.AddMapping();
-            builder.AddVersioning();
-            builder.AddMessaging();
-            builder.AddValidation<IAssemblyMarker>();
-            builder.AddServiceDefaults();
-            builder.AddSecurity();
-            builder.AddDatabase();
-            builder.AddDocumentation();
-            builder.AddStorage();
-            builder.AddExceptionHandling<GlobalExceptionHandler>();
+        builder.AddRedisClient("redis");
+        builder.AddSqlDb("e-security-bff-db");
+        builder.AddProxy();
+        builder.AddCors();
+        builder.AddAuthentication();
+        builder.AddBff();
+        builder.AddServiceDefaults();
 
-            builder.Services.AddDataBinding();
-            builder.Services.AddTransient<RequestBufferingMiddleware>();
-            builder.Services.AddMediator<IAssemblyMarker>();
-            builder.Services.AddHttpContextAccessor();
-            builder.Services.AddDistributedMemoryCache();
-            builder.Services.ConfigureHttpJsonOptions(options =>
+        builder.Services.AddHttpClient();
+        builder.Services.AddGateway();
+        builder.Services.AddHttpContextAccessor();
+        builder.Services.AddDataProtection();
+        builder.Services.AddSingleton<ICache, RedisCache>();
+
+        builder.Services.AddControllers()
+            .AddJsonOptions(cfg =>
             {
-                options.SerializerOptions.WriteIndented = true;
-                options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-                options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
-                options.SerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.SnakeCaseLower;
+                cfg.JsonSerializerOptions.WriteIndented = true;
+                cfg.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             });
-            
-            builder.Services
-                .AddControllers(options =>
-                {
-                    options.Conventions.Add(new RoutePrefixConvention("api"));
-                })
-                .AddJsonOptions(options =>
-                {
-                    options.JsonSerializerOptions.WriteIndented = true;
-                    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
-                    options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.SnakeCaseLower;
-                });
-        }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace eSystem.Core.Server.Messaging;
+﻿using eSystem.Core.Messaging;
+
+namespace eSystem.Core.Server.Messaging;
 
 public class MessageRequest
 {

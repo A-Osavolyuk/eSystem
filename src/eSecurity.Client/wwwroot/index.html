@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Loading...</title>
+    <base href="/" />
+    <link rel="preload" id="webassembly" />
+    <!-- If you add any scoped CSS files, uncomment the following to load them
+    <link href="eSecurity.Client.UI.styles.css" rel="stylesheet" /> -->
+    <link rel="stylesheet" href="bootstrap/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/global.css"/>
+    <link rel="stylesheet" href="css/mudblazor-override.css"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" />
+    <link rel="stylesheet" href="_content/MudBlazor/MudBlazor.min.css" />
+    <link rel="stylesheet" href="_content/CodeBeam.MudBlazor.Extensions/MudExtensions.min.css"/>
+    <link rel="stylesheet" href="css/app.css"/>
+    <link rel="stylesheet" href="css/loading.css"/>
+    <script type="importmap"></script>
+    <link rel="icon" type="image/png" href="favicon.png"/>
+</head>
+
+<body>
+<div id="app">
+    <div class="loader-wrapper">
+        <div class="spinner"></div>
+        <div class="text">
+            <p>Loading...</p>
+        </div>
+    </div>
+</div>
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="." class="reload">Reload</a>
+        <span class="dismiss">🗙</span>
+    </div>
+
+    <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
+    <script src="_content/MudBlazor/MudBlazor.min.js"></script>
+    <script src="_content/CodeBeam.MudBlazor.Extensions/MudExtensions.min.js"></script>
+    <script src="scripts/fileDownload.js"></script>
+    <script src="scripts/webAuthN.js"></script>
+    <script src="scripts/clipboard.js"></script>
+    <script src="scripts/printer.js"></script>
+    <script src="scripts/localization.js"></script>
+</body>
+
+</html>

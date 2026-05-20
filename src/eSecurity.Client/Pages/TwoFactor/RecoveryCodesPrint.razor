@@ -1,0 +1,48 @@
+﻿@page "/settings/recovery-codes/print"
+@using eSecurity.Client.Security.Authentication.TwoFactor
+@inherits PageBase
+
+@attribute [Authorize]
+
+@inject ITwoFactorService TwoFactorService
+
+<PageTitle>Recovery codes</PageTitle>
+
+@if (_codes.Count > 0)
+{
+    <MudGrid Justify="Justify.Center">
+        <MudItem xs="4">
+            <MudPaper Class="pa-5" Outlined="true">
+                <MudStack Spacing="2" Justify="Justify.Center" AlignItems="AlignItems.Center">
+                    @foreach (var recoveryCode in _codes)
+                    {
+                        <MudTextM3 Typo="TypoM3.Title" Size="Size.Large">
+                            @recoveryCode
+                        </MudTextM3>
+                    }
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+    <Printer />
+}
+
+@code {
+    private List<string> _codes = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
+        var result = await TwoFactorService.LoadRecoveryCodesAsync();
+
+        if (result.Succeeded && result.TryGetValue<List<string>>(out var codes))
+        {
+            _codes = codes!;
+        }
+        else Snackbar.Add(result.GetError().Description, Severity.Error);
+    }
+}

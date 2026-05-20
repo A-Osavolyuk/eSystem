@@ -1,0 +1,9 @@
+﻿@using eSecurity.Client.Common.State
+@inherits ComponentBase
+
+@code {
+    [Inject] public NavigationManager NavigationManager { get; private set; } = null!;
+    [Inject] public UserState UserState { get; private set; } = null!;
+    [Inject] public ISnackbar Snackbar { get; private set; } = null!;
+    [Inject] public IJSRuntime Js { get; private set; } = null!;
+}

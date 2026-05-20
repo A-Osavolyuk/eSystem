@@ -1,4 +1,5 @@
-﻿using eSystem.Core.Server.Messaging;
+﻿using eSystem.Core.Messaging;
+using eSystem.Core.Server.Messaging;
 using MassTransit;
 
 namespace eSystem.MessageBus.Consumers;

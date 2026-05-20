@@ -1,0 +1,89 @@
+﻿using eSecurity.Idp.Security.Authorization.OAuth.Protocol;
+using eSecurity.Idp.Security.Cryptography.Hashing;
+using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Server.Security.Authorization.OAuth.Token;
+using eSystem.Core.Server.Security.Authorization.OAuth.Token.DeviceCode;
+
+namespace eSecurity.Idp.Security.Authorization.OAuth.Token.DeviceCode;
+
+public sealed class DeviceCodeStrategy(
+    IDeviceCodeManager deviceCodeManager,
+    IHasherProvider hasherProvider,
+    IDeviceCodeFlowResolver resolver) : ITokenStrategy
+{
+    private readonly IDeviceCodeManager _deviceCodeManager = deviceCodeManager;
+    private readonly IDeviceCodeFlowResolver _resolver = resolver;
+    private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
+
+    public async ValueTask<Result> ExecuteAsync(TokenRequest tokenRequest, CancellationToken cancellationToken = default)
+    {
+        if (tokenRequest is not DeviceCodeRequest request)
+            throw new NotSupportedException("Payload type must be 'DeviceCodeContext'.");
+
+        if (string.IsNullOrEmpty(request.DeviceCode))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidGrant,
+                Description = "Invalid device code"
+            });
+        }
+        
+        var deviceCodeHash = _hasher.Hash(request.DeviceCode);
+        var deviceCode = await _deviceCodeManager.FindByHashAsync(deviceCodeHash, cancellationToken);
+        if (deviceCode is null || deviceCode.State == DeviceCodeState.Consumed || 
+            deviceCode is { State: DeviceCodeState.Denied, IsFirstPoll: false } ||
+            deviceCode.ClientId.ToString() != request.ClientId)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidGrant,
+                Description = "Invalid device code"
+            });
+        }
+
+        if (deviceCode is { State: DeviceCodeState.Denied, IsFirstPoll: true })
+        {
+            deviceCode.IsFirstPoll = false;
+            
+            var deviceResult = await _deviceCodeManager.UpdateAsync(deviceCode, cancellationToken);
+            if (!deviceResult.Succeeded) return deviceResult;
+                
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.AccessDenied,
+                Description = "Device code was denied"
+            });
+        }
+
+        if (deviceCode.State == DeviceCodeState.Pending)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.AuthorizationPending,
+                Description = "Authorization pending"
+            });
+        }
+
+        if (deviceCode.ExpiresAt < DateTimeOffset.UtcNow)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.ExpiredToken,
+                Description = "Device code is already expired"
+            });
+        }
+
+        var scopes = deviceCode.Scopes.Select(x => x.Scope).ToList();
+        var protocol = scopes.Contains(ScopeTypes.OpenId) 
+            ? AuthorizationProtocol.OpenIdConnect 
+            : AuthorizationProtocol.OAuth;
+        
+        var deviceCodeFlowContext = new DeviceCodeFlowContext() { ClientId = request.ClientId };
+        var flow = _resolver.Resolve(protocol);
+        
+        return await flow.ExecuteAsync(deviceCode, deviceCodeFlowContext, cancellationToken);
+    }
+}

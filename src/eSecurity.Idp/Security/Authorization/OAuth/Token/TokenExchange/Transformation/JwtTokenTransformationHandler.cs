@@ -1,0 +1,102 @@
+﻿using System.Security.Claims;
+using eSecurity.Idp.Security.Authentication.OpenIdConnect.Client;
+using eSecurity.Idp.Security.Authorization.OAuth.Token.TokenExchange.Delegation;
+using eSecurity.Idp.Security.Cryptography.Tokens;
+using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Security.Authorization.OAuth;
+using eSystem.Core.Security.Identity.Claims;
+using eSystem.Core.Server.Security.Authorization.OAuth.Token.TokenExchange;
+
+namespace eSecurity.Idp.Security.Authorization.OAuth.Token.TokenExchange.Transformation;
+
+public sealed class JwtTokenTransformationHandler(
+    ITokenClaimsExtractor claimsExtractor,
+    IClientManager clientManager,
+    ITokenBuilderProvider tokenBuilderProvider,
+    IOptions<TokenConfigurations> options) : ITokenTransformationHandler
+{
+    private readonly ITokenClaimsExtractor _claimsExtractor = claimsExtractor;
+    private readonly IClientManager _clientManager = clientManager;
+    private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
+    private readonly TokenConfigurations _configurations = options.Value;
+
+    public async ValueTask<Result> HandleAsync(TokenExchangeFlowContext context,
+        CancellationToken cancellationToken = default)
+    {
+        var extractionResult = await _claimsExtractor.ExtractAsync(context.SubjectToken, cancellationToken);
+        if (!extractionResult.Succeeded || !extractionResult.TryGetValue(out var value))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidGrant,
+                Description = "Subject token is invalid"
+            });
+        }
+
+        var claims = value.ToList();
+        var client = await _clientManager.FindByIdAsync(context.ClientId, cancellationToken);
+        if (client is null)
+        {
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error()
+            {
+                Code = ErrorCode.UnauthorizedClient,
+                Description = "Unauthorized client"
+            });
+        }
+
+        if (!string.IsNullOrEmpty(context.Audience))
+        {
+            if (!client.IsValidAudience(context.Audience))
+            {
+                return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+                {
+                    Code = ErrorCode.InvalidTarget,
+                    Description = "The requested audience is not an allowed audience for this client."
+                });
+            }
+
+            claims.Add(new Claim(AppClaimTypes.Aud, context.Audience));
+        }
+
+        var scopes = context.Scope.Split(' ').ToList();
+        var subjectScopes = claims
+            .FirstOrDefault(x => x.Type == AppClaimTypes.Scope)?.Value
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .ToHashSet();
+
+        if (subjectScopes is not null && !scopes.All(s => subjectScopes.Contains(s)))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
+            {
+                Code = ErrorCode.InvalidScope,
+                Description = "Requested scopes exceed the subject token scopes."
+            });
+        }
+
+        if (claims.Any(x => x.Type == AppClaimTypes.Scope))
+        {
+            var scopeClaim = claims.First(x => x.Type == AppClaimTypes.Scope);
+            claims.Remove(scopeClaim);
+        }
+
+        claims.Add(new Claim(AppClaimTypes.Scope, context.Scope));
+
+        var tokenFactory = _tokenBuilderProvider.GetFactory<JwtTokenBuildContext, string>();
+        var tokenContext = new JwtTokenBuildContext { Claims = claims, Type = JwtTokenType.AccessToken };
+        var accessToken = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
+
+        var response = new TokenExchangeResponse
+        {
+            ExpiresIn = (int)_configurations.DefaultAccessTokenLifetime.TotalSeconds,
+            TokenType = ResponseTokenType.Bearer,
+            IssuedTokenType = TokenType.AccessToken,
+            Scope = context.Scope,
+            Audience = context.Audience,
+            AccessToken = accessToken,
+            IssuedAt = long.Parse(claims.First(x => x.Type == AppClaimTypes.Iat).Value)
+        };
+
+        return Results.Success(SuccessCodes.Ok, response);
+    }
+}

@@ -1,4 +1,5 @@
-﻿using eSecurity.Core.Security.Credentials.PublicKey;
+﻿using System.Text.Json.Serialization;
+using eSecurity.WebAuthN;
 
 namespace eSecurity.Core.Security.Authorization.Verification;
 

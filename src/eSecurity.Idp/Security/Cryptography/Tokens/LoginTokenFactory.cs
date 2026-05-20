@@ -1,0 +1,59 @@
+﻿using eSecurity.Idp.Data.Entities;
+using eSecurity.Idp.Security.Authentication.Subject;
+using eSecurity.Idp.Security.Authorization.OAuth.Token;
+using eSystem.Core.Primitives;
+
+namespace eSecurity.Idp.Security.Cryptography.Tokens;
+
+public sealed class LoginTokenFactory(
+    IOptions<TokenConfigurations> options,
+    ITokenBuilderProvider tokenBuilderProvider,
+    ISubjectProvider subjectProvider) : ITokenFactory
+{
+    private readonly TokenConfigurations _tokenConfigurations = options.Value;
+    private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
+    private readonly ISubjectProvider _subjectProvider = subjectProvider;
+
+    public async ValueTask<TypedResult<string>> CreateAsync(
+        ClientEntity client, 
+        UserEntity? user = null, 
+        SessionEntity? session = null,
+        TokenFactoryOptions? factoryOptions = null, 
+        CancellationToken cancellationToken = default)
+    {
+        if (user is null)
+        {
+            return TypedResult<string>.Fail(new Error()
+            {
+                Code = ErrorCode.ServerError,
+                Description = "Server error"
+            });
+        }
+        
+        var subjectResult = await _subjectProvider.GetSubjectAsync(user, client, cancellationToken);
+        if (!subjectResult.Succeeded || !subjectResult.TryGetValue(out var subject))
+        {
+            return TypedResult<string>.Fail(new Error()
+            {
+                Code = ErrorCode.ServerError,
+                Description = "Server error"
+            });
+        }
+        
+        var lifetime = client.LoginTokenLifetime ?? _tokenConfigurations.DefaultLoginTokenLifetime;
+        var tokenContext = new OpaqueTokenBuildContext
+        {
+            TokenLength = _tokenConfigurations.OpaqueTokenLength,
+            TokenType = OpaqueTokenType.LoginToken,
+            Sid = session?.Id,
+            ClientId = client.Id,
+            ExpiredAt = DateTimeOffset.UtcNow.Add(lifetime),
+            Subject = subject,
+        };
+            
+        var tokenFactory = _tokenBuilderProvider.GetFactory<OpaqueTokenBuildContext, string>();
+        var token = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
+        
+        return TypedResult<string>.Success(token);
+    }
+}

@@ -1,6 +1,7 @@
 ﻿using eSystem.Core.Enums;
 using eSystem.Core.Form;
-using eSystem.Core.Server.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Security.Authorization.OAuth;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eSystem.Core.Server.Security.Authorization.OAuth.Token;

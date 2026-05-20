@@ -1,4 +1,5 @@
-using eSecurity.Core.Common.Requests;
+using eSecurity.Client.Common.Http;
+using eSecurity.Core.Requests;
 
 namespace eSecurity.Client.Security.Credentials.PublicKey;
 
@@ -14,10 +15,6 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
                 Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Passkey/options/request"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.None
             });
 
     public async ValueTask<ApiResponse> GenerateCreationOptionsAsync(
@@ -28,10 +25,6 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
                 Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Passkey/options/creation"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.Bearer
             });
 
     public async ValueTask<ApiResponse> CreateAsync(CreatePasskeyRequest request)
@@ -41,10 +34,6 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
                 Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Passkey/create"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.Bearer
             });
 
     public async ValueTask<ApiResponse> ChangeNameAsync(ChangePasskeyNameRequest request)
@@ -54,10 +43,6 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
                 Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Passkey/change-name"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.Bearer
             });
 
     public async ValueTask<ApiResponse> RemoveAsync(RemovePasskeyRequest request)
@@ -67,9 +52,5 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
                 Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Passkey/remove"
-            }, new ApiOptions
-            {
-                ContentType = ContentTypes.Application.Json,
-                Authentication = AuthenticationType.Bearer
             });
 }
