@@ -12,7 +12,7 @@ public sealed class PushedAuthorizationRequestConfiguration : IEntityTypeConfigu
         builder.Property(x => x.RequestUri).HasMaxLength(70);
         builder.Property(x => x.ResponseType).HasEnumConversion();
         builder.Property(x => x.RedirectUri).HasMaxLength(1000);
-        builder.Property(x => x.Nonce).HasMaxLength(100);
+        builder.Property(x => x.Nonce).HasMaxLength(1000);
         builder.Property(x => x.State).HasMaxLength(1000);
         builder.Property(x => x.CodeChallenge).HasMaxLength(100);
         builder.Property(x => x.CodeChallengeMethod).HasEnumConversion();

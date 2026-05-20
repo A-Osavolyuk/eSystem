@@ -218,9 +218,10 @@ namespace eSecurity.Idp.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    RequestUri = table.Column<string>(type: "character varying(70)", maxLength: 70, nullable: false),
                     ResponseType = table.Column<string>(type: "text", nullable: false),
                     RedirectUri = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
-                    Nonce = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    Nonce = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
                     State = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
                     CodeChallenge = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     CodeChallengeMethod = table.Column<string>(type: "text", nullable: true),
