@@ -3,7 +3,7 @@ using eSecurity.Idp.Data.Entities;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 
-namespace eSecurity.Idp.Security.Authorization.Par;
+namespace eSecurity.Idp.Security.Authorization.Authorize.Par;
 
 public sealed class ParManager(AuthDbContext context) : IParManager
 {

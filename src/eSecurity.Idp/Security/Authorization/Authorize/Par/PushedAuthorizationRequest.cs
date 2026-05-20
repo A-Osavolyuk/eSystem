@@ -1,6 +1,6 @@
 ﻿using eSystem.Core.Security.Authentication.OpenIdConnect;
 
-namespace eSecurity.Idp.Security.Authorization.Par;
+namespace eSecurity.Idp.Security.Authorization.Authorize.Par;
 
 public sealed class PushedAuthorizationRequest
 {

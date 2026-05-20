@@ -1,7 +1,7 @@
 ﻿using eSecurity.Idp.Data.Entities;
 using eSecurity.Idp.Security.Authentication.OpenIdConnect.Client;
+using eSecurity.Idp.Security.Authorization.Authorize.Par;
 using eSecurity.Idp.Security.Authorization.OAuth.Scopes;
-using eSecurity.Idp.Security.Authorization.Par;
 using eSystem.Core.Enums;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;

@@ -1,4 +1,4 @@
-﻿using eSecurity.Idp.Security.Authorization.Par;
+﻿using eSecurity.Idp.Security.Authorization.Authorize.Par;
 using eSystem.Core.Enums;
 using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authentication.OpenIdConnect;

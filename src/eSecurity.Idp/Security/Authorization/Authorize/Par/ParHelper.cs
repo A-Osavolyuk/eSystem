@@ -1,4 +1,4 @@
-﻿namespace eSecurity.Idp.Security.Authorization.Par;
+﻿namespace eSecurity.Idp.Security.Authorization.Authorize.Par;
 
 public static class ParHelper
 {

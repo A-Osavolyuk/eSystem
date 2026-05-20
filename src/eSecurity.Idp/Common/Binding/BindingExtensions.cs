@@ -1,5 +1,5 @@
 ﻿using eSecurity.Idp.Common.Binding.Binders;
-using eSecurity.Idp.Security.Authorization.Par;
+using eSecurity.Idp.Security.Authorization.Authorize.Par;
 using eSystem.Core.Server.Binding;
 using eSystem.Core.Server.Security.Authorization.OAuth.Introspection;
 using eSystem.Core.Server.Security.Authorization.OAuth.Revocation;

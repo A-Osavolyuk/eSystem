@@ -1,10 +1,10 @@
 ﻿using eSecurity.Idp.Security.Authentication.OpenIdConnect.Ciba;
+using eSecurity.Idp.Security.Authorization.Authorize.Par;
 using eSecurity.Idp.Security.Authorization.Codes;
 using eSecurity.Idp.Security.Authorization.Constants;
 using eSecurity.Idp.Security.Authorization.OAuth.Consents;
 using eSecurity.Idp.Security.Authorization.OAuth.LinkedAccount;
 using eSecurity.Idp.Security.Authorization.OAuth.Token.Validation;
-using eSecurity.Idp.Security.Authorization.Par;
 using eSecurity.Idp.Security.Authorization.Devices;
 using eSecurity.Idp.Security.Authorization.OAuth.Token;
 using eSecurity.Idp.Security.Authorization.OAuth.Token.DeviceCode;
