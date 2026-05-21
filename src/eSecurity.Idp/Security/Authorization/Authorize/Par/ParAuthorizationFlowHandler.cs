@@ -6,40 +6,37 @@ namespace eSecurity.Idp.Security.Authorization.Authorize.Par;
 
 public sealed class ParAuthorizationFlowHandler(
     IParManager parManager,
-    IPromptsProcessor promptsProcessor) : IAuthorizationFlowHandler
+    IPromptsProcessor promptsProcessor,
+    RedirectManager redirectManager) : IAuthorizationFlowHandler
 {
     private readonly IParManager _parManager = parManager;
     private readonly IPromptsProcessor _promptsProcessor = promptsProcessor;
+    private readonly RedirectManager _redirectManager = redirectManager;
 
     public async ValueTask<Result> HandleAsync(AuthorizationRequest request, 
         CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrEmpty(request.RequestUri))
         {
-            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
-            {
-                Code = ErrorCode.ServerError,
-                Description = "Server error"
-            });
+            var uri = _redirectManager.GetRedirectUri(ErrorCode.ServerError, "Server error");
+            return Results.Redirect(RedirectionCode.Found, uri);
         }
 
         var par = await _parManager.FindByRequestUriAsync(request.RequestUri, cancellationToken);
         if (par is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
-            {
-                Code = ErrorCode.InvalidRequestUri,
-                Description = "request_uri is invalid"
-            });
+            var uri = _redirectManager.GetRedirectUri(ErrorCode.InvalidRequestUri, 
+                "request_uri is invalid");
+            
+            return Results.Redirect(RedirectionCode.Found, uri);
         }
 
         if (par.Status is ParState.Cancelled or ParState.Consumed or ParState.Expired)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
-            {
-                Code = ErrorCode.InvalidRequestUri,
-                Description = "invalid request_uri"
-            });
+            var uri = _redirectManager.GetRedirectUri(ErrorCode.InvalidRequestUri, 
+                "request_uri is invalid");
+            
+            return Results.Redirect(RedirectionCode.Found, uri);
         }
 
         if (par.ExpiredAt > DateTimeOffset.UtcNow)
@@ -50,11 +47,10 @@ public sealed class ParAuthorizationFlowHandler(
             if (!updateResult.Succeeded) 
                 return updateResult;
             
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
-            {
-                Code = ErrorCode.InvalidRequestUri,
-                Description = "invalid request_uri"
-            });
+            var uri = _redirectManager.GetRedirectUri(ErrorCode.InvalidRequestUri, 
+                "request_uri is invalid");
+            
+            return Results.Redirect(RedirectionCode.Found, uri);
         }
 
         var promptContext = new PromptContext()

@@ -1,6 +1,7 @@
 ﻿using eSecurity.Idp.Data.Entities;
 using eSecurity.Idp.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Idp.Security.Authentication.OpenIdConnect.Session;
+using eSecurity.Idp.Security.Authorization.Authorize;
 using eSecurity.Idp.Security.Authorization.OAuth.Consents;
 using eSecurity.Idp.Security.Authorization.OAuth.Protocol;
 using eSecurity.Idp.Security.Authorization.OAuth.Scopes;
@@ -19,7 +20,8 @@ public sealed class NonePromptHandler(
     IUserManager userManager,
     IConsentManager consentManager,
     IAuthorizationCodeManager authorizationCodeManager,
-    ISessionAccessor sessionAccessor) : IPromptHandler
+    ISessionAccessor sessionAccessor,
+    RedirectManager redirectManager) : IPromptHandler
 {
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IClientManager _clientManager = clientManager;
@@ -27,6 +29,7 @@ public sealed class NonePromptHandler(
     private readonly IConsentManager _consentManager = consentManager;
     private readonly IAuthorizationCodeManager _authorizationCodeManager = authorizationCodeManager;
     private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
+    private readonly RedirectManager _redirectManager = redirectManager;
 
     public bool CanHandle(PromptType promptType) => promptType == PromptType.None;
 
@@ -35,51 +38,46 @@ public sealed class NonePromptHandler(
         var sessionCookie = _sessionAccessor.GetCookie();
         if (sessionCookie is null)
         {
-            return PromptResult.Failed(
-                Results.Redirect(RedirectionCode.Found, PromptHelper.GetRedirectUri(context.RedirectUri, 
-                    ErrorCode.LoginRequired, "Login required", context.State)
-                )
-            );
+            var uri = _redirectManager.GetRedirectUri(context.RedirectUri, ErrorCode.LoginRequired, 
+                "login is required", context.State);
+            
+            return PromptResult.Failed(Results.Redirect(RedirectionCode.Found, uri));
         }
         
         var session = await _sessionManager.FindByIdAsync(sessionCookie.SessionId, cancellationToken);
         if (session is null)
         {
-            return PromptResult.Failed(
-                Results.Redirect(RedirectionCode.Found, PromptHelper.GetRedirectUri(context.RedirectUri,
-                    ErrorCode.LoginRequired, "Login required", context.State)
-                )
-            );
+            var uri = _redirectManager.GetRedirectUri(context.RedirectUri, ErrorCode.LoginRequired, 
+                "login is required", context.State);
+            
+            return PromptResult.Failed(Results.Redirect(RedirectionCode.Found, uri));
         }
 
         var client = await _clientManager.FindByIdAsync(context.ClientId, cancellationToken);
         if (client is null)
         {
-            return PromptResult.Failed(
-                Results.Redirect(RedirectionCode.Found, PromptHelper.GetRedirectUri(context.RedirectUri,
-                    ErrorCode.LoginRequired, "Login required", context.State)
-                )
-            );
+            var uri = _redirectManager.GetRedirectUri(context.RedirectUri, ErrorCode.LoginRequired, 
+                "login is required", context.State);
+            
+            return PromptResult.Failed(Results.Redirect(RedirectionCode.Found, uri));
         }
 
         var user = await _userManager.FindByIdAsync(session.UserId, cancellationToken);
         if (user is null)
         {
-            return PromptResult.Failed(
-                Results.Redirect(RedirectionCode.Found, PromptHelper.GetRedirectUri(context.RedirectUri,
-                    ErrorCode.LoginRequired, "Login required", context.State)
-                )
-            );
+            var uri = _redirectManager.GetRedirectUri(context.RedirectUri, ErrorCode.LoginRequired, 
+                "login is required", context.State);
+            
+            return PromptResult.Failed(Results.Redirect(RedirectionCode.Found, uri));
         }
 
         var consent = await _consentManager.FindAsync(user, client, cancellationToken);
         if (consent is null)
         {
-            return PromptResult.Failed(
-                Results.Redirect(RedirectionCode.Found, PromptHelper.GetRedirectUri(context.RedirectUri,
-                    ErrorCode.AccessDenied, "The user denied consents request", context.State)
-                )
-            );
+            var uri = _redirectManager.GetRedirectUri(context.RedirectUri, ErrorCode.AccessDenied, 
+                "The user denied consents request", context.State);
+            
+            return PromptResult.Failed(Results.Redirect(RedirectionCode.Found, uri));
         }
 
         var grantedScopes = consent.GrantedScopes
@@ -87,11 +85,10 @@ public sealed class NonePromptHandler(
 
         if (!ScopesValidator.Validate(grantedScopes, context.Scopes, out _))
         {
-            return PromptResult.Failed(
-                Results.Redirect(RedirectionCode.Found, PromptHelper.GetRedirectUri(context.RedirectUri,
-                    ErrorCode.AccessDenied, "The user denied consents request", context.State)
-                )
-            );
+            var uri = _redirectManager.GetRedirectUri(context.RedirectUri, ErrorCode.AccessDenied, 
+                "The user denied consents request", context.State);
+            
+            return PromptResult.Failed(Results.Redirect(RedirectionCode.Found, uri));
         }
 
         var protocol = context.Scopes.Contains(ScopeTypes.OpenId)
@@ -117,11 +114,10 @@ public sealed class NonePromptHandler(
         if (!codeResult.Succeeded)
         {
             var error = codeResult.GetError();
-            return PromptResult.Failed(
-                Results.Redirect(RedirectionCode.Found, PromptHelper.GetRedirectUri(context.RedirectUri,
-                    error.Code, error.Description, context.State)
-                )
-            );
+            var uri = _redirectManager.GetRedirectUri(context.RedirectUri, 
+                error.Code, error.Description, context.State);
+            
+            return PromptResult.Failed(Results.Redirect(RedirectionCode.Found, uri));
         }
 
         var builder = QueryBuilder.Create()

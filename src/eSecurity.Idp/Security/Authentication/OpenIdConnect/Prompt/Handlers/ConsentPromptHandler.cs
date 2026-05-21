@@ -1,5 +1,6 @@
 ﻿using eSecurity.Idp.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Idp.Security.Authentication.OpenIdConnect.Session;
+using eSecurity.Idp.Security.Authorization.Authorize;
 using eSecurity.Idp.Security.Authorization.OAuth.Consents;
 using eSecurity.Idp.Security.Authorization.OAuth.Scopes;
 using eSecurity.Idp.Security.Identity.User;
@@ -18,7 +19,8 @@ public sealed class ConsentPromptHandler(
     IUserManager userManager,
     IOptions<OpenIdConfiguration> options,
     ISessionAccessor sessionAccessor,
-    IPromptStateFactory stateFactory) : IPromptHandler
+    IPromptStateFactory stateFactory,
+    RedirectManager redirectManager) : IPromptHandler
 {
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IClientManager _clientManager = clientManager;
@@ -26,6 +28,7 @@ public sealed class ConsentPromptHandler(
     private readonly IUserManager _userManager = userManager;
     private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
     private readonly IPromptStateFactory _stateFactory = stateFactory;
+    private readonly RedirectManager _redirectManager = redirectManager;
     private readonly OpenIdConfiguration _configuration = options.Value;
 
     public bool CanHandle(PromptType promptType) => promptType == PromptType.Consent;
@@ -35,41 +38,37 @@ public sealed class ConsentPromptHandler(
         var sessionCookie = _sessionAccessor.GetCookie();
         if (sessionCookie is null)
         {
-            return PromptResult.Failed(
-                Results.Redirect(RedirectionCode.Found, PromptHelper.GetRedirectUri(context.RedirectUri,
-                    ErrorCode.LoginRequired, "Login required", context.State)
-                )
-            );
+            var uri = _redirectManager.GetRedirectUri(context.RedirectUri, ErrorCode.LoginRequired, 
+                "login is required", context.State);
+            
+            return PromptResult.Failed(Results.Redirect(RedirectionCode.Found, uri));
         }
 
         var session = await _sessionManager.FindByIdAsync(sessionCookie.SessionId, cancellationToken);
         if (session is null)
         {
-            return PromptResult.Failed(
-                Results.Redirect(RedirectionCode.Found, PromptHelper.GetRedirectUri(context.RedirectUri,
-                    ErrorCode.LoginRequired, "Login required", context.State)
-                )
-            );
+            var uri = _redirectManager.GetRedirectUri(context.RedirectUri, ErrorCode.LoginRequired, 
+                "login is required", context.State);
+            
+            return PromptResult.Failed(Results.Redirect(RedirectionCode.Found, uri));
         }
 
         var client = await _clientManager.FindByIdAsync(context.ClientId, cancellationToken);
         if (client is null)
         {
-            return PromptResult.Failed(
-                Results.Redirect(RedirectionCode.Found, PromptHelper.GetRedirectUri(context.RedirectUri,
-                    ErrorCode.LoginRequired, "Invalid or unknown client_id", context.State)
-                )
-            );
+            var uri = _redirectManager.GetRedirectUri(context.RedirectUri, ErrorCode.BadRequest, 
+                "invalid or unknown client_id", context.State);
+            
+            return PromptResult.Failed(Results.Redirect(RedirectionCode.Found, uri));
         }
 
         var user = await _userManager.FindByIdAsync(session.UserId, cancellationToken);
         if (user is null)
         {
-            return PromptResult.Failed(
-                Results.Redirect(RedirectionCode.Found, PromptHelper.GetRedirectUri(context.RedirectUri,
-                    ErrorCode.LoginRequired, "Login required", context.State)
-                )
-            );
+            var uri = _redirectManager.GetRedirectUri(context.RedirectUri, ErrorCode.LoginRequired, 
+                "login is required", context.State);
+            
+            return PromptResult.Failed(Results.Redirect(RedirectionCode.Found, uri));
         }
 
         var consent = await _consentManager.FindAsync(user, client, cancellationToken);

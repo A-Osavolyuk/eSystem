@@ -12,32 +12,32 @@ namespace eSecurity.Idp.Security.Authorization.Authorize.Manual;
 public sealed class ManualAuthorizationFlowHandler(
     IClientManager clientManager,
     IOptions<OpenIdConfiguration> options,
-    IPromptsProcessor promptsProcessor) : IAuthorizationFlowHandler
+    IPromptsProcessor promptsProcessor,
+    RedirectManager redirectManager) : IAuthorizationFlowHandler
 {
     private readonly IClientManager _clientManager = clientManager;
     private readonly OpenIdConfiguration _configuration = options.Value;
     private readonly IPromptsProcessor _promptsProcessor = promptsProcessor;
+    private readonly RedirectManager _redirectManager = redirectManager;
 
     public async ValueTask<Result> HandleAsync(AuthorizationRequest request,
         CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrEmpty(request.ClientId))
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
-            {
-                Code = ErrorCode.InvalidRequest,
-                Description = "client_id is required"
-            });
+            var uri = _redirectManager.GetRedirectUri(ErrorCode.InvalidRequest, 
+                "client_id is required");
+            
+            return Results.Redirect(RedirectionCode.Found, uri);
         }
 
         var client = await _clientManager.FindByIdAsync(request.ClientId, cancellationToken);
         if (client is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
-            {
-                Code = ErrorCode.InvalidRequest,
-                Description = "Invalid client_id"
-            });
+            var uri = _redirectManager.GetRedirectUri(ErrorCode.InvalidRequest, 
+                "client_id is invalid");
+            
+            return Results.Redirect(RedirectionCode.Found, uri);
         }
 
         string redirectUri;
@@ -49,11 +49,10 @@ public sealed class ManualAuthorizationFlowHandler(
 
             if (redirectUris.Count != 1)
             {
-                return Results.ClientError(ClientErrorCode.BadRequest, new Error()
-                {
-                    Code = ErrorCode.InvalidRequest,
-                    Description = "redirect_uri is required"
-                });
+                var uri = _redirectManager.GetRedirectUri(ErrorCode.InvalidRequest, 
+                    "redirect_uri is required");
+            
+                return Results.Redirect(RedirectionCode.Found, uri);
             }
 
             redirectUri = redirectUris.Single().Uri;
@@ -62,11 +61,10 @@ public sealed class ManualAuthorizationFlowHandler(
         {
             if (!client.HasUri(request.RedirectUri, UriType.Redirect))
             {
-                return Results.ClientError(ClientErrorCode.BadRequest, new Error()
-                {
-                    Code = ErrorCode.InvalidRequest,
-                    Description = "Invalid redirect_uri"
-                });
+                var uri = _redirectManager.GetRedirectUri(ErrorCode.InvalidRequest, 
+                    "redirect_uri is invalid");
+            
+                return Results.Redirect(RedirectionCode.Found, uri);
             }
 
             redirectUri = request.RedirectUri;
@@ -74,42 +72,42 @@ public sealed class ManualAuthorizationFlowHandler(
 
         if (string.IsNullOrEmpty(request.ResponseType))
         {
-            var uri = PromptHelper.GetRedirectUri(redirectUri, ErrorCode.UnsupportedResponseType,
+            var uri = _redirectManager.GetRedirectUri(redirectUri, ErrorCode.UnsupportedResponseType, 
                 "response_type is required", request.State);
-
+            
             return Results.Redirect(RedirectionCode.Found, uri);
         }
 
         var responseType = EnumHelper.FromString<ResponseType>(request.ResponseType);
         if (responseType is null)
         {
-            var uri = PromptHelper.GetRedirectUri(redirectUri, ErrorCode.UnsupportedResponseType,
-                "Invalid response_type", request.State);
-
+            var uri = _redirectManager.GetRedirectUri(redirectUri, ErrorCode.UnsupportedResponseType, 
+                "response_type is invalid", request.State);
+            
             return Results.Redirect(RedirectionCode.Found, uri);
         }
 
         if (!_configuration.ResponseTypesSupported.Contains(responseType.Value))
         {
-            var uri = PromptHelper.GetRedirectUri(redirectUri, ErrorCode.UnsupportedResponseType,
+            var uri = _redirectManager.GetRedirectUri(redirectUri, ErrorCode.UnsupportedResponseType, 
                 $"{responseType.Value.GetString()} is not supported", request.State);
-
+            
             return Results.Redirect(RedirectionCode.Found, uri);
         }
 
         if (client.ResponseTypes.All(x => x.ResponseType.Type != responseType.Value))
         {
-            var uri = PromptHelper.GetRedirectUri(redirectUri, ErrorCode.UnsupportedResponseType,
+            var uri = _redirectManager.GetRedirectUri(redirectUri, ErrorCode.UnsupportedResponseType, 
                 $"{responseType.Value.GetString()} is not supported by client", request.State);
-
+            
             return Results.Redirect(RedirectionCode.Found, uri);
         }
 
         if (string.IsNullOrEmpty(request.Scope))
         {
-            var uri = PromptHelper.GetRedirectUri(redirectUri, ErrorCode.InvalidScope,
+            var uri = _redirectManager.GetRedirectUri(redirectUri, ErrorCode.InvalidScope, 
                 "scope is required", request.State);
-
+            
             return Results.Redirect(RedirectionCode.Found, uri);
         }
 
@@ -118,9 +116,9 @@ public sealed class ManualAuthorizationFlowHandler(
         if (!ScopesValidator.Validate(allowedScopes, scopes, out var invalidScopes))
         {
             var errorDescription = $"{string.Join(", ", invalidScopes)} are not supported scopes by client";
-            var uri = PromptHelper.GetRedirectUri(redirectUri, ErrorCode.InvalidScope, errorDescription,
-                request.State);
-
+            var uri = _redirectManager.GetRedirectUri(redirectUri, ErrorCode.InvalidScope, 
+                errorDescription, request.State);
+            
             return Results.Redirect(RedirectionCode.Found, uri);
         }
 
@@ -137,17 +135,17 @@ public sealed class ManualAuthorizationFlowHandler(
                 var prompt = EnumHelper.FromString<PromptType>(promptString);
                 if (prompt is null)
                 {
-                    var uri = PromptHelper.GetRedirectUri(redirectUri, ErrorCode.InvalidRequest,
-                        "Invalid prompt", request.State);
-
+                    var uri = _redirectManager.GetRedirectUri(redirectUri, ErrorCode.InvalidRequest, 
+                        "prompt is invalid", request.State);
+            
                     return Results.Redirect(RedirectionCode.Found, uri);
                 }
 
                 if (!_configuration.PromptValuesSupported.Contains(prompt.Value))
                 {
-                    var uri = PromptHelper.GetRedirectUri(redirectUri, ErrorCode.InvalidRequest,
+                    var uri = _redirectManager.GetRedirectUri(redirectUri, ErrorCode.InvalidRequest, 
                         $"{prompt.Value.GetString()} is not supported prompt", request.State);
-
+            
                     return Results.Redirect(RedirectionCode.Found, uri);
                 }
 
@@ -161,17 +159,17 @@ public sealed class ManualAuthorizationFlowHandler(
         {
             if (!hasCodeChallenge)
             {
-                var uri = PromptHelper.GetRedirectUri(redirectUri, ErrorCode.InvalidRequest,
+                var uri = _redirectManager.GetRedirectUri(redirectUri, ErrorCode.InvalidRequest, 
                     "code_challenge is required", request.State);
-
+            
                 return Results.Redirect(RedirectionCode.Found, uri);
             }
 
             if (!hasCodeChallengeMethod)
             {
-                var uri = PromptHelper.GetRedirectUri(redirectUri, ErrorCode.InvalidRequest,
+                var uri = _redirectManager.GetRedirectUri(redirectUri, ErrorCode.InvalidRequest, 
                     "code_challenge_method is required", request.State);
-
+            
                 return Results.Redirect(RedirectionCode.Found, uri);
             }
         }
@@ -179,10 +177,9 @@ public sealed class ManualAuthorizationFlowHandler(
         {
             if (hasCodeChallenge ^ hasCodeChallengeMethod)
             {
-                var uri = PromptHelper.GetRedirectUri(redirectUri, ErrorCode.InvalidRequest,
-                    "code_challenge and code_challenge_method must be provided together",
-                    request.State);
-
+                var uri = _redirectManager.GetRedirectUri(redirectUri, ErrorCode.InvalidRequest, 
+                    "code_challenge and code_challenge_method must be provided together", request.State);
+            
                 return Results.Redirect(RedirectionCode.Found, uri);
             }
         }
@@ -196,17 +193,17 @@ public sealed class ManualAuthorizationFlowHandler(
 
             if (challengeMethod is null)
             {
-                var uri = PromptHelper.GetRedirectUri(redirectUri, ErrorCode.InvalidRequest,
+                var uri = _redirectManager.GetRedirectUri(redirectUri, ErrorCode.InvalidRequest, 
                     "code_challenge_method is invalid", request.State);
-
+            
                 return Results.Redirect(RedirectionCode.Found, uri);
             }
 
             if (!_configuration.CodeChallengeMethodsSupported.Contains(challengeMethod.Value))
             {
-                var uri = PromptHelper.GetRedirectUri(redirectUri, ErrorCode.InvalidRequest,
-                    "Unsupported code_challenge_method", request.State);
-
+                var uri = _redirectManager.GetRedirectUri(redirectUri, ErrorCode.InvalidRequest, 
+                    "code_challenge_method is unsupported", request.State);
+            
                 return Results.Redirect(RedirectionCode.Found, uri);
             }
 
