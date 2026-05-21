@@ -19,6 +19,16 @@ public sealed class ParManager(AuthDbContext context) : IParManager
             .FirstOrDefaultAsync(cancellationToken);
     }
 
+    public async ValueTask<PushedAuthorizationRequestEntity?> FindByRequestUriAsync(string requestUri, 
+        CancellationToken cancellationToken)
+    {
+        return await _context.PushedAuthorizationRequest
+            .Where(x => x.RequestUri == requestUri)
+            .Include(x => x.Prompts)
+            .Include(x => x.Scopes)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
     public async ValueTask<Result> CreateAsync(PushedAuthorizationRequestEntity entity,
         CancellationToken cancellationToken)
     {

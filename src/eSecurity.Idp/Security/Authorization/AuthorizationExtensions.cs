@@ -54,6 +54,7 @@ public static class AuthorizationExtensions
         
         builder.Services.AddSingleton<IAuthorizationFlowHandlerProvider, AuthorizationFlowHandlerProvider>();
         builder.Services.AddKeyedScoped<IAuthorizationFlowHandler, ManualAuthorizationFlowHandler>(AuthorizationFlow.Manual);
+        builder.Services.AddKeyedScoped<IAuthorizationFlowHandler, ParAuthorizationFlowHandler>(AuthorizationFlow.PushedAuthorizationRequest);
 
         builder.Services.AddAuthorizationBuilder()
             .AddPolicy(AuthorizationPolicies.BasicAuthorization, policy =>

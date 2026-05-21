@@ -15,7 +15,7 @@ public sealed class PushedAuthorizationRequestEntity : Entity
     public string? CodeChallenge { get; init; }
     public ChallengeMethod? CodeChallengeMethod { get; init; }
 
-    public ParState Status { get; init; }
+    public ParState Status { get; set; }
     public DateTimeOffset ExpiredAt { get; init; }
     public DateTimeOffset? ConsumedAt { get; set; }
     public DateTimeOffset? CancelledAt { get; set; }
