@@ -1,6 +1,5 @@
 ﻿using eSecurity.Idp.Security.Authentication.OpenIdConnect.Ciba;
 using eSecurity.Idp.Security.Authorization.Authorize;
-using eSecurity.Idp.Security.Authorization.Authorize.Manual;
 using eSecurity.Idp.Security.Authorization.Authorize.Par;
 using eSecurity.Idp.Security.Authorization.Codes;
 using eSecurity.Idp.Security.Authorization.Constants;
@@ -22,6 +21,14 @@ public static class AuthorizationExtensions
 {
     public static void AddAuthorization(this IHostApplicationBuilder builder)
     {
+        var configuration = builder.Configuration;
+        var clientUri = configuration.GetValue<string>("Client:Uri");
+        
+        builder.Services.AddAuthorizationFlow(options =>
+        {
+            options.FallbackUrl = $"{clientUri}/connect/fallback";
+        });
+        
         builder.Services.AddTokenFlow();
         builder.Services.AddRoleManagement();
         builder.Services.AddDeviceManagement();
@@ -31,7 +38,7 @@ public static class AuthorizationExtensions
             options.UserCodeLenght = 8;
             options.Interval = 5;
             options.Timestamp = TimeSpan.FromSeconds(3600);
-            options.VerificationUri = "https://localhost:6521/device/activate";
+            options.VerificationUri = $"{clientUri}/device/activate";
         });
         
         builder.Services.AddVerification(options =>
@@ -51,10 +58,6 @@ public static class AuthorizationExtensions
         builder.Services.AddKeyedScoped<IJwtTokenValidator, AccessTokenValidator>(JwtTokenType.AccessToken);
         builder.Services.AddKeyedScoped<IJwtTokenValidator, GenericJwtTokenValidator>(JwtTokenType.Generic);
         builder.Services.AddTransient<IParManager, ParManager>();
-        
-        builder.Services.AddSingleton<IAuthorizationFlowHandlerProvider, AuthorizationFlowHandlerProvider>();
-        builder.Services.AddKeyedScoped<IAuthorizationFlowHandler, ManualAuthorizationFlowHandler>(AuthorizationFlow.Manual);
-        builder.Services.AddKeyedScoped<IAuthorizationFlowHandler, ParAuthorizationFlowHandler>(AuthorizationFlow.PushedAuthorizationRequest);
 
         builder.Services.AddAuthorizationBuilder()
             .AddPolicy(AuthorizationPolicies.BasicAuthorization, policy =>
