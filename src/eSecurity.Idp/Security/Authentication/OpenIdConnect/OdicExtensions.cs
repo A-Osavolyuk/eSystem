@@ -1,17 +1,15 @@
 ﻿using eSecurity.Idp.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Idp.Security.Authentication.OpenIdConnect.Logout;
 using eSecurity.Idp.Security.Authentication.OpenIdConnect.Logout.Strategies;
-using eSecurity.Idp.Security.Authentication.OpenIdConnect.Prompt;
-using eSecurity.Idp.Security.Authentication.OpenIdConnect.Prompt.Handlers;
 using eSecurity.Idp.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Idp.Security.Cryptography.Pkce;
 using eSecurity.Idp.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
+using eSecurity.Idp.Security.Authentication.OpenIdConnect.Prompt;
+using eSecurity.Idp.Security.Authentication.OpenIdConnect.Prompt.Handlers;
 using eSystem.Core.Primitives;
 using eSystem.Core.Server.Security.Authentication.OpenIdConnect.Discovery;
 
 namespace eSecurity.Idp.Security.Authentication.OpenIdConnect;
-
-using SessionOptions = Session.SessionOptions;
 
 public static class OdicExtensions
 {
@@ -33,6 +31,8 @@ public static class OdicExtensions
             services.AddScoped<IPromptHandler, ConsentPromptHandler>();
             services.AddScoped<IPromptHandler, SelectAccountPromptHandler>();
             services.AddScoped<IPromptHandler, NonePromptHandler>();
+            services.AddTransient<IPromptStateFactory, PromptStateFactory>();
+            services.AddTransient<IPromptsProcessor, PromptsProcessor>();
             
             services.AddBackchannelAuthentication(options =>
             {

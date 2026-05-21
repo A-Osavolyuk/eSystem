@@ -1,4 +1,6 @@
 ﻿using eSecurity.Idp.Security.Authentication.OpenIdConnect.Ciba;
+using eSecurity.Idp.Security.Authorization.Authorize;
+using eSecurity.Idp.Security.Authorization.Authorize.Manual;
 using eSecurity.Idp.Security.Authorization.Authorize.Par;
 using eSecurity.Idp.Security.Authorization.Codes;
 using eSecurity.Idp.Security.Authorization.Constants;
@@ -29,7 +31,7 @@ public static class AuthorizationExtensions
             options.UserCodeLenght = 8;
             options.Interval = 5;
             options.Timestamp = TimeSpan.FromSeconds(3600);
-            options.VerificationUri = "https://localhost:6501/device/activate";
+            options.VerificationUri = "https://localhost:6521/device/activate";
         });
         
         builder.Services.AddVerification(options =>
@@ -49,6 +51,9 @@ public static class AuthorizationExtensions
         builder.Services.AddKeyedScoped<IJwtTokenValidator, AccessTokenValidator>(JwtTokenType.AccessToken);
         builder.Services.AddKeyedScoped<IJwtTokenValidator, GenericJwtTokenValidator>(JwtTokenType.Generic);
         builder.Services.AddTransient<IParManager, ParManager>();
+        
+        builder.Services.AddSingleton<IAuthorizationFlowHandlerProvider, AuthorizationFlowHandlerProvider>();
+        builder.Services.AddKeyedScoped<IAuthorizationFlowHandler, ManualAuthorizationFlowHandler>(AuthorizationFlow.Manual);
 
         builder.Services.AddAuthorizationBuilder()
             .AddPolicy(AuthorizationPolicies.BasicAuthorization, policy =>

@@ -11,6 +11,12 @@ public sealed class AuthorizationRequest
     [FromQuery(Name = "redirect_uri")]
     public string? RedirectUri { get; set; }
     
+    [FromQuery(Name = "request_uri")]
+    public string? RequestUri { get; set; }
+    
+    [FromQuery(Name = "request")]
+    public string? Request { get; set; }
+    
     [FromQuery(Name = "scope")]
     public string? Scope { get; set; }
     

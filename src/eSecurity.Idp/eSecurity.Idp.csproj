@@ -47,5 +47,6 @@
 
     <ItemGroup>
       <Folder Include="Features\OAuth\Queries\" />
+      <Folder Include="Security\Authorization\Authorize\Jar\" />
     </ItemGroup>
 </Project>
