@@ -35,12 +35,9 @@ public static class Links
     
     public static class Connect
     {
-        public const string Authorize = "/connect/authorize";
         public const string Logout = "/connect/logout";
-        public const string LogoutCallback = "/connect/logout/callback";
         public const string LoggedOut = "/connect/logged-out";
-        public const string Consents = "/connect/consents";
-        public const string SelectAccount = "/connect/select-account";
+        public const string Fallback = "/connect/fallback";
     }
 
     public static class Session
