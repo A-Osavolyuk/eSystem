@@ -9,7 +9,7 @@ using eSystem.Core.Utilities.Query;
 
 namespace eSecurity.Idp.Features.Connect.Commands;
 
-public sealed record ConfirmEndSessionCommand(СonfirmEndSessionRequest Request) : IRequest<Result>;
+public sealed record ConfirmEndSessionCommand(ConfirmEndSessionRequest Request) : IRequest<Result>;
 
 public sealed class ConfirmEndSessionCommandHandler(
     IEndSessionManager endSessionManager,

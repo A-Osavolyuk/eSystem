@@ -2,7 +2,7 @@
 
 namespace eSecurity.Core.Requests;
 
-public sealed class СonfirmEndSessionRequest
+public sealed class ConfirmEndSessionRequest
 {
     [JsonPropertyName("end_session_request_id")]
     public Guid RequestId { get; set; }
