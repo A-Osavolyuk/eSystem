@@ -10,6 +10,7 @@ using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Identity.Claims;
 using eSystem.Core.Server.Security.Authorization.OAuth.Token.Validation;
 using eSystem.Core.Utilities.Query;
+using eSystem.Core.Utilities.State;
 
 namespace eSecurity.Idp.Features.Connect.Commands;
 
@@ -68,7 +69,7 @@ public sealed class EndSessionCommandHandler(
 
         UserEntity? user;
         ClientEntity? client;
-        
+
         if (string.IsNullOrEmpty(request.Request.IdTokenHint))
         {
             client = await _clientManager.FindByIdAsync(request.Request.ClientId!, cancellationToken);
@@ -109,13 +110,13 @@ public sealed class EndSessionCommandHandler(
             var sidClaim = claimsPrincipal.FindFirst(AppClaimTypes.Sid);
             var audClaim = claimsPrincipal.FindFirst(AppClaimTypes.Aud);
             var subClaim = claimsPrincipal.FindFirst(AppClaimTypes.Sub);
-            
+
             if (sidClaim is null || session.Id != Guid.Parse(sidClaim.Value) || audClaim is null || subClaim is null)
             {
                 return Fallback(redirectUri, ErrorCode.InvalidRequest,
                     "id_token_hint is invalid", request.Request.State);
             }
-            
+
             user = await _userManager.FindBySubjectAsync(subClaim.Value, cancellationToken);
             if (user is null)
             {
@@ -129,7 +130,7 @@ public sealed class EndSessionCommandHandler(
                 return Fallback(redirectUri, ErrorCode.InvalidRequest,
                     "id_token_hint is invalid", request.Request.State);
             }
-            
+
             if (!string.IsNullOrEmpty(request.Request.PostLogoutRedirectUri))
             {
                 if (!client.HasUri(request.Request.PostLogoutRedirectUri, UriType.PostLogoutRedirect))
@@ -169,18 +170,27 @@ public sealed class EndSessionCommandHandler(
             return Fallback(redirectUri, error.Code, error.Description, request.Request.State);
         }
 
-        var builder = QueryBuilder.Create()
+        var redirectUrlBuilder = QueryBuilder.Create()
             .WithUri(logoutUri)
-            .WithQueryParam("end_session_request_id", endSessionRequestEntity.Id)
             .WithQueryParam("user_hint", user.Username);
 
         if (!string.IsNullOrEmpty(request.Request.UiLocales))
-            builder.WithQueryParam("ui_locales", request.Request.UiLocales);
-            
-        if (!string.IsNullOrEmpty(request.Request.State))
-            builder.WithQueryParam("state", request.Request.State);
+            redirectUrlBuilder.WithQueryParam("ui_locales", request.Request.UiLocales);
 
-        return Results.Redirect(RedirectionCode.Found, builder.Build());
+        var returnUrlBuilder = QueryBuilder.Create()
+            .WithUri("https://localhost:6201/api/v1/connect/confirm-end-session")
+            .WithQueryParam("end_session_request_id", endSessionRequestEntity.Id);
+
+        if (!string.IsNullOrEmpty(request.Request.State))
+            returnUrlBuilder.WithQueryParam("state", request.Request.State);
+
+        var state = StateBuilder.Create()
+            .WithData("return_url", returnUrlBuilder.Build())
+            .Build();
+        
+        redirectUrlBuilder.WithQueryParam("state", state);
+
+        return Results.Redirect(RedirectionCode.Found, redirectUrlBuilder.Build());
     }
 
     private static Result Fallback(string uri, ErrorCode error, string description, string? state = null)
