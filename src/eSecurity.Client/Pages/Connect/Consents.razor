@@ -153,28 +153,27 @@
 
     [SupplyParameterFromQuery(Name = "state")]
     public string State { get; set; } = string.Empty;
+    
+    [SupplyParameterFromQuery(Name = "client_id")]
+    public string ClientId { get; set; } = string.Empty;
+    
+    [SupplyParameterFromQuery(Name = "scope")]
+    public string Scope { get; set; } = string.Empty;
 
     private ClientInfo _clientInfo = new();
     private string? _username;
     private List<string> _scopes = [];
-    private string _clientId = string.Empty;
-    private string _redirectUri = string.Empty;
     private string _returnUrl = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         var stateData = StateParser.Parse(State);
         _returnUrl = HttpUtility.UrlDecode(stateData["return_url"]);
-        
-        var queryParams = QueryParser.GetQueryParameters(_returnUrl);
-        
-        _clientId = queryParams["client_id"];
-        _redirectUri = queryParams["redirect_uri"];
 
         var request = new CheckConsentRequest
         {
-            ClientId = Guid.Parse(_clientId),
-            Scopes = queryParams["scope"].Split(' ').ToList()
+            ClientId = Guid.Parse(ClientId),
+            Scopes = Scope.Split(' ').ToList()
         };
 
         var result = await ConsentService.CheckAsync(request);
@@ -196,7 +195,7 @@
         {
             var error = result.GetError();
             NavigationManager.NavigateTo(QueryBuilder.Create()
-                .WithUri(_redirectUri)
+                .WithUri(Links.Connect.Fallback)
                 .WithQueryParam("error", error.Code)
                 .WithQueryParam("error_description", error.Description)
                 .Build());
@@ -205,7 +204,7 @@
 
     private async Task InitializeAsync()
     {
-        var result = await ConnectService.GetClientInfoAsync(_clientId);
+        var result = await ConnectService.GetClientInfoAsync(ClientId);
         if (result.Succeeded && result.TryGetValue<ClientInfo>(out var clientInfo))
         {
             _clientInfo = clientInfo!;
@@ -214,7 +213,7 @@
         {
             var error = result.GetError();
             NavigationManager.NavigateTo(QueryBuilder.Create()
-                .WithUri(_redirectUri)
+                .WithUri(Links.Connect.Fallback)
                 .WithQueryParam("error", error.Code)
                 .WithQueryParam("error_description", error.Description)
                 .Build());
@@ -224,7 +223,7 @@
     private void OnCancel()
     {
         NavigationManager.NavigateTo(QueryBuilder.Create()
-            .WithUri(_redirectUri)
+            .WithUri(Links.Connect.Fallback)
             .WithQueryParam("error", ErrorCode.AccessDenied)
             .WithQueryParam("error_description", "The resource owner or authorization server denied the request")
             .Build());
@@ -234,7 +233,7 @@
     {
         var request = new GrantConsentRequest
         {
-            ClientId = Guid.Parse(_clientId),
+            ClientId = Guid.Parse(ClientId),
             Scopes = _scopes
         };
 
@@ -244,7 +243,7 @@
         {
             var error = result.GetError();
             NavigationManager.NavigateTo(QueryBuilder.Create()
-                .WithUri(_redirectUri)
+                .WithUri(Links.Connect.Fallback)
                 .WithQueryParam("error", error.Code)
                 .WithQueryParam("error_description", error.Description)
                 .Build());

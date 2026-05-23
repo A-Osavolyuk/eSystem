@@ -43,14 +43,18 @@ public sealed class PromptStateFactory(IOptions<OpenIdConfiguration> options) : 
             if (string.IsNullOrEmpty(context.RequestUri))
                 throw new NotSupportedException("RequestUri cannot be null or empty while PAR flow");
 
-            returnUrlBuilder.WithQueryParam("request_uri", context.RequestUri);
+            returnUrlBuilder
+                .WithQueryParam("request_uri", context.RequestUri)
+                .WithQueryParam("client_id", context.ClientId);
         }
         else
         {
             if (string.IsNullOrEmpty(context.Request))
                 throw new NotSupportedException("Request cannot be null or empty while JAR flow");
 
-            returnUrlBuilder.WithQueryParam("request", context.Request);
+            returnUrlBuilder
+                .WithQueryParam("request", context.Request)
+                .WithQueryParam("client_id", context.ClientId);
         }
 
         return StateBuilder.Create()

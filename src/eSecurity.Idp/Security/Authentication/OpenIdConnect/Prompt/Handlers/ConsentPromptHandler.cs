@@ -90,6 +90,8 @@ public sealed class ConsentPromptHandler(
             var state = _stateFactory.CreateState(context);
             var url = QueryBuilder.Create()
                 .WithUri("https://localhost:6521/connect/consents")
+                .WithQueryParam("client_id", client.Id)
+                .WithQueryParam("scope", string.Join(' ', context.Scopes))
                 .WithQueryParam("state", state)
                 .Build();
 
