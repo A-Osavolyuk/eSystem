@@ -156,8 +156,6 @@ public sealed class EndSessionCommandHandler(
             SessionId = session.Id,
             PostLogoutRedirectUri = request.Request.PostLogoutRedirectUri,
             State = request.Request.State,
-            IdTokenHint = request.Request.IdTokenHint,
-            LogoutHint = request.Request.LogoutHint,
             Status = EndSessionStatus.Pending,
             ExpiredAt = DateTimeOffset.UtcNow.Add(_options.Timestamp)
         };

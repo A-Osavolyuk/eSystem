@@ -9,11 +9,9 @@ public sealed class EndSessionRequestConfiguration : IEntityTypeConfiguration<En
     public void Configure(EntityTypeBuilder<EndSessionRequestEntity> builder)
     {
         builder.HasKey(x => x.Id);
-
-        builder.Property(x => x.IdTokenHint).HasMaxLength(1000);
+        
         builder.Property(x => x.State).HasMaxLength(1000);
         builder.Property(x => x.PostLogoutRedirectUri).HasMaxLength(1000);
-        builder.Property(x => x.LogoutHint).HasMaxLength(32);
         builder.Property(x => x.Status).HasEnumConversion();
 
         builder.HasOne(x => x.User)

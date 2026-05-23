@@ -6,10 +6,8 @@ namespace eSecurity.Idp.Data.Entities;
 public sealed class EndSessionRequestEntity : Entity
 {
     public Guid Id { get; set; }
-    public string? IdTokenHint { get; set; }
     public string? PostLogoutRedirectUri { get; set; }
     public string? State { get; set; }
-    public string? LogoutHint { get; set; }
     
     public EndSessionStatus Status { get; set; }
     public DateTimeOffset ExpiredAt { get; set; }
