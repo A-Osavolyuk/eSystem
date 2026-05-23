@@ -20,11 +20,16 @@ public sealed class AuthorizationCodeConfiguration : IEntityTypeConfiguration<Au
         builder.HasOne(x => x.User)
             .WithMany()
             .HasForeignKey(x => x.UserId)
-            .OnDelete(DeleteBehavior.Cascade);;
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(x => x.Client)
             .WithMany()
             .HasForeignKey(x => x.ClientId)
-            .OnDelete(DeleteBehavior.Cascade);;
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.HasOne(x => x.Session)
+            .WithMany()
+            .HasForeignKey(x => x.SessionId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

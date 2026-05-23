@@ -100,6 +100,7 @@ public sealed class NonePromptHandler(
         {
             Id = Guid.CreateVersion7(),
             ClientId = client.Id,
+            SessionId = session.Id,
             UserId = user.Id,
             Protocol = protocol,
             Code = code,

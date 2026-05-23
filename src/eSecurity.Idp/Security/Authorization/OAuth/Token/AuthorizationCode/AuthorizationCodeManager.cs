@@ -16,8 +16,10 @@ public class AuthorizationCodeManager(
     public async ValueTask<AuthorizationCodeEntity?> FindByCodeAsync(string code, 
         CancellationToken cancellationToken = default)
     {
-        return await _context.AuthorizationCodes.FirstOrDefaultAsync(
-            c => c.Code == code, cancellationToken);
+        return await _context.AuthorizationCodes
+            .Where(c => c.Code == code)
+            .Include(x => x.Session)
+            .FirstOrDefaultAsync(cancellationToken);
     }
 
     public async ValueTask<Result> CreateAsync(AuthorizationCodeEntity code, 
