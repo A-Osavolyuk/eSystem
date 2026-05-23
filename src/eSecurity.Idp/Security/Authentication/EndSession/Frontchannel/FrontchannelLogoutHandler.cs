@@ -63,7 +63,7 @@ public sealed class FrontchannelLogoutHandler(
                   {{iframesBuilder}}
                   <script>
                     setTimeout(function() {
-                      window.location.replace({{frontchannelRedirectUriBuilder.Build()}});
+                      window.location.replace('{{frontchannelRedirectUriBuilder.Build()}}');
                     }, {{redirectDelay}});
                   </script>
                 </body>
