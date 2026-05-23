@@ -3,5 +3,4 @@
 public interface ISessionAccessor
 {
     public SessionCookie? GetCookie();
-    public void Remove();
 }

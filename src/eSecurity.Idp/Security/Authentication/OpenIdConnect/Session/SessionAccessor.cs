@@ -31,9 +31,4 @@ public sealed class SessionAccessor(
             return null;
         }
     }
-
-    public void Remove()
-    {
-        _httpContext.Response.Cookies.Delete(DefaultCookies.Session);
-    }
 }
