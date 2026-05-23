@@ -1,4 +1,5 @@
-﻿using eSecurity.Idp.Features.Connect.Commands;
+﻿using eSecurity.Core.Requests;
+using eSecurity.Idp.Features.Connect.Commands;
 using eSecurity.Idp.Features.Connect.Queries;
 using eSecurity.Idp.Security.Authentication.EndSession;
 using eSecurity.Idp.Security.Authorization;
@@ -161,6 +162,16 @@ public class ConnectController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> EndSessionAsync([FromQuery] EndSessionRequest request)
     {
         var result = await _sender.Send(new EndSessionCommand(request));
+        return HttpContext.HandleResult(result);
+    }
+    
+    [EndpointSummary("Confirm end session")]
+    [EndpointDescription("Confirm end session")]
+    [ProducesResponseType(200)]
+    [HttpGet("confirm-end-session")]
+    public async ValueTask<IActionResult> ConfirmEndSessionAsync([FromForm] ConfirmEndSessionRequest request)
+    {
+        var result = await _sender.Send(new ConfirmEndSessionCommand(request));
         return HttpContext.HandleResult(result);
     }
 
