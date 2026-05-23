@@ -30,7 +30,6 @@ public class AccessTokenValidator(
         if (certificate is null) return TokenValidationResult.Fail();
 
         var publicKey = certificate.Certificate.GetRSAPublicKey()!;
-        var audiences = await _clientManager.GetAudiencesAsync(cancellationToken);
         var validationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -42,8 +41,10 @@ public class AccessTokenValidator(
             ValidateLifetime = true,
             ClockSkew = TimeSpan.FromMinutes(5),
             RequireSignedTokens = true,
-            ValidAlgorithms = [SecurityAlgorithms.RsaSha256],
+            ValidAlgorithms = [SecurityAlgorithms.RsaSha256]
         };
+        
+        _handler.MapInboundClaims = false;
 
         try
         {

@@ -42,8 +42,10 @@ public class GenericJwtTokenValidator(
             ValidateLifetime = true,
             ClockSkew = TimeSpan.FromMinutes(5),
             RequireSignedTokens = true,
-            ValidAlgorithms = [SecurityAlgorithms.RsaSha256],
+            ValidAlgorithms = [SecurityAlgorithms.RsaSha256]
         };
+        
+        _handler.MapInboundClaims = false;
 
         try
         {

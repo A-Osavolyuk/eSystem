@@ -40,8 +40,10 @@ public class IdTokenValidator(
             IssuerSigningKey = new RsaSecurityKey(publicKey),
             ValidateLifetime = false,
             RequireSignedTokens = true,
-            ValidAlgorithms = [SecurityAlgorithms.RsaSha256],
+            ValidAlgorithms = [SecurityAlgorithms.RsaSha256]
         };
+        
+        _handler.MapInboundClaims = false;
 
         var audClaim = securityToken.Claims.FirstOrDefault(x => x.Type == AppClaimTypes.Aud);
         if (audClaim is null) return TokenValidationResult.Fail();
