@@ -12,7 +12,7 @@ using eSecurity.Server.Data;
 namespace eSecurity.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260517103051_Initial")]
+    [Migration("20260523230212_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

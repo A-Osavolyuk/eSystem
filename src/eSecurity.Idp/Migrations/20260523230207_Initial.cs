@@ -363,44 +363,6 @@ namespace eSecurity.Idp.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AuthorizationCodes",
-                schema: "public",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Protocol = table.Column<string>(type: "text", nullable: false),
-                    Code = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
-                    RedirectUri = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    Nonce = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
-                    CodeChallenge = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
-                    CodeChallengeMethod = table.Column<int>(type: "integer", maxLength: 16, nullable: true),
-                    Used = table.Column<bool>(type: "boolean", nullable: false),
-                    ExpiredAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AuthorizationCodes", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AuthorizationCodes_Clients_ClientId",
-                        column: x => x.ClientId,
-                        principalSchema: "public",
-                        principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AuthorizationCodes_Users_UserId",
-                        column: x => x.UserId,
-                        principalSchema: "public",
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Codes",
                 schema: "public",
                 columns: table => new
@@ -997,6 +959,52 @@ namespace eSecurity.Idp.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AuthorizationCodes",
+                schema: "public",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Protocol = table.Column<string>(type: "text", nullable: false),
+                    Code = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    RedirectUri = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Nonce = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    CodeChallenge = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    CodeChallengeMethod = table.Column<int>(type: "integer", maxLength: 16, nullable: true),
+                    Used = table.Column<bool>(type: "boolean", nullable: false),
+                    ExpiredAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    SessionId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AuthorizationCodes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AuthorizationCodes_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalSchema: "public",
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AuthorizationCodes_Sessions_SessionId",
+                        column: x => x.SessionId,
+                        principalSchema: "public",
+                        principalTable: "Sessions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AuthorizationCodes_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "public",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CibaRequests",
                 schema: "public",
                 columns: table => new
@@ -1129,17 +1137,15 @@ namespace eSecurity.Idp.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    IdTokenHint = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    PostLogoutRedirectUri = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    PostLogoutRedirectUri = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
                     State = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    LogoutHint = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
                     Status = table.Column<string>(type: "text", nullable: false),
                     ExpiredAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     ApprovedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     DeniedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     CancelledAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ClientId = table.Column<Guid>(type: "uuid", maxLength: 36, nullable: false),
+                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
                     SessionId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
@@ -1445,6 +1451,12 @@ namespace eSecurity.Idp.Migrations
                 schema: "public",
                 table: "AuthorizationCodes",
                 column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuthorizationCodes_SessionId",
+                schema: "public",
+                table: "AuthorizationCodes",
+                column: "SessionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AuthorizationCodes_UserId",

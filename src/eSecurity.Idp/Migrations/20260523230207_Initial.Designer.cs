@@ -12,7 +12,7 @@ using eSecurity.Idp.Data;
 namespace eSecurity.Idp.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20260523195232_Initial")]
+    [Migration("20260523230207_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -143,6 +143,9 @@ namespace eSecurity.Idp.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
+                    b.Property<Guid>("SessionId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -155,6 +158,8 @@ namespace eSecurity.Idp.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId");
+
+                    b.HasIndex("SessionId");
 
                     b.HasIndex("UserId");
 
@@ -693,7 +698,6 @@ namespace eSecurity.Idp.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("ClientId")
-                        .HasMaxLength(36)
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset?>("CreatedAt")
@@ -705,17 +709,9 @@ namespace eSecurity.Idp.Migrations
                     b.Property<DateTimeOffset>("ExpiredAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("IdTokenHint")
+                    b.Property<string>("PostLogoutRedirectUri")
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
-
-                    b.Property<string>("LogoutHint")
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
-
-                    b.Property<string>("PostLogoutRedirectUri")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
 
                     b.Property<Guid>("SessionId")
                         .HasColumnType("uuid");
@@ -1906,6 +1902,12 @@ namespace eSecurity.Idp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("eSecurity.Idp.Data.Entities.SessionEntity", "Session")
+                        .WithMany()
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("eSecurity.Idp.Data.Entities.UserEntity", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -1913,6 +1915,8 @@ namespace eSecurity.Idp.Migrations
                         .IsRequired();
 
                     b.Navigation("Client");
+
+                    b.Navigation("Session");
 
                     b.Navigation("User");
                 });
