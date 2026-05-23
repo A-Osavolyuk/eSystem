@@ -39,7 +39,7 @@ public sealed class ParAuthorizationFlowHandler(
             return Results.Redirect(RedirectionCode.Found, uri);
         }
 
-        if (par.ExpiredAt > DateTimeOffset.UtcNow)
+        if (DateTimeOffset.UtcNow > par.ExpiredAt)
         {
             par.Status = ParState.Expired;
             
