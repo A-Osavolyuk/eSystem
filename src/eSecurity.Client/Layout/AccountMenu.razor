@@ -1,5 +1,8 @@
 ﻿@using eSecurity.Client.Common.State
+@using eSecurity.Client.Security.Authentication
+
 @inject UserState UserState
+@inject SignInManager SignInManager
 
 <MudAvatar @onclick="DrawerToggle">
     <MudImage
@@ -73,7 +76,8 @@
         <MudDivider Class="my-2"/>
         <MudNavLink
             Match="NavLinkMatch.All"
-            Icon="@Icons.Material.Filled.Logout">
+            Icon="@Icons.Material.Filled.Logout"
+            OnClick="@(() => SignInManager.SignOut())">
             Logout
         </MudNavLink>
     </MudNavMenu>
