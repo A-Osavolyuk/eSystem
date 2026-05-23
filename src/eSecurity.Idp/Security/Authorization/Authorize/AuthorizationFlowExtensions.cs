@@ -10,7 +10,7 @@ public static class AuthorizationFlowExtensions
         services.Configure(options);
 
         services.AddTransient<RedirectManager>();
-        services.AddSingleton<IAuthorizationFlowHandlerProvider, AuthorizationFlowHandlerProvider>();
+        services.AddScoped<IAuthorizationFlowHandlerProvider, AuthorizationFlowHandlerProvider>();
         services.AddKeyedScoped<IAuthorizationFlowHandler, ManualAuthorizationFlowHandler>(AuthorizationFlow.Manual);
         services.AddKeyedScoped<IAuthorizationFlowHandler, ParAuthorizationFlowHandler>(AuthorizationFlow.PushedAuthorizationRequest);
     }
