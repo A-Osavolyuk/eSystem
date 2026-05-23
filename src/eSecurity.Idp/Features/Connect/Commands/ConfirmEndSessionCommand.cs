@@ -3,6 +3,7 @@ using eSecurity.Idp.Security.Authentication.EndSession;
 using eSecurity.Idp.Security.Authentication.EndSession.Backchannel;
 using eSecurity.Idp.Security.Authentication.EndSession.Frontchannel;
 using eSecurity.Idp.Security.Authentication.OpenIdConnect.Session;
+using eSecurity.Idp.Security.Cookies;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Utilities.Query;
@@ -17,13 +18,13 @@ public sealed class ConfirmEndSessionCommandHandler(
     IBackchannelLogoutHandler backchannelLogoutHandler,
     IFrontChannelLogoutHandler frontChannelLogoutHandler,
     ISessionManager sessionManager,
-    ISessionAccessor sessionAccessor) : IRequestHandler<ConfirmEndSessionCommand, Result>
+    IHttpContextAccessor httpContextAccessor) : IRequestHandler<ConfirmEndSessionCommand, Result>
 {
     private readonly IEndSessionManager _endSessionManager = endSessionManager;
     private readonly IBackchannelLogoutHandler _backchannelLogoutHandler = backchannelLogoutHandler;
     private readonly IFrontChannelLogoutHandler _frontChannelLogoutHandler = frontChannelLogoutHandler;
     private readonly ISessionManager _sessionManager = sessionManager;
-    private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly EndSessionOptions _options = options.Value;
 
     public async Task<Result> Handle(ConfirmEndSessionCommand request, CancellationToken cancellationToken = default)
@@ -47,7 +48,7 @@ public sealed class ConfirmEndSessionCommandHandler(
                 "End session request is invalid. Please, try again later", request.Request.State);
         }
 
-        if (endSessionRequest.ExpiredAt > DateTimeOffset.UtcNow)
+        if (DateTimeOffset.UtcNow > endSessionRequest.ExpiredAt)
         {
             endSessionRequest.Status = EndSessionStatus.Expired;
 
@@ -84,6 +85,15 @@ public sealed class ConfirmEndSessionCommandHandler(
             var error = result.GetError();
             return Fallback(redirectUri, error.Code, error.Description, endSessionRequest.State);
         }
+        
+        _httpContext.Response.Cookies.Delete(DefaultCookies.Session, new CookieOptions()
+        {
+            Secure = true,
+            HttpOnly = true,
+            SameSite = SameSiteMode.Lax,
+            Domain = "localhost",
+            Path = "/"
+        });
 
         if (endSessionRequest.Client.AllowBackChannelLogout)
         {
@@ -113,8 +123,6 @@ public sealed class ConfirmEndSessionCommandHandler(
             var error = sessionResult.GetError();
             return Fallback(redirectUri, error.Code, error.Description, endSessionRequest.State);
         }
-
-        _sessionAccessor.Remove();
 
         var postLogoutRedirectUri = endSessionRequest.PostLogoutRedirectUri;
         if (string.IsNullOrEmpty(postLogoutRedirectUri))
