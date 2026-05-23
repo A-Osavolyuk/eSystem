@@ -71,7 +71,7 @@ else
     {
         _isLoading = true;
         _showError = false;
-        
+
         var request = new GenerateRequestOptionsRequest();
         var result = await PasskeyService.GenerateRequestOptionsAsync(request);
         if (result.Succeeded && result.TryGetValue<PublicKeyCredentialRequestOptions>(out var value))
@@ -107,21 +107,18 @@ else
             var result = await SecurityService.SignInAsync(request);
             if (result.Succeeded && result.TryGetValue<SignInResponse>(out var response) && response is not null)
             {
-                if (!string.IsNullOrEmpty(response.SessionCookie))
+                var queryParams = QueryParser.GetQueryParameters(NavigationManager.Uri);
+                if (queryParams.TryGetValue("state", out var state) && !string.IsNullOrEmpty(state))
                 {
-                    var queryParams = QueryParser.GetQueryParameters(NavigationManager.Uri);
-                    if (queryParams.TryGetValue("state", out var state) && !string.IsNullOrEmpty(state))
+                    var stateData = StateParser.Parse(state);
+                    if (stateData.TryGetValue("return_url", out var returnUrl))
                     {
-                        var stateData = StateParser.Parse(state);
-                        if (stateData.TryGetValue("return_url", out var returnUrl))
-                        {
-                            NavigationManager.NavigateTo(returnUrl, true);
-                            return;
-                        }
+                        NavigationManager.NavigateTo(returnUrl, true);
+                        return;
                     }
-                    
-                    SignInManager.SignIn();
                 }
+
+                SignInManager.SignIn();
             }
             else
             {
@@ -145,4 +142,5 @@ else
             _isLoading = false;
         }
     }
+
 }
