@@ -9,6 +9,7 @@ using eSecurity.Idp.Security.Identity.Options;
 using eSecurity.Idp.Security.Identity.User;
 using eSecurity.Core.Responses;
 using eSecurity.Core.Security.Authentication.Lockout;
+using eSecurity.Idp.Security.Cookies;
 using eSecurity.WebAuthN;
 using eSecurity.WebAuthN.Constants;
 using eSystem.Core.Http.Extensions;
@@ -173,10 +174,18 @@ public sealed class PasskeyTwoFactorStrategy(
         var sessionResult = await _authenticationSessionManager.UpdateAsync(authenticationSession, cancellationToken);
         if (!sessionResult.Succeeded) return sessionResult;
 
+        var sessionCookie = _sessionCookieFactory.CreateCookie(session);
+        _httpContext.Response.Cookies.Append(DefaultCookies.Session, sessionCookie, new CookieOptions()
+        {
+            Secure = true,
+            HttpOnly = true,
+            SameSite = SameSiteMode.Lax,
+            Expires = DateTimeOffset.UtcNow.AddDays(30),
+        });
+
         return Results.Success(SuccessCodes.Ok, new SignInResponse
         {
-            TransactionId = authenticationSession.Id,
-            SessionCookie = _sessionCookieFactory.CreateCookie(session)
+            TransactionId = authenticationSession.Id
         });
     }
 }

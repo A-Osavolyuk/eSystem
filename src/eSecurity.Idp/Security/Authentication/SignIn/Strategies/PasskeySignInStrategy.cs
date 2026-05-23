@@ -8,6 +8,7 @@ using eSecurity.Idp.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Idp.Security.Identity.User;
 using eSecurity.Core.Responses;
 using eSecurity.Core.Security.Authentication.SignIn;
+using eSecurity.Idp.Security.Cookies;
 using eSecurity.WebAuthN.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;
@@ -141,10 +142,18 @@ public sealed class PasskeySignInStrategy(
         var sessionResult = await _authenticationSessionManager.CreateAsync(authenticationSession, cancellationToken);
         if (!sessionResult.Succeeded) return sessionResult;
         
+        var sessionCookie = _sessionCookieFactory.CreateCookie(session);
+        _httpContext.Response.Cookies.Append(DefaultCookies.Session, sessionCookie, new CookieOptions()
+        {
+            Secure = true,
+            HttpOnly = true,
+            SameSite = SameSiteMode.Lax,
+            Expires = DateTimeOffset.UtcNow.AddDays(30),
+        });
+        
         return Results.Success(SuccessCodes.Ok, new SignInResponse
         {
-            TransactionId = authenticationSession.Id,
-            SessionCookie = _sessionCookieFactory.CreateCookie(session)
+            TransactionId = authenticationSession.Id
         });
     }
 }

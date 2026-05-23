@@ -277,7 +277,7 @@ public sealed class PasswordSignInStrategy(
             {
                 Secure = true,
                 HttpOnly = true,
-                SameSite = SameSiteMode.None,
+                SameSite = SameSiteMode.Lax,
                 Expires = DateTimeOffset.UtcNow.AddDays(30),
             });
             
