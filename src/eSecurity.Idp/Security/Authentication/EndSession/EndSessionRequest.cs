@@ -1,4 +1,4 @@
-﻿namespace eSecurity.Idp.Security.Authentication.OpenIdConnect.Logout;
+﻿namespace eSecurity.Idp.Security.Authentication.EndSession;
 
 public sealed class EndSessionRequest
 {

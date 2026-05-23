@@ -1,6 +1,6 @@
 ﻿using eSecurity.Idp.Features.Connect.Commands;
 using eSecurity.Idp.Features.Connect.Queries;
-using eSecurity.Idp.Security.Authentication.OpenIdConnect.Logout;
+using eSecurity.Idp.Security.Authentication.EndSession;
 using eSecurity.Idp.Security.Authorization;
 using eSecurity.Idp.Security.Authorization.Constants;
 using eSystem.Core.Enums;
@@ -161,16 +161,6 @@ public class ConnectController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> EndSessionAsync([FromQuery] EndSessionRequest request)
     {
         var result = await _sender.Send(new EndSessionCommand(request));
-        return HttpContext.HandleResult(result);
-    }
-
-    [EndpointSummary("Logout")]
-    [EndpointDescription("Logout")]
-    [ProducesResponseType(200)]
-    [HttpPost("logout")]
-    public async ValueTask<IActionResult> LogoutAsync([FromBody] LogoutRequest request)
-    {
-        var result = await _sender.Send(new LogoutCommand(request));
         return HttpContext.HandleResult(result);
     }
 

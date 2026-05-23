@@ -2,10 +2,10 @@
 using eSystem.Core.Enums;
 using eSystem.Core.Enums.Serialization;
 
-namespace eSecurity.Idp.Security.Authentication.OpenIdConnect.Logout;
+namespace eSecurity.Idp.Security.Authentication.EndSession;
 
-[JsonConverter(typeof(JsonEnumValueConverter<LogoutStatus>))]
-public enum LogoutStatus
+[JsonConverter(typeof(JsonEnumValueConverter<EndSessionStatus>))]
+public enum EndSessionStatus
 {
     [EnumValue("pending")]
     Pending,

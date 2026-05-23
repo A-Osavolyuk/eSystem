@@ -40,4 +40,15 @@
 </MudGrid>
 
 @code {
+    [SupplyParameterFromQuery(Name = "end_session_request_id")]
+    public Guid RequestId { get; set; }
+
+    [SupplyParameterFromQuery(Name = "ui_locales")]
+    public string? UiLocales { get; set; }
+
+    [SupplyParameterFromQuery(Name = "user_hint")]
+    public string? UserHint { get; set; }
+
+    [SupplyParameterFromQuery(Name = "state")]
+    public string? State { get; set; }
 }

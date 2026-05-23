@@ -23,14 +23,21 @@ public class ClientUriSeed : Seed<ClientUriEntity>
                 Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("392e390f-33bd-4f30-af70-ccbe04bbb2c4"),
                 Type = UriType.PostLogoutRedirect,
-                Uri = "https://localhost:6501/login",
+                Uri = "https://localhost:6206/connect/logout/callback-oidc",
             },
             new()
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("392e390f-33bd-4f30-af70-ccbe04bbb2c4"),
                 Type = UriType.FrontChannelLogout,
-                Uri = "https://localhost:6501/connect/logout/callback",
+                Uri = "https://localhost:6521/connect/frontchannel-logout",
+            },
+            new()
+            {
+                Id = Guid.CreateVersion7(),
+                ClientId = Guid.Parse("392e390f-33bd-4f30-af70-ccbe04bbb2c4"),
+                Type = UriType.BackChannelLogout,
+                Uri = "https://localhost:6206/connect/backchannel-logout",
             },
 
             // eCinema.Client

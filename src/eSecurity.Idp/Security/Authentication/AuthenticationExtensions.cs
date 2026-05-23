@@ -1,4 +1,5 @@
-﻿using eSecurity.Idp.Security.Authentication.Handlers;
+﻿using eSecurity.Idp.Security.Authentication.EndSession;
+using eSecurity.Idp.Security.Authentication.Handlers;
 using eSecurity.Idp.Security.Authentication.Session;
 using eSecurity.Idp.Security.Cookies;
 using eSecurity.Idp.Security.Authentication.Lockout;
@@ -22,6 +23,7 @@ public static class AuthenticationExtensions
     public static void AddAuthentication(this IHostApplicationBuilder builder)
     {
         var configuration = builder.Configuration;
+        var clientUri = configuration.GetValue<string>("Client:Uri");
 
         builder.Services.AddScoped<IAuthenticationSessionManager, AuthenticationSessionManager>();
 
@@ -35,6 +37,16 @@ public static class AuthenticationExtensions
         builder.Services.AddSignInStrategies();
         builder.Services.Add2Fa();
         builder.Services.AddLockout();
+        
+        builder.Services.AddEndSessionFlow(options =>
+        {
+            options.LogoutUrl = $"{clientUri}/connect/logout";
+            options.LoggedOutUrl = $"{clientUri}/connect/logged-out";
+            options.FallbackUrl = $"{clientUri}/connect/logout/fallback";
+            options.Timestamp = TimeSpan.FromMinutes(5);
+            options.FrontchannelRedirectDelay = TimeSpan.FromMilliseconds(500);
+        });
+        
         builder.Services.AddOpenIdConnect(cfg =>
         {
             cfg.Issuer = "https://localhost:6201";

@@ -1,6 +1,4 @@
 ﻿using eSecurity.Idp.Security.Authentication.OpenIdConnect.Client;
-using eSecurity.Idp.Security.Authentication.OpenIdConnect.Logout;
-using eSecurity.Idp.Security.Authentication.OpenIdConnect.Logout.Strategies;
 using eSecurity.Idp.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Idp.Security.Cryptography.Pkce;
 using eSecurity.Idp.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
@@ -20,10 +18,6 @@ public static class OdicExtensions
             services.Configure(configure);
             services.AddScoped<IPkceHandler, PkceHandler>();
             services.AddScoped<IClientManager, ClientManager>();
-            services.AddKeyedScoped<ILogoutStrategy<Result>, BackchannelLogoutStrategy>(LogoutFlow.Backchannel);
-            services.AddKeyedScoped<ILogoutStrategy<List<string>>, FrontchannelLogoutStrategy>(LogoutFlow.Frontchannel);
-            services.AddScoped<ILogoutStrategyResolver, LogoutStrategyResolver>();
-            services.AddScoped<ILogoutHandler, LogoutHandler>();
             services.AddScoped<ISessionAccessor, SessionAccessor>();
             services.AddScoped<ISessionCookieFactory, SessionCookieFactory>();
 

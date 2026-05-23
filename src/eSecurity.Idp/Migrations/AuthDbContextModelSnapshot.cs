@@ -689,9 +689,9 @@ namespace eSecurity.Idp.Migrations
                     b.Property<DateTimeOffset?>("CancelledAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("ClientId")
+                    b.Property<Guid>("ClientId")
                         .HasMaxLength(36)
-                        .HasColumnType("character varying(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset?>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -714,6 +714,9 @@ namespace eSecurity.Idp.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
+                    b.Property<Guid>("SessionId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("State")
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
@@ -729,6 +732,10 @@ namespace eSecurity.Idp.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("SessionId");
 
                     b.HasIndex("UserId");
 
@@ -2129,11 +2136,27 @@ namespace eSecurity.Idp.Migrations
 
             modelBuilder.Entity("eSecurity.Idp.Data.Entities.EndSessionRequestEntity", b =>
                 {
+                    b.HasOne("eSecurity.Idp.Data.Entities.ClientEntity", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("eSecurity.Idp.Data.Entities.SessionEntity", "Session")
+                        .WithMany()
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("eSecurity.Idp.Data.Entities.UserEntity", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Session");
 
                     b.Navigation("User");
                 });

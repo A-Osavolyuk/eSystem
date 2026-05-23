@@ -12,6 +12,13 @@ public class SessionManager(
     private readonly AuthDbContext _context = context;
     private readonly SessionOptions _options = options.Value;
 
+    public async ValueTask<bool> OwnClientAsync(SessionEntity session, 
+        ClientEntity client, CancellationToken cancellationToken = default)
+    {
+        return await _context.ClientSessions.AnyAsync(
+            x => x.SessionId == session.Id && x.ClientId == client.Id, cancellationToken);
+    }
+
     public async ValueTask<SessionEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _context.Sessions

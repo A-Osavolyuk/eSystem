@@ -28,37 +28,15 @@
                         </MudTextM3>
                     </MudStack>
                 </MudStack>
-                @if (string.IsNullOrEmpty(PostLogoutRedirectUri) && string.IsNullOrEmpty(State))
-                {
-                    <MudButton
-                        Color="Color.Success"
-                        Variant="Variant.Filled"
-                        ButtonType="ButtonType.Button"
-                        Size="Size.Medium"
-                        Href="@Links.Common.Login">
-                        Click here to continue
-                    </MudButton>
-                }
-                else
-                {
-                    <MudButton
-                        Color="Color.Success"
-                        Variant="Variant.Filled"
-                        ButtonType="ButtonType.Button"
-                        Size="Size.Medium">
-                        Click here to continue
-                    </MudButton>
-                }
+                <MudButton
+                    Color="Color.Success"
+                    Variant="Variant.Filled"
+                    ButtonType="ButtonType.Button"
+                    Size="Size.Medium"
+                    Href="@Links.Common.Login">
+                    Click here to continue
+                </MudButton>
             </MudStack>
         </MudPaper>
     </MudItem>
 </MudGrid>
-
-@code {
-
-    [SupplyParameterFromQuery(Name = "post_logout_redirect_uri")]
-    public string PostLogoutRedirectUri { get; set; } = string.Empty;
-
-    [SupplyParameterFromQuery(Name = "state")]
-    public string? State { get; set; }
-}

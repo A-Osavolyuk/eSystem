@@ -40,6 +40,9 @@ public class ClientEntity : Entity
     public ICollection<ClientAudienceEntity> Audiences { get; set; } = null!;
     public ICollection<ClientUriEntity> Uris { get; set; } = null!;
 
+    public string? GetUri(UriType uriType) 
+        => Uris.FirstOrDefault(x => x.Type == uriType)?.Uri;
+    
     public bool HasScopes(IEnumerable<string> scopes, out IEnumerable<string> unsupportedScopes)
     {
         unsupportedScopes = scopes.Except(AllowedScopes.Select(x => x.Scope.Value));

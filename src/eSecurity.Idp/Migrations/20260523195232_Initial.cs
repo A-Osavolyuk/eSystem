@@ -459,38 +459,6 @@ namespace eSecurity.Idp.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "EndSessionRequests",
-                schema: "public",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    IdTokenHint = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    PostLogoutRedirectUri = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    State = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    ClientId = table.Column<string>(type: "character varying(36)", maxLength: 36, nullable: true),
-                    LogoutHint = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
-                    Status = table.Column<string>(type: "text", nullable: false),
-                    ExpiredAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    ApprovedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    DeniedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    CancelledAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EndSessionRequests", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_EndSessionRequests_Users_UserId",
-                        column: x => x.UserId,
-                        principalSchema: "public",
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "LockoutStates",
                 schema: "public",
                 columns: table => new
@@ -993,29 +961,6 @@ namespace eSecurity.Idp.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "EndSessionRequestUiLocales",
-                schema: "public",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Locale = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
-                    RequestId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EndSessionRequestUiLocales", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_EndSessionRequestUiLocales_EndSessionRequests_RequestId",
-                        column: x => x.RequestId,
-                        principalSchema: "public",
-                        principalTable: "EndSessionRequests",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AuthenticationSessions",
                 schema: "public",
                 columns: table => new
@@ -1171,6 +1116,53 @@ namespace eSecurity.Idp.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_DeviceCodes_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "public",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EndSessionRequests",
+                schema: "public",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    IdTokenHint = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    PostLogoutRedirectUri = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    State = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    LogoutHint = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
+                    Status = table.Column<string>(type: "text", nullable: false),
+                    ExpiredAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    ApprovedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    DeniedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    CancelledAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ClientId = table.Column<Guid>(type: "uuid", maxLength: 36, nullable: false),
+                    SessionId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EndSessionRequests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EndSessionRequests_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalSchema: "public",
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EndSessionRequests_Sessions_SessionId",
+                        column: x => x.SessionId,
+                        principalSchema: "public",
+                        principalTable: "Sessions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EndSessionRequests_Users_UserId",
                         column: x => x.UserId,
                         principalSchema: "public",
                         principalTable: "Users",
@@ -1343,6 +1335,29 @@ namespace eSecurity.Idp.Migrations
                         column: x => x.DeviceCodeId,
                         principalSchema: "public",
                         principalTable: "DeviceCodes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EndSessionRequestUiLocales",
+                schema: "public",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Locale = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
+                    RequestId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EndSessionRequestUiLocales", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EndSessionRequestUiLocales_EndSessionRequests_RequestId",
+                        column: x => x.RequestId,
+                        principalSchema: "public",
+                        principalTable: "EndSessionRequests",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -1550,6 +1565,18 @@ namespace eSecurity.Idp.Migrations
                 schema: "public",
                 table: "DeviceCodeScopeEntity",
                 column: "DeviceCodeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EndSessionRequests_ClientId",
+                schema: "public",
+                table: "EndSessionRequests",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EndSessionRequests_SessionId",
+                schema: "public",
+                table: "EndSessionRequests",
+                column: "SessionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EndSessionRequests_UserId",
