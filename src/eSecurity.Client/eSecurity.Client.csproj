@@ -64,7 +64,6 @@
       <AdditionalFiles Include="Pages\Emails\VerifyEmail.razor" />
       <AdditionalFiles Include="Pages\Logout\LoggedOut.razor" />
       <AdditionalFiles Include="Pages\Logout\Logout.razor" />
-      <AdditionalFiles Include="Pages\Logout\LogoutCallback.razor" />
       <AdditionalFiles Include="Pages\Logout\LogoutFallback.razor" />
       <AdditionalFiles Include="Pages\OAuth\Error.razor" />
       <AdditionalFiles Include="Pages\OAuth\Handle.razor" />
