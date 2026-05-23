@@ -169,7 +169,7 @@ public class ConnectController(ISender sender) : ControllerBase
     [EndpointDescription("Confirm end session")]
     [ProducesResponseType(200)]
     [HttpGet("confirm-end-session")]
-    public async ValueTask<IActionResult> ConfirmEndSessionAsync([FromForm] ConfirmEndSessionRequest request)
+    public async ValueTask<IActionResult> ConfirmEndSessionAsync([FromQuery] ConfirmEndSessionRequest request)
     {
         var result = await _sender.Send(new ConfirmEndSessionCommand(request));
         return HttpContext.HandleResult(result);
