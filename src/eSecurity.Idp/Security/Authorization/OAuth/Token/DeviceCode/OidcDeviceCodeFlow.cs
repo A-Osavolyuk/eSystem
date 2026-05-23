@@ -17,13 +17,15 @@ public sealed class OidcDeviceCodeFlow(
     IUserManager userManager,
     ISessionManager sessionManager,
     ITokenFactoryProvider tokenFactoryProvider,
-    IOptions<TokenConfigurations> tokenOptions) : IDeviceCodeFlow
+    IOptions<TokenConfigurations> tokenOptions,
+    ISessionAccessor sessionAccessor) : IDeviceCodeFlow
 {
     private readonly IClientManager _clientManager = clientManager;
     private readonly IDeviceCodeManager _deviceCodeManager = deviceCodeManager;
     private readonly IUserManager _userManager = userManager;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
+    private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
     private readonly TokenConfigurations _tokenConfigurations = tokenOptions.Value;
 
     public async ValueTask<Result> ExecuteAsync(DeviceCodeEntity deviceCode, DeviceCodeFlowContext context,
@@ -61,8 +63,18 @@ public sealed class OidcDeviceCodeFlow(
             ExpiresIn = (int)_tokenConfigurations.DefaultAccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenType.Bearer,
         };
+
+        var sessionCookie = _sessionAccessor.GetCookie();
+        if (sessionCookie is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
+            {
+                Code = ErrorCode.UnauthorizedClient,
+                Description = "Unauthorized client."
+            });
+        }
         
-        var session = await _sessionManager.FindAsync(user, cancellationToken);
+        var session = await _sessionManager.FindByIdAsync(sessionCookie.SessionId, cancellationToken);
         if (session is null || session.ExpireDate < DateTimeOffset.UtcNow)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error

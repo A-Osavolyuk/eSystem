@@ -24,7 +24,6 @@ public class GetUserInfoQueryHandler(
     IUserManager userManager,
     IEmailManager emailManager,
     IPhoneManager phoneManager,
-    ISessionManager sessionManager,
     IPersonalDataManager personalDataManager,
     IHttpContextAccessor httpContextAccessor,
     ITokenValidationProvider validationProvider) : IRequestHandler<GetUserInfoQuery, Result>
@@ -32,7 +31,6 @@ public class GetUserInfoQueryHandler(
     private readonly IUserManager _userManager = userManager;
     private readonly IEmailManager _emailManager = emailManager;
     private readonly IPhoneManager _phoneManager = phoneManager;
-    private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IPersonalDataManager _personalDataManager = personalDataManager;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly ITokenValidator _validator = validationProvider.CreateValidator(TokenKind.Jwt);
@@ -105,27 +103,8 @@ public class GetUserInfoQueryHandler(
                 Description = description
             });
         }
-
-        var session = await _sessionManager.FindAsync(user, cancellationToken);
-        if (session is null)
-        {
-            const string description = "The access token is invalid or the session does not exist";
-
-            _httpContext.Response.Headers.Append(HeaderTypes.WwwAuthenticate,
-                $"Bearer error=\"{ErrorCode.InvalidToken}\", error_description=\"{description}\"");
-
-            return Results.ClientError(ClientErrorCode.Unauthorized, new Error
-            {
-                Code = ErrorCode.InvalidToken,
-                Description = description
-            });
-        }
-
-        var amr = session.AuthenticationMethods
-            .Select(x => x.MethodReference.GetString())
-            .ToArray();
         
-        var response = new UserInfoResponse { Subject = subjectClaim.Value, Amr = amr };
+        var response = new UserInfoResponse { Subject = subjectClaim.Value };
         var scopes = scopeClaim.Value.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         if (scopes.Contains(ScopeTypes.Email))
         {

@@ -25,11 +25,6 @@ public class SessionManager(
             .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
     }
 
-    public async ValueTask<SessionEntity?> FindAsync(UserEntity user, CancellationToken cancellationToken = default)
-    {
-        return await _context.Sessions.FirstOrDefaultAsync(x => x.UserId == user.Id, cancellationToken);
-    }
-
     public async ValueTask<Result> CreateAsync(SessionEntity session, CancellationToken cancellationToken = default)
     {
         await _context.Sessions.AddAsync(session, cancellationToken);

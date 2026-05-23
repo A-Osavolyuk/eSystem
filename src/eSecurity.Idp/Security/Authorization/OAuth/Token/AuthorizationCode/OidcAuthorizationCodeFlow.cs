@@ -17,13 +17,11 @@ public class OidcAuthorizationCodeFlow(
     IUserManager userManager,
     IPkceHandler pkceHandler,
     IClientManager clientManager,
-    ISessionManager sessionManager,
     IAuthorizationCodeManager authorizationCodeManager,
     ITokenFactoryProvider tokenFactoryProvider,
     IOptions<TokenConfigurations> options) : IAuthorizationCodeFlow
 {
     private readonly IClientManager _clientManager = clientManager;
-    private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IUserManager _userManager = userManager;
     private readonly IPkceHandler _pkceHandler = pkceHandler;
     private readonly IAuthorizationCodeManager _authorizationCodeManager = authorizationCodeManager;
@@ -35,11 +33,13 @@ public class OidcAuthorizationCodeFlow(
     {
         var client = await _clientManager.FindByIdAsync(context.ClientId, cancellationToken);
         if (client is null)
+        {
             return Results.ClientError(ClientErrorCode.Unauthorized, new Error
             {
                 Code = ErrorCode.InvalidClient,
                 Description = "Client was not found."
             });
+        }
 
         if (client.Id != code.ClientId || !client.HasUri(context.RedirectUri!, UriType.Redirect))
         {
@@ -107,8 +107,8 @@ public class OidcAuthorizationCodeFlow(
             TokenType = ResponseTokenType.Bearer,
         };
 
-        var session = await _sessionManager.FindAsync(user, cancellationToken);
-        if (session is null || session.ExpireDate < DateTimeOffset.UtcNow)
+        var session = code.Session;
+        if (session.ExpireDate < DateTimeOffset.UtcNow)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
