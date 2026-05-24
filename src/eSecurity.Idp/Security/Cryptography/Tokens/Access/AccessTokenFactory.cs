@@ -41,7 +41,7 @@ public sealed class AccessTokenFactory(
         if (context.Client.AccessTokenType == AccessTokenType.Jwt)
         {
             var iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
-            var exp = DateTimeOffset.UtcNow.Add(lifetime).ToString();
+            var exp = DateTimeOffset.UtcNow.Add(lifetime).ToUnixTimeSeconds().ToString();
             
             var claims = new List<Claim>()
             {

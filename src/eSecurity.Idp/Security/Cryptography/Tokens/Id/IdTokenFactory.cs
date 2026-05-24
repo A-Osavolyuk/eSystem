@@ -64,7 +64,7 @@ public sealed class IdTokenFactory(
             .ToArray();
         
         var iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
-        var exp = DateTimeOffset.UtcNow.Add(tokenLifetime).ToString();
+        var exp = DateTimeOffset.UtcNow.Add(tokenLifetime).ToUnixTimeSeconds().ToString();
         var authTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
 
         var claims = new List<Claim>
