@@ -1,4 +1,4 @@
-﻿using eSecurity.Idp.Security.Authentication.OpenIdConnect.Prompt;
+﻿using eSecurity.Idp.Security.Authorization.Prompt;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 

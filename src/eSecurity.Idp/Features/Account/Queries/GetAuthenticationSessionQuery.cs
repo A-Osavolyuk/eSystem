@@ -1,5 +1,4 @@
-﻿using eSecurity.Idp.Security.Authentication.OpenIdConnect.Session;
-using eSecurity.Idp.Security.Authentication.Session;
+﻿using eSecurity.Idp.Security.Authentication.Session;
 using eSecurity.Core.DTOs;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;

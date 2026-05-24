@@ -1,6 +1,6 @@
-﻿using eSecurity.Idp.Security.Authorization.OAuth.Token.DeviceCode;
-using eSecurity.Core.Requests;
+﻿using eSecurity.Core.Requests;
 using eSecurity.Core.Responses;
+using eSecurity.Idp.Security.Authorization.Token.DeviceCode;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 

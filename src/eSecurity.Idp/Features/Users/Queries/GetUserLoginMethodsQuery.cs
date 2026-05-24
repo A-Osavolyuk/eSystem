@@ -1,11 +1,11 @@
 ﻿using eSecurity.Idp.Security.Authentication.Password;
 using eSecurity.Idp.Security.Authentication.TwoFactor;
 using eSecurity.Idp.Security.Authorization.Devices;
-using eSecurity.Idp.Security.Authorization.OAuth.LinkedAccount;
 using eSecurity.Idp.Security.Credentials.PublicKey;
 using eSecurity.Idp.Security.Identity.User;
 using eSecurity.Core.DTOs;
 using eSecurity.Core.Security.Authentication.TwoFactor;
+using eSecurity.Idp.Security.Authorization.LinkedAccount;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;

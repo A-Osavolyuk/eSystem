@@ -1,7 +1,7 @@
-﻿using eSecurity.Idp.Security.Authorization.OAuth.LinkedAccount;
-using eSecurity.Idp.Security.Identity.User;
+﻿using eSecurity.Idp.Security.Identity.User;
 using eSecurity.Core.DTOs;
 using eSecurity.Core.Security.Authorization.OAuth;
+using eSecurity.Idp.Security.Authorization.LinkedAccount;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Identity.Claims;

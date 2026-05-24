@@ -1,5 +1,5 @@
-using eSecurity.Idp.Security.Authentication.OpenIdConnect.Client;
 using eSecurity.Core.Security.Authentication.OpenIdConnect.Client;
+using eSecurity.Idp.Security.Authentication.Client;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 

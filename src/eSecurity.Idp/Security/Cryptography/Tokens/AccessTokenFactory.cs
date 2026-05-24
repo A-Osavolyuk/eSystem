@@ -1,8 +1,8 @@
 ﻿using System.Security.Claims;
 using eSecurity.Idp.Data.Entities;
-using eSecurity.Idp.Security.Authentication.OpenIdConnect.Client;
+using eSecurity.Idp.Security.Authentication.Client;
 using eSecurity.Idp.Security.Authentication.Subject;
-using eSecurity.Idp.Security.Authorization.OAuth.Token;
+using eSecurity.Idp.Security.Authorization.Token;
 using eSecurity.Idp.Security.Identity.Claims;
 using eSecurity.Idp.Security.Identity.Claims.Factories;
 using eSystem.Core.Primitives;

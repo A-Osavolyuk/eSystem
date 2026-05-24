@@ -1,15 +1,15 @@
-﻿using eSecurity.Idp.Security.Authentication.OpenIdConnect.Ciba;
-using eSecurity.Idp.Security.Authorization.Authorize;
+﻿using eSecurity.Idp.Security.Authorization.Authorize;
 using eSecurity.Idp.Security.Authorization.Authorize.Par;
 using eSecurity.Idp.Security.Authorization.Codes;
+using eSecurity.Idp.Security.Authorization.Consents;
 using eSecurity.Idp.Security.Authorization.Constants;
-using eSecurity.Idp.Security.Authorization.OAuth.Consents;
-using eSecurity.Idp.Security.Authorization.OAuth.LinkedAccount;
-using eSecurity.Idp.Security.Authorization.OAuth.Token.Validation;
 using eSecurity.Idp.Security.Authorization.Devices;
-using eSecurity.Idp.Security.Authorization.OAuth.Token;
-using eSecurity.Idp.Security.Authorization.OAuth.Token.DeviceCode;
+using eSecurity.Idp.Security.Authorization.LinkedAccount;
+using eSecurity.Idp.Security.Authorization.Prompt;
 using eSecurity.Idp.Security.Authorization.Roles;
+using eSecurity.Idp.Security.Authorization.Token;
+using eSecurity.Idp.Security.Authorization.Token.DeviceCode;
+using eSecurity.Idp.Security.Authorization.Token.Validation;
 using eSecurity.Idp.Security.Authorization.Verification;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Server.Security.Authentication.Schemes;
@@ -29,6 +29,7 @@ public static class AuthorizationExtensions
             options.FallbackUrl = $"{clientUri}/connect/fallback";
         });
         
+        builder.Services.AddPromptsHandling();
         builder.Services.AddTokenFlow();
         builder.Services.AddRoleManagement();
         builder.Services.AddDeviceManagement();
@@ -47,7 +48,6 @@ public static class AuthorizationExtensions
         });
 
         builder.Services.AddScoped<ICodeManager, CodeManager>();
-        builder.Services.AddScoped<ICibaRequestManager, CibaRequestManager>();
         builder.Services.AddScoped<IConsentManager, ConsentManager>();
         builder.Services.AddScoped<ILinkedAccountManager, LinkedAccountManager>();
         builder.Services.AddScoped<ITokenValidationProvider, TokenValidationProvider>();

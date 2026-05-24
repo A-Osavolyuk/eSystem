@@ -9,4 +9,4 @@ global using Microsoft.Extensions.Options;
 global using Microsoft.IdentityModel.Tokens;
 global using OAuthFlow = eSecurity.Core.Security.Authorization.OAuth.OAuthFlow;
 global using Results = eSystem.Core.Primitives.Results;
-global using SessionOptions = eSecurity.Idp.Security.Authentication.OpenIdConnect.Session.SessionOptions;
+global using SessionOptions = eSecurity.Idp.Security.Authentication.Session.SessionOptions;

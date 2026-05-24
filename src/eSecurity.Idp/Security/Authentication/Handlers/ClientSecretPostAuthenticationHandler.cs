@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text.Encodings.Web;
-using eSecurity.Idp.Security.Authentication.OpenIdConnect.Client;
+using eSecurity.Idp.Security.Authentication.Client;
 using eSystem.Core.Enums;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Primitives;

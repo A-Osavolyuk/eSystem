@@ -1,12 +1,11 @@
 ﻿using System.Security.Claims;
-using eSecurity.Idp.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Idp.Security.Authorization.Constants;
-using eSecurity.Idp.Security.Authorization.OAuth.Token.Validation;
 using eSecurity.Idp.Security.Identity.Email;
 using eSecurity.Idp.Security.Identity.Phone;
 using eSecurity.Idp.Security.Identity.Privacy;
 using eSecurity.Idp.Security.Identity.User;
 using eSecurity.Core.Security.Identity;
+using eSecurity.Idp.Security.Authorization.Token.Validation;
 using eSystem.Core.Enums;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Primitives;

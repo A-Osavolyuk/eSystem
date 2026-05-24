@@ -1,0 +1,182 @@
+﻿using eSecurity.Idp.Data.Entities;
+using eSecurity.Idp.Security.Authentication.Client;
+using eSecurity.Idp.Security.Authentication.Session;
+using eSecurity.Idp.Security.Cryptography.Tokens;
+using eSecurity.Idp.Security.Identity.User;
+using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Security.Authorization.OAuth;
+using eSystem.Core.Server.Security.Authorization.OAuth.Token.DeviceCode;
+
+namespace eSecurity.Idp.Security.Authorization.Token.DeviceCode;
+
+public sealed class OidcDeviceCodeFlow(
+    IClientManager clientManager,
+    IDeviceCodeManager deviceCodeManager,
+    IUserManager userManager,
+    ISessionManager sessionManager,
+    ITokenFactoryProvider tokenFactoryProvider,
+    IOptions<TokenConfigurations> tokenOptions,
+    ISessionAccessor sessionAccessor) : IDeviceCodeFlow
+{
+    private readonly IClientManager _clientManager = clientManager;
+    private readonly IDeviceCodeManager _deviceCodeManager = deviceCodeManager;
+    private readonly IUserManager _userManager = userManager;
+    private readonly ISessionManager _sessionManager = sessionManager;
+    private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
+    private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
+    private readonly TokenConfigurations _tokenConfigurations = tokenOptions.Value;
+
+    public async ValueTask<Result> ExecuteAsync(DeviceCodeEntity deviceCode, DeviceCodeFlowContext context,
+        CancellationToken cancellationToken = default)
+    {
+        var client = await _clientManager.FindByIdAsync(context.ClientId, cancellationToken);
+        if (client is null || deviceCode.UserId is null || deviceCode.SessionId is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidGrant,
+                Description = "Invalid device code"
+            });
+        }
+
+        deviceCode.State = DeviceCodeState.Consumed;
+        deviceCode.ConsumedAt = DateTimeOffset.UtcNow;
+        deviceCode.IsFirstPoll = false;
+
+        var deviceResult = await _deviceCodeManager.UpdateAsync(deviceCode, cancellationToken);
+        if (deviceResult.Succeeded) return deviceResult;
+
+        var user = await _userManager.FindByIdAsync(deviceCode.UserId.Value, cancellationToken);
+        if (user is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidGrant,
+                Description = "Invalid device code"
+            });
+        }
+
+        var response = new DeviceCodeResponse
+        {
+            ExpiresIn = (int)_tokenConfigurations.DefaultAccessTokenLifetime.TotalSeconds,
+            TokenType = ResponseTokenType.Bearer,
+        };
+
+        var sessionCookie = _sessionAccessor.GetCookie();
+        if (sessionCookie is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
+            {
+                Code = ErrorCode.UnauthorizedClient,
+                Description = "Unauthorized client."
+            });
+        }
+        
+        var session = await _sessionManager.FindByIdAsync(sessionCookie.SessionId, cancellationToken);
+        if (session is null || session.ExpireDate < DateTimeOffset.UtcNow)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
+            {
+                Code = ErrorCode.InvalidGrant,
+                Description = "Invalid authorization code."
+            });
+        }
+
+        var accessTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.AccessToken);
+        var accessTokenResult = await accessTokenFactory.CreateAsync(client, user, 
+            session, cancellationToken: cancellationToken);
+        
+        if (!accessTokenResult.Succeeded)
+        {
+            var error = accessTokenResult.GetError();
+            return Results.ServerError(ServerErrorCode.InternalServerError, error);
+        }
+
+        if (!accessTokenResult.TryGetValue(out var accessToken))
+        {
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+            {
+                Code = ErrorCode.ServerError,
+                Description = "Server error"
+            });
+        }
+            
+        response.AccessToken = accessToken;
+
+        var clientResult = await _clientManager.RelateAsync(client, session, cancellationToken);
+        if (!clientResult.Succeeded) return clientResult;
+
+        if (client.AllowOfflineAccess && client.HasScope(ScopeTypes.OfflineAccess))
+        {
+            var refreshTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.RefreshToken);
+            var refreshTokenResult = await refreshTokenFactory.CreateAsync(client, user, 
+                session, cancellationToken: cancellationToken);
+            
+            if (!refreshTokenResult.Succeeded)
+            {
+                var error = refreshTokenResult.GetError();
+                return Results.ServerError(ServerErrorCode.InternalServerError, error);
+            }
+
+            if (!accessTokenResult.TryGetValue(out var refreshToken))
+            {
+                return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+                {
+                    Code = ErrorCode.ServerError,
+                    Description = "Server error"
+                });
+            }
+            
+            response.RefreshToken = refreshToken;
+        }
+        
+        if (client.HasGrantType(GrantType.Ciba))
+        {
+            var loginTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.LoginToken);
+            var loginTokenResult = await loginTokenFactory.CreateAsync(client, user, 
+                session, cancellationToken: cancellationToken);
+            
+            if (!loginTokenResult.Succeeded)
+            {
+                var error = loginTokenResult.GetError();
+                return Results.ServerError(ServerErrorCode.InternalServerError, error);
+            }
+
+            if (!accessTokenResult.TryGetValue(out var loginToken))
+            {
+                return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+                {
+                    Code = ErrorCode.ServerError,
+                    Description = "Server error"
+                });
+            }
+            
+            response.LoginTokenHint = loginToken;
+        }
+
+        var idTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.IdToken);
+        var idTokenResult = await idTokenFactory.CreateAsync(client, user, 
+            session, cancellationToken: cancellationToken);
+        
+        if (!idTokenResult.Succeeded)
+        {
+            var error = idTokenResult.GetError();
+            return Results.ServerError(ServerErrorCode.InternalServerError, error);
+        }
+
+        if (!idTokenResult.TryGetValue(out var idToken))
+        {
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+            {
+                Code = ErrorCode.ServerError,
+                Description = "Server error"
+            });
+        }
+            
+        response.IdToken = idToken;
+        
+        return Results.Success(SuccessCodes.Ok, response);
+    }
+}

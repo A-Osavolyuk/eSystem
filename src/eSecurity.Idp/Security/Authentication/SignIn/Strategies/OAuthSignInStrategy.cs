@@ -1,19 +1,18 @@
 ﻿using eSecurity.Idp.Data.Entities;
 using eSecurity.Idp.Security.Authentication.Lockout;
-using eSecurity.Idp.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Idp.Security.Authentication.Session;
 using eSecurity.Idp.Security.Authentication.TwoFactor;
 using eSecurity.Idp.Security.Authorization.Devices;
-using eSecurity.Idp.Security.Authorization.OAuth.LinkedAccount;
 using eSecurity.Idp.Security.Credentials.PublicKey;
 using eSecurity.Idp.Security.Identity.User;
 using eSecurity.Core.Security.Authentication.SignIn;
+using eSecurity.Idp.Security.Authorization.LinkedAccount;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Utilities.Query;
-using Session_SessionOptions = eSecurity.Idp.Security.Authentication.OpenIdConnect.Session.SessionOptions;
+using Session_SessionOptions = eSecurity.Idp.Security.Authentication.Session.SessionOptions;
 
 namespace eSecurity.Idp.Security.Authentication.SignIn.Strategies;
 

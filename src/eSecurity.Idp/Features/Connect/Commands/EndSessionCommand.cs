@@ -1,9 +1,9 @@
 ﻿using eSecurity.Idp.Data.Entities;
+using eSecurity.Idp.Security.Authentication.Client;
 using eSecurity.Idp.Security.Authentication.EndSession;
-using eSecurity.Idp.Security.Authentication.OpenIdConnect.Client;
-using eSecurity.Idp.Security.Authentication.OpenIdConnect.Session;
+using eSecurity.Idp.Security.Authentication.Session;
 using eSecurity.Idp.Security.Authorization.Constants;
-using eSecurity.Idp.Security.Authorization.OAuth.Token.Validation;
+using eSecurity.Idp.Security.Authorization.Token.Validation;
 using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;

@@ -1,4 +1,7 @@
-﻿using eSecurity.Idp.Security.Authentication.EndSession;
+﻿using eSecurity.Idp.Security.Authentication.BackchannelAuthentication;
+using eSecurity.Idp.Security.Authentication.Ciba;
+using eSecurity.Idp.Security.Authentication.Client;
+using eSecurity.Idp.Security.Authentication.EndSession;
 using eSecurity.Idp.Security.Authentication.Handlers;
 using eSecurity.Idp.Security.Authentication.Session;
 using eSecurity.Idp.Security.Cookies;
@@ -8,6 +11,7 @@ using eSecurity.Idp.Security.Authentication.Password;
 using eSecurity.Idp.Security.Authentication.SignIn;
 using eSecurity.Idp.Security.Authentication.Subject;
 using eSecurity.Idp.Security.Authentication.TwoFactor;
+using eSecurity.Idp.Security.Cryptography.Pkce;
 using eSystem.Core.Configuration;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
@@ -26,7 +30,25 @@ public static class AuthenticationExtensions
         var clientUri = configuration.GetValue<string>("Client:Uri");
 
         builder.Services.AddScoped<IAuthenticationSessionManager, AuthenticationSessionManager>();
-
+        
+        builder.Services.AddScoped<IPkceHandler, PkceHandler>();
+        builder.Services.AddScoped<IClientManager, ClientManager>();
+        builder.Services.AddScoped<ICibaRequestManager, CibaRequestManager>();
+            
+        builder.Services.AddBackchannelAuthentication(options =>
+        {
+            options.Interval = 5;
+            options.AuthReqIdLength = 32;
+            options.DefaultRequestLifetime = TimeSpan.FromSeconds(300);
+            options.MinRequestLifetime = TimeSpan.FromSeconds(60);
+            options.MaxRequestLifetime = TimeSpan.FromSeconds(600);
+        });
+            
+        builder.Services.AddSsoSession(cfg =>
+        {
+            cfg.Timestamp = TimeSpan.FromDays(30);
+        });
+        
         builder.Services.AddSubjects(options =>
         {
             options.PublicSubjectLength = 36;

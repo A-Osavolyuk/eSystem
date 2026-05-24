@@ -1,4 +1,4 @@
-﻿using eSecurity.Idp.Security.Authorization.OAuth.Token;
+﻿using eSecurity.Idp.Security.Authorization.Token;
 using eSystem.Core.Enums;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;

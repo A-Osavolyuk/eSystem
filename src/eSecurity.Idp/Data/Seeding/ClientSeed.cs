@@ -1,5 +1,5 @@
 ﻿using eSecurity.Idp.Data.Entities;
-using eSecurity.Idp.Security.Authentication.OpenIdConnect.Client;
+using eSecurity.Idp.Security.Authentication.Client;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
 using eSystem.Core.Server.Data.Seeding;
 

@@ -1,4 +1,4 @@
-﻿using eSecurity.Idp.Security.Authentication.OpenIdConnect.Client;
+﻿using eSecurity.Idp.Security.Authentication.Client;
 using eSystem.Core.Server.Data.Entities;
 
 namespace eSecurity.Idp.Data.Entities;

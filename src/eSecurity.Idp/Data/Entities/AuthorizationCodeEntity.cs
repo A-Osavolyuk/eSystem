@@ -1,4 +1,4 @@
-﻿using eSecurity.Idp.Security.Authorization.OAuth.Protocol;
+﻿using eSecurity.Idp.Security.Authorization;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Server.Data.Entities;
 

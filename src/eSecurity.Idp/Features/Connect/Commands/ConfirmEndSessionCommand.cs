@@ -2,7 +2,7 @@
 using eSecurity.Idp.Security.Authentication.EndSession;
 using eSecurity.Idp.Security.Authentication.EndSession.Backchannel;
 using eSecurity.Idp.Security.Authentication.EndSession.Frontchannel;
-using eSecurity.Idp.Security.Authentication.OpenIdConnect.Session;
+using eSecurity.Idp.Security.Authentication.Session;
 using eSecurity.Idp.Security.Cookies;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;

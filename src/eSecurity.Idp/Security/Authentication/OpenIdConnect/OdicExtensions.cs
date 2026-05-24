@@ -1,9 +1,5 @@
-﻿using eSecurity.Idp.Security.Authentication.OpenIdConnect.Client;
-using eSecurity.Idp.Security.Authentication.OpenIdConnect.Session;
+﻿using eSecurity.Idp.Security.Authentication.Session;
 using eSecurity.Idp.Security.Cryptography.Pkce;
-using eSecurity.Idp.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
-using eSecurity.Idp.Security.Authentication.OpenIdConnect.Prompt;
-using eSecurity.Idp.Security.Authentication.OpenIdConnect.Prompt.Handlers;
 using eSystem.Core.Primitives;
 using eSystem.Core.Server.Security.Authentication.OpenIdConnect.Discovery;
 
@@ -16,34 +12,14 @@ public static class OdicExtensions
         public void AddOpenIdConnect(Action<OpenIdConfiguration> configure)
         {
             services.Configure(configure);
-            services.AddScoped<IPkceHandler, PkceHandler>();
-            services.AddScoped<IClientManager, ClientManager>();
-            services.AddScoped<ISessionAccessor, SessionAccessor>();
-            services.AddScoped<ISessionCookieFactory, SessionCookieFactory>();
-
-            services.AddScoped<IPromptHandler, LoginPromptHandler>();
-            services.AddScoped<IPromptHandler, ConsentPromptHandler>();
-            services.AddScoped<IPromptHandler, SelectAccountPromptHandler>();
-            services.AddScoped<IPromptHandler, NonePromptHandler>();
-            services.AddTransient<IPromptStateFactory, PromptStateFactory>();
-            services.AddTransient<IPromptsProcessor, PromptsProcessor>();
-            
-            services.AddBackchannelAuthentication(options =>
-            {
-                options.Interval = 5;
-                options.AuthReqIdLength = 32;
-                options.DefaultRequestLifetime = TimeSpan.FromSeconds(300);
-                options.MinRequestLifetime = TimeSpan.FromSeconds(60);
-                options.MaxRequestLifetime = TimeSpan.FromSeconds(600);
-            });
-            
-            services.AddSession(cfg => { cfg.Timestamp = TimeSpan.FromDays(30); });
         }
 
-        private void AddSession(Action<SessionOptions> configure)
+        public void AddSsoSession(Action<SessionOptions> configure)
         {
-            services.AddScoped<ISessionManager, SessionManager>();
             services.Configure(configure);
+            services.AddScoped<ISessionManager, SessionManager>();
+            services.AddScoped<ISessionAccessor, SessionAccessor>();
+            services.AddScoped<ISessionCookieFactory, SessionCookieFactory>();
         }
     }
 }

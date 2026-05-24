@@ -1,6 +1,6 @@
 ﻿using eSecurity.Idp.Data.Entities;
-using eSecurity.Idp.Security.Authentication.OpenIdConnect.Client;
-using eSecurity.Idp.Security.Authorization.OAuth.Token;
+using eSecurity.Idp.Security.Authentication.Client;
+using eSecurity.Idp.Security.Authorization.Token;
 using eSecurity.Idp.Security.Cryptography.Hashing;
 using eSecurity.Idp.Security.Cryptography.Keys;
 

@@ -1,4 +1,4 @@
-﻿using eSecurity.Idp.Security.Authorization.OAuth.Token.DeviceCode;
+﻿using eSecurity.Idp.Security.Authorization.Token.DeviceCode;
 using eSystem.Core.Server.Data.Entities;
 
 namespace eSecurity.Idp.Data.Entities;

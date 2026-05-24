@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
-using eSecurity.Idp.Security.Authentication.OpenIdConnect.Session;
-using eSecurity.Idp.Security.Authorization.OAuth.Token;
+using eSecurity.Idp.Security.Authentication.Session;
+using eSecurity.Idp.Security.Authorization.Token;
 using eSecurity.Idp.Security.Cryptography.Hashing;
 using eSecurity.Idp.Security.Cryptography.Tokens;
 using eSecurity.Idp.Security.Identity.User;

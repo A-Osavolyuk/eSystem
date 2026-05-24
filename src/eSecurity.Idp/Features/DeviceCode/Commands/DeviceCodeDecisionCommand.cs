@@ -1,10 +1,10 @@
 ﻿using eSecurity.Idp.Data.Entities;
-using eSecurity.Idp.Security.Authentication.OpenIdConnect.Client;
-using eSecurity.Idp.Security.Authentication.OpenIdConnect.Session;
-using eSecurity.Idp.Security.Authorization.OAuth.Consents;
-using eSecurity.Idp.Security.Authorization.OAuth.Token.DeviceCode;
 using eSecurity.Idp.Security.Identity.User;
 using eSecurity.Core.Requests;
+using eSecurity.Idp.Security.Authentication.Client;
+using eSecurity.Idp.Security.Authentication.Session;
+using eSecurity.Idp.Security.Authorization.Consents;
+using eSecurity.Idp.Security.Authorization.Token.DeviceCode;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;

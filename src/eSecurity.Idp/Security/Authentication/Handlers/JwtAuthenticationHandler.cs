@@ -1,7 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Text.Encodings.Web;
 using eSecurity.Idp.Security.Authorization.Constants;
-using eSecurity.Idp.Security.Authorization.OAuth.Token.Validation;
+using eSecurity.Idp.Security.Authorization.Token.Validation;
 using eSystem.Core.Enums;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Primitives;

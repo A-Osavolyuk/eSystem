@@ -1,7 +1,7 @@
-﻿using eSecurity.Idp.Security.Authentication.OpenIdConnect.Session;
-using eSecurity.Idp.Security.Identity.User;
+﻿using eSecurity.Idp.Security.Identity.User;
 using eSecurity.Idp.Security.Identity.User.Username;
 using eSecurity.Core.Requests;
+using eSecurity.Idp.Security.Authentication.Session;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 

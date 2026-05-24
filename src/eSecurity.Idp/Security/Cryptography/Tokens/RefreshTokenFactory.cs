@@ -1,6 +1,6 @@
 ﻿using eSecurity.Idp.Data.Entities;
 using eSecurity.Idp.Security.Authentication.Subject;
-using eSecurity.Idp.Security.Authorization.OAuth.Token;
+using eSecurity.Idp.Security.Authorization.Token;
 using eSystem.Core.Primitives;
 
 namespace eSecurity.Idp.Security.Cryptography.Tokens;

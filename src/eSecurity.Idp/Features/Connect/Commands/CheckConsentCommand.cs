@@ -1,9 +1,9 @@
-﻿using eSecurity.Idp.Security.Authentication.OpenIdConnect.Client;
-using eSecurity.Idp.Security.Authentication.OpenIdConnect.Session;
-using eSecurity.Idp.Security.Authorization.OAuth.Consents;
-using eSecurity.Idp.Security.Identity.User;
+﻿using eSecurity.Idp.Security.Identity.User;
 using eSecurity.Core.Requests;
 using eSecurity.Core.Responses;
+using eSecurity.Idp.Security.Authentication.Client;
+using eSecurity.Idp.Security.Authentication.Session;
+using eSecurity.Idp.Security.Authorization.Consents;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 
