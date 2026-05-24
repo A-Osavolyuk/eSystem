@@ -6,6 +6,7 @@ using eSecurity.Idp.Security.Authentication.OpenIdConnect.Session;
 using eSecurity.Idp.Security.Cookies;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect.Discovery;
 using eSystem.Core.Utilities.Query;
 
 namespace eSecurity.Idp.Features.Connect.Commands;
@@ -15,6 +16,7 @@ public sealed record ConfirmEndSessionCommand(ConfirmEndSessionRequest Request) 
 public sealed class ConfirmEndSessionCommandHandler(
     IEndSessionManager endSessionManager,
     IOptions<EndSessionOptions> options,
+    IOptions<OpenIdConfiguration> configuration,
     IBackchannelLogoutHandler backchannelLogoutHandler,
     IFrontChannelLogoutHandler frontChannelLogoutHandler,
     ISessionManager sessionManager,
@@ -26,6 +28,7 @@ public sealed class ConfirmEndSessionCommandHandler(
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly EndSessionOptions _options = options.Value;
+    private readonly OpenIdConfiguration _configuration = configuration.Value;
 
     public async Task<Result> Handle(ConfirmEndSessionCommand request, CancellationToken cancellationToken = default)
     {
@@ -95,7 +98,7 @@ public sealed class ConfirmEndSessionCommandHandler(
             Path = "/"
         });
 
-        if (endSessionRequest.Client.AllowBackChannelLogout)
+        if (endSessionRequest.Client.AllowBackChannelLogout && _configuration.BackchannelLogoutSupported)
         {
             var backchannelResult = await _backchannelLogoutHandler.HandleAsync(endSessionRequest, cancellationToken);
             if (!backchannelResult.Succeeded)
@@ -105,7 +108,7 @@ public sealed class ConfirmEndSessionCommandHandler(
             }
         }
 
-        if (endSessionRequest.Client.AllowFrontChannelLogout)
+        if (endSessionRequest.Client.AllowFrontChannelLogout && _configuration.FrontchannelLogoutSupported)
         {
             var frontchannelResult = await _frontChannelLogoutHandler.HandleAsync(endSessionRequest, cancellationToken);
             if (!frontchannelResult.Succeeded)
