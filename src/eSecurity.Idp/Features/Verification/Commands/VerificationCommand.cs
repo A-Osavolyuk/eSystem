@@ -50,7 +50,7 @@ public class VerificationCommandHandler(
             });
         }
 
-        var strategy = _verificationStrategyResolver.Resolve(context);
+        var strategy = _verificationStrategyResolver.Resolve(request.Request.Method);
         return await strategy.ExecuteAsync(context, cancellationToken);
     }
 }

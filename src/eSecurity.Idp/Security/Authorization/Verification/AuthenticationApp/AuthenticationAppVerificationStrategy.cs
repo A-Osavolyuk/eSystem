@@ -18,7 +18,7 @@ public sealed class AuthenticationAppVerificationStrategy(
     IVerificationManager verificationManager,
     ISecretManager secretManager,
     IDataProtectionProvider protectionProvider,
-    IOptions<VerificationConfiguration> options) : IVerificationStrategy<AuthenticatorAppVerificationContext>
+    IOptions<VerificationConfiguration> options) : IVerificationStrategy
 {
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly IUserManager _userManager = userManager;
@@ -27,9 +27,12 @@ public sealed class AuthenticationAppVerificationStrategy(
     private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
     private readonly VerificationConfiguration _configuration = options.Value;
 
-    public async ValueTask<Result> ExecuteAsync(AuthenticatorAppVerificationContext context,
+    public async ValueTask<Result> ExecuteAsync(VerificationContext context,
         CancellationToken cancellationToken = default)
     {
+        if (context is not AuthenticatorAppVerificationContext authenticationContext)
+            throw new InvalidOperationException("Invalid context type");
+        
         var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
         if (subjectClaim is null)
         {
@@ -62,7 +65,7 @@ public sealed class AuthenticationAppVerificationStrategy(
 
         var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Secret);
         var unprotectedSecret = protector.Unprotect(secret.ProtectedSecret);
-        var verified = AuthenticatorUtils.VerifyCode(context.Code, unprotectedSecret);
+        var verified = AuthenticatorUtils.VerifyCode(authenticationContext.Code, unprotectedSecret);
         if (!verified)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -76,8 +79,8 @@ public sealed class AuthenticationAppVerificationStrategy(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            Action = context.Action,
-            Purpose = context.Purpose,
+            Action = authenticationContext.Action,
+            Purpose = authenticationContext.Purpose,
             Method = VerificationMethod.AuthenticatorApp,
             Status = VerificationStatus.Approved,
             ApprovedAt = DateTimeOffset.UtcNow,

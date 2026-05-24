@@ -15,7 +15,7 @@ public sealed class TotpVerificationStrategy(
     IUserManager userManager,
     ICodeManager codeManager,
     IVerificationManager verificationManager,
-    IOptions<VerificationConfiguration> options) : IVerificationStrategy<TotpVerificationContext>
+    IOptions<VerificationConfiguration> options) : IVerificationStrategy
 {
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly IUserManager _userManager = userManager;
@@ -23,9 +23,12 @@ public sealed class TotpVerificationStrategy(
     private readonly IVerificationManager _verificationManager = verificationManager;
     private readonly VerificationConfiguration _configuration = options.Value;
 
-    public async ValueTask<Result> ExecuteAsync(TotpVerificationContext context, 
+    public async ValueTask<Result> ExecuteAsync(VerificationContext context, 
         CancellationToken cancellationToken = default)
     {
+        if (context is not TotpVerificationContext totpContext)
+            throw new InvalidOperationException("Invalid context type");
+        
         var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
         if (subjectClaim is null)
         {
@@ -46,7 +49,7 @@ public sealed class TotpVerificationStrategy(
             });
         }
 
-        var code = await _codeManager.FindAsync(user, context.Code, cancellationToken);
+        var code = await _codeManager.FindAsync(user, totpContext.Code, cancellationToken);
         if (code is null) return Results.ClientError(ClientErrorCode.BadRequest, new Error
         {
             Code = ErrorCode.BadRequest,
@@ -67,8 +70,8 @@ public sealed class TotpVerificationStrategy(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            Action = context.Action,
-            Purpose = context.Purpose,
+            Action = totpContext.Action,
+            Purpose = totpContext.Purpose,
             Method = method,
             Status = VerificationStatus.Approved,
             ApprovedAt = DateTimeOffset.UtcNow,

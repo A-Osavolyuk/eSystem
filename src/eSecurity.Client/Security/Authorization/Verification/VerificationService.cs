@@ -31,6 +31,6 @@ public class VerificationService(IApiClient apiClient) : IVerificationService
             {
                 Method = HttpMethods.Post,
                 Data = request,
-                Url = "/api/v1/Verification/passkey/request-verification"
+                Url = "/api/v1/Verification/request-verification"
             });
 }

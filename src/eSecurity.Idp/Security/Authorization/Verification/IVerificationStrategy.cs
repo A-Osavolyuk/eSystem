@@ -2,7 +2,7 @@
 
 namespace eSecurity.Idp.Security.Authorization.Verification;
 
-public interface IVerificationStrategy<in TContext> where TContext : VerificationContext
+public interface IVerificationStrategy
 {
-    public ValueTask<Result> ExecuteAsync(TContext context, CancellationToken cancellationToken = default);
+    public ValueTask<Result> ExecuteAsync(VerificationContext context, CancellationToken cancellationToken = default);
 }

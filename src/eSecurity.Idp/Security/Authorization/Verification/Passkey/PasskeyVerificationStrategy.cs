@@ -16,7 +16,7 @@ public sealed class PasskeyVerificationStrategy(
     IUserManager userManager,
     IPasskeyManager passkeyManager,
     IVerificationManager verificationManager,
-    IOptions<VerificationConfiguration> options) : IVerificationStrategy<PasskeyVerificationContext>
+    IOptions<VerificationConfiguration> options) : IVerificationStrategy
 {
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly IUserManager _userManager = userManager;
@@ -24,9 +24,12 @@ public sealed class PasskeyVerificationStrategy(
     private readonly IVerificationManager _verificationManager = verificationManager;
     private readonly VerificationConfiguration _configuration = options.Value;
 
-    public async ValueTask<Result> ExecuteAsync(PasskeyVerificationContext context,
+    public async ValueTask<Result> ExecuteAsync(VerificationContext context,
         CancellationToken cancellationToken = default)
     {
+        if (context is not PasskeyVerificationContext passkeyContext)
+            throw new InvalidOperationException("Invalid context type");
+        
         var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
         if (subjectClaim is null)
         {
@@ -47,7 +50,7 @@ public sealed class PasskeyVerificationStrategy(
             });
         }
 
-        var credential = context.Credential;
+        var credential = passkeyContext.Credential;
         var credentialId = CredentialUtils.ToBase64String(credential.Id);
 
         var passkey = await _passkeyManager.FindByCredentialIdAsync(credentialId, cancellationToken);
@@ -77,8 +80,8 @@ public sealed class PasskeyVerificationStrategy(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            Action = context.Action,
-            Purpose = context.Purpose,
+            Action = passkeyContext.Action,
+            Purpose = passkeyContext.Purpose,
             Status = VerificationStatus.Approved,
             Method = VerificationMethod.Passkey,
             ApprovedAt = DateTimeOffset.UtcNow,

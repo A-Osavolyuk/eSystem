@@ -1,6 +1,8 @@
-﻿namespace eSecurity.Idp.Security.Authorization.Verification;
+﻿using eSecurity.Core.Security.Authorization.Verification;
+
+namespace eSecurity.Idp.Security.Authorization.Verification;
 
 public interface IVerificationStrategyResolver
 {
-    public IVerificationStrategy<TContext> Resolve<TContext>(TContext context) where TContext : VerificationContext;
+    public IVerificationStrategy Resolve(VerificationMethod verificationMethod);
 }
