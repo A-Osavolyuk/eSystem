@@ -20,7 +20,7 @@ public sealed class IdTokenHintUserResolver(
     {
         if (string.IsNullOrEmpty(request.IdTokenHint))
         {
-            return TypedResult<UserEntity>.Fail(new Error()
+            return TypedResult<UserEntity>.Fail(new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "id_token_hind is invalid"
@@ -32,7 +32,7 @@ public sealed class IdTokenHintUserResolver(
         if (!validationResult.IsValid || validationResult.ClaimsPrincipal is null)
         {
             {
-                return TypedResult<UserEntity>.Fail(new Error()
+                return TypedResult<UserEntity>.Fail(new Error
                 {
                     Code = ErrorCode.InvalidRequest,
                     Description = "id_token_hind is invalid"
@@ -44,7 +44,7 @@ public sealed class IdTokenHintUserResolver(
         if (subClaim is null)
         {
             {
-                return TypedResult<UserEntity>.Fail(new Error()
+                return TypedResult<UserEntity>.Fail(new Error
                 {
                     Code = ErrorCode.InvalidRequest,
                     Description = "id_token_hind is invalid"
@@ -55,7 +55,7 @@ public sealed class IdTokenHintUserResolver(
         var user = await _userManager.FindByIdAsync(Guid.Parse(subClaim.Value), cancellationToken);
         if (user is null)
         {
-            return TypedResult<UserEntity>.Fail(new Error()
+            return TypedResult<UserEntity>.Fail(new Error
             {
                 Code = ErrorCode.UnknownUserId,
                 Description = "Unknown user"

@@ -64,7 +64,7 @@ public sealed class OAuthSignInStrategy(
         var user = await _userManager.FindByEmailAsync(oauthPayload.Email, cancellationToken);
         if (user is null)
         {
-            return Results.ClientError(ClientErrorCode.NotAcceptable, new Error()
+            return Results.ClientError(ClientErrorCode.NotAcceptable, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "User not found."
@@ -106,7 +106,7 @@ public sealed class OAuthSignInStrategy(
         var lockoutState = await _lockoutManager.GetAsync(user, cancellationToken);
         if (lockoutState is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "State not found"

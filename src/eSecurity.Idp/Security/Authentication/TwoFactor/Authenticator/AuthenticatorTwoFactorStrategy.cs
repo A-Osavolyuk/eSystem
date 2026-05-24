@@ -57,7 +57,7 @@ public sealed class AuthenticatorTwoFactorStrategy(
         if (authenticationSession?.UserId is null ||
             authenticationSession.GetMethods(AuthenticationMethodType.AllowedMfa).Count == 0)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidSession,
                 Description = "Invalid session"
@@ -67,7 +67,7 @@ public sealed class AuthenticatorTwoFactorStrategy(
         var user = await _userManager.FindByIdAsync(authenticationSession.UserId.Value, cancellationToken);
         if (user is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "User not found."
@@ -89,7 +89,7 @@ public sealed class AuthenticatorTwoFactorStrategy(
         var secret = await _secretManager.GetAsync(user, cancellationToken);
         if (secret is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "Secret not found."
@@ -162,7 +162,7 @@ public sealed class AuthenticatorTwoFactorStrategy(
         if (!sessionResult.Succeeded) return sessionResult;
         
         var sessionCookie = _sessionCookieFactory.CreateCookie(session);
-        _httpContext.Response.Cookies.Append(DefaultCookies.Session, sessionCookie, new CookieOptions()
+        _httpContext.Response.Cookies.Append(DefaultCookies.Session, sessionCookie, new CookieOptions
         {
             Secure = true,
             HttpOnly = true,

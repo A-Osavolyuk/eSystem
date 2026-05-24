@@ -80,7 +80,7 @@ public sealed class OAuthRefreshTokenFlow(
             TokenType = ResponseTokenType.Bearer,
         };
 
-        var accessTokenFactoryContext = new AccessTokenFactoryContext()
+        var accessTokenFactoryContext = new AccessTokenFactoryContext
         {
             Client = client,
             User = user
@@ -98,7 +98,7 @@ public sealed class OAuthRefreshTokenFlow(
 
         if (!accessTokenResult.TryGetValue(out var accessToken))
         {
-            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error
             {
                 Code = ErrorCode.ServerError,
                 Description = "Server error"
@@ -109,7 +109,7 @@ public sealed class OAuthRefreshTokenFlow(
 
         if (client.RefreshTokenRotationEnabled)
         {
-            var refreshTokenFactoryContext = new RefreshTokenFactoryContext()
+            var refreshTokenFactoryContext = new RefreshTokenFactoryContext
             {
                 Client = client,
                 User = user
@@ -127,7 +127,7 @@ public sealed class OAuthRefreshTokenFlow(
 
             if (!refreshTokenResult.TryGetValue(out var refreshToken))
             {
-                return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+                return Results.ServerError(ServerErrorCode.InternalServerError, new Error
                 {
                     Code = ErrorCode.ServerError,
                     Description = "Server error"

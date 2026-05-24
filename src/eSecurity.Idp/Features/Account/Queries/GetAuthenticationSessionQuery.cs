@@ -22,7 +22,7 @@ public sealed class GetAuthenticationSessionQueryHandler(
         var authenticationSession = await _authenticationSessionManager.FindByIdAsync(request.Sid, cancellationToken);
         if (authenticationSession is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "Session not found"
@@ -31,7 +31,7 @@ public sealed class GetAuthenticationSessionQueryHandler(
         
         if (authenticationSession.ExpiredAt < DateTimeOffset.UtcNow)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.ExpiredAuthenticationSession,
                 Description = "Session is already expired"
@@ -46,7 +46,7 @@ public sealed class GetAuthenticationSessionQueryHandler(
             .GetMethods(AuthenticationMethodType.AllowedMfa)
             .Select(x => x.MethodReference);
         
-        var response = new AuthenticationSessionDto()
+        var response = new AuthenticationSessionDto
         {
             SessionId = authenticationSession.SessionId,
             OAuthFlow =  authenticationSession.OAuthFlow,
@@ -60,7 +60,7 @@ public sealed class GetAuthenticationSessionQueryHandler(
             var session = await _sessionManager.FindByIdAsync(authenticationSession.SessionId.Value, cancellationToken);
             if (session is null)
             {
-                return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+                return Results.ClientError(ClientErrorCode.BadRequest, new Error
                 {
                     Code = ErrorCode.InvalidSession,
                     Description = "Invalid session"

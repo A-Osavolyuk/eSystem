@@ -27,14 +27,14 @@ public sealed class LogoutTokenFactory(
         var subjectResult = await _subjectProvider.GetSubjectAsync(context.User, context.Client, cancellationToken);
         if (!subjectResult.Succeeded || !subjectResult.TryGetValue(out var subject))
         {
-            return TypedResult<string>.Fail(new Error()
+            return TypedResult<string>.Fail(new Error
             {
                 Code = ErrorCode.ServerError,
                 Description = "Server error"
             });
         }
         
-        var claimsContext = new LogoutTokenClaimsContext()
+        var claimsContext = new LogoutTokenClaimsContext
         {
             Subject = subject,
             Audience = context.Client.Id.ToString(),

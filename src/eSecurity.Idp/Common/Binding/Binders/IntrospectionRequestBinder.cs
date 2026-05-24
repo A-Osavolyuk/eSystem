@@ -13,7 +13,7 @@ public sealed class IntrospectionRequestBinder : IFormBinder<IntrospectionReques
     {
         if (!form.TryGetValue("token", out var token))
         {
-            return Task.FromResult(TypedResult<IntrospectionRequest>.Fail(new Error()
+            return Task.FromResult(TypedResult<IntrospectionRequest>.Fail(new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "token is required"
@@ -21,7 +21,7 @@ public sealed class IntrospectionRequestBinder : IFormBinder<IntrospectionReques
         }
 
         var tokenTypeHintString = form["token_type_hint"];
-        var result = new IntrospectionRequest()
+        var result = new IntrospectionRequest
         {
             Token = token.ToString(),
             TokenTypeHint = EnumHelper.FromString<TokenTypeHint>(tokenTypeHintString)?.Value

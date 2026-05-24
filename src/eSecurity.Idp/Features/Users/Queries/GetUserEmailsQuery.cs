@@ -23,7 +23,7 @@ public class GetUserEmailsQueryHandler(
         var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
         if (subjectClaim is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest, 
                 Description = "Invalid subject."
@@ -33,7 +33,7 @@ public class GetUserEmailsQueryHandler(
         var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
         if (user is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "User not found"

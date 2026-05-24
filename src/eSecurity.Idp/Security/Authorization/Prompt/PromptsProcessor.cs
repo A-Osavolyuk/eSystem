@@ -16,7 +16,7 @@ public sealed class PromptsProcessor(IEnumerable<IPromptHandler> handlers) : IPr
             var handler = _handlers.FirstOrDefault(h => h.CanHandle(processingPrompt));
             if (handler is null)
             {
-                return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+                return Results.ServerError(ServerErrorCode.InternalServerError, new Error
                 {
                     Code = ErrorCode.ServerError,
                     Description = $"No handler for prompt {processingPrompt}"
@@ -29,7 +29,7 @@ public sealed class PromptsProcessor(IEnumerable<IPromptHandler> handlers) : IPr
                 var result = promptResult.Result;
                 if (result is null)
                 {
-                    return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+                    return Results.ServerError(ServerErrorCode.InternalServerError, new Error
                     {
                         Code = ErrorCode.ServerError,
                         Description = "Server error"

@@ -14,7 +14,7 @@ public sealed class CibaRequestBinder : IFormBinder<CibaRequest>
         var grantType = EnumHelper.FromString<GrantType>(form["grant_type"].ToString());
         if (grantType is null)
         {
-            return Task.FromResult(TypedResult<CibaRequest>.Fail(new Error()
+            return Task.FromResult(TypedResult<CibaRequest>.Fail(new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "grant_type is invalid."
@@ -22,7 +22,7 @@ public sealed class CibaRequestBinder : IFormBinder<CibaRequest>
         }
         
         var assertionsTypeString = form["client_assertion_type"].ToString();
-        var result = TypedResult<CibaRequest>.Success(new CibaRequest()
+        var result = TypedResult<CibaRequest>.Success(new CibaRequest
         {
             GrantType = grantType.Value,
             ClientId = form["client_id"].ToString(),

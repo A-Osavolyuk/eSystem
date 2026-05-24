@@ -21,7 +21,7 @@ public class SessionTicketStore(
         await using var scope = _scopeFactory.CreateAsyncScope();
         var manager = scope.ServiceProvider.GetRequiredService<ISessionManager>();
         
-        var session = new SessionEntity()
+        var session = new SessionEntity
         {
             Id = Guid.CreateVersion7(),
             Key = Guid.CreateVersion7().ToString("N"),
@@ -29,7 +29,7 @@ public class SessionTicketStore(
             Sid = ticket.Principal.Claims.First(x => x.Type == AppClaimTypes.Sid).Value,
         };
 
-        session.Properties = new SessionPropertiesEntity()
+        session.Properties = new SessionPropertiesEntity
         {
             Id = Guid.CreateVersion7(),
             SessionId = session.Id,
@@ -40,7 +40,7 @@ public class SessionTicketStore(
             RedirectUri = ticket.Properties.RedirectUri
         };
         
-        session.Claims = ticket.Principal.Claims.Select(claim => new SessionClaimEntity()
+        session.Claims = ticket.Principal.Claims.Select(claim => new SessionClaimEntity
         {
             Id = Guid.CreateVersion7(),
             SessionId = session.Id,
@@ -48,7 +48,7 @@ public class SessionTicketStore(
             Value = claim.Value,
         }).ToList();
 
-        session.Tokens = ticket.Properties.Items.Select(item => new SessionTokenEntity()
+        session.Tokens = ticket.Properties.Items.Select(item => new SessionTokenEntity
         {
             Id = Guid.CreateVersion7(),
             SessionId = session.Id,
@@ -92,7 +92,7 @@ public class SessionTicketStore(
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-        var authenticationProperties = new AuthenticationProperties()
+        var authenticationProperties = new AuthenticationProperties
         {
             AllowRefresh = session.Properties.AllowRefresh,
             ExpiresUtc = session.Properties.ExpiredAt,

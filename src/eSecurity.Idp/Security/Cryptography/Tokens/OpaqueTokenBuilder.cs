@@ -39,7 +39,7 @@ public class OpaqueTokenBuilder(
         if (client is null) throw new Exception("Client was not found");
 
         var token = _keyFactory.Create(buildContext.TokenLength);
-        var opaqueToken = new OpaqueTokenEntity()
+        var opaqueToken = new OpaqueTokenEntity
         {
             Id = Guid.CreateVersion7(),
             Subject = buildContext.Subject,
@@ -57,7 +57,7 @@ public class OpaqueTokenBuilder(
         {
             opaqueToken.Audiences = client.Audiences
                 .Where(aud => buildContext.Audiences.Contains(aud.Audience))
-                .Select(aud => new OpaqueTokenAudienceEntity()
+                .Select(aud => new OpaqueTokenAudienceEntity
                 {
                     Id = Guid.CreateVersion7(),
                     TokenId = opaqueToken.Id,
@@ -70,7 +70,7 @@ public class OpaqueTokenBuilder(
         {
             opaqueToken.Scopes = client.AllowedScopes
                 .Where(scope => buildContext.Scopes.Contains(scope.Scope.Value))
-                .Select(scope => new OpaqueTokenScopeEntity()
+                .Select(scope => new OpaqueTokenScopeEntity
                 {
                     Id = Guid.CreateVersion7(),
                     TokenId = opaqueToken.Id,

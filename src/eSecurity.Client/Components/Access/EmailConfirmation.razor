@@ -128,12 +128,12 @@
 
         if (_form.IsValid)
         {
-            var request = new VerificationRequest()
+            var request = new VerificationRequest
             {
                 Action = Context.Action,
                 Purpose = Context.Purpose,
                 Method = VerificationMethod.EmailOtp,
-                Payload = new TotpVerificationPayload()
+                Payload = new TotpVerificationPayload
                 {
                     Code = _codeModel.Code
                 }

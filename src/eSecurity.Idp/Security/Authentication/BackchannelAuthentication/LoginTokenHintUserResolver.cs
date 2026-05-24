@@ -21,7 +21,7 @@ public sealed class LoginTokenHintUserResolver(
     {
         if (string.IsNullOrEmpty(request.LoginTokenHint))
         {
-            return TypedResult<UserEntity>.Fail(new Error()
+            return TypedResult<UserEntity>.Fail(new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "login_token_hint is invalid"
@@ -32,7 +32,7 @@ public sealed class LoginTokenHintUserResolver(
         var token = await _tokenManager.FindByHashAsync(hash, cancellationToken);
         if (token?.TokenType is not OpaqueTokenType.LoginToken)
         {
-            return TypedResult<UserEntity>.Fail(new Error()
+            return TypedResult<UserEntity>.Fail(new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "login_token_hint is invalid"
@@ -41,7 +41,7 @@ public sealed class LoginTokenHintUserResolver(
 
         if (token.ExpiredAt < DateTimeOffset.UtcNow)
         {
-            return TypedResult<UserEntity>.Fail(new Error()
+            return TypedResult<UserEntity>.Fail(new Error
             {
                 Code = ErrorCode.ExpiredLoginTokenHint,
                 Description = "login_token_hint is expired"
@@ -51,7 +51,7 @@ public sealed class LoginTokenHintUserResolver(
         var user = await _userManager.FindByIdAsync(Guid.Parse(token.Subject), cancellationToken);
         if (user is null)
         {
-            return TypedResult<UserEntity>.Fail(new Error()
+            return TypedResult<UserEntity>.Fail(new Error
             {
                 Code = ErrorCode.UnknownUserId,
                 Description = "Unknown user"

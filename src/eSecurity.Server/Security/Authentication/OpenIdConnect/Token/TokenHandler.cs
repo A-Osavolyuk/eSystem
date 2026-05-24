@@ -2,7 +2,6 @@
 using eSystem.Core.Gateway;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Security.Authorization.OAuth;
-using eSystem.Core.Server.Encoding;
 using eSystem.Core.Server.Security.Authorization.OAuth;
 using eSystem.Core.Server.Security.Authorization.OAuth.Token.RefreshToken;
 using Microsoft.AspNetCore.Authentication;

@@ -23,7 +23,7 @@ public sealed class SetUsernameCommandHandler(
         var session = await _sessionManager.FindByIdAsync(request.Request.SessionId, cancellationToken);
         if (session is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "Session not found"
@@ -33,7 +33,7 @@ public sealed class SetUsernameCommandHandler(
         var user = await _userManager.FindByIdAsync(session.UserId, cancellationToken);
         if (user is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "User not found"

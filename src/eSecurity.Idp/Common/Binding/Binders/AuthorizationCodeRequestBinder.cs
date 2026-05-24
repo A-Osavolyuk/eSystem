@@ -15,7 +15,7 @@ public sealed class AuthorizationCodeRequestBinder : IFormBinder<AuthorizationCo
         var grantType = EnumHelper.FromString<GrantType>(form["grant_type"].ToString());
         if (grantType is null)
         {
-            return Task.FromResult(TypedResult<AuthorizationCodeRequest>.Fail(new Error()
+            return Task.FromResult(TypedResult<AuthorizationCodeRequest>.Fail(new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "grant_type is invalid."
@@ -23,7 +23,7 @@ public sealed class AuthorizationCodeRequestBinder : IFormBinder<AuthorizationCo
         }
 
         var assertionsTypeString = form["client_assertion_type"].ToString();
-        var result = TypedResult<AuthorizationCodeRequest>.Success(new AuthorizationCodeRequest()
+        var result = TypedResult<AuthorizationCodeRequest>.Success(new AuthorizationCodeRequest
         {
             GrantType = grantType.Value,
             ClientId = form["client_id"].ToString(),

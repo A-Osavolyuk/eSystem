@@ -126,7 +126,7 @@
 
     private async Task OnAllowAsync()
     {
-        var request = new DeviceCodeDecisionRequest()
+        var request = new DeviceCodeDecisionRequest
         {
             UserCode = _userCode!,
             Decision = DeviceCodeDecision.Approved
@@ -147,7 +147,7 @@
 
     private async Task OnDenyAsync()
     {
-        var request = new DeviceCodeDecisionRequest()
+        var request = new DeviceCodeDecisionRequest
         {
             UserCode = _userCode!,
             Decision = DeviceCodeDecision.Denied

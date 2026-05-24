@@ -69,12 +69,12 @@
 
     private async Task OnVerifyAsync()
     {
-        var request = new VerificationRequest()
+        var request = new VerificationRequest
         {
             Action = Context.Action,
             Purpose = Context.Purpose,
             Method = VerificationMethod.AuthenticatorApp,
-            Payload = new AuthenticatorAppVerificationPayload()
+            Payload = new AuthenticatorAppVerificationPayload
             {
                 Code = _codeModel.Code
             }

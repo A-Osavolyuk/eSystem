@@ -37,7 +37,7 @@ public sealed class OAuthLoginCommandHandler(
             .WithUri("/api/v1/oauth/handle")
             .WithQueryParam("returnUri", request.ReturnUri);
 
-        var session = new AuthenticationSessionEntity()
+        var session = new AuthenticationSessionEntity
         {
             Id = Guid.CreateVersion7(),
             IdentityProvider = request.Provider,

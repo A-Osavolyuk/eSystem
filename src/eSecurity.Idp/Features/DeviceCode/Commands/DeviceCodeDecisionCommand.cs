@@ -36,7 +36,7 @@ public sealed class DeviceCodeDecisionCommandHandler(
         var deviceCode = await _deviceCodeManager.FindByCodeAsync(request.Request.UserCode, cancellationToken);
         if (deviceCode is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "Device code was not found"
@@ -49,7 +49,7 @@ public sealed class DeviceCodeDecisionCommandHandler(
             var result = await _deviceCodeManager.UpdateAsync(deviceCode, cancellationToken);
             if (!result.Succeeded) return result;
             
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.ExpiredToken,
                 Description = "Device code is already expired"
@@ -58,7 +58,7 @@ public sealed class DeviceCodeDecisionCommandHandler(
         
         if (deviceCode.State != DeviceCodeState.Pending)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidToken,
                 Description = "Device code is not valid"
@@ -71,7 +71,7 @@ public sealed class DeviceCodeDecisionCommandHandler(
             var session = await _sessionManager.FindByIdAsync(sessionCookie.SessionId, cancellationToken);
             if (session is null)
             {
-                return Results.ClientError(ClientErrorCode.NotFound, new Error()
+                return Results.ClientError(ClientErrorCode.NotFound, new Error
                 {
                     Code = ErrorCode.NotFound,
                     Description = "Session not found"
@@ -84,7 +84,7 @@ public sealed class DeviceCodeDecisionCommandHandler(
         var subjectClaim = HttpContext.User.FindFirst(AppClaimTypes.Sub);
         if (subjectClaim is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "Invalid request"
@@ -94,7 +94,7 @@ public sealed class DeviceCodeDecisionCommandHandler(
         var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
         if (user is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "User not found"
@@ -116,7 +116,7 @@ public sealed class DeviceCodeDecisionCommandHandler(
         var client = await _clientManager.FindByIdAsync(deviceCode.ClientId, cancellationToken);
         if (client is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "Client not found"
@@ -131,14 +131,14 @@ public sealed class DeviceCodeDecisionCommandHandler(
                 .Where(x => scopes.Contains(x.Scope.Value))
                 .ToList();
 
-            consent = new ConsentEntity()
+            consent = new ConsentEntity
             {
                 Id = Guid.CreateVersion7(),
                 UserId = user.Id,
                 ClientId = client.Id,
             };
             
-            consent.GrantedScopes = clientScopes.Select(x => new GrantedScopeEntity()
+            consent.GrantedScopes = clientScopes.Select(x => new GrantedScopeEntity
             {
                 Id = Guid.CreateVersion7(),
                 ConsentId = consent.Id,
@@ -156,7 +156,7 @@ public sealed class DeviceCodeDecisionCommandHandler(
                     .Where(x => remainingScopes.Contains(x.Scope.Value))
                     .ToList();
                 
-                consent.GrantedScopes = clientScopes.Select(x => new GrantedScopeEntity()
+                consent.GrantedScopes = clientScopes.Select(x => new GrantedScopeEntity
                 {
                     Id = Guid.CreateVersion7(),
                     ConsentId = consent.Id,

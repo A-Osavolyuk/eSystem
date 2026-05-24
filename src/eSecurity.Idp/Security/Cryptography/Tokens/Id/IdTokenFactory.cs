@@ -39,7 +39,7 @@ public sealed class IdTokenFactory(
         var subjectResult = await _subjectProvider.GetSubjectAsync(context.User, context.Client, cancellationToken);
         if (!subjectResult.Succeeded || !subjectResult.TryGetValue(out var subject))
         {
-            return TypedResult<string>.Fail(new Error()
+            return TypedResult<string>.Fail(new Error
             {
                 Code = ErrorCode.ServerError,
                 Description = "Server error"

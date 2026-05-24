@@ -29,7 +29,7 @@ public sealed class TotpVerificationStrategy(
         var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
         if (subjectClaim is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "Invalid subject"
@@ -39,7 +39,7 @@ public sealed class TotpVerificationStrategy(
         var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
         if (user is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "User was not found"
@@ -47,7 +47,7 @@ public sealed class TotpVerificationStrategy(
         }
 
         var code = await _codeManager.FindAsync(user, context.Code, cancellationToken);
-        if (code is null) return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+        if (code is null) return Results.ClientError(ClientErrorCode.BadRequest, new Error
         {
             Code = ErrorCode.BadRequest,
             Description = "Invalid code"
@@ -63,7 +63,7 @@ public sealed class TotpVerificationStrategy(
             _ => throw new NotSupportedException("Unknown sender")
         };
         
-        var requestEntity = new VerificationRequestEntity()
+        var requestEntity = new VerificationRequestEntity
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,

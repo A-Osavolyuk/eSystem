@@ -123,7 +123,7 @@ public sealed class OidcRefreshTokenFlow(
             TokenType = ResponseTokenType.Bearer,
         };
 
-        var accessTokenFactoryContext = new AccessTokenFactoryContext()
+        var accessTokenFactoryContext = new AccessTokenFactoryContext
         {
             Client = client,
             User = user,
@@ -142,7 +142,7 @@ public sealed class OidcRefreshTokenFlow(
 
         if (!accessTokenResult.TryGetValue(out var accessToken))
         {
-            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error
             {
                 Code = ErrorCode.ServerError,
                 Description = "Server error"
@@ -153,7 +153,7 @@ public sealed class OidcRefreshTokenFlow(
 
         if (client.RefreshTokenRotationEnabled)
         {
-            var refreshTokenFactoryContext = new RefreshTokenFactoryContext()
+            var refreshTokenFactoryContext = new RefreshTokenFactoryContext
             {
                 Client = client,
                 User = user,
@@ -172,7 +172,7 @@ public sealed class OidcRefreshTokenFlow(
 
             if (!refreshTokenResult.TryGetValue(out var refreshToken))
             {
-                return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+                return Results.ServerError(ServerErrorCode.InternalServerError, new Error
                 {
                     Code = ErrorCode.ServerError,
                     Description = "Server error"
@@ -186,7 +186,7 @@ public sealed class OidcRefreshTokenFlow(
             response.RefreshToken = flowContext.RefreshToken;
         }
 
-        var idTokenFactoryContext = new IdTokenFactoryContext()
+        var idTokenFactoryContext = new IdTokenFactoryContext
         {
             Client = client,
             User = user,
@@ -205,7 +205,7 @@ public sealed class OidcRefreshTokenFlow(
 
         if (!idTokenResult.TryGetValue(out var idToken))
         {
-            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error
             {
                 Code = ErrorCode.ServerError,
                 Description = "Server error"

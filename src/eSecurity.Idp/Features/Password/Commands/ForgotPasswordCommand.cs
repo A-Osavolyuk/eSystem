@@ -29,7 +29,7 @@ public sealed class ForgotPasswordCommandHandler(
         var user = await _userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
         if (user is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "User not found."
@@ -46,7 +46,7 @@ public sealed class ForgotPasswordCommandHandler(
         }
 
         var code = await _codeManager.CreateAsync(user, SenderType.Email, cancellationToken);
-        var message = new CodeEmailMessage()
+        var message = new CodeEmailMessage
         {
             Credentials = new Dictionary<string, string>
             {

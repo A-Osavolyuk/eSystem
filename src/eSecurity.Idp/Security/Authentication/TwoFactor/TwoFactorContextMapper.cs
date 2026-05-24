@@ -12,17 +12,17 @@ public sealed class TwoFactorContextMapper : ITwoFactorContextMapper
     {
         return payload.Payload switch
         {
-            AuthenticatorTwoFactorPayload authenticatorPayload => new AuthenticatorTwoFactorContext()
+            AuthenticatorTwoFactorPayload authenticatorPayload => new AuthenticatorTwoFactorContext
             {
                 Code = authenticatorPayload.Code, 
                 TransactionId = payload.TransactionId
             },
-            PasskeyTwoFactorPayload passkeyPayload => new PasskeyTwoFactorContext()
+            PasskeyTwoFactorPayload passkeyPayload => new PasskeyTwoFactorContext
             {
                 Credential = passkeyPayload.Credential, 
                 TransactionId = payload.TransactionId
             },
-            RecoveryCodeTwoFactorPayload recoveryCodePayload => new RecoveryCodeTwoFactorContext()
+            RecoveryCodeTwoFactorPayload recoveryCodePayload => new RecoveryCodeTwoFactorContext
             {
                 Code = recoveryCodePayload.Code, 
                 TransactionId = payload.TransactionId

@@ -36,7 +36,7 @@ public sealed class DeviceAuthorizationCommandHandler(
         var client = await _clientManager.FindByIdAsync(request.Request.ClientId, cancellationToken);
         if (client is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.UnauthorizedClient,
                 Description = "Client is not registered to for device authorization flow"
@@ -47,7 +47,7 @@ public sealed class DeviceAuthorizationCommandHandler(
         var invalidScopes = scopes.Except(_options.ScopesSupported).ToList();
         if (invalidScopes.Count > 0)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidScope,
                 Description = $"Scopes are not supported: {string.Join(", ", invalidScopes)}."
@@ -58,7 +58,7 @@ public sealed class DeviceAuthorizationCommandHandler(
         var unallowedScopes = scopes.Except(allowedScopes).ToList();
         if (unallowedScopes.Count > 0)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidScope,
                 Description = $"Scopes are not allowed for this client: {string.Join(", ", unallowedScopes)}."
@@ -84,7 +84,7 @@ public sealed class DeviceAuthorizationCommandHandler(
 
         foreach (var scope in scopes)
         {
-            deviceCodeEntity.Scopes.Add(new DeviceCodeScopeEntity()
+            deviceCodeEntity.Scopes.Add(new DeviceCodeScopeEntity
             {
                 Id = Guid.CreateVersion7(),
                 DeviceCodeId = deviceCodeEntity.Id,
@@ -100,14 +100,14 @@ public sealed class DeviceAuthorizationCommandHandler(
                 var acrValue = EnumHelper.FromString<AuthenticationContextClassReference>(acrString);
                 if (acrValue is null)
                 {
-                    return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+                    return Results.ClientError(ClientErrorCode.BadRequest, new Error
                     {
                         Code = ErrorCode.InvalidRequest,
                         Description = $"Invalid ACR value '{acrValue}'"
                     });
                 }
                 
-                deviceCodeEntity.AcrValues.Add(new DeviceCodeAcrValueEntity()
+                deviceCodeEntity.AcrValues.Add(new DeviceCodeAcrValueEntity
                 {
                     Id = Guid.CreateVersion7(),
                     DeviceCodeId = deviceCodeEntity.Id,

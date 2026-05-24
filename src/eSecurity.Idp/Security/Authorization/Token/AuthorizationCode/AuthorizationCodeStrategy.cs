@@ -40,7 +40,7 @@ public class AuthorizationCodeStrategy(
             });
         }
         
-        var context = new AuthorizationCodeFlowContext()
+        var context = new AuthorizationCodeFlowContext
         {
             ClientId = request.ClientId,
             GrantType = request.GrantType,

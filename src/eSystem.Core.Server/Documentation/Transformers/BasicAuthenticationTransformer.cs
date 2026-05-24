@@ -19,12 +19,12 @@ public class BasicAuthenticationTransformer : IOpenApiDocumentTransformer
                 Description = "Enter your Basic Authentication value in the format: `Basic {value}`"
             });
         
-        document.Security?.Add(new OpenApiSecurityRequirement()
+        document.Security?.Add(new OpenApiSecurityRequirement
         {
             {
                 new OpenApiSecuritySchemeReference(AuthenticationSchemes.Basic)
                 {
-                    Reference = new OpenApiReferenceWithDescription()
+                    Reference = new OpenApiReferenceWithDescription
                     {
                         Id = AuthenticationSchemes.Basic,
                         Type = ReferenceType.SecurityScheme

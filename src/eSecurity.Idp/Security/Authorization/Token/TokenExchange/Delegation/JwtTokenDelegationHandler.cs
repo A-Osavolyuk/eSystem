@@ -26,7 +26,7 @@ public sealed class JwtTokenDelegationHandler(
     {
         if (string.IsNullOrEmpty(context.ActorToken))
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "actor_token is required"
@@ -35,7 +35,7 @@ public sealed class JwtTokenDelegationHandler(
 
         if (context.ActorTokenType is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "actor_token_type is required"
@@ -45,7 +45,7 @@ public sealed class JwtTokenDelegationHandler(
         var actorTokenExtractionResult = await _claimsExtractor.ExtractAsync(context.ActorToken, cancellationToken);
         if (!actorTokenExtractionResult.Succeeded || actorTokenExtractionResult.TryGetValue(out var actorClaims))
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Actor token is invalid"
@@ -55,7 +55,7 @@ public sealed class JwtTokenDelegationHandler(
         var subjectTokenExtractionResult = await _claimsExtractor.ExtractAsync(context.SubjectToken, cancellationToken);
         if (!subjectTokenExtractionResult.Succeeded || !subjectTokenExtractionResult.TryGetValue(out var subjectClaims))
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Subject token is invalid"
@@ -67,7 +67,7 @@ public sealed class JwtTokenDelegationHandler(
         if (actorTokenClaims.Any(x => x.Type == AppClaimTypes.Delegated) ||
             subjectTokenClaims.Any(x => x.Type == AppClaimTypes.Delegated))
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Delegation chaining is not allowed"
@@ -77,7 +77,7 @@ public sealed class JwtTokenDelegationHandler(
         var client = await _clientManager.FindByIdAsync(context.ClientId, cancellationToken);
         if (client is null)
         {
-            return Results.ClientError(ClientErrorCode.Unauthorized, new Error()
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error
             {
                 Code = ErrorCode.UnauthorizedClient,
                 Description = "Unauthorized client"
@@ -88,7 +88,7 @@ public sealed class JwtTokenDelegationHandler(
         {
             if (!client.IsValidAudience(context.Audience))
             {
-                return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+                return Results.ClientError(ClientErrorCode.BadRequest, new Error
                 {
                     Code = ErrorCode.InvalidTarget,
                     Description = "The requested audience is not an allowed audience for this client."
@@ -124,7 +124,7 @@ public sealed class JwtTokenDelegationHandler(
         var subClaim = actorTokenClaims.FirstOrDefault(x => x.Type == AppClaimTypes.Sub);
         var clientIdClaim = actorTokenClaims.First(x => x.Type == AppClaimTypes.ClientId);
 
-        var actor = new ActorClaim()
+        var actor = new ActorClaim
         {
             Subject = subClaim?.Value ?? clientIdClaim.Value,
             ClientId = clientIdClaim.Value,

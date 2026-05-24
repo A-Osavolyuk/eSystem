@@ -42,7 +42,7 @@ public sealed class SecretManager(
 
         if (secret is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "Cannot find user secret or doesn't exists"

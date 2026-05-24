@@ -1,5 +1,4 @@
-﻿using eSecurity.Idp.Data.Entities;
-using eSecurity.Idp.Security.Authentication.Subject;
+﻿using eSecurity.Idp.Security.Authentication.Subject;
 using eSecurity.Idp.Security.Authorization.Token;
 using eSystem.Core.Primitives;
 
@@ -53,7 +52,7 @@ public sealed class RefreshTokenFactory(
             var subjectResult = await _subjectProvider.GetSubjectAsync(context.User, context.Client, cancellationToken);
             if (!subjectResult.Succeeded || !subjectResult.TryGetValue(out var subject))
             {
-                return TypedResult<string>.Fail(new Error()
+                return TypedResult<string>.Fail(new Error
                 {
                     Code = ErrorCode.ServerError,
                     Description = "Server error"

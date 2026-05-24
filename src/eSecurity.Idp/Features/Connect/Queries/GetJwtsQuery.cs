@@ -18,7 +18,7 @@ public class GetJwksQueryHandler(
         var publicKey = certificate.Certificate.GetRSAPublicKey();
         if (publicKey is null)
         {
-            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error
             {
                 Description = "Error on retrieving public key.",
                 Code = ErrorCode.ServerError
@@ -29,7 +29,7 @@ public class GetJwksQueryHandler(
         var jwks = JsonWebKeyConverter.ConvertFromRSASecurityKey(securityKey);
         if (jwks is null)
         {
-            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error
             {
                 Code = ErrorCode.ServerError,
                 Description = "Error on converting public key."

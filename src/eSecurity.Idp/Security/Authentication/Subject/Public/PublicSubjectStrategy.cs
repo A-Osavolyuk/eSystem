@@ -24,9 +24,9 @@ public sealed class PublicSubjectStrategy(
         if (subject is not null) return TypedResult<string>.Success(subject.Subject);
 
         var subjectFactory = _subjectFactoryProvider.GetFactory<PublicSubjectFactoryContext>();
-        var factoryContext = new PublicSubjectFactoryContext() { Length = _options.PublicSubjectLength };
+        var factoryContext = new PublicSubjectFactoryContext { Length = _options.PublicSubjectLength };
 
-        subject = new PublicSubjectEntity()
+        subject = new PublicSubjectEntity
         {
             Id = Guid.CreateVersion7(),
             UserId = context.User.Id,

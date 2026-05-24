@@ -2,10 +2,8 @@
 using eSecurity.Idp.Security.Authentication.Client;
 using eSecurity.Idp.Security.Cryptography.Tokens;
 using eSecurity.Idp.Security.Cryptography.Tokens.Logout;
-using eSecurity.Idp.Security.Identity.Claims.Factories;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Server.Encoding;
 using eSystem.Core.Server.Security.Authentication.OpenIdConnect.Logout;
 using eSystem.Core.Utilities.Query;
@@ -37,7 +35,7 @@ public sealed class BackchannelLogoutHandler(
             if (backchannelLogoutUri is null) 
                 continue;
 
-            var logoutTokenFactoryContext = new LogoutTokenFactoryContext()
+            var logoutTokenFactoryContext = new LogoutTokenFactoryContext
             {
                 Client = client,
                 User = request.User,

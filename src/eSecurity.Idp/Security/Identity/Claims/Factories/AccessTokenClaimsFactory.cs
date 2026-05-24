@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using System.Text.Json;
 using eSecurity.Idp.Data.Entities;
 using eSecurity.Idp.Security.Cryptography.Tokens;
 using eSystem.Core.Security.Identity.Claims;

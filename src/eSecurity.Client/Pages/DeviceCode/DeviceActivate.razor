@@ -72,7 +72,7 @@
         await _form.ValidateAsync();
         if (_form.IsValid)
         {
-            var request = new CheckDeviceCodeRequest() { UserCode = _model.UserCode };
+            var request = new CheckDeviceCodeRequest { UserCode = _model.UserCode };
             var result = await DeviceService.CheckDeviceCodeAsync(request);
             if (result.Succeeded && result.TryGetValue<CheckDeviceCodeResponse>(out var response) && response is not null)
             {

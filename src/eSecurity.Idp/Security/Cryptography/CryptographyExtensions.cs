@@ -10,7 +10,6 @@ using eSecurity.Idp.Security.Cryptography.Tokens.Id;
 using eSecurity.Idp.Security.Cryptography.Tokens.Login;
 using eSecurity.Idp.Security.Cryptography.Tokens.Logout;
 using eSecurity.Idp.Security.Cryptography.Tokens.Refresh;
-using eSystem.Core.Security.Authorization.OAuth;
 
 namespace eSecurity.Idp.Security.Cryptography;
 

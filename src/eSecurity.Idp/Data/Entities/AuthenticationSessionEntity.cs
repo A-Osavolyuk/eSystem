@@ -45,7 +45,7 @@ public sealed class AuthenticationSessionEntity : Entity
             }
             else
             {
-                AuthenticationMethods.Add(new AuthenticationMethodEntity()
+                AuthenticationMethods.Add(new AuthenticationMethodEntity
                 {
                     Id = Guid.CreateVersion7(),
                     SessionId = Id,
@@ -60,7 +60,7 @@ public sealed class AuthenticationSessionEntity : Entity
     {
         foreach (var method in methods)
         {
-            AuthenticationMethods.Add(new AuthenticationMethodEntity()
+            AuthenticationMethods.Add(new AuthenticationMethodEntity
             {
                 Id = Guid.CreateVersion7(),
                 SessionId = Id,
@@ -74,7 +74,7 @@ public sealed class AuthenticationSessionEntity : Entity
     {
         foreach (var method in methods)
         {
-            AuthenticationMethods.Add(new AuthenticationMethodEntity()
+            AuthenticationMethods.Add(new AuthenticationMethodEntity
             {
                 Id = Guid.CreateVersion7(),
                 SessionId = Id,

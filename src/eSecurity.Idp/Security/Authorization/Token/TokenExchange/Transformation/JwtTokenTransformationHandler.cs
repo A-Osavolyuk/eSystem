@@ -27,7 +27,7 @@ public sealed class JwtTokenTransformationHandler(
         var extractionResult = await _claimsExtractor.ExtractAsync(context.SubjectToken, cancellationToken);
         if (!extractionResult.Succeeded || !extractionResult.TryGetValue(out var value))
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Subject token is invalid"
@@ -38,7 +38,7 @@ public sealed class JwtTokenTransformationHandler(
         var client = await _clientManager.FindByIdAsync(context.ClientId, cancellationToken);
         if (client is null)
         {
-            return Results.ClientError(ClientErrorCode.Unauthorized, new Error()
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error
             {
                 Code = ErrorCode.UnauthorizedClient,
                 Description = "Unauthorized client"
@@ -49,7 +49,7 @@ public sealed class JwtTokenTransformationHandler(
         {
             if (!client.IsValidAudience(context.Audience))
             {
-                return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+                return Results.ClientError(ClientErrorCode.BadRequest, new Error
                 {
                     Code = ErrorCode.InvalidTarget,
                     Description = "The requested audience is not an allowed audience for this client."

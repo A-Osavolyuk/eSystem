@@ -9,7 +9,7 @@ public class DeviceService(IApiClient apiClient) : IDeviceService
 
     public async ValueTask<ApiResponse> GetDeviceCodeInfoAsync(string userCode)
     {
-        return await _apiClient.SendAsync(new ApiRequest()
+        return await _apiClient.SendAsync(new ApiRequest
         {
             Method = HttpMethods.Get,
             Url = $"/api/v1/Device/device-code/{userCode}",
@@ -18,7 +18,7 @@ public class DeviceService(IApiClient apiClient) : IDeviceService
 
     public async ValueTask<ApiResponse> CheckDeviceCodeAsync(CheckDeviceCodeRequest request)
     {
-        return await _apiClient.SendAsync(new ApiRequest()
+        return await _apiClient.SendAsync(new ApiRequest
         {
             Method = HttpMethods.Post,
             Url = "/api/v1/Device/device-code/check",
@@ -28,7 +28,7 @@ public class DeviceService(IApiClient apiClient) : IDeviceService
 
     public async ValueTask<ApiResponse> SendDecisionAsync(DeviceCodeDecisionRequest request)
     {
-        return await _apiClient.SendAsync(new ApiRequest()
+        return await _apiClient.SendAsync(new ApiRequest
         {
             Method = HttpMethods.Post,
             Url = "/api/v1/Device/device-code/decision",

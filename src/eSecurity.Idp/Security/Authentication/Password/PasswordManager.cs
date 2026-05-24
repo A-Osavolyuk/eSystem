@@ -38,7 +38,7 @@ public class PasswordManager(
         var passwordEntity = await GetAsync(user, cancellationToken);
         if (passwordEntity is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "User doesn't have password yet."
@@ -59,7 +59,7 @@ public class PasswordManager(
         var passwordEntity = await GetAsync(user, cancellationToken);
         if (passwordEntity is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "User doesn't have password yet."
@@ -79,7 +79,7 @@ public class PasswordManager(
         var passwordEntity = await GetAsync(user, cancellationToken);
         if (passwordEntity is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "User doesn't have password yet."

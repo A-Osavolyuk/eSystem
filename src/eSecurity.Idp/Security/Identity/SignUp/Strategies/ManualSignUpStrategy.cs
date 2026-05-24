@@ -57,7 +57,7 @@ public sealed class ManualSignUpStrategy(
     {
         if (payload is not ManualSignUpPayload manualPayload)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "Incorrect payload type"
@@ -107,7 +107,7 @@ public sealed class ManualSignUpStrategy(
         var role = await _roleManager.FindByNameAsync("User", cancellationToken);
         if (role is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "Cannot find role with name User"
@@ -139,7 +139,7 @@ public sealed class ManualSignUpStrategy(
 
         var code = await _codeManager.CreateAsync(user, SenderType.Email, cancellationToken);
         
-        var message = new CodeEmailMessage()
+        var message = new CodeEmailMessage
         {
             Credentials = new Dictionary<string, string>
             {
@@ -154,7 +154,7 @@ public sealed class ManualSignUpStrategy(
 
         await _messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
 
-        var session = new AuthenticationSessionEntity()
+        var session = new AuthenticationSessionEntity
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,

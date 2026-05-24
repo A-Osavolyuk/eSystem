@@ -1,6 +1,4 @@
-﻿using eSystem.Core.Security.Authorization.OAuth;
-
-namespace eSecurity.Idp.Security.Cryptography.Tokens;
+﻿namespace eSecurity.Idp.Security.Cryptography.Tokens;
 
 public sealed class TokenFactoryProvider(IServiceProvider serviceProvider) : ITokenFactoryProvider
 {

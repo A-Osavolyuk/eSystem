@@ -219,7 +219,7 @@
 
     private async Task OnResendAsync()
     {
-        var request = new ResendCodeRequest()
+        var request = new ResendCodeRequest
         {
             Sender = SenderType.Email,
             Payload = new()
@@ -242,7 +242,7 @@
 
         if (_changeForm.IsValid)
         {
-            var request = new SendCodeRequest()
+            var request = new SendCodeRequest
             {
                 Sender = SenderType.Email,
                 Payload = new()
@@ -292,12 +292,12 @@
 
         if (_confirmForm.IsValid)
         {
-            var request = new VerificationRequest()
+            var request = new VerificationRequest
             {
                 Action = ActionType.Change,
                 Purpose = PurposeType.Email,
                 Method = VerificationMethod.EmailOtp,
-                Payload = new TotpVerificationPayload()
+                Payload = new TotpVerificationPayload
                 {
                     Code = _confirmModel.Code
                 }

@@ -23,7 +23,7 @@ public class SignInCommandHandler(ISignInResolver signInResolver) : IRequestHand
             _ => throw new NotSupportedException("Unknown payload")
         };
         
-        if (type == SignInType.OAuth) return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+        if (type == SignInType.OAuth) return Results.ClientError(ClientErrorCode.BadRequest, new Error
         {
             Code = ErrorCode.BadRequest,
             Description = "Unsupported for manual call"

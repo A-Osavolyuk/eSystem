@@ -13,7 +13,7 @@ public sealed class ParBinder : IFormBinder<PushedAuthorizationRequest>
     {
         if (!form.TryGetValue("response_type", out var responseTypeString))
         {
-            return TypedResult<PushedAuthorizationRequest>.Fail(new Error()
+            return TypedResult<PushedAuthorizationRequest>.Fail(new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "response_type is required"
@@ -23,7 +23,7 @@ public sealed class ParBinder : IFormBinder<PushedAuthorizationRequest>
         var responseType = EnumHelper.FromString<ResponseType>(responseTypeString);
         if (responseType is null)
         {
-            return TypedResult<PushedAuthorizationRequest>.Fail(new Error()
+            return TypedResult<PushedAuthorizationRequest>.Fail(new Error
             {
                 Code = ErrorCode.UnsupportedResponseType,
                 Description = "response_type is invalid"
@@ -32,7 +32,7 @@ public sealed class ParBinder : IFormBinder<PushedAuthorizationRequest>
 
         if (!form.TryGetValue("client_id", out var clientId))
         {
-            return TypedResult<PushedAuthorizationRequest>.Fail(new Error()
+            return TypedResult<PushedAuthorizationRequest>.Fail(new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "client_id is required"
@@ -41,7 +41,7 @@ public sealed class ParBinder : IFormBinder<PushedAuthorizationRequest>
         
         if (!form.TryGetValue("scope", out var scope))
         {
-            return TypedResult<PushedAuthorizationRequest>.Fail(new Error()
+            return TypedResult<PushedAuthorizationRequest>.Fail(new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "scope is required"
@@ -57,7 +57,7 @@ public sealed class ParBinder : IFormBinder<PushedAuthorizationRequest>
         var codeChallengeMethod = EnumHelper.FromString<ChallengeMethod>(
             codeChallengeMethodString);
 
-        var request = new PushedAuthorizationRequest()
+        var request = new PushedAuthorizationRequest
         {
             ResponseType = responseType.Value,
             ClientId = clientId.ToString(),

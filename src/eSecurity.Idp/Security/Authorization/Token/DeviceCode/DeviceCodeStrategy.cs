@@ -23,7 +23,7 @@ public sealed class DeviceCodeStrategy(
 
         if (string.IsNullOrEmpty(request.DeviceCode))
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Invalid device code"
@@ -36,7 +36,7 @@ public sealed class DeviceCodeStrategy(
             deviceCode is { State: DeviceCodeState.Denied, IsFirstPoll: false } ||
             deviceCode.ClientId.ToString() != request.ClientId)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Invalid device code"
@@ -50,7 +50,7 @@ public sealed class DeviceCodeStrategy(
             var deviceResult = await _deviceCodeManager.UpdateAsync(deviceCode, cancellationToken);
             if (!deviceResult.Succeeded) return deviceResult;
                 
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.AccessDenied,
                 Description = "Device code was denied"
@@ -59,7 +59,7 @@ public sealed class DeviceCodeStrategy(
 
         if (deviceCode.State == DeviceCodeState.Pending)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.AuthorizationPending,
                 Description = "Authorization pending"
@@ -68,7 +68,7 @@ public sealed class DeviceCodeStrategy(
 
         if (deviceCode.ExpiresAt < DateTimeOffset.UtcNow)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.ExpiredToken,
                 Description = "Device code is already expired"
@@ -80,7 +80,7 @@ public sealed class DeviceCodeStrategy(
             ? AuthorizationProtocol.OpenIdConnect 
             : AuthorizationProtocol.OAuth;
         
-        var deviceCodeFlowContext = new DeviceCodeFlowContext() { ClientId = request.ClientId };
+        var deviceCodeFlowContext = new DeviceCodeFlowContext { ClientId = request.ClientId };
         var flow = _resolver.Resolve(protocol);
         
         return await flow.ExecuteAsync(deviceCode, deviceCodeFlowContext, cancellationToken);

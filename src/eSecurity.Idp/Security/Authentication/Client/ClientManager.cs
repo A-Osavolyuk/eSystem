@@ -81,7 +81,7 @@ public class ClientManager(AuthDbContext context) : IClientManager
         if (!await _context.ClientSessions.AnyAsync(x => x.SessionId == session.Id && 
                                                          x.ClientId == client.Id, cancellationToken))
         {
-            var entity = new ClientSessionEntity()
+            var entity = new ClientSessionEntity
             {
                 ClientId = client.Id,
                 SessionId = session.Id

@@ -55,7 +55,7 @@ public sealed class PasskeySignInStrategy(
         var passkey = await _passkeyManager.FindByCredentialIdAsync(credentialId, cancellationToken);
         if (passkey is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "Invalid credential"
@@ -65,7 +65,7 @@ public sealed class PasskeySignInStrategy(
         var user = await _userManager.FindByIdAsync(passkey.Device.UserId, cancellationToken);
         if (user is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = $"Cannot find user with ID {passkey.Device.UserId}."
@@ -75,7 +75,7 @@ public sealed class PasskeySignInStrategy(
         var savedChallenge = _httpContext.Session.GetString(ChallengeSessionKeys.Assertion);
         if (string.IsNullOrEmpty(savedChallenge))
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "Invalid challenge"
@@ -88,7 +88,7 @@ public sealed class PasskeySignInStrategy(
         var lockoutState = await _lockoutManager.GetAsync(user, cancellationToken);
         if (lockoutState is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "State not found"
@@ -127,7 +127,7 @@ public sealed class PasskeySignInStrategy(
         session.AddMethods(AuthenticationMethodReference.SoftwareKey);
         await _sessionManager.CreateAsync(session, cancellationToken);
         
-        var authenticationSession = new AuthenticationSessionEntity()
+        var authenticationSession = new AuthenticationSessionEntity
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
@@ -142,7 +142,7 @@ public sealed class PasskeySignInStrategy(
         if (!sessionResult.Succeeded) return sessionResult;
         
         var sessionCookie = _sessionCookieFactory.CreateCookie(session);
-        _httpContext.Response.Cookies.Append(DefaultCookies.Session, sessionCookie, new CookieOptions()
+        _httpContext.Response.Cookies.Append(DefaultCookies.Session, sessionCookie, new CookieOptions
         {
             Secure = true,
             HttpOnly = true,

@@ -58,7 +58,7 @@ public sealed class RecoverManager(
 
         if (recoveryCodes.Count == 0)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "User does not have any recovery code."
@@ -70,7 +70,7 @@ public sealed class RecoverManager(
 
         if (recoveryCode is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "Invalid recovery code."

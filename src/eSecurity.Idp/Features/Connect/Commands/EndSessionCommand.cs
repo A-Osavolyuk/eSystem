@@ -149,7 +149,7 @@ public sealed class EndSessionCommandHandler(
                 "client_id is invalid", request.Request.State);
         }
 
-        var endSessionRequestEntity = new EndSessionRequestEntity()
+        var endSessionRequestEntity = new EndSessionRequestEntity
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,

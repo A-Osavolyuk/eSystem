@@ -15,7 +15,7 @@ public sealed class RefreshTokenRequestBinder : IFormBinder<RefreshTokenRequest>
         var grantType = EnumHelper.FromString<GrantType>(form["grant_type"].ToString());
         if (grantType is null)
         {
-            return Task.FromResult(TypedResult<RefreshTokenRequest>.Fail(new Error()
+            return Task.FromResult(TypedResult<RefreshTokenRequest>.Fail(new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "grant_type is invalid."
@@ -23,7 +23,7 @@ public sealed class RefreshTokenRequestBinder : IFormBinder<RefreshTokenRequest>
         }
         
         var assertionsTypeString = form["client_assertion_type"].ToString();
-        var result = TypedResult<RefreshTokenRequest>.Success(new RefreshTokenRequest()
+        var result = TypedResult<RefreshTokenRequest>.Success(new RefreshTokenRequest
         {
             GrantType = grantType.Value,
             ClientId = form["client_id"].ToString(),

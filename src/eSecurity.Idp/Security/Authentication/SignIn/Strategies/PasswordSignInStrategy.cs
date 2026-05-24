@@ -76,7 +76,7 @@ public sealed class PasswordSignInStrategy(
 
         if (user is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = $"Cannot find user with login {passwordPayload.Login}."
@@ -85,7 +85,7 @@ public sealed class PasswordSignInStrategy(
 
         if (!await _passwordManager.HasAsync(user, cancellationToken))
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "Cannot log in, you don't have a password."
@@ -118,7 +118,7 @@ public sealed class PasswordSignInStrategy(
         var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
         if (email is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "Email not found"
@@ -138,7 +138,7 @@ public sealed class PasswordSignInStrategy(
         var lockoutState = await _lockoutManager.GetAsync(user, cancellationToken);
         if (lockoutState is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "State not found"
@@ -157,7 +157,7 @@ public sealed class PasswordSignInStrategy(
 
         if (!await _passwordManager.HasAsync(user, cancellationToken))
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "User doesn't have a password."
@@ -218,7 +218,7 @@ public sealed class PasswordSignInStrategy(
             });
         }
 
-        var authSession = new AuthenticationSessionEntity()
+        var authSession = new AuthenticationSessionEntity
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
@@ -272,7 +272,7 @@ public sealed class PasswordSignInStrategy(
             if (!sessionResult.Succeeded) return sessionResult;
 
             var sessionCookie = _sessionCookieFactory.CreateCookie(session);
-            _httpContext.Response.Cookies.Append(DefaultCookies.Session, sessionCookie, new CookieOptions()
+            _httpContext.Response.Cookies.Append(DefaultCookies.Session, sessionCookie, new CookieOptions
             {
                 Secure = true,
                 HttpOnly = true,

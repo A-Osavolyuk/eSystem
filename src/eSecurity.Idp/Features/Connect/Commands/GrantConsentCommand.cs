@@ -32,7 +32,7 @@ public class GrantConsentCommandHandler(
         var sessionCookie = _sessionAccessor.GetCookie();
         if (sessionCookie is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.LoginRequired,
                 Description = "Login required"
@@ -42,7 +42,7 @@ public class GrantConsentCommandHandler(
         var session = await _sessionManager.FindByIdAsync(sessionCookie.SessionId, cancellationToken);
         if (session is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "Session was not found"
@@ -52,7 +52,7 @@ public class GrantConsentCommandHandler(
         var user = await _userManager.FindByIdAsync(session.UserId, cancellationToken);
         if (user is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "User was not found"
@@ -62,7 +62,7 @@ public class GrantConsentCommandHandler(
         var client = await _clientManager.FindByIdAsync(request.Request.ClientId, cancellationToken);
         if (client is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "Client was not found"

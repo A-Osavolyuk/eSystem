@@ -18,12 +18,12 @@ public class BearerTokenTransformer : IOpenApiDocumentTransformer
             Description = "Enter your Bearer token in the format: `Bearer {token}`"
         });
         
-        document.Security?.Add(new OpenApiSecurityRequirement()
+        document.Security?.Add(new OpenApiSecurityRequirement
         {
             {
                 new OpenApiSecuritySchemeReference(JwtBearerDefaults.AuthenticationScheme)
                 {
-                    Reference = new OpenApiReferenceWithDescription()
+                    Reference = new OpenApiReferenceWithDescription
                     {
                         Id = JwtBearerDefaults.AuthenticationScheme,
                         Type = ReferenceType.SecurityScheme

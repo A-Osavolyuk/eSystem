@@ -29,7 +29,7 @@ public class CheckConsentCommandHandler(
         var sessionCookie = _sessionAccessor.GetCookie();
         if (sessionCookie is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.LoginRequired,
                 Description = "Login required"
@@ -39,7 +39,7 @@ public class CheckConsentCommandHandler(
         var session = await _sessionManager.FindByIdAsync(sessionCookie.SessionId, cancellationToken);
         if (session is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "Session not found"
@@ -49,7 +49,7 @@ public class CheckConsentCommandHandler(
         var user = await _userManager.FindByIdAsync(session.UserId, cancellationToken);
         if (user is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "User not found"
@@ -59,7 +59,7 @@ public class CheckConsentCommandHandler(
         var client = await _clientManager.FindByIdAsync(request.Request.ClientId, cancellationToken);
         if (client is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "Client not found"

@@ -34,7 +34,7 @@ public sealed class EndSessionRequestEntity : Entity
             UiLocales = [];
             foreach (var locale in locales)
             {
-                UiLocales.Add(new EndSessionRequestUiLocaleEntity()
+                UiLocales.Add(new EndSessionRequestUiLocaleEntity
                 {
                     Id = Guid.CreateVersion7(),
                     RequestId = Id,

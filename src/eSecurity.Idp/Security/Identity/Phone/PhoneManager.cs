@@ -45,7 +45,7 @@ public class PhoneManager(AuthDbContext context) : IPhoneManager
     {
         if (await ExistsAsync(phoneNumber, cancellationToken))
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "Phone number is already taken"
@@ -76,7 +76,7 @@ public class PhoneManager(AuthDbContext context) : IPhoneManager
 
         if (userPhoneNumber == null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "Phone number not found"
@@ -100,7 +100,7 @@ public class PhoneManager(AuthDbContext context) : IPhoneManager
 
         if (userPhoneNumber is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "Phone number not found"
@@ -125,7 +125,7 @@ public class PhoneManager(AuthDbContext context) : IPhoneManager
 
         if (userPhoneNumber == null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "Phone number not found"
@@ -147,7 +147,7 @@ public class PhoneManager(AuthDbContext context) : IPhoneManager
 
         if (userPhoneNumber is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "Phone number not found"
@@ -169,7 +169,7 @@ public class PhoneManager(AuthDbContext context) : IPhoneManager
     {
         if (await ExistsAsync(phoneNumber, cancellationToken))
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "Phone number is already taken"

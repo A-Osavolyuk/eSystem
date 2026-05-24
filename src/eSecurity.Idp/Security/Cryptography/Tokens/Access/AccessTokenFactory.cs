@@ -62,7 +62,7 @@ public sealed class AccessTokenFactory(
                 
                 if (!subjectResult.Succeeded || !subjectResult.TryGetValue(out var subject))
                 {
-                    return TypedResult<string>.Fail(new Error()
+                    return TypedResult<string>.Fail(new Error
                     {
                         Code = ErrorCode.ServerError,
                         Description = "Server error"
@@ -110,7 +110,7 @@ public sealed class AccessTokenFactory(
                 
                 if (!subjectResult.Succeeded || !subjectResult.TryGetValue(out var subject))
                 {
-                    return TypedResult<string>.Fail(new Error()
+                    return TypedResult<string>.Fail(new Error
                     {
                         Code = ErrorCode.ServerError,
                         Description = "Server error"

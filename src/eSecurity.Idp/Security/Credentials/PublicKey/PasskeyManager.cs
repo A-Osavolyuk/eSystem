@@ -54,7 +54,7 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
 
         if (clientData is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "Invalid client data"
@@ -63,7 +63,7 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
 
         if (clientData.Type != ClientDataTypes.Get)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "Invalid type"
@@ -73,7 +73,7 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
         var base64Challenge = CredentialUtils.ToBase64String(clientData.Challenge);
         if (storedChallenge != base64Challenge)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "Challenge mismatch"
@@ -83,7 +83,7 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
         var valid = CredentialUtils.VerifySignature(authenticatorAssertionResponse, passkey.PublicKey);
         if (!valid)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "Invalid client data"

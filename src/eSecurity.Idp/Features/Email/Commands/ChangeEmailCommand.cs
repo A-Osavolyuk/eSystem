@@ -35,7 +35,7 @@ public sealed class RequestChangeEmailCommandHandler(
         var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
         if (subjectClaim is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "Invalid request"
@@ -44,7 +44,7 @@ public sealed class RequestChangeEmailCommandHandler(
 
         var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
         if (user is null)
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "User not found"
@@ -94,7 +94,7 @@ public sealed class RequestChangeEmailCommandHandler(
         var verification = await _verificationManager.FindByIdAsync(request.Request.VerificationId, cancellationToken);
         if (verification?.Status is not VerificationStatus.Approved)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "Unverified request."

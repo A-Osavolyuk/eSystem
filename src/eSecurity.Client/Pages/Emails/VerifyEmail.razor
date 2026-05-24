@@ -152,7 +152,7 @@
     {
         if (firstRender)
         {
-            var request = new SendCodeRequest()
+            var request = new SendCodeRequest
             {
                 Sender = SenderType.Email,
                 Payload = new()
@@ -168,7 +168,7 @@
 
     private async Task OnResendAsync()
     {
-        var request = new ResendCodeRequest()
+        var request = new ResendCodeRequest
         {
             Sender = SenderType.Email,
             Payload = new()
@@ -191,12 +191,12 @@
 
         if (_form.IsValid)
         {
-            var request = new VerificationRequest()
+            var request = new VerificationRequest
             {
                 Action = ActionType.Verify,
                 Purpose = PurposeType.Email,
                 Method = VerificationMethod.EmailOtp,
-                Payload = new TotpVerificationPayload()
+                Payload = new TotpVerificationPayload
                 {
                     Code = _model.Code
                 }

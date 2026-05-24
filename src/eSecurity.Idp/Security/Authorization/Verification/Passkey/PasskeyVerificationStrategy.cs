@@ -30,7 +30,7 @@ public sealed class PasskeyVerificationStrategy(
         var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
         if (subjectClaim is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "Invalid subject"
@@ -40,7 +40,7 @@ public sealed class PasskeyVerificationStrategy(
         var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
         if (user is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "User was not found"
@@ -73,7 +73,7 @@ public sealed class PasskeyVerificationStrategy(
         var passkeyResult = await _passkeyManager.VerifyAsync(passkey, credential, savedChallenge, cancellationToken);
         if (!passkeyResult.Succeeded) return passkeyResult;
 
-        var requestEntity = new VerificationRequestEntity()
+        var requestEntity = new VerificationRequestEntity
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
@@ -88,7 +88,7 @@ public sealed class PasskeyVerificationStrategy(
         var verificationResult = await _verificationManager.CreateAsync(requestEntity, cancellationToken);
         if (!verificationResult.Succeeded) return verificationResult;
 
-        var response = new VerificationResponse() { VerificationId = requestEntity.Id };
+        var response = new VerificationResponse { VerificationId = requestEntity.Id };
         return Results.Success(SuccessCodes.Ok, response);
     }
 }

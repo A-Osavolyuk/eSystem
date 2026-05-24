@@ -20,7 +20,7 @@ public sealed class GetDeviceCodeInfoQueryHandler(
         var deviceCode = await _deviceCodeManager.FindByCodeAsync(request.UserCode, cancellationToken);
         if (deviceCode is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "Device code not found"
@@ -29,7 +29,7 @@ public sealed class GetDeviceCodeInfoQueryHandler(
 
         if (deviceCode.State is not DeviceCodeState.Pending)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidToken,
                 Description = "This device code is not available anymore"
@@ -39,14 +39,14 @@ public sealed class GetDeviceCodeInfoQueryHandler(
         var client = await _clientManager.FindByIdAsync(deviceCode.ClientId, cancellationToken);
         if (client is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "Client not found"
             });
         }
 
-        var response = new DeviceCodeInfo()
+        var response = new DeviceCodeInfo
         {
             ClientName = client.Name,
             DeviceModel = deviceCode.DeviceModel,

@@ -82,7 +82,7 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         if (await _context.UserTwoFactorMethods.CountAsync(
                 x => x.UserId == user.Id, cancellationToken) == 1)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "Cannot change the only preferred method"
@@ -92,7 +92,7 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         var currentPreferredMethod = await GetPreferredAsync(user, cancellationToken);
         if (currentPreferredMethod is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "Invalid method"
@@ -104,7 +104,7 @@ public sealed class TwoFactorManager(AuthDbContext context) : ITwoFactorManager
         var nextPreferredMethod = await GetAsync(user, method, cancellationToken);
         if (nextPreferredMethod is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "Method not found"

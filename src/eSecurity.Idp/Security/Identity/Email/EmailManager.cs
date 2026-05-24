@@ -67,7 +67,7 @@ public class EmailManager(AuthDbContext context) : IEmailManager
 
         if (userEmail is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = $"User doesn't have email {currentEmail}"
@@ -102,7 +102,7 @@ public class EmailManager(AuthDbContext context) : IEmailManager
 
         if (nextEmail is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = $"User doesn't have email {email}."
@@ -125,7 +125,7 @@ public class EmailManager(AuthDbContext context) : IEmailManager
 
         if (userEmail == null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = $"User doesn't have email {email}"
@@ -149,7 +149,7 @@ public class EmailManager(AuthDbContext context) : IEmailManager
 
         if (userEmail is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = $"User doesn't have email {currentEmail}"
@@ -173,7 +173,7 @@ public class EmailManager(AuthDbContext context) : IEmailManager
         var userEmail = await _context.UserEmails.FirstOrDefaultAsync(
             x => x.UserId == user.Id && x.Email == email, cancellationToken);
 
-        if (userEmail is null) return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+        if (userEmail is null) return Results.ClientError(ClientErrorCode.BadRequest, new Error
         {
             Code = ErrorCode.BadRequest,
             Description = "Invalid email"
@@ -190,7 +190,7 @@ public class EmailManager(AuthDbContext context) : IEmailManager
     {
         if (await _context.UserEmails.AnyAsync(x => x.Email == email, cancellationToken))
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "Email is already taken"

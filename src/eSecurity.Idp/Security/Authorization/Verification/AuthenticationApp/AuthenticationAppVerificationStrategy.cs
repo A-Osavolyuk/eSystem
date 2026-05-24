@@ -33,7 +33,7 @@ public sealed class AuthenticationAppVerificationStrategy(
         var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
         if (subjectClaim is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "Invalid subject"
@@ -43,7 +43,7 @@ public sealed class AuthenticationAppVerificationStrategy(
         var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
         if (user is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "User was not found"
@@ -53,7 +53,7 @@ public sealed class AuthenticationAppVerificationStrategy(
         var secret = await _secretManager.GetAsync(user, cancellationToken);
         if (secret is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "Authenticator app is not set up for this user."
@@ -65,14 +65,14 @@ public sealed class AuthenticationAppVerificationStrategy(
         var verified = AuthenticatorUtils.VerifyCode(context.Code, unprotectedSecret);
         if (!verified)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "Invalid code."
             });
         }
 
-        var requestEntity = new VerificationRequestEntity()
+        var requestEntity = new VerificationRequestEntity
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,

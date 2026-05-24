@@ -41,7 +41,7 @@ public class RemovePasskeyCommandHandler(
         var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
         if (subjectClaim is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "Invalid request"
@@ -51,7 +51,7 @@ public class RemovePasskeyCommandHandler(
         var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
         if (user is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "User not found."
@@ -61,7 +61,7 @@ public class RemovePasskeyCommandHandler(
         var passkey = await _passkeyManager.FindByIdAsync(request.Request.PasskeyId, cancellationToken);
         if (passkey is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "Passkey not found."
@@ -71,7 +71,7 @@ public class RemovePasskeyCommandHandler(
         if ((!await _emailManager.HasAsync(user, EmailType.Primary, cancellationToken) &&
              _options.RequireConfirmedEmail) || !await _passwordManager.HasAsync(user, cancellationToken))
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "You need to enable another authentication method first."
@@ -81,7 +81,7 @@ public class RemovePasskeyCommandHandler(
         var verification = await _verificationManager.FindByIdAsync(request.Request.VerificationId, cancellationToken);
         if (verification?.Status is not VerificationStatus.Approved)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "Unverified request."
@@ -99,7 +99,7 @@ public class RemovePasskeyCommandHandler(
                 var method = await _twoFactorManager.GetAsync(user, TwoFactorMethod.Passkey, cancellationToken);
                 if (method is null)
                 {
-                    return Results.ClientError(ClientErrorCode.NotFound, new Error()
+                    return Results.ClientError(ClientErrorCode.NotFound, new Error
                     {
                         Code = ErrorCode.NotFound,
                         Description = "Method not found"

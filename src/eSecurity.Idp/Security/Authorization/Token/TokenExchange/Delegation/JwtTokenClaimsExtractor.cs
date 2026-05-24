@@ -22,7 +22,7 @@ public sealed class JwtTokenClaimsExtractor(
     {
         if (!_handler.CanReadToken(subjectToken))
         {
-            return TypedResult<IEnumerable<Claim>>.Fail(new Error()
+            return TypedResult<IEnumerable<Claim>>.Fail(new Error
             {
                 Code = ErrorCode.InvalidToken,
                 Description = "Invalid subject token"
@@ -32,7 +32,7 @@ public sealed class JwtTokenClaimsExtractor(
         var securityToken = _handler.ReadJwtToken(subjectToken);
         if (securityToken is null)
         {
-            return TypedResult<IEnumerable<Claim>>.Fail(new Error()
+            return TypedResult<IEnumerable<Claim>>.Fail(new Error
             {
                 Code = ErrorCode.InvalidToken,
                 Description = "Invalid subject token"
@@ -42,7 +42,7 @@ public sealed class JwtTokenClaimsExtractor(
         var tokenType = EnumHelper.FromString<JwtTokenType>(securityToken.Header.Typ);
         if (tokenType?.Value is not JwtTokenType.AccessToken)
         {
-            return TypedResult<IEnumerable<Claim>>.Fail(new Error()
+            return TypedResult<IEnumerable<Claim>>.Fail(new Error
             {
                 Code = ErrorCode.InvalidToken,
                 Description = "Invalid subject token"
@@ -53,7 +53,7 @@ public sealed class JwtTokenClaimsExtractor(
         var validationResult = await validator.ValidateAsync(subjectToken, cancellationToken);
         if (!validationResult.IsValid || validationResult.ClaimsPrincipal is null)
         {
-            return TypedResult<IEnumerable<Claim>>.Fail(new Error()
+            return TypedResult<IEnumerable<Claim>>.Fail(new Error
             {
                 Code = ErrorCode.InvalidToken,
                 Description = "Invalid subject token"

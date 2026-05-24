@@ -44,7 +44,7 @@ public class ApiClient(
             if (error is not null)
                 return ApiResponse.Fail(error);
             
-            return ApiResponse.Fail(new Error()
+            return ApiResponse.Fail(new Error
             {
                 Code = ErrorCode.InternalServerError,
                 Description = "Invalid response"

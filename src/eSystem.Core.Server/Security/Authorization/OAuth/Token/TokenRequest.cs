@@ -25,7 +25,7 @@ public abstract class TokenRequest : IFormRequest
 
     public virtual Dictionary<string, string> GetForm()
     {
-        var form = new Dictionary<string, string>()
+        var form = new Dictionary<string, string>
         {
             { "grant_type", GrantType.GetString() },
             { "client_id", ClientId }

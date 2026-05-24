@@ -9,7 +9,6 @@ using eSecurity.WebAuthN.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using CredentialOptions = eSecurity.Idp.Security.Credentials.PublicKey.Credentials.CredentialOptions;
 using Credentials_CredentialOptions = eSecurity.Idp.Security.Credentials.PublicKey.Credentials.CredentialOptions;
 
 namespace eSecurity.Idp.Features.Passkeys.Commands;
@@ -49,7 +48,7 @@ public class GenerateRequestOptionsCommandHandler(
             var user = await _userManager.FindBySubjectAsync(request.Request.Subject, cancellationToken);
             if (user is null)
             {
-                return Results.ClientError(ClientErrorCode.NotFound, new Error()
+                return Results.ClientError(ClientErrorCode.NotFound, new Error
                 {
                     Code = ErrorCode.NotFound,
                     Description = "User not found."

@@ -64,7 +64,7 @@ public class ConsentManager(AuthDbContext context) : IConsentManager
 
         if (grantedScope is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "Scope is not granted."

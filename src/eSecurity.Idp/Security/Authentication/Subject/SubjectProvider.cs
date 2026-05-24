@@ -17,7 +17,7 @@ public sealed class SubjectProvider(
         if (client.SubjectType == SubjectType.Public)
         {
             var strategy = _strategyResolver.Resolver<PublicSubjectStrategyContext>();
-            var context = new PublicSubjectStrategyContext() { User = user };
+            var context = new PublicSubjectStrategyContext { User = user };
             return await strategy.ExecuteAsync(context, cancellationToken);
         }
         else

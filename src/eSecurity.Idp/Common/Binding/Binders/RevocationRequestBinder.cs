@@ -13,7 +13,7 @@ public sealed class RevocationRequestBinder : IFormBinder<RevocationRequest>
     {
         if (!form.TryGetValue("token", out var token))
         {
-            return Task.FromResult(TypedResult<RevocationRequest>.Fail(new Error()
+            return Task.FromResult(TypedResult<RevocationRequest>.Fail(new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "token is required"
@@ -21,7 +21,7 @@ public sealed class RevocationRequestBinder : IFormBinder<RevocationRequest>
         }
 
         var tokenTypeHintString = form["token_type_hint"];
-        var result = new RevocationRequest()
+        var result = new RevocationRequest
         {
             Token = token.ToString(),
             TokenTypeHint = EnumHelper.FromString<TokenTypeHint>(tokenTypeHintString)?.Value

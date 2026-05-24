@@ -14,7 +14,7 @@ public sealed class LoginHintUserResolver(IUserManager userManager) : IUserResol
     {
         if (string.IsNullOrEmpty(request.LoginHint))
         {
-            return TypedResult<UserEntity>.Fail(new Error()
+            return TypedResult<UserEntity>.Fail(new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "login_hint is invalid"
@@ -24,7 +24,7 @@ public sealed class LoginHintUserResolver(IUserManager userManager) : IUserResol
         var user = await _userManager.FindByLoginAsync(request.LoginHint, cancellationToken);
         if (user is null)
         {
-            return TypedResult<UserEntity>.Fail(new Error()
+            return TypedResult<UserEntity>.Fail(new Error
             {
                 Code = ErrorCode.UnknownUserId,
                 Description = "Unknown user"

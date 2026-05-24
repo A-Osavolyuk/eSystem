@@ -97,7 +97,7 @@ public sealed class OAuthSignUpStrategy(
         var role = await _roleManager.FindByNameAsync("User", cancellationToken);
         if (role is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "Cannot find role 'User'"
@@ -130,7 +130,7 @@ public sealed class OAuthSignUpStrategy(
         var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
         if (email is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "Email not found"

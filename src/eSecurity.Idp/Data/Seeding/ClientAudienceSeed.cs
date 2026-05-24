@@ -10,19 +10,19 @@ public sealed class ClientAudienceSeed : Seed<ClientAudienceEntity>
         return
         [
             // eSecurity
-            new ClientAudienceEntity()
+            new ClientAudienceEntity
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("392e390f-33bd-4f30-af70-ccbe04bbb2c4"),
                 Audience = "api://esecurity"
             },
-            new ClientAudienceEntity()
+            new ClientAudienceEntity
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("392e390f-33bd-4f30-af70-ccbe04bbb2c4"),
                 Audience = "api://emessage"
             },
-            new ClientAudienceEntity()
+            new ClientAudienceEntity
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("392e390f-33bd-4f30-af70-ccbe04bbb2c4"),
@@ -30,7 +30,7 @@ public sealed class ClientAudienceSeed : Seed<ClientAudienceEntity>
             },
             
             // eCinema
-            new ClientAudienceEntity()
+            new ClientAudienceEntity
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("307268b0-005c-4ee4-a0e8-a93bd0010382"),
@@ -38,7 +38,7 @@ public sealed class ClientAudienceSeed : Seed<ClientAudienceEntity>
             },
             
             // eCinema TV App
-            new ClientAudienceEntity()
+            new ClientAudienceEntity
             {
                 Id = Guid.CreateVersion7(),
                 ClientId = Guid.Parse("19362a03-8793-4300-82ad-28719f21a8e2"),

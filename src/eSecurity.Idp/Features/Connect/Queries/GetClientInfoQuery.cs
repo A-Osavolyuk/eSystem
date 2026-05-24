@@ -16,7 +16,7 @@ public class GetClientInfoQueryHandler(IClientManager clientManager) : IRequestH
         var client = await _clientManager.FindByIdAsync(request.ClientId, cancellationToken);
         if (client is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "Client not found"

@@ -37,7 +37,7 @@ public sealed class PushedAuthorizationRequestCommandHandler(
 
         if (!bindingResult.TryGetValue(out var par))
         {
-            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error
             {
                 Code = ErrorCode.ServerError,
                 Description = "Server error"
@@ -47,7 +47,7 @@ public sealed class PushedAuthorizationRequestCommandHandler(
         var client = await _clientManager.FindByIdAsync(par.ClientId, cancellationToken);
         if (client is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "Invalid client_id"
@@ -63,7 +63,7 @@ public sealed class PushedAuthorizationRequestCommandHandler(
 
             if (redirectUris.Count != 1)
             {
-                return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+                return Results.ClientError(ClientErrorCode.BadRequest, new Error
                 {
                     Code = ErrorCode.InvalidRequest,
                     Description = "redirect_uri is required"
@@ -76,7 +76,7 @@ public sealed class PushedAuthorizationRequestCommandHandler(
         {
             if (!client.HasUri(par.RedirectUri, UriType.Redirect))
             {
-                return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+                return Results.ClientError(ClientErrorCode.BadRequest, new Error
                 {
                     Code = ErrorCode.InvalidRequest,
                     Description = "Invalid redirect_uri"
@@ -88,7 +88,7 @@ public sealed class PushedAuthorizationRequestCommandHandler(
 
         if (!_configuration.ResponseTypesSupported.Contains(par.ResponseType))
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.UnsupportedResponseType,
                 Description = $"{par.ResponseType.GetString()} is not supported"
@@ -97,7 +97,7 @@ public sealed class PushedAuthorizationRequestCommandHandler(
 
         if (client.ResponseTypes.All(x => x.ResponseType.Type != par.ResponseType))
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.UnsupportedResponseType,
                 Description = $"{par.ResponseType.GetString()} is not supported by client"
@@ -108,7 +108,7 @@ public sealed class PushedAuthorizationRequestCommandHandler(
         var allowedScopes = client.AllowedScopes.Select(x => x.Scope.Value);
         if (!ScopesValidator.Validate(allowedScopes, scopes, out var invalidScopes))
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidUserCode,
                 Description = $"{string.Join(", ", invalidScopes)} are not supported scopes by client"
@@ -128,7 +128,7 @@ public sealed class PushedAuthorizationRequestCommandHandler(
                 var prompt = EnumHelper.FromString<PromptType>(promptString);
                 if (prompt is null)
                 {
-                    return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+                    return Results.ClientError(ClientErrorCode.BadRequest, new Error
                     {
                         Code = ErrorCode.InvalidRequest,
                         Description = "Invalid prompt"
@@ -137,7 +137,7 @@ public sealed class PushedAuthorizationRequestCommandHandler(
 
                 if (!_configuration.PromptValuesSupported.Contains(prompt.Value))
                 {
-                    return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+                    return Results.ClientError(ClientErrorCode.BadRequest, new Error
                     {
                         Code = ErrorCode.InvalidRequest,
                         Description = $"{prompt.Value.GetString()} is not supported prompt"
@@ -154,7 +154,7 @@ public sealed class PushedAuthorizationRequestCommandHandler(
         {
             if (!hasCodeChallenge)
             {
-                return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+                return Results.ClientError(ClientErrorCode.BadRequest, new Error
                 {
                     Code = ErrorCode.InvalidRequest,
                     Description = "code_challenge is required"
@@ -163,7 +163,7 @@ public sealed class PushedAuthorizationRequestCommandHandler(
 
             if (!hasCodeChallengeMethod)
             {
-                return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+                return Results.ClientError(ClientErrorCode.BadRequest, new Error
                 {
                     Code = ErrorCode.InvalidRequest,
                     Description = "code_challenge_method is required"
@@ -198,7 +198,7 @@ public sealed class PushedAuthorizationRequestCommandHandler(
         }
 
         //TODO: Add PAR configurations
-        var parEntity = new PushedAuthorizationRequestEntity()
+        var parEntity = new PushedAuthorizationRequestEntity
         {
             Id = Guid.CreateVersion7(),
             RequestUri = ParHelper.GetRequestUri(),
@@ -220,7 +220,7 @@ public sealed class PushedAuthorizationRequestCommandHandler(
         if (!result.Succeeded)
             return result;
 
-        var response = new PushedAuthorizationResponse()
+        var response = new PushedAuthorizationResponse
         {
             ClientId = parEntity.ClientId.ToString(),
             RequestUri = parEntity.RequestUri

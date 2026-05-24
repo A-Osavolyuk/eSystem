@@ -32,7 +32,7 @@ public sealed class OAuthDeviceCodeFlow(
         var client = await _clientManager.FindByIdAsync(context.ClientId, cancellationToken);
         if (client is null || deviceCode.UserId is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Invalid device code"
@@ -49,7 +49,7 @@ public sealed class OAuthDeviceCodeFlow(
         var user = await _userManager.FindByIdAsync(deviceCode.UserId.Value, cancellationToken);
         if (user is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Invalid device code"
@@ -62,7 +62,7 @@ public sealed class OAuthDeviceCodeFlow(
             TokenType = ResponseTokenType.Bearer,
         };
 
-        var accessTokenFactoryContext = new AccessTokenFactoryContext()
+        var accessTokenFactoryContext = new AccessTokenFactoryContext
         {
             Client = client,
             User = user
@@ -80,7 +80,7 @@ public sealed class OAuthDeviceCodeFlow(
 
         if (!accessTokenResult.TryGetValue(out var accessToken))
         {
-            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error
             {
                 Code = ErrorCode.ServerError,
                 Description = "Server error"
@@ -91,7 +91,7 @@ public sealed class OAuthDeviceCodeFlow(
         
         if (client.AllowOfflineAccess && client.HasScope(ScopeTypes.OfflineAccess))
         {
-            var refreshTokenFactoryContext = new RefreshTokenFactoryContext()
+            var refreshTokenFactoryContext = new RefreshTokenFactoryContext
             {
                 Client = client,
                 User = user
@@ -109,7 +109,7 @@ public sealed class OAuthDeviceCodeFlow(
 
             if (!refreshTokenResult.TryGetValue(out var refreshToken))
             {
-                return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+                return Results.ServerError(ServerErrorCode.InternalServerError, new Error
                 {
                     Code = ErrorCode.ServerError,
                     Description = "Server error"
@@ -121,7 +121,7 @@ public sealed class OAuthDeviceCodeFlow(
 
         if (client.HasGrantType(GrantType.Ciba))
         {
-            var loginTokenFactoryContext = new LoginTokenFactoryContext()
+            var loginTokenFactoryContext = new LoginTokenFactoryContext
             {
                 Client = client,
                 User = user
@@ -139,7 +139,7 @@ public sealed class OAuthDeviceCodeFlow(
 
             if (!loginTokenResult.TryGetValue(out var loginToken))
             {
-                return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+                return Results.ServerError(ServerErrorCode.InternalServerError, new Error
                 {
                     Code = ErrorCode.ServerError,
                     Description = "Server error"

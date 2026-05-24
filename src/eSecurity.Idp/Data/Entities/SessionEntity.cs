@@ -21,7 +21,7 @@ public class SessionEntity : Entity
         {
             if (AuthenticationMethods.All(x => x.MethodReference != method))
             {
-                AuthenticationMethods.Add(new SessionAuthenticationMethodEntity()
+                AuthenticationMethods.Add(new SessionAuthenticationMethodEntity
                 {
                     Id = Guid.CreateVersion7(),
                     SessionId = Id,

@@ -48,7 +48,7 @@ public class RefreshTokenStrategy(
             : AuthorizationProtocol.OAuth;
 
         var flow = _resolver.Resolve(protocol);
-        var refreshTokenContext = new RefreshTokenFlowContext()
+        var refreshTokenContext = new RefreshTokenFlowContext
         {
             ClientId = request.ClientId,
             GrantType = request.GrantType,

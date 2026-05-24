@@ -24,7 +24,7 @@ public sealed class ResetPasswordCommandHandler(
         var user = await _userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
         if (user is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "User not found."
@@ -43,7 +43,7 @@ public sealed class ResetPasswordCommandHandler(
         var verification = await _verificationManager.FindByIdAsync(request.Request.VerificationId, cancellationToken);
         if (verification?.Status is not VerificationStatus.Approved)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
                 Description = "Unverified request."

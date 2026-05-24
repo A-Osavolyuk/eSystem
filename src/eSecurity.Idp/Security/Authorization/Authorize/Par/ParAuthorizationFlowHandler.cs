@@ -53,7 +53,7 @@ public sealed class ParAuthorizationFlowHandler(
             return Results.Redirect(RedirectionCode.Found, uri);
         }
 
-        var promptContext = new PromptContext()
+        var promptContext = new PromptContext
         {
             AuthorizationFlow = AuthorizationFlow.PushedAuthorizationRequest,
             ClientId = par.ClientId,

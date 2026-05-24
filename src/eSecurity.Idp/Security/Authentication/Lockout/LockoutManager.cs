@@ -23,7 +23,7 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
         var state = await GetAsync(user, cancellationToken);
         if (state is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "State not found"
@@ -47,7 +47,7 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
         var state = await GetAsync(user, cancellationToken);
         if (state is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "State not found"
@@ -82,7 +82,7 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
         var state = await GetAsync(user, cancellationToken);
         if (state is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "State not found"
@@ -106,7 +106,7 @@ public sealed class LockoutManager(AuthDbContext context) : ILockoutManager
         var state = await GetAsync(user, cancellationToken);
         if (state is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "State not found"

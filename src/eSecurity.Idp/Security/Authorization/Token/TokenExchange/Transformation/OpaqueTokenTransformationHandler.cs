@@ -27,7 +27,7 @@ public sealed class OpaqueTokenTransformationHandler(
     {
         if (!await _tokenManager.IsOpaqueAsync(context.SubjectToken, cancellationToken))
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Subject token is invalid."
@@ -38,7 +38,7 @@ public sealed class OpaqueTokenTransformationHandler(
         var token = await _tokenManager.FindByHashAsync(hash, cancellationToken);
         if (token is null || !token.IsValid)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Subject token is invalid."
@@ -48,7 +48,7 @@ public sealed class OpaqueTokenTransformationHandler(
         var client = await _clientManager.FindByIdAsync(context.ClientId, cancellationToken);
         if (client is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Subject token is invalid."
@@ -71,7 +71,7 @@ public sealed class OpaqueTokenTransformationHandler(
         {
             if (!client.IsValidAudience(context.Audience))
             {
-                return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+                return Results.ClientError(ClientErrorCode.BadRequest, new Error
                 {
                     Code = ErrorCode.InvalidTarget,
                     Description = "The requested audience is not an allowed audience for this client."

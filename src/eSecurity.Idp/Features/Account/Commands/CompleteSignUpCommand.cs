@@ -39,7 +39,7 @@ public sealed class CompleteSignUpCommandHandler(
 
         if (authenticationSession is null || !authenticationSession.IsActive || authenticationSession.UserId is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidSession,
                 Description = "Invalid session"
@@ -49,7 +49,7 @@ public sealed class CompleteSignUpCommandHandler(
         var user = await _userManager.FindByIdAsync(authenticationSession.UserId.Value, cancellationToken);
         if (user is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "User not found"
@@ -59,7 +59,7 @@ public sealed class CompleteSignUpCommandHandler(
         var code = await _codeManager.FindAsync(user, request.Request.Code, cancellationToken);
         if (code is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound, 
                 Description = "Code not found"
@@ -72,7 +72,7 @@ public sealed class CompleteSignUpCommandHandler(
         var primaryEmail = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
         if (primaryEmail is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "Email not found"
@@ -82,7 +82,7 @@ public sealed class CompleteSignUpCommandHandler(
         var emailResult = await _emailManager.VerifyAsync(user, primaryEmail.Email, cancellationToken);
         if (!emailResult.Succeeded) return emailResult;
 
-        var session = new SessionEntity()
+        var session = new SessionEntity
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,

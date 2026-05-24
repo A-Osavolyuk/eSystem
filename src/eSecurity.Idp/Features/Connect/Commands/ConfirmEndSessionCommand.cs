@@ -1,5 +1,4 @@
-﻿using eSecurity.Core.Requests;
-using eSecurity.Idp.Security.Authentication.EndSession;
+﻿using eSecurity.Idp.Security.Authentication.EndSession;
 using eSecurity.Idp.Security.Authentication.EndSession.Backchannel;
 using eSecurity.Idp.Security.Authentication.EndSession.Frontchannel;
 using eSecurity.Idp.Security.Authentication.Session;
@@ -89,7 +88,7 @@ public sealed class ConfirmEndSessionCommandHandler(
             return Fallback(redirectUri, error.Code, error.Description, endSessionRequest.State);
         }
         
-        _httpContext.Response.Cookies.Delete(DefaultCookies.Session, new CookieOptions()
+        _httpContext.Response.Cookies.Delete(DefaultCookies.Session, new CookieOptions
         {
             Secure = true,
             HttpOnly = true,

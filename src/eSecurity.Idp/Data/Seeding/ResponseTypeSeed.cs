@@ -10,7 +10,7 @@ public sealed class ResponseTypeSeed : Seed<ResponseTypeEntity>
     {
         return
         [
-            new ResponseTypeEntity()
+            new ResponseTypeEntity
             {
                 Id = Guid.Parse("690d364a-056b-4bbf-ab24-5d3835ff3917"),
                 Type = ResponseType.Code

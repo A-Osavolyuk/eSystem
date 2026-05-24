@@ -21,7 +21,7 @@ public sealed class TokenRequestBinder(IFormBindingProvider bindingProvider) : I
         var grantTypeString = form["grant_type"].ToString();
         if (string.IsNullOrEmpty(grantTypeString))
         {
-            return TypedResult<TokenRequest>.Fail(new Error()
+            return TypedResult<TokenRequest>.Fail(new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "grant_type is mandatory"
@@ -31,7 +31,7 @@ public sealed class TokenRequestBinder(IFormBindingProvider bindingProvider) : I
         var grantType = EnumHelper.FromString<GrantType>(grantTypeString);
         if (grantType is null)
         {
-            return TypedResult<TokenRequest>.Fail(new Error()
+            return TypedResult<TokenRequest>.Fail(new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "grant_type is invalid."

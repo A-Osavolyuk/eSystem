@@ -1,5 +1,4 @@
-﻿using eSecurity.Core.Requests;
-using eSecurity.Idp.Features.Connect.Commands;
+﻿using eSecurity.Idp.Features.Connect.Commands;
 using eSecurity.Idp.Features.Connect.Queries;
 using eSecurity.Idp.Security.Authentication.EndSession;
 using eSecurity.Idp.Security.Authorization;

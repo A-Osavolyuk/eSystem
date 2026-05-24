@@ -26,7 +26,7 @@ public sealed class TokenExchangeStrategy(
 
         if (string.IsNullOrEmpty(request.SubjectToken))
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "subject_token is required"
@@ -35,7 +35,7 @@ public sealed class TokenExchangeStrategy(
 
         if (request.SubjectTokenType is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "subject_token_type is required"
@@ -44,7 +44,7 @@ public sealed class TokenExchangeStrategy(
 
         if (request.SubjectTokenType is not TokenType.AccessToken)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.UnsupportedTokenType,
                 Description = $"{TokenType.AccessToken.GetString()} is the only supported subject_token_type value"
@@ -53,7 +53,7 @@ public sealed class TokenExchangeStrategy(
 
         if (request.RequestTokenType is not TokenType.AccessToken)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.UnsupportedTokenType,
                 Description = $"{TokenType.AccessToken.GetString()} is the only supported request_token_type value"
@@ -63,7 +63,7 @@ public sealed class TokenExchangeStrategy(
         var clientIdClaim = _httpContext.User.FindFirst(AppClaimTypes.ClientId);
         if (clientIdClaim is null)
         {
-            return Results.ClientError(ClientErrorCode.Unauthorized, new Error()
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error
             {
                 Code = ErrorCode.UnauthorizedClient,
                 Description = "Unauthorized client"
@@ -72,7 +72,7 @@ public sealed class TokenExchangeStrategy(
         
         if (string.IsNullOrEmpty(request.Scope))
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "scope is required"
@@ -82,7 +82,7 @@ public sealed class TokenExchangeStrategy(
         var scopes = request.Scope.Split(' ').ToList();
         if (scopes.Contains(ScopeTypes.Delegation) && scopes.Contains(ScopeTypes.Transformation))
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidScope,
                 Description = "delegation and transformation scopes are not allowed to use in the same time"
@@ -91,14 +91,14 @@ public sealed class TokenExchangeStrategy(
 
         if (!scopes.Contains(ScopeTypes.Delegation) && !scopes.Contains(ScopeTypes.Transformation))
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidScope,
                 Description = "scope must contain either delegation or transformation scope"
             });
         }
 
-        var context = new TokenExchangeFlowContext()
+        var context = new TokenExchangeFlowContext
         {
             ClientId = clientIdClaim.Value,
             GrantType = request.GrantType,

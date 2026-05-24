@@ -99,13 +99,13 @@ public class OAuthAuthorizationCodeFlow(
         var codeResult = await _authorizationCodeManager.UseAsync(code, cancellationToken);
         if (!codeResult.Succeeded) return codeResult;
 
-        var response = new AuthorizationCodeResponse()
+        var response = new AuthorizationCodeResponse
         {
             ExpiresIn = (int)_tokenConfigurations.DefaultAccessTokenLifetime.TotalSeconds,
             TokenType = ResponseTokenType.Bearer,
         };
 
-        var accessTokenFactoryContext = new AccessTokenFactoryContext()
+        var accessTokenFactoryContext = new AccessTokenFactoryContext
         {
             Client = client,
             User = user
@@ -123,7 +123,7 @@ public class OAuthAuthorizationCodeFlow(
         
         if (!accessTokenResult.TryGetValue(out var accessToken))
         {
-            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error
             {
                 Code = ErrorCode.ServerError,
                 Description = "Server error"
@@ -134,7 +134,7 @@ public class OAuthAuthorizationCodeFlow(
 
         if (client.AllowOfflineAccess)
         {
-            var refreshTokenFactoryContext = new RefreshTokenFactoryContext()
+            var refreshTokenFactoryContext = new RefreshTokenFactoryContext
             {
                 Client = client,
                 User = user
@@ -152,7 +152,7 @@ public class OAuthAuthorizationCodeFlow(
             
             if (!refreshTokenResult.TryGetValue(out var refreshToken))
             {
-                return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+                return Results.ServerError(ServerErrorCode.InternalServerError, new Error
                 {
                     Code = ErrorCode.ServerError,
                     Description = "Server error"

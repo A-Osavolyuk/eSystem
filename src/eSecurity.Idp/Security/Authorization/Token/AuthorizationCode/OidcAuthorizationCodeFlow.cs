@@ -119,7 +119,7 @@ public class OidcAuthorizationCodeFlow(
             });
         }
 
-        var accessTokenFactoryContext = new AccessTokenFactoryContext()
+        var accessTokenFactoryContext = new AccessTokenFactoryContext
         {
             Client = client,
             User = user,
@@ -138,7 +138,7 @@ public class OidcAuthorizationCodeFlow(
 
         if (!accessTokenResult.TryGetValue(out var accessToken))
         {
-            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error
             {
                 Code = ErrorCode.ServerError,
                 Description = "Server error"
@@ -152,7 +152,7 @@ public class OidcAuthorizationCodeFlow(
 
         if (client.AllowOfflineAccess && client.HasScope(ScopeTypes.OfflineAccess))
         {
-            var refreshTokenFactoryContext = new RefreshTokenFactoryContext()
+            var refreshTokenFactoryContext = new RefreshTokenFactoryContext
             {
                 Client = client,
                 User = user,
@@ -165,7 +165,7 @@ public class OidcAuthorizationCodeFlow(
 
             if (!refreshTokenResult.TryGetValue(out var refreshToken))
             {
-                return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+                return Results.ServerError(ServerErrorCode.InternalServerError, new Error
                 {
                     Code = ErrorCode.ServerError,
                     Description = "Server error"
@@ -175,7 +175,7 @@ public class OidcAuthorizationCodeFlow(
             response.RefreshToken = refreshToken;
         }
 
-        var idTokenFactoryContext = new IdTokenFactoryContext()
+        var idTokenFactoryContext = new IdTokenFactoryContext
         {
             Client = client,
             User = user,
@@ -183,7 +183,7 @@ public class OidcAuthorizationCodeFlow(
         };
         
         var idTokenFactory = _tokenFactoryProvider.GetFactory<IdTokenFactoryContext>();
-        var idFactoryOptions = new TokenFactoryOptions() { Nonce = code.Nonce };
+        var idFactoryOptions = new TokenFactoryOptions { Nonce = code.Nonce };
         var idTokenResult = await idTokenFactory.CreateAsync(idTokenFactoryContext, idFactoryOptions, cancellationToken);
         
         if (!idTokenResult.Succeeded)
@@ -194,7 +194,7 @@ public class OidcAuthorizationCodeFlow(
 
         if (!idTokenResult.TryGetValue(out var idToken))
         {
-            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error
             {
                 Code = ErrorCode.ServerError,
                 Description = "Server error"

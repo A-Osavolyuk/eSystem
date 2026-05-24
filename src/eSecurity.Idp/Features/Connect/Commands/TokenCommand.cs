@@ -34,7 +34,7 @@ public class TokenCommandHandler(
         var grantType = EnumHelper.FromString<GrantType>(grantTypeString.ToString());
         if (grantType is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "grant_type is invalid."

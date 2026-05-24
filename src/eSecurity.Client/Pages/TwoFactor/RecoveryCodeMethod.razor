@@ -82,7 +82,7 @@
 
         if (_form.IsValid)
         {
-            await OnSignIn.InvokeAsync(new RecoveryCodeTwoFactorPayload()
+            await OnSignIn.InvokeAsync(new RecoveryCodeTwoFactorPayload
             {
                 Code = _model.Code
             });

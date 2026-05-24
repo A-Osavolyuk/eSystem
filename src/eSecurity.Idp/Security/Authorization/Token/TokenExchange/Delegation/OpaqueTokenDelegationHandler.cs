@@ -27,7 +27,7 @@ public sealed class OpaqueTokenDelegationHandler(
     {
         if (string.IsNullOrEmpty(context.ActorToken))
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "actor_token is required"
@@ -36,7 +36,7 @@ public sealed class OpaqueTokenDelegationHandler(
 
         if (context.ActorTokenType is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "actor_token_type is required"
@@ -45,7 +45,7 @@ public sealed class OpaqueTokenDelegationHandler(
 
         if (context.ActorTokenType != TokenType.AccessToken)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = $"{TokenType.AccessToken} is the only allowed actor_token_type value"
@@ -54,7 +54,7 @@ public sealed class OpaqueTokenDelegationHandler(
 
         if (!await _tokenManager.IsOpaqueAsync(context.SubjectToken, cancellationToken))
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Subject token is invalid."
@@ -63,7 +63,7 @@ public sealed class OpaqueTokenDelegationHandler(
 
         if (!await _tokenManager.IsOpaqueAsync(context.ActorToken, cancellationToken))
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Actor token is invalid."
@@ -74,7 +74,7 @@ public sealed class OpaqueTokenDelegationHandler(
         var subjectToken = await _tokenManager.FindByHashAsync(subjectTokenHash, cancellationToken);
         if (subjectToken is null || !subjectToken.IsValid)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Subject token is invalid."
@@ -85,7 +85,7 @@ public sealed class OpaqueTokenDelegationHandler(
         var actorToken = await _tokenManager.FindByHashAsync(actorTokenHash, cancellationToken);
         if (actorToken is null || !actorToken.IsValid || actorToken.TokenType != OpaqueTokenType.AccessToken)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Actor token is invalid."
@@ -94,7 +94,7 @@ public sealed class OpaqueTokenDelegationHandler(
 
         if (subjectToken.IsDelegated || actorToken.IsDelegated)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Delegation chaining is not allowed."
@@ -104,7 +104,7 @@ public sealed class OpaqueTokenDelegationHandler(
         var client = await _clientManager.FindByIdAsync(context.ClientId, cancellationToken);
         if (client is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "Subject token is invalid."
@@ -128,7 +128,7 @@ public sealed class OpaqueTokenDelegationHandler(
         {
             if (!client.IsValidAudience(context.Audience))
             {
-                return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+                return Results.ClientError(ClientErrorCode.BadRequest, new Error
                 {
                     Code = ErrorCode.InvalidTarget,
                     Description = "The requested audience is not an allowed audience for this client."

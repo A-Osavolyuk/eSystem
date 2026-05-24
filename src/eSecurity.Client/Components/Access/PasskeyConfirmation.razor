@@ -124,12 +124,12 @@
         if (authenticateResult.Success)
         {
             var credential = authenticateResult.Get<PublicKeyCredential>();
-            var request = new VerificationRequest()
+            var request = new VerificationRequest
             {
                 Action = Context.Action,
                 Purpose = Context.Purpose,
                 Method = VerificationMethod.Passkey,
-                Payload = new PasskeyVerificationPayload()
+                Payload = new PasskeyVerificationPayload
                 {
                     Credential = credential,
                 }

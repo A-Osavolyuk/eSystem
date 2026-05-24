@@ -20,19 +20,19 @@ public class VerificationCommandHandler(
     {
         VerificationContext? context = request.Request.Payload switch
         {
-            TotpVerificationPayload payload => new TotpVerificationContext()
+            TotpVerificationPayload payload => new TotpVerificationContext
             {
                 Code = payload.Code,
                 Action = request.Request.Action,
                 Purpose = request.Request.Purpose
             },
-            PasskeyVerificationPayload payload => new PasskeyVerificationContext()
+            PasskeyVerificationPayload payload => new PasskeyVerificationContext
             {
                 Credential = payload.Credential,
                 Action = request.Request.Action,
                 Purpose = request.Request.Purpose
             },
-            AuthenticatorAppVerificationPayload payload => new AuthenticatorAppVerificationContext()
+            AuthenticatorAppVerificationPayload payload => new AuthenticatorAppVerificationContext
             {
                 Code = payload.Code,
                 Action = request.Request.Action,
@@ -43,7 +43,7 @@ public class VerificationCommandHandler(
 
         if (context is null)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "Invalid payload"

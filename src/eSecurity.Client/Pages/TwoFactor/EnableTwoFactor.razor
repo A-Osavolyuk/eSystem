@@ -323,12 +323,12 @@
     {
         _showError = false;
         
-        var request = new VerificationRequest()
+        var request = new VerificationRequest
         {
             Action = ActionType.Enable,
             Purpose = PurposeType.TwoFactor,
             Method = VerificationMethod.AuthenticatorApp,
-            Payload = new AuthenticatorAppVerificationPayload()
+            Payload = new AuthenticatorAppVerificationPayload
             {
                 Code = _model.Code
             }

@@ -18,7 +18,7 @@ public class CheckDeviceCodeCommandHandler(
         var deviceCode = await _deviceCodeManager.FindByCodeAsync(request.Request.UserCode, cancellationToken);
         if (deviceCode is null)
         {
-            return Results.Success(SuccessCodes.Ok, new CheckDeviceCodeResponse()
+            return Results.Success(SuccessCodes.Ok, new CheckDeviceCodeResponse
             {
                 Exists = false
             });
@@ -26,7 +26,7 @@ public class CheckDeviceCodeCommandHandler(
 
         if (deviceCode.ExpiresAt < DateTimeOffset.UtcNow)
         {
-            return Results.Success(SuccessCodes.Ok, new CheckDeviceCodeResponse()
+            return Results.Success(SuccessCodes.Ok, new CheckDeviceCodeResponse
             {
                 Exists = true,
                 IsExpired = true

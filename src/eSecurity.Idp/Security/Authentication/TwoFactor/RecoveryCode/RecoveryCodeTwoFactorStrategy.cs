@@ -52,7 +52,7 @@ public sealed class RecoveryCodeTwoFactorStrategy(
         if (authenticationSession?.UserId is null || 
             authenticationSession.GetMethods(AuthenticationMethodType.AllowedMfa).Count == 0)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidSession,
                 Description = "Invalid session"
@@ -62,7 +62,7 @@ public sealed class RecoveryCodeTwoFactorStrategy(
         var user = await _userManager.FindByIdAsync(authenticationSession.UserId.Value, cancellationToken);
         if (user is null)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error()
+            return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
                 Description = "User not found."
@@ -145,7 +145,7 @@ public sealed class RecoveryCodeTwoFactorStrategy(
         if (!sessionResult.Succeeded) return sessionResult;
         
         var sessionCookie = _sessionCookieFactory.CreateCookie(session);
-        _httpContext.Response.Cookies.Append(DefaultCookies.Session, sessionCookie, new CookieOptions()
+        _httpContext.Response.Cookies.Append(DefaultCookies.Session, sessionCookie, new CookieOptions
         {
             Secure = true,
             HttpOnly = true,

@@ -36,7 +36,7 @@ public sealed class PairwiseSubjectStrategy(
             Salt = _options.PairwiseSubjectSalt
         };
         
-        subject = new PairwiseSubjectEntity()
+        subject = new PairwiseSubjectEntity
         {
             Id = Guid.CreateVersion7(),
             UserId = context.User.Id,

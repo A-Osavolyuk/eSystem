@@ -31,7 +31,7 @@ public sealed class PushedAuthorizationRequestEntity : Entity
         Prompts = [];
         foreach (var prompt in prompts)
         {
-            Prompts.Add(new PushedAuthorizationRequestPromptEntity()
+            Prompts.Add(new PushedAuthorizationRequestPromptEntity
             {
                 Id = Guid.CreateVersion7(),
                 RequestId = Id,
@@ -45,7 +45,7 @@ public sealed class PushedAuthorizationRequestEntity : Entity
         Scopes = [];
         foreach (var scope in scopes)
         {
-            Scopes.Add(new PushedAuthorizationRequestScopeEntity()
+            Scopes.Add(new PushedAuthorizationRequestScopeEntity
             {
                 Id = Guid.CreateVersion7(),
                 RequestId = Id,

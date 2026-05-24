@@ -15,7 +15,7 @@ public sealed class TokenExchangeRequestBinder : IFormBinder<TokenExchangeReques
         var grantType = EnumHelper.FromString<GrantType>(form["grant_type"].ToString());
         if (grantType is null)
         {
-            return Task.FromResult(TypedResult<TokenExchangeRequest>.Fail(new Error()
+            return Task.FromResult(TypedResult<TokenExchangeRequest>.Fail(new Error
             {
                 Code = ErrorCode.InvalidGrant,
                 Description = "grant_type is invalid."
@@ -23,7 +23,7 @@ public sealed class TokenExchangeRequestBinder : IFormBinder<TokenExchangeReques
         }
         
         var assertionsTypeString = form["client_assertion_type"].ToString();
-        var result = TypedResult<TokenExchangeRequest>.Success(new TokenExchangeRequest()
+        var result = TypedResult<TokenExchangeRequest>.Success(new TokenExchangeRequest
         {
             GrantType = grantType.Value,
             ClientId = form["client_id"].ToString(),

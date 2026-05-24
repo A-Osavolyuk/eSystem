@@ -13,7 +13,7 @@ public sealed class GetOAuthAuthorizationServerQueryHandler : IRequestHandler<Ge
 {
     public Task<Result> Handle(GetOAuthAuthorizationServerQuery request, CancellationToken cancellationToken)
     {
-        var discovery = new AuthorizationServerDiscovery()
+        var discovery = new AuthorizationServerDiscovery
         {
             Issuer = "https://localhost:6201",
             AuthorizationEndpoint = "https://localhost:6501/connect/authorize",
