@@ -1,4 +1,4 @@
-namespace eSecurity.Idp.Security.Identity.Claims.Subject;
+namespace eSecurity.Idp.Security.Identity.Subject;
 
 public interface IPairwiseSubjectFactory
 {

@@ -1,8 +1,6 @@
 ﻿using eSecurity.Idp.Security.Authentication.Client;
-using eSecurity.Idp.Security.Cryptography.Hashing;
 using eSecurity.Idp.Security.Cryptography.Tokens;
 using eSecurity.Idp.Security.Cryptography.Tokens.Access;
-using eSecurity.Idp.Security.Identity.Claims;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authorization.OAuth;
@@ -13,18 +11,10 @@ namespace eSecurity.Idp.Security.Authorization.Token.ClientCredentials;
 
 public sealed class ClientCredentialsStrategy(
     IClientManager clientManager,
-    IClaimFactoryProvider claimFactoryProvider,
-    ITokenBuilderProvider tokenBuilderProvider,
-    IHasherProvider hasherProvider,
-    ITokenManager tokenManager,
     ITokenFactoryProvider tokenFactoryProvider,
     IOptions<TokenConfigurations> options) : ITokenStrategy
 {
     private readonly IClientManager _clientManager = clientManager;
-    private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
-    private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
-    private readonly IHasherProvider _hasherProvider = hasherProvider;
-    private readonly ITokenManager _tokenManager = tokenManager;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
 

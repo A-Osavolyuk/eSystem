@@ -1,6 +1,6 @@
 using eSecurity.Idp.Security.Cryptography.Hashing;
 
-namespace eSecurity.Idp.Security.Identity.Claims.Subject;
+namespace eSecurity.Idp.Security.Identity.Subject;
 
 public class PairwiseSubjectFactory(IHasherProvider hasherProvider) : IPairwiseSubjectFactory
 {

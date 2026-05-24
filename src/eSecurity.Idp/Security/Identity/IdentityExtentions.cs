@@ -1,14 +1,11 @@
-﻿using eSecurity.Idp.Data.Entities;
-using eSecurity.Idp.Security.Identity.Claims;
-using eSecurity.Idp.Security.Identity.Claims.Factories;
-using eSecurity.Idp.Security.Identity.Claims.Subject;
-using eSecurity.Idp.Security.Identity.Email;
+﻿using eSecurity.Idp.Security.Identity.Email;
 using eSecurity.Idp.Security.Identity.Options;
 using eSecurity.Idp.Security.Identity.Phone;
 using eSecurity.Idp.Security.Identity.Privacy;
 using eSecurity.Idp.Security.Identity.User;
 using eSecurity.Idp.Security.Identity.User.Username;
 using eSecurity.Idp.Security.Identity.SignUp;
+using eSecurity.Idp.Security.Identity.Subject;
 
 namespace eSecurity.Idp.Security.Identity;
 
@@ -25,12 +22,6 @@ public static class IdentityExtensions
             builder.Services.AddScoped<IEmailManager, EmailManager>();
             builder.Services.AddScoped<IPhoneManager, PhoneManager>();
             builder.Services.AddScoped<IPairwiseSubjectFactory, PairwiseSubjectFactory>();
-            
-            builder.Services.AddScoped<IClaimFactoryProvider, ClaimFactoryProvider>();
-            builder.Services.AddScoped<ITokenClaimsFactory<AccessTokenClaimsContext, UserEntity>, AccessTokenClaimsFactory>();
-            builder.Services.AddScoped<ITokenClaimsFactory<AccessTokenClaimsContext, ClientEntity>, AccessTokenClaimsFactory>();
-            builder.Services.AddScoped<ITokenClaimsFactory<IdTokenClaimsContext, UserEntity>, IdTokenClaimsFactory>();
-            builder.Services.AddScoped<ITokenClaimsFactory<LogoutTokenClaimsContext, UserEntity>, LogoutTokenClaimsFactory>();
         
             builder.ConfigureIdentity(cfg =>
             {

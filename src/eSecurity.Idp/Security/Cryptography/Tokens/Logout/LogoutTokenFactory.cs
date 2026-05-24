@@ -1,19 +1,18 @@
-﻿using eSecurity.Idp.Data.Entities;
+﻿using System.Security.Claims;
+using System.Text.Json;
 using eSecurity.Idp.Security.Authentication.Subject;
-using eSecurity.Idp.Security.Identity.Claims;
-using eSecurity.Idp.Security.Identity.Claims.Factories;
 using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authorization.OAuth;
+using eSystem.Core.Security.Identity.Claims;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect.Logout;
 
 namespace eSecurity.Idp.Security.Cryptography.Tokens.Logout;
 
 public sealed class LogoutTokenFactory(
     IOptions<TokenConfigurations> options,
-    IClaimFactoryProvider claimFactoryProvider,
     ITokenBuilderProvider tokenBuilderProvider,
     ISubjectProvider subjectProvider) : ITokenFactory<LogoutTokenFactoryContext>
 {
-    private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
     private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
     private readonly ISubjectProvider _subjectProvider = subjectProvider;
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
@@ -34,16 +33,25 @@ public sealed class LogoutTokenFactory(
             });
         }
         
-        var claimsContext = new LogoutTokenClaimsContext
+        var eventsJson = JsonSerializer.Serialize(new Dictionary<string, object>
         {
-            Subject = subject,
-            Audience = context.Client.Id.ToString(),
-            SessionId = context.Session.Id.ToString(),
-            Expiration = DateTimeOffset.UtcNow.Add(lifetime)
+            { LogoutEvents.BackChannelLogout, new object() }
+        });
+        
+        var iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
+        var exp = DateTimeOffset.UtcNow.Add(lifetime).ToUnixTimeSeconds().ToString();
+        var claims = new List<Claim>
+        {
+            new(AppClaimTypes.Jti, Guid.NewGuid().ToString()),
+            new(AppClaimTypes.Iss, _tokenConfigurations.Issuer),
+            new(AppClaimTypes.Aud, context.Client.Id.ToString()),
+            new(AppClaimTypes.Sub, subject),
+            new(AppClaimTypes.Sid, context.Session.Id.ToString()),
+            new(AppClaimTypes.Events, eventsJson),
+            new(AppClaimTypes.Iat, iat, ClaimValueTypes.Integer64),
+            new(AppClaimTypes.Exp, exp, ClaimValueTypes.Integer64),
         };
-
-        var claimsFactory = _claimFactoryProvider.GetClaimFactory<LogoutTokenClaimsContext, UserEntity>();
-        var claims = await claimsFactory.GetClaimsAsync(context.User, claimsContext, cancellationToken);
+        
         var tokenContext = new JwtTokenBuildContext { Claims = claims, Type = JwtTokenType.Generic };
         var tokenFactory = _tokenBuilderProvider.GetFactory<JwtTokenBuildContext, string>();
         var token = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
