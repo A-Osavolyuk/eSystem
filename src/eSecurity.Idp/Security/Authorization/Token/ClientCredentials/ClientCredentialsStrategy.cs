@@ -1,6 +1,7 @@
 ﻿using eSecurity.Idp.Security.Authentication.Client;
 using eSecurity.Idp.Security.Cryptography.Hashing;
 using eSecurity.Idp.Security.Cryptography.Tokens;
+using eSecurity.Idp.Security.Cryptography.Tokens.Access;
 using eSecurity.Idp.Security.Identity.Claims;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
@@ -89,10 +90,10 @@ public sealed class ClientCredentialsStrategy(
             TokenType = ResponseTokenType.Bearer
         };
 
-        var factoryOptions = new TokenFactoryOptions() { AllowedScopes = allowedScopes };
-        var accessTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.AccessToken);
-        var accessTokenResult = await accessTokenFactory.CreateAsync(client, 
-            factoryOptions: factoryOptions, cancellationToken: cancellationToken);
+        var factoryContext = new AccessTokenFactoryContext { Client = client };
+        var factoryOptions = new TokenFactoryOptions { AllowedScopes = allowedScopes };
+        var accessTokenFactory = _tokenFactoryProvider.GetFactory<AccessTokenFactoryContext>();
+        var accessTokenResult = await accessTokenFactory.CreateAsync(factoryContext, factoryOptions, cancellationToken);
         
         if (!accessTokenResult.Succeeded)
         {
@@ -102,7 +103,7 @@ public sealed class ClientCredentialsStrategy(
 
         if (!accessTokenResult.TryGetValue(out var accessToken))
         {
-            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error
             {
                 Code = ErrorCode.ServerError,
                 Description = "Server error"

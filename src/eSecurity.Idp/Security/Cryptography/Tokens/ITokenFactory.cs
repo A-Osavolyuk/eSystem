@@ -3,12 +3,10 @@ using eSystem.Core.Primitives;
 
 namespace eSecurity.Idp.Security.Cryptography.Tokens;
 
-public interface ITokenFactory
+public interface ITokenFactory<in TContext> where TContext : TokenFactoryContext
 {
     public ValueTask<TypedResult<string>> CreateAsync(
-        ClientEntity client, 
-        UserEntity? user = null, 
-        SessionEntity? session = null, 
-        TokenFactoryOptions? factoryOptions = null, 
+        TContext context,
+        TokenFactoryOptions? options = null, 
         CancellationToken cancellationToken = default);
 }

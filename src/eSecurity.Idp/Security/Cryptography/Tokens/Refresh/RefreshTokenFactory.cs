@@ -3,54 +3,54 @@ using eSecurity.Idp.Security.Authentication.Subject;
 using eSecurity.Idp.Security.Authorization.Token;
 using eSystem.Core.Primitives;
 
-namespace eSecurity.Idp.Security.Cryptography.Tokens;
+namespace eSecurity.Idp.Security.Cryptography.Tokens.Refresh;
 
 public sealed class RefreshTokenFactory(
     IOptions<TokenConfigurations> options,
     ITokenBuilderProvider tokenBuilderProvider,
-    ISubjectProvider subjectProvider) : ITokenFactory
+    ISubjectProvider subjectProvider) : ITokenFactory<RefreshTokenFactoryContext>
 {
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
     private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
     private readonly ISubjectProvider _subjectProvider = subjectProvider;
 
     public async ValueTask<TypedResult<string>> CreateAsync(
-        ClientEntity client, 
-        UserEntity? user = null, 
-        SessionEntity? session = null,
-        TokenFactoryOptions? factoryOptions = null, 
+        RefreshTokenFactoryContext context,
+        TokenFactoryOptions? options = null, 
         CancellationToken cancellationToken = default)
     {
         IEnumerable<string> scopes;
-        if (factoryOptions is null || factoryOptions.AllowedScopes.Count == 0)
+        if (options is null || options.AllowedScopes.Count == 0)
         {
-            scopes = client.AllowedScopes.Select(x => x.Scope.Value);
+            scopes = context.Client.AllowedScopes.Select(x => x.Scope.Value);
         }
         else
         {
-            scopes = client.AllowedScopes
-                .Where(x => factoryOptions.AllowedScopes.Contains(x.Scope.Value))
+            scopes = context.Client.AllowedScopes
+                .Where(x => options.AllowedScopes.Contains(x.Scope.Value))
                 .Select(x => x.Scope.Value);
         }
         
-        var lifetime = client.RefreshTokenLifetime ?? _tokenConfigurations.DefaultRefreshTokenLifetime;
+        var lifetime = context.Client.RefreshTokenLifetime 
+                       ?? _tokenConfigurations.DefaultRefreshTokenLifetime;
+        
         OpaqueTokenBuildContext tokenContext;
-        if (user is null)
+        if (context.User is null)
         {
             tokenContext = new OpaqueTokenBuildContext
             {
                 TokenLength = _tokenConfigurations.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.RefreshToken,
-                ClientId = client.Id,
-                Audiences = client.Audiences.Select(x => x.Audience).ToList(),
+                ClientId = context.Client.Id,
+                Audiences = context.Client.Audiences.Select(x => x.Audience).ToList(),
                 Scopes = scopes.ToList(),
                 ExpiredAt = DateTimeOffset.UtcNow.Add(lifetime),
-                Subject = client.Id.ToString()
+                Subject = context.Client.Id.ToString()
             };
         }
         else
         {
-            var subjectResult = await _subjectProvider.GetSubjectAsync(user, client, cancellationToken);
+            var subjectResult = await _subjectProvider.GetSubjectAsync(context.User, context.Client, cancellationToken);
             if (!subjectResult.Succeeded || !subjectResult.TryGetValue(out var subject))
             {
                 return TypedResult<string>.Fail(new Error()
@@ -64,12 +64,12 @@ public sealed class RefreshTokenFactory(
             {
                 TokenLength = _tokenConfigurations.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.RefreshToken,
-                ClientId = client.Id,
-                Audiences = client.Audiences.Select(x => x.Audience).ToList(),
+                ClientId = context.Client.Id,
+                Audiences = context.Client.Audiences.Select(x => x.Audience).ToList(),
                 Scopes = scopes.ToList(),
                 ExpiredAt = DateTimeOffset.UtcNow.Add(lifetime),
                 Subject = subject,
-                Sid = session?.Id
+                Sid = context.Session?.Id
             };
         }
 

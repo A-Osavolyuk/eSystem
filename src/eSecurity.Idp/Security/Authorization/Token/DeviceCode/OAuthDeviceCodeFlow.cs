@@ -1,6 +1,9 @@
 ﻿using eSecurity.Idp.Data.Entities;
 using eSecurity.Idp.Security.Authentication.Client;
 using eSecurity.Idp.Security.Cryptography.Tokens;
+using eSecurity.Idp.Security.Cryptography.Tokens.Access;
+using eSecurity.Idp.Security.Cryptography.Tokens.Login;
+using eSecurity.Idp.Security.Cryptography.Tokens.Refresh;
 using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
@@ -59,8 +62,16 @@ public sealed class OAuthDeviceCodeFlow(
             TokenType = ResponseTokenType.Bearer,
         };
 
-        var accessTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.AccessToken);
-        var accessTokenResult = await accessTokenFactory.CreateAsync(client, user, cancellationToken: cancellationToken);
+        var accessTokenFactoryContext = new AccessTokenFactoryContext()
+        {
+            Client = client,
+            User = user
+        };
+        
+        var accessTokenFactory = _tokenFactoryProvider.GetFactory<AccessTokenFactoryContext>();
+        var accessTokenResult = await accessTokenFactory.CreateAsync(accessTokenFactoryContext, 
+            cancellationToken: cancellationToken);
+        
         if (!accessTokenResult.Succeeded)
         {
             var error = accessTokenResult.GetError();
@@ -80,8 +91,16 @@ public sealed class OAuthDeviceCodeFlow(
         
         if (client.AllowOfflineAccess && client.HasScope(ScopeTypes.OfflineAccess))
         {
-            var refreshTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.RefreshToken);
-            var refreshTokenResult = await refreshTokenFactory.CreateAsync(client, user, cancellationToken: cancellationToken);
+            var refreshTokenFactoryContext = new RefreshTokenFactoryContext()
+            {
+                Client = client,
+                User = user
+            };
+            
+            var refreshTokenFactory = _tokenFactoryProvider.GetFactory<RefreshTokenFactoryContext>();
+            var refreshTokenResult = await refreshTokenFactory.CreateAsync(refreshTokenFactoryContext, 
+                cancellationToken: cancellationToken);
+            
             if (!refreshTokenResult.Succeeded)
             {
                 var error = refreshTokenResult.GetError();
@@ -102,8 +121,16 @@ public sealed class OAuthDeviceCodeFlow(
 
         if (client.HasGrantType(GrantType.Ciba))
         {
-            var loginTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.LoginToken);
-            var loginTokenResult = await loginTokenFactory.CreateAsync(client, user, cancellationToken: cancellationToken);
+            var loginTokenFactoryContext = new LoginTokenFactoryContext()
+            {
+                Client = client,
+                User = user
+            };
+                
+            var loginTokenFactory = _tokenFactoryProvider.GetFactory<LoginTokenFactoryContext>();
+            var loginTokenResult = await loginTokenFactory.CreateAsync(loginTokenFactoryContext, 
+                cancellationToken: cancellationToken);
+            
             if (!loginTokenResult.Succeeded)
             {
                 var error = loginTokenResult.GetError();

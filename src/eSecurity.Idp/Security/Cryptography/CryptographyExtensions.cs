@@ -5,6 +5,11 @@ using eSecurity.Idp.Security.Cryptography.Keys;
 using eSecurity.Idp.Security.Cryptography.Signing;
 using eSecurity.Idp.Security.Cryptography.Signing.Certificates;
 using eSecurity.Idp.Security.Cryptography.Tokens;
+using eSecurity.Idp.Security.Cryptography.Tokens.Access;
+using eSecurity.Idp.Security.Cryptography.Tokens.Id;
+using eSecurity.Idp.Security.Cryptography.Tokens.Login;
+using eSecurity.Idp.Security.Cryptography.Tokens.Logout;
+using eSecurity.Idp.Security.Cryptography.Tokens.Refresh;
 using eSystem.Core.Security.Authorization.OAuth;
 
 namespace eSecurity.Idp.Security.Cryptography;
@@ -69,16 +74,16 @@ public static class CryptographyExtensions
             services.Configure(configure);
 
             services.AddScoped<ITokenBuilderProvider, TokenBuilderProvider>();
-            services.AddScoped<ITokenBuilder<JwtTokenBuildContext, string>, JwtTokenBuilder>();
-            services.AddScoped<ITokenBuilder<OpaqueTokenBuildContext, string>, OpaqueTokenBuilder>();
+            services.AddScoped<ITokenBuilder<JwtTokenBuildContext>, JwtTokenBuilder>();
+            services.AddScoped<ITokenBuilder<OpaqueTokenBuildContext>, OpaqueTokenBuilder>();
             services.AddScoped<IJwtSigner, JwtSigner>();
 
             services.AddScoped<ITokenFactoryProvider, TokenFactoryProvider>();
-            services.AddKeyedScoped<ITokenFactory, AccessTokenFactory>(TokenType.AccessToken);
-            services.AddKeyedScoped<ITokenFactory, RefreshTokenFactory>(TokenType.RefreshToken);
-            services.AddKeyedScoped<ITokenFactory, IdTokenFactory>(TokenType.IdToken);
-            services.AddKeyedScoped<ITokenFactory, LogoutTokenFactory>(TokenType.LogoutToken);
-            services.AddKeyedScoped<ITokenFactory, LoginTokenFactory>(TokenType.LoginToken);
+            services.AddScoped<ITokenFactory<AccessTokenFactoryContext>, AccessTokenFactory>();
+            services.AddScoped<ITokenFactory<RefreshTokenFactoryContext>, RefreshTokenFactory>();
+            services.AddScoped<ITokenFactory<IdTokenFactoryContext>, IdTokenFactory>();
+            services.AddScoped<ITokenFactory<LogoutTokenFactoryContext>, LogoutTokenFactory>();
+            services.AddScoped<ITokenFactory<LoginTokenFactoryContext>, LoginTokenFactory>();
         }
     }
 }

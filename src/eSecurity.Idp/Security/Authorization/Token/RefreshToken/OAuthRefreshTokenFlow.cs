@@ -1,6 +1,8 @@
 ﻿using eSecurity.Idp.Data.Entities;
 using eSecurity.Idp.Security.Authentication.Client;
 using eSecurity.Idp.Security.Cryptography.Tokens;
+using eSecurity.Idp.Security.Cryptography.Tokens.Access;
+using eSecurity.Idp.Security.Cryptography.Tokens.Refresh;
 using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
@@ -78,9 +80,15 @@ public sealed class OAuthRefreshTokenFlow(
             TokenType = ResponseTokenType.Bearer,
         };
 
-        var accessTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.AccessToken);
-        var accessTokenResult = await accessTokenFactory.CreateAsync(client, 
-            user, cancellationToken: cancellationToken);
+        var accessTokenFactoryContext = new AccessTokenFactoryContext()
+        {
+            Client = client,
+            User = user
+        };
+        
+        var accessTokenFactory = _tokenFactoryProvider.GetFactory<AccessTokenFactoryContext>();
+        var accessTokenResult = await accessTokenFactory.CreateAsync(accessTokenFactoryContext, 
+            cancellationToken: cancellationToken);
         
         if (!accessTokenResult.Succeeded)
         {
@@ -101,9 +109,15 @@ public sealed class OAuthRefreshTokenFlow(
 
         if (client.RefreshTokenRotationEnabled)
         {
-            var refreshTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.RefreshToken);
-            var refreshTokenResult = await refreshTokenFactory.CreateAsync(client, 
-                user, cancellationToken: cancellationToken);
+            var refreshTokenFactoryContext = new RefreshTokenFactoryContext()
+            {
+                Client = client,
+                User = user
+            };
+            
+            var refreshTokenFactory = _tokenFactoryProvider.GetFactory<RefreshTokenFactoryContext>();
+            var refreshTokenResult = await refreshTokenFactory.CreateAsync(refreshTokenFactoryContext, 
+                cancellationToken: cancellationToken);
             
             if (!refreshTokenResult.Succeeded)
             {

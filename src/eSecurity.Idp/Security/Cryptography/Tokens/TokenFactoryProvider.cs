@@ -6,6 +6,6 @@ public sealed class TokenFactoryProvider(IServiceProvider serviceProvider) : ITo
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
 
-    public ITokenFactory GetFactory(TokenType tokenType)
-        => _serviceProvider.GetRequiredKeyedService<ITokenFactory>(tokenType);
+    public ITokenFactory<TContext> GetFactory<TContext>() where TContext : TokenFactoryContext
+        => _serviceProvider.GetRequiredService<ITokenFactory<TContext>>();
 }

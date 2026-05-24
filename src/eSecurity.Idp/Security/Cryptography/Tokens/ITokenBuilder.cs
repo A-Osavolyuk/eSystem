@@ -1,6 +1,6 @@
 ﻿namespace eSecurity.Idp.Security.Cryptography.Tokens;
 
-public interface ITokenBuilder<in TContext, TResult> where TContext : TokenBuildContext
+public interface ITokenBuilder<in TContext> where TContext : TokenBuildContext
 {
-    public ValueTask<TResult> BuildAsync(TContext context, CancellationToken cancellationToken = default);
+    public ValueTask<string> BuildAsync(TContext context, CancellationToken cancellationToken = default);
 }

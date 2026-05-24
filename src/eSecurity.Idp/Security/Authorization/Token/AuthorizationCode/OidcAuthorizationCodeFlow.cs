@@ -2,6 +2,9 @@
 using eSecurity.Idp.Security.Authentication.Client;
 using eSecurity.Idp.Security.Cryptography.Pkce;
 using eSecurity.Idp.Security.Cryptography.Tokens;
+using eSecurity.Idp.Security.Cryptography.Tokens.Access;
+using eSecurity.Idp.Security.Cryptography.Tokens.Id;
+using eSecurity.Idp.Security.Cryptography.Tokens.Refresh;
 using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
@@ -116,9 +119,16 @@ public class OidcAuthorizationCodeFlow(
             });
         }
 
-        var accessTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.AccessToken);
-        var accessTokenResult = await accessTokenFactory.CreateAsync(client, user,
-            session, cancellationToken: cancellationToken);
+        var accessTokenFactoryContext = new AccessTokenFactoryContext()
+        {
+            Client = client,
+            User = user,
+            Session = session
+        };
+            
+        var accessTokenFactory = _tokenFactoryProvider.GetFactory<AccessTokenFactoryContext>();
+        var accessTokenResult = await accessTokenFactory.CreateAsync(accessTokenFactoryContext, 
+            cancellationToken: cancellationToken);
 
         if (!accessTokenResult.Succeeded)
         {
@@ -142,9 +152,16 @@ public class OidcAuthorizationCodeFlow(
 
         if (client.AllowOfflineAccess && client.HasScope(ScopeTypes.OfflineAccess))
         {
-            var refreshTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.RefreshToken);
-            var refreshTokenResult = await refreshTokenFactory.CreateAsync(client, user,
-                session, cancellationToken: cancellationToken);
+            var refreshTokenFactoryContext = new RefreshTokenFactoryContext()
+            {
+                Client = client,
+                User = user,
+                Session = session
+            };
+                
+            var refreshTokenFactory = _tokenFactoryProvider.GetFactory<RefreshTokenFactoryContext>();
+            var refreshTokenResult = await refreshTokenFactory.CreateAsync(refreshTokenFactoryContext, 
+                cancellationToken: cancellationToken);
 
             if (!refreshTokenResult.TryGetValue(out var refreshToken))
             {
@@ -158,10 +175,16 @@ public class OidcAuthorizationCodeFlow(
             response.RefreshToken = refreshToken;
         }
 
-        var idTokenFactory = _tokenFactoryProvider.GetFactory(TokenType.IdToken);
+        var idTokenFactoryContext = new IdTokenFactoryContext()
+        {
+            Client = client,
+            User = user,
+            Session = session
+        };
+        
+        var idTokenFactory = _tokenFactoryProvider.GetFactory<IdTokenFactoryContext>();
         var idFactoryOptions = new TokenFactoryOptions() { Nonce = code.Nonce };
-        var idTokenResult = await idTokenFactory.CreateAsync(client, user, 
-            session, idFactoryOptions, cancellationToken);
+        var idTokenResult = await idTokenFactory.CreateAsync(idTokenFactoryContext, idFactoryOptions, cancellationToken);
         
         if (!idTokenResult.Succeeded)
         {

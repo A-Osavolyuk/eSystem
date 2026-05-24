@@ -2,5 +2,5 @@
 
 public interface ITokenBuilderProvider
 {
-    public ITokenBuilder<TContext, TResult> GetFactory<TContext, TResult>() where TContext : TokenBuildContext;
+    public ITokenBuilder<TContext> GetFactory<TContext, TResult>() where TContext : TokenBuildContext;
 }

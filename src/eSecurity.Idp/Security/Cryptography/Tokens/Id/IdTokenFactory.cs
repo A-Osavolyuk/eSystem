@@ -6,13 +6,13 @@ using eSystem.Core.Enums;
 using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authorization.OAuth;
 
-namespace eSecurity.Idp.Security.Cryptography.Tokens;
+namespace eSecurity.Idp.Security.Cryptography.Tokens.Id;
 
 public sealed class IdTokenFactory(
     IOptions<TokenConfigurations> options,
     IClaimFactoryProvider claimFactoryProvider,
     ITokenBuilderProvider tokenBuilderProvider,
-    ISubjectProvider subjectProvider) : ITokenFactory
+    ISubjectProvider subjectProvider) : ITokenFactory<IdTokenFactoryContext>
 {
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
     private readonly IClaimFactoryProvider _claimFactoryProvider = claimFactoryProvider;
@@ -20,34 +20,23 @@ public sealed class IdTokenFactory(
     private readonly ISubjectProvider _subjectProvider = subjectProvider;
 
     public async ValueTask<TypedResult<string>> CreateAsync(
-        ClientEntity client, 
-        UserEntity? user = null, 
-        SessionEntity? session = null, 
-        TokenFactoryOptions? factoryOptions = null, 
+        IdTokenFactoryContext context,
+        TokenFactoryOptions? options = null, 
         CancellationToken cancellationToken = default)
     {
-        if (user is null || session is null)
-        {
-            return TypedResult<string>.Fail(new Error()
-            {
-                Code = ErrorCode.ServerError,
-                Description = "Server error"
-            });
-        }
-        
         IEnumerable<string> scopes;
-        if (factoryOptions is null || factoryOptions.AllowedScopes.Count == 0)
+        if (options is null || options.AllowedScopes.Count == 0)
         {
-            scopes = client.AllowedScopes.Select(x => x.Scope.Value);
+            scopes = context.Client.AllowedScopes.Select(x => x.Scope.Value);
         }
         else
         {
-            scopes = client.AllowedScopes
-                .Where(x => factoryOptions.AllowedScopes.Contains(x.Scope.Value))
+            scopes = context.Client.AllowedScopes
+                .Where(x => options.AllowedScopes.Contains(x.Scope.Value))
                 .Select(x => x.Scope.Value);
         }
         
-        var subjectResult = await _subjectProvider.GetSubjectAsync(user, client, cancellationToken);
+        var subjectResult = await _subjectProvider.GetSubjectAsync(context.User, context.Client, cancellationToken);
         if (!subjectResult.Succeeded || !subjectResult.TryGetValue(out var subject))
         {
             return TypedResult<string>.Fail(new Error()
@@ -57,22 +46,22 @@ public sealed class IdTokenFactory(
             });
         }
         
-        var tokenLifetime = client.IdTokenLifetime ?? _tokenConfigurations.DefaultIdTokenLifetime;
+        var tokenLifetime = context.Client.IdTokenLifetime ?? _tokenConfigurations.DefaultIdTokenLifetime;
         var claimsFactory = _claimFactoryProvider.GetClaimFactory<IdTokenClaimsContext, UserEntity>();
-        var authenticationMethods = session.AuthenticationMethods
+        var authenticationMethods = context.Session.AuthenticationMethods
             .Select(x => x.MethodReference.GetString())
             .ToArray();
         
-        var claims = await claimsFactory.GetClaimsAsync(user, new IdTokenClaimsContext
+        var claims = await claimsFactory.GetClaimsAsync(context.User, new IdTokenClaimsContext
         {
             Subject = subject,
-            Audience = client.Id.ToString(),
+            Audience = context.Client.Id.ToString(),
             Scopes = scopes,
-            SessionId = session.Id.ToString(),
+            SessionId = context.Session.Id.ToString(),
             AuthenticationMethods = authenticationMethods,
             AuthTime = DateTimeOffset.UtcNow,
             Expiration = DateTimeOffset.UtcNow.Add(tokenLifetime),
-            Nonce = factoryOptions?.Nonce
+            Nonce = options?.Nonce
         }, cancellationToken);
 
         var tokenContext = new JwtTokenBuildContext { Claims = claims, Type = JwtTokenType.IdToken };

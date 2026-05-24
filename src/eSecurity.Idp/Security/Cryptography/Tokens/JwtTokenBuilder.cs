@@ -14,7 +14,7 @@ public sealed class JwtTokenBuildContext : TokenBuildContext
 
 public class JwtTokenBuilder(
     IJwtSigner signer,
-    ICertificateProvider certificateProvider) : ITokenBuilder<JwtTokenBuildContext, string>
+    ICertificateProvider certificateProvider) : ITokenBuilder<JwtTokenBuildContext>
 {
     private readonly IJwtSigner _signer = signer;
     private readonly ICertificateProvider _certificateProvider = certificateProvider;

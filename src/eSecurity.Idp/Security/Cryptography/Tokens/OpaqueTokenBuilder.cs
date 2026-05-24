@@ -25,7 +25,7 @@ public class OpaqueTokenBuilder(
     IKeyFactory keyFactory,
     ITokenManager tokenManager,
     IHasherProvider hasherProvider,
-    IClientManager clientManager) : ITokenBuilder<OpaqueTokenBuildContext, string>
+    IClientManager clientManager) : ITokenBuilder<OpaqueTokenBuildContext>
 {
     private readonly IKeyFactory _keyFactory = keyFactory;
     private readonly ITokenManager _tokenManager = tokenManager;
