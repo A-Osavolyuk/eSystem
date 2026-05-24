@@ -4,6 +4,6 @@ namespace eSecurity.Core.Requests;
 
 public sealed class GenerateRequestOptionsRequest
 {
-    [JsonPropertyName("subject")]
-    public string? Subject { get; set; }
+    [JsonPropertyName("user_hint")]
+    public string? UserHint { get; set; }
 }

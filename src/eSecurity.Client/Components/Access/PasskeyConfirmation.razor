@@ -1,10 +1,12 @@
 ﻿@using eSecurity.Client.Common.Confirmation
 @using eSecurity.Client.Common.JS.WebAuthN
+@using eSecurity.Client.Common.State
 @using eSecurity.Client.Security.Authorization.Verification
 @using eSecurity.Client.Security.Credentials.PublicKey
 @using eSecurity.WebAuthN
 
 @inject WebAuthNManager WebAuthNManager
+@inject UserState UserState
 @inject ISnackbar Snackbar
 @inject IVerificationService VerificationService
 @inject IPasskeyService PasskeyService
@@ -103,7 +105,7 @@
     {
         _isLoading = true;
         _showError = false;
-        var request = new GenerateRequestOptionsRequest();
+        var request = new GenerateRequestOptionsRequest { UserHint = UserState.Email };
         var result = await PasskeyService.GenerateRequestOptionsAsync(request);
 
         if (result.Succeeded && result.TryGetValue<PublicKeyCredentialRequestOptions>(out var value))

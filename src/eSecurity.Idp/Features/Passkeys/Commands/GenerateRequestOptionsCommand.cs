@@ -42,10 +42,10 @@ public class GenerateRequestOptionsCommandHandler(
             Domain = _credentialOptions.Domain,
             UserVerification = UserVerifications.Required,
         };
-
-        if (!string.IsNullOrEmpty(request.Request.Subject))
+        
+        if (!string.IsNullOrEmpty(request.Request.UserHint))
         {
-            var user = await _userManager.FindBySubjectAsync(request.Request.Subject, cancellationToken);
+            var user = await _userManager.FindByLoginAsync(request.Request.UserHint, cancellationToken);
             if (user is null)
             {
                 return Results.ClientError(ClientErrorCode.NotFound, new Error
