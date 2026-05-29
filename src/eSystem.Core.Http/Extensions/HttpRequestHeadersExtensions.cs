@@ -1,4 +1,4 @@
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Text;
 using eSystem.Core.Http.Constants;
 
@@ -19,26 +19,6 @@ public static class HttpRequestHeadersExtensions
             var base64 = Convert.ToBase64String(bytes);
             
             headers.Authorization = new AuthenticationHeaderValue(AuthenticationTypes.Basic, base64);
-        }
-        
-        public void WithUserAgent(string userAgent)
-        {
-            headers.Add(HeaderTypes.UserAgent, userAgent);
-        }
-        
-        public void WithCookies(string cookies)
-        {
-            headers.Add(HeaderTypes.Cookie, cookies);
-        }
-
-        public void WithLocale(string locale)
-        {
-            headers.Add(HeaderTypes.XLocale, locale);
-        }
-        
-        public void WithTimeZone(string timezone)
-        {
-            headers.Add(HeaderTypes.XTimezone, timezone);
         }
     }
 }

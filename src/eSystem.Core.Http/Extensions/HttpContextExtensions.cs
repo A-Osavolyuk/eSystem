@@ -45,16 +45,6 @@ public static class HttpContextExtensions
             return clientInfo;
         }
 
-        public string GetCookies()
-        {
-            var cookies = context.Request.Cookies
-                .ToDictionary(cookie => cookie.Key, cookie => cookie.Value)
-                .Select(cookie => $"{cookie.Key}={cookie.Value}")
-                .Aggregate((acc, item) => $"{acc}; {item}");
-
-            return cookies;
-        }
-
         public IActionResult HandleResult(Result result)
         {
             var statusCode = (int)result.StatusCode;
