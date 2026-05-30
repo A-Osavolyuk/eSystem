@@ -1,16 +1,16 @@
 ﻿using eSystem.Core.Server.Messaging;
+using eSystem.Core.Server.Messaging.Sms;
 using eSystem.SmsSender.Api.Interfaces;
 
 namespace eSystem.SmsSender.Api.Consumers;
 
-public class SmsConsumer(ISmsService smsService) : IConsumer<MessageRequest>
+public class SmsConsumer(ISmsService smsService) : IConsumer<SendSmsRequest>
 {
     private readonly ISmsService _smsService = smsService;
     
-    public async Task Consume(ConsumeContext<MessageRequest> context)
+    public async Task Consume(ConsumeContext<SendSmsRequest> context)
     {
         var message = context.Message;
-
-        await _smsService.SendMessageAsync(message.Credentials["To"], message.Body);
+        await _smsService.SendMessageAsync(message.Credentials.To, message.Body);
     }
 }

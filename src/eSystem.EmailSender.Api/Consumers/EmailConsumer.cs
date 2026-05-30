@@ -1,18 +1,18 @@
-﻿using eSystem.Core.Server.Messaging;
+﻿using eSystem.Core.Server.Messaging.Email;
 
 namespace eSystem.EmailSender.Api.Consumers;
 
-public class EmailConsumer(IEmailService emailService) : IConsumer<MessageRequest>
+public sealed class EmailConsumer(IEmailService emailService) : IConsumer<SendEmailRequest>
 {
     private readonly IEmailService _emailService = emailService;
 
-    public async Task Consume(ConsumeContext<MessageRequest> context)
+    public async Task Consume(ConsumeContext<SendEmailRequest> context)
     {
         var message = context.Message;
         var options = new MessageOptions
         {
-            Subject = message.Credentials["Subject"],
-            To = message.Credentials["To"],
+            Subject = message.Credentials.Subject,
+            To = message.Credentials.To,
         };
         
         await _emailService.SendMessageAsync(message.Body, options);

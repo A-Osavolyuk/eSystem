@@ -1,10 +1,13 @@
-﻿using eSystem.Core.Server.Messaging;
+﻿namespace eSecurity.Idp.Common.Messaging.Email.Builders;
 
-namespace eSecurity.Idp.Common.Messaging.Messages.Email;
-
-public class EmailMessage : Message
+public sealed class OAuthSignedUpEmailContext : EmailContext
 {
-    public override string Build()
+    public required string Provider { get; set; }
+}
+
+public sealed class OAuthSignedUpEmailBuilder : IEmailBuilder<OAuthSignedUpEmailContext>
+{
+    public string Build(OAuthSignedUpEmailContext context)
     {
         return $"""
                 <!doctype html>
@@ -12,26 +15,21 @@ public class EmailMessage : Message
                   <head>
                     <meta charset="UTF-8" />
                     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-                    <title>{Credentials["Subject"]}</title>
+                    <title>{context.Subject}</title>
                   </head>
                   <body style="background-color: rgb(230, 229, 229); padding: 20px">
                     <div style="width: 600px; margin: auto; padding: 1px; background-color: white">
                       <div style="padding: 50px 50px; margin: auto">
                         <h1 style="font: bold 24px Arial, sans-serif; margin: 0; margin-bottom: 40px; text-align: center;">
-                          {Credentials["Subject"]}
+                          {context.Subject}
                         </h1>
                         <p style="font: 16px Arial, sans-serif; margin: 0;">
-                          {Payload["Content"]}.
+                          Your account was successfully signed-up with {context.Provider}.
                         </p>
                       </div>
                     </div>
                   </body>
                 </html>
                 """;
-    }
-
-    public override void Initialize(Dictionary<string, string> payload)
-    {
-        Payload = payload;
     }
 }

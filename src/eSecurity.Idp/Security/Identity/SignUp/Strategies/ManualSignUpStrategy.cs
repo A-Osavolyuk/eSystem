@@ -1,5 +1,3 @@
-using eSecurity.Idp.Common.Messaging;
-using eSecurity.Idp.Common.Messaging.Messages.Email;
 using eSecurity.Idp.Data.Entities;
 using eSecurity.Idp.Security.Authentication.Password;
 using eSecurity.Idp.Security.Authentication.Session;
@@ -12,6 +10,8 @@ using eSecurity.Idp.Security.Identity.User;
 using eSecurity.Idp.Security.Identity.User.Username;
 using eSecurity.Core.Responses;
 using eSecurity.Core.Security.Identity;
+using eSecurity.Idp.Common.Messaging.Email;
+using eSecurity.Idp.Common.Messaging.Email.Builders;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Messaging;
 using eSystem.Core.Primitives;
@@ -35,7 +35,7 @@ public sealed class ManualSignUpStrategy(
     IDeviceManager deviceManager,
     IEmailManager emailManager,
     IHttpContextAccessor httpContextAccessor,
-    IMessageService messageService,
+    IEmailService emailService,
     ICodeManager codeManager,
     IAuthenticationSessionManager sessionManager,
     IOptions<AccountOptions> options) : ISignUpStrategy
@@ -46,7 +46,7 @@ public sealed class ManualSignUpStrategy(
     private readonly IRoleManager _roleManager = roleManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly IEmailManager _emailManager = emailManager;
-    private readonly IMessageService _messageService = messageService;
+    private readonly IEmailService _emailService = emailService;
     private readonly ICodeManager _codeManager = codeManager;
     private readonly IAuthenticationSessionManager _sessionManager = sessionManager;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
@@ -138,21 +138,14 @@ public sealed class ManualSignUpStrategy(
         if (!deviceResult.Succeeded) return deviceResult;
 
         var code = await _codeManager.CreateAsync(user, SenderType.Email, cancellationToken);
-        
-        var message = new CodeEmailMessage
+        var emailContext = new CodeVerificationEmailContext
         {
-            Credentials = new Dictionary<string, string>
-            {
-                { "To", manualPayload.Email },
-                { "Subject", "Sign Up" },
-            },
-            Payload = new()
-            {
-                { "Code", code }
-            }
+            Subject = "Sign Up",
+            To = manualPayload.Email,
+            Code = code
         };
 
-        await _messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
+        await _emailService.SendAsync(emailContext, cancellationToken);
 
         var session = new AuthenticationSessionEntity
         {

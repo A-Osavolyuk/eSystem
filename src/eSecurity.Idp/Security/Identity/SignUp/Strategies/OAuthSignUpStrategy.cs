@@ -1,5 +1,3 @@
-using eSecurity.Idp.Common.Messaging;
-using eSecurity.Idp.Common.Messaging.Messages.Email;
 using eSecurity.Idp.Data.Entities;
 using eSecurity.Idp.Security.Authentication.Session;
 using eSecurity.Idp.Security.Authorization.Devices;
@@ -8,9 +6,10 @@ using eSecurity.Idp.Security.Identity.Email;
 using eSecurity.Idp.Security.Identity.User;
 using eSecurity.Core.Security.Authorization.OAuth;
 using eSecurity.Core.Security.Identity;
+using eSecurity.Idp.Common.Messaging.Email;
+using eSecurity.Idp.Common.Messaging.Email.Builders;
 using eSecurity.Idp.Security.Authorization.LinkedAccount;
 using eSystem.Core.Http.Extensions;
-using eSystem.Core.Messaging;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Utilities.Query;
@@ -29,7 +28,6 @@ public sealed class OAuthSignUpPayload : SignUpPayload
 
 public sealed class OAuthSignUpStrategy(
     IUserManager userManager,
-    IMessageService messageService,
     IRoleManager roleManager,
     ILinkedAccountManager providerManager,
     IDeviceManager deviceManager,
@@ -37,17 +35,18 @@ public sealed class OAuthSignUpStrategy(
     IEmailManager emailManager,
     ISessionManager sessionManager,
     IAuthenticationSessionManager authenticationSessionManager,
-    IOptions<Session_SessionOptions> sessionOptions) : ISignUpStrategy
+    IOptions<Session_SessionOptions> sessionOptions,
+    IEmailService emailService) : ISignUpStrategy
 {
     private readonly IUserManager _userManager = userManager;
-    private readonly IMessageService _messageService = messageService;
     private readonly IRoleManager _roleManager = roleManager;
     private readonly ILinkedAccountManager _providerManager = providerManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly IEmailManager _emailManager = emailManager;
-    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
+    private readonly IEmailService _emailService = emailService;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly Session_SessionOptions _sessionOptions = sessionOptions.Value;
 
     public async ValueTask<Result> ExecuteAsync(SignUpPayload payload,
@@ -136,21 +135,15 @@ public sealed class OAuthSignUpStrategy(
                 Description = "Email not found"
             });
         }
-        
-        var message = new EmailMessage
+
+        var emailContext = new OAuthSignedUpEmailContext()
         {
-            Credentials = new Dictionary<string, string>
-            {
-                { "To", email.Email },
-                { "Subject", $"Sign Up with {oauthPayload.Provider.ToString()}" },
-            },
-            Payload = new()
-            {
-                { "Content", $"Your account was successfully signed-up with {oauthPayload.Provider.ToString()}" }
-            }
+            Subject = $"Sign Up with {oauthPayload.Provider.ToString()}",
+            To = email.Email,
+            Provider = oauthPayload.Provider.ToString()
         };
 
-        await _messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
+        await _emailService.SendAsync(emailContext, cancellationToken);
 
         var userLinkedAccount = new UserLinkedAccountEntity
         {

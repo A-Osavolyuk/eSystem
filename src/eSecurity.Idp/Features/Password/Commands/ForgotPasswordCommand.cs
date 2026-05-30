@@ -1,9 +1,9 @@
-﻿using eSecurity.Idp.Common.Messaging;
-using eSecurity.Idp.Common.Messaging.Messages.Email;
-using eSecurity.Idp.Security.Authentication.Password;
+﻿using eSecurity.Idp.Security.Authentication.Password;
 using eSecurity.Idp.Security.Authorization.Codes;
 using eSecurity.Idp.Security.Identity.User;
 using eSecurity.Core.Requests;
+using eSecurity.Idp.Common.Messaging.Email;
+using eSecurity.Idp.Common.Messaging.Email.Builders;
 using eSystem.Core.Messaging;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
@@ -16,12 +16,12 @@ public sealed class ForgotPasswordCommandHandler(
     IUserManager userManager,
     IPasswordManager passwordManager,
     ICodeManager codeManager,
-    IMessageService messageService) : IRequestHandler<ForgotPasswordCommand, Result>
+    IEmailService emailService) : IRequestHandler<ForgotPasswordCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IPasswordManager _passwordManager = passwordManager;
     private readonly ICodeManager _codeManager = codeManager;
-    private readonly IMessageService _messageService = messageService;
+    private readonly IEmailService _emailService = emailService;
 
     public async Task<Result> Handle(ForgotPasswordCommand request,
         CancellationToken cancellationToken)
@@ -46,20 +46,14 @@ public sealed class ForgotPasswordCommandHandler(
         }
 
         var code = await _codeManager.CreateAsync(user, SenderType.Email, cancellationToken);
-        var message = new CodeEmailMessage
+        var emailContext = new CodeVerificationEmailContext()
         {
-            Credentials = new Dictionary<string, string>
-            {
-                { "To", request.Request.Email },
-                { "Subject", "Forgot password" },
-            },
-            Payload = new()
-            {
-                { "Code", code }
-            }
+            Subject = "Forgot password",
+            To = request.Request.Email,
+            Code = code
         };
-        
-        await _messageService.SendMessageAsync(SenderType.Email, message, cancellationToken);
+
+        await _emailService.SendAsync(emailContext, cancellationToken);
         
         return Results.Success(SuccessCodes.Ok);
     }

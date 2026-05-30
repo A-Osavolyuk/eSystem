@@ -1,16 +1,16 @@
-﻿using eSecurity.Idp.Common.Messaging;
-using eSecurity.Idp.Common.Messaging.Messages.Email;
-using eSecurity.Idp.Common.Messaging.Messages.Sms;
-using eSecurity.Idp.Security.Authorization.Codes;
+﻿using eSecurity.Idp.Security.Authorization.Codes;
 using eSecurity.Idp.Security.Identity.Options;
 using eSecurity.Idp.Security.Identity.User;
 using eSecurity.Core.Requests;
 using eSecurity.Core.Responses;
+using eSecurity.Idp.Common.Messaging.Email;
+using eSecurity.Idp.Common.Messaging.Email.Builders;
+using eSecurity.Idp.Common.Messaging.Sms;
+using eSecurity.Idp.Common.Messaging.Sms.Builders;
 using eSystem.Core.Messaging;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Identity.Claims;
-using eSystem.Core.Server.Messaging;
 
 namespace eSecurity.Idp.Features.Verification.Commands;
 
@@ -19,13 +19,15 @@ public record ResendCodeCommand(ResendCodeRequest Request) : IRequest<Result>;
 public class ResendCodeCommandHandler(
     IUserManager userManager,
     ICodeManager codeManager,
-    IMessageService messageService,
     IOptions<CodeOptions> options,
+    IEmailService emailService,
+    ISmsService smsService,
     IHttpContextAccessor httpContextAccessor) : IRequestHandler<ResendCodeCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly ICodeManager _codeManager = codeManager;
-    private readonly IMessageService _messageService = messageService;
+    private readonly IEmailService _emailService = emailService;
+    private readonly ISmsService _smsService = smsService;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly CodeOptions _options = options.Value;
     
@@ -71,32 +73,29 @@ public class ResendCodeCommandHandler(
 
         var userUpdateResult = await _userManager.UpdateAsync(user, cancellationToken);
         if (!userUpdateResult.Succeeded) return userUpdateResult;
-
-        var sender = request.Request.Sender;
-        var payload = request.Request.Payload;
-
-        var code = await _codeManager.CreateAsync(user, sender, cancellationToken);
-        payload["Code"] = code; 
-        payload["UserName"] = user.Username;
-
-        Message? message = sender switch
+        
+        var code = await _codeManager.CreateAsync(user, request.Request.Sender, cancellationToken);
+        if (request.Request.Sender is SenderType.Email)
         {
-            SenderType.Email => new CodeEmailMessage(),
-            SenderType.Sms => new CodeSmsMessage(),
-            _ => null
-        };
-
-        if (message is null)
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error
+            var emailContext = new CodeVerificationEmailContext()
             {
-                Code = ErrorCode.BadRequest,
-                Description = "Invalid message type."
-            });
-        }
+                Code = code,
+                Subject = request.Request.Payload["Subject"],
+                To = request.Request.Payload["To"]
+            };
 
-        message.Initialize(payload);
-        await _messageService.SendMessageAsync(sender, message, cancellationToken);
+            await _emailService.SendAsync(emailContext, cancellationToken);
+        }
+        else
+        {
+            var smsContext = new CodeVerificationSmsContext()
+            {
+                Code = code,
+                To = request.Request.Payload["To"]
+            };
+
+            await _smsService.SendAsync(smsContext, cancellationToken);
+        }
 
         var response = new ResendCodeResponse
         {
