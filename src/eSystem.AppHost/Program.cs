@@ -35,28 +35,20 @@ var smsService = builder.AddProject<Projects.eSystem_SmsSender_Api>("sms-sender"
     .WithReference(rabbitMq).WaitFor(rabbitMq)
     .WithReference(redisCache).WaitFor(redisCache);
 
-var telegramService = builder.AddProject<Projects.eSystem_Telegram_Bot>("telegram-bot")
-    .WithReference(rabbitMq).WaitFor(rabbitMq)
-    .WithReference(redisCache).WaitFor(redisCache);
-
-var eMessageServer = builder.AddProject<Projects.eSystem_MessageBus>("message-bus")
-    .WithReference(rabbitMq).WaitFor(rabbitMq)
-    .WaitFor(emailService)
-    .WaitFor(smsService)
-    .WaitFor(telegramService);
-
 var eSecurityIdp = builder.AddProject<Projects.eSecurity_Idp>("e-security-idp")
     .WithReference(eSecurityDb).WaitFor(eSecurityDb)
     .WithReference(redisCache).WaitFor(redisCache)
     .WithReference(rabbitMq).WaitFor(rabbitMq)
-    .WaitFor(eMessageServer).WithRelationship(eMessageServer.Resource, "Messaging");
+    .WaitFor(emailService)
+    .WaitFor(smsService);
 
 var eStorageServer = builder.AddProject<Projects.eSystem_Storage_Api>("storage-api")
     .WaitFor(eSecurityIdp).WithRelationship(eSecurityIdp.Resource, "Authentication")
-    .WaitFor(eMessageServer).WithRelationship(eMessageServer.Resource, "Messaging")
     .WithReference(rabbitMq).WaitFor(rabbitMq)
     .WithReference(redisCache).WaitFor(redisCache)
-    .WithReference(blobs).WaitFor(blobs);
+    .WithReference(blobs).WaitFor(blobs)
+    .WaitFor(emailService)
+    .WaitFor(smsService);
 
 var proxy = builder.AddProject<Projects.eSystem_Proxy>("proxy")
     .WithReference(eSecurityIdp).WaitFor(eSecurityIdp)

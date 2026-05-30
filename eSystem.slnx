@@ -13,12 +13,6 @@
     </Project>
     <Project Path="src/eCinema.Server/eCinema.Server.csproj" />
   </Folder>
-  <Folder Name="/src/eMessage/">
-    <Project Path="src\eSystem.EmailSender.Api\eSystem.EmailSender.Api.csproj" />
-    <Project Path="src\eSystem.MessageBus\eSystem.MessageBus.csproj" />
-    <Project Path="src\eSystem.SmsSender.Api\eSystem.SmsSender.Api.csproj" />
-    <Project Path="src\eSystem.Telegram.Bot\eSystem.Telegram.Bot.csproj" />
-  </Folder>
   <Folder Name="/src/eSecurity/">
     <Project Path="src/eSecurity.Client/eSecurity.Client.csproj" />
     <Project Path="src/eSecurity.Core/eSecurity.Core.csproj" />
@@ -32,6 +26,10 @@
   <Folder Name="/src/Hosting/">
     <Project Path="src\eSystem.AppHost\eSystem.AppHost.csproj" />
     <Project Path="src\eSystem.ServiceDefaults\eSystem.ServiceDefaults.csproj" />
+  </Folder>
+  <Folder Name="/src/Messaging/">
+    <Project Path="src\eSystem.EmailSender.Api\eSystem.EmailSender.Api.csproj" />
+    <Project Path="src\eSystem.SmsSender.Api\eSystem.SmsSender.Api.csproj" />
   </Folder>
   <Folder Name="/src/Proxy/">
     <Project Path="src\eSystem.Proxy/eSystem.Proxy.csproj" />
