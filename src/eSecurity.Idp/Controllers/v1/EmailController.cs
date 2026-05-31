@@ -1,5 +1,7 @@
 using eSecurity.Idp.Features.Email.Commands;
 using eSecurity.Core.Requests;
+using eSecurity.Core.Requests.Email;
+using eSecurity.Idp.Features.Email.Verification;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 
@@ -12,6 +14,39 @@ namespace eSecurity.Idp.Controllers.v1;
 public class EmailController(ISender sender) : ControllerBase
 {
     private readonly ISender _sender = sender;
+    
+    [EndpointSummary("Confirm email verification")]
+    [EndpointDescription("Confirm email verification")]
+    [ProducesResponseType(200)]
+    [HttpPost("verification/confirm")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async ValueTask<IActionResult> ConfirmVerificationAsync([FromBody] ConfirmEmailVerificationRequest request)
+    {
+        var result = await _sender.Send(new ConfirmEmailVerificationCommand(request));
+        return HttpContext.HandleResult(result);
+    }
+    
+    [EndpointSummary("Send email verification")]
+    [EndpointDescription("Send email verification")]
+    [ProducesResponseType(200)]
+    [HttpPost("verification/send")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async ValueTask<IActionResult> SendVerificationAsync([FromBody] SendEmailVerificationRequest request)
+    {
+        var result = await _sender.Send(new SendEmailVerificationCommand(request));
+        return HttpContext.HandleResult(result);
+    }
+    
+    [EndpointSummary("Resend email verification")]
+    [EndpointDescription("Resend email verification")]
+    [ProducesResponseType(200)]
+    [HttpPost("verification/resend")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async ValueTask<IActionResult> ResendVerificationAsync([FromBody] ResendEmailVerificationRequest request)
+    {
+        var result = await _sender.Send(new ResendEmailVerificationCommand(request));
+        return HttpContext.HandleResult(result);
+    }
     
     [EndpointSummary("Verify email")]
     [EndpointDescription("Verify email")]
