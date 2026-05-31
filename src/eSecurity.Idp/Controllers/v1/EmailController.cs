@@ -1,6 +1,6 @@
 using eSecurity.Idp.Features.Email.Commands;
 using eSecurity.Core.Requests;
-using eSecurity.Core.Requests.Email;
+using eSecurity.Core.Requests.Email.Verification;
 using eSecurity.Idp.Features.Email.Verification;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;

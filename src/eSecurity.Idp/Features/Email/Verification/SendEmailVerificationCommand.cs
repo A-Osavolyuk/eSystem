@@ -1,5 +1,7 @@
 ﻿using eSecurity.Core.Requests.Email;
+using eSecurity.Core.Requests.Email.Verification;
 using eSecurity.Core.Responses.Email;
+using eSecurity.Core.Responses.Email.Verification;
 using eSecurity.Idp.Common.Messaging.Email;
 using eSecurity.Idp.Common.Messaging.Email.Builders;
 using eSecurity.Idp.Security.Authorization.Codes;

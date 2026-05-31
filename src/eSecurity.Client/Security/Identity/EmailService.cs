@@ -1,6 +1,7 @@
 ﻿using eSecurity.Client.Common.Http;
 using eSecurity.Core.Requests;
 using eSecurity.Core.Requests.Email;
+using eSecurity.Core.Requests.Email.Verification;
 
 namespace eSecurity.Client.Security.Identity;
 

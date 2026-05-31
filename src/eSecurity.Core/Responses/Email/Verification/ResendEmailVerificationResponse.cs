@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace eSecurity.Core.Responses.Email;
+namespace eSecurity.Core.Responses.Email.Verification;
 
 public sealed class ResendEmailVerificationResponse
 {

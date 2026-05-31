@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace eSecurity.Core.Requests.Email;
+namespace eSecurity.Core.Requests.Email.Verification;
 
 public sealed class ConfirmEmailVerificationRequest
 {
