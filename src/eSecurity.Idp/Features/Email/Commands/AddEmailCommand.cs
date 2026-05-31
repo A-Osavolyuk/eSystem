@@ -14,30 +14,27 @@ public record AddEmailCommand(AddEmailRequest Request) : IRequest<Result>;
 public class AddEmailCommandHandler(
     IUserManager userManager,
     IEmailManager emailManager,
-    IHttpContextAccessor httpContextAccessor,
     IOptions<AccountOptions> options) : IRequestHandler<AddEmailCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IEmailManager _emailManager = emailManager;
-    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly AccountOptions _options = options.Value;
 
     public async Task<Result> Handle(AddEmailCommand request, CancellationToken cancellationToken)
     {
-        var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
-        if (subjectClaim is null) return Results.ClientError(ClientErrorCode.BadRequest, new Error
+        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        if (!userResult.Succeeded)
         {
-            Code = ErrorCode.BadRequest,
-            Description = "Invalid request"
-        });
-        
-        var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
-        if (user is null)
+            var error = userResult.GetError();
+            return Results.ClientError(ClientErrorCode.Unauthorized, error);
+        }
+
+        if (!userResult.TryGetValue(out var user))
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error()
             {
-                Code = ErrorCode.NotFound,
-                Description = "User not found"
+                Code = ErrorCode.Unauthorized,
+                Description = "Unauthorized"
             });
         }
 

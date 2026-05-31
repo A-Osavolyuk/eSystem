@@ -20,37 +20,31 @@ public class GenerateQrCodeCommandHandler(
     IQrCodeFactory qrCodeFactory,
     ISecretManager secretManager,
     IEmailManager emailManager,
-    IHttpContextAccessor httpContextAccessor,
     IDataProtectionProvider protectionProvider) : IRequestHandler<GenerateQrCodeCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IQrCodeFactory _qrCodeFactory = qrCodeFactory;
     private readonly ISecretManager _secretManager = secretManager;
     private readonly IEmailManager _emailManager = emailManager;
-    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
 
     public async Task<Result> Handle(GenerateQrCodeCommand request, CancellationToken cancellationToken)
     {
         var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Secret);
         
-        var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
-        if (subjectClaim is null)
+        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        if (!userResult.Succeeded)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error
-            {
-                Code = ErrorCode.BadRequest,
-                Description = "Invalid request"
-            });
+            var error = userResult.GetError();
+            return Results.ClientError(ClientErrorCode.Unauthorized, error);
         }
-        
-        var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
-        if (user is null)
+
+        if (!userResult.TryGetValue(out var user))
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error()
             {
-                Code = ErrorCode.NotFound,
-                Description = "User not found."
+                Code = ErrorCode.Unauthorized,
+                Description = "Unauthorized"
             });
         }
         

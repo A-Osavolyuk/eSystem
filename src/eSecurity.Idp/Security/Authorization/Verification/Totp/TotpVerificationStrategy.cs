@@ -11,13 +11,11 @@ using eSystem.Core.Security.Identity.Claims;
 namespace eSecurity.Idp.Security.Authorization.Verification.Totp;
 
 public sealed class TotpVerificationStrategy(
-    IHttpContextAccessor httpContextAccessor,
     IUserManager userManager,
     ICodeManager codeManager,
     IVerificationManager verificationManager,
     IOptions<VerificationConfiguration> options) : IVerificationStrategy
 {
-    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly IUserManager _userManager = userManager;
     private readonly ICodeManager _codeManager = codeManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
@@ -29,23 +27,19 @@ public sealed class TotpVerificationStrategy(
         if (context is not TotpVerificationContext totpContext)
             throw new InvalidOperationException("Invalid context type");
         
-        var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
-        if (subjectClaim is null)
+        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        if (!userResult.Succeeded)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error
-            {
-                Code = ErrorCode.BadRequest,
-                Description = "Invalid subject"
-            });
+            var error = userResult.GetError();
+            return Results.ClientError(ClientErrorCode.Unauthorized, error);
         }
 
-        var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
-        if (user is null)
+        if (!userResult.TryGetValue(out var user))
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error()
             {
-                Code = ErrorCode.NotFound,
-                Description = "User was not found"
+                Code = ErrorCode.Unauthorized,
+                Description = "Unauthorized"
             });
         }
 

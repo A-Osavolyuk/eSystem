@@ -17,35 +17,32 @@ public class ResetEmailCommandHandler(
     IUserManager userManager,
     IEmailManager emailManager,
     IVerificationManager verificationManager,
-    IHttpContextAccessor httpContextAccessor,
     IOptions<AccountOptions> options) : IRequestHandler<ResetEmailCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IEmailManager _emailManager = emailManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
-    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly AccountOptions _options = options.Value;
 
     public async Task<Result> Handle(ResetEmailCommand request, CancellationToken cancellationToken)
     {
         var newEmail = request.Request.Email;
 
-        var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
-        if (subjectClaim is null)
+        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        if (!userResult.Succeeded)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error
+            var error = userResult.GetError();
+            return Results.ClientError(ClientErrorCode.Unauthorized, error);
+        }
+
+        if (!userResult.TryGetValue(out var user))
+        {
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error()
             {
-                Description = "Invalid request",
-                Code = ErrorCode.BadRequest
+                Code = ErrorCode.Unauthorized,
+                Description = "Unauthorized"
             });
         }
-        
-        var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
-        if (user is null) return Results.ClientError(ClientErrorCode.NotFound, new Error
-        {
-            Description = "User not found.",
-            Code = ErrorCode.NotFound
-        });
 
         var userCurrentEmail = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
         if (userCurrentEmail is null)

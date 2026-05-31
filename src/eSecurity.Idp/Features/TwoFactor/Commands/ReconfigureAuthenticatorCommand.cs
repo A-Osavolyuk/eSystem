@@ -17,34 +17,28 @@ public class ReconfigureAuthenticatorCommandHandler(
     IUserManager userManager,
     ISecretManager secretManager,
     IVerificationManager verificationManager,
-    IDataProtectionProvider protectionProvider,
-    IHttpContextAccessor httpContextAccessor) : IRequestHandler<ReconfigureAuthenticatorCommand, Result>
+    IDataProtectionProvider protectionProvider) : IRequestHandler<ReconfigureAuthenticatorCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly ISecretManager _secretManager = secretManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
     private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
-    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(ReconfigureAuthenticatorCommand request, CancellationToken cancellationToken)
     {
-        var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
-        if (subjectClaim is null)
+        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        if (!userResult.Succeeded)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error
-            {
-                Code = ErrorCode.BadRequest,
-                Description = "Invalid subject"
-            });
+            var error = userResult.GetError();
+            return Results.ClientError(ClientErrorCode.Unauthorized, error);
         }
 
-        var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
-        if (user is null)
+        if (!userResult.TryGetValue(out var user))
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error()
             {
-                Code = ErrorCode.NotFound,
-                Description = "User not found."
+                Code = ErrorCode.Unauthorized,
+                Description = "Unauthorized"
             });
         }
 

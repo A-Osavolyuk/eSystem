@@ -19,34 +19,31 @@ public class RemoveEmailCommandHandler(
     IEmailManager emailManager,
     IPasskeyManager passkeyManager,
     ILinkedAccountManager linkedAccountManager,
-    IVerificationManager verificationManager,
-    IHttpContextAccessor httpContextAccessor) : IRequestHandler<RemoveEmailCommand, Result>
+    IVerificationManager verificationManager) : IRequestHandler<RemoveEmailCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IEmailManager _emailManager = emailManager;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
     private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
-    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(RemoveEmailCommand request, CancellationToken cancellationToken)
     {
-        var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
-        if (subjectClaim is null)
+        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        if (!userResult.Succeeded)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error
+            var error = userResult.GetError();
+            return Results.ClientError(ClientErrorCode.Unauthorized, error);
+        }
+
+        if (!userResult.TryGetValue(out var user))
+        {
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error()
             {
-                Code = ErrorCode.BadRequest,
-                Description = "Invalid request"
+                Code = ErrorCode.Unauthorized,
+                Description = "Unauthorized"
             });
         }
-        
-        var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
-        if (user is null) return Results.ClientError(ClientErrorCode.NotFound, new Error
-        {
-            Code = ErrorCode.NotFound,
-            Description = "User not found"
-        });
 
         var email = await _emailManager.FindByEmailAsync(user, request.Request.Email, cancellationToken);
         if (email is null)

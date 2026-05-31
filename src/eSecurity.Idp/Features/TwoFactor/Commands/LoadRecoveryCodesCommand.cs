@@ -9,33 +9,27 @@ namespace eSecurity.Idp.Features.TwoFactor.Commands;
 public record LoadRecoveryCodesCommand() : IRequest<Result>;
 
 public class LoadRecoveryCodesCommandHandler(
-    IHttpContextAccessor httpContextAccessor,
     IUserManager userManager,
     IRecoverManager recoverManager) : IRequestHandler<LoadRecoveryCodesCommand, Result>
 {
-    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly IUserManager _userManager = userManager;
     private readonly IRecoverManager _recoverManager = recoverManager;
     
     public async Task<Result> Handle(LoadRecoveryCodesCommand request, CancellationToken cancellationToken)
     {
-        var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
-        if (subjectClaim is null)
+        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        if (!userResult.Succeeded)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error
-            {
-                Code = ErrorCode.BadRequest,
-                Description = "Invalid subject"
-            });
+            var error = userResult.GetError();
+            return Results.ClientError(ClientErrorCode.Unauthorized, error);
         }
-        
-        var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
-        if (user is null)
+
+        if (!userResult.TryGetValue(out var user))
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error()
             {
-                Code = ErrorCode.NotFound,
-                Description = "User not found."
+                Code = ErrorCode.Unauthorized,
+                Description = "Unauthorized"
             });
         }
 

@@ -4,12 +4,48 @@ using eSecurity.Core.Security.Authentication.Lockout;
 using eSecurity.Core.Security.Identity;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Idp.Security.Identity.User;
 
-public sealed class UserManager(AuthDbContext context) : IUserManager
+public sealed class UserManager(AuthDbContext context, IHttpContextAccessor httpContextAccessor) : IUserManager
 {
     private readonly AuthDbContext _context = context;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
+
+    public async ValueTask<TypedResult<UserEntity>> GetUserAsync(CancellationToken cancellationToken = default)
+    {
+        if (_httpContext.User?.Identity?.IsAuthenticated == false)
+        {
+            return TypedResult<UserEntity>.Fail(new Error()
+            {
+                Code = ErrorCode.Unauthorized,
+                Description = "Unauthorized"
+            });
+        }
+
+        var subjectClaim = _httpContext.User?.FindFirst(AppClaimTypes.Sub);
+        if (subjectClaim is null)
+        {
+            return TypedResult<UserEntity>.Fail(new Error()
+            {
+                Code = ErrorCode.Unauthorized,
+                Description = "Unauthorized"
+            });
+        }
+
+        var user = await FindBySubjectAsync(subjectClaim.Value, cancellationToken);
+        if (user is null)
+        {
+            return TypedResult<UserEntity>.Fail(new Error()
+            {
+                Code = ErrorCode.Unauthorized,
+                Description = "Unauthorized"
+            });
+        }
+
+        return TypedResult<UserEntity>.Success(user);
+    }
 
     public async ValueTask<UserEntity?> FindByEmailAsync(string email, CancellationToken cancellationToken = default)
     {

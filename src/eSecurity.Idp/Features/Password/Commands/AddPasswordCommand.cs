@@ -11,32 +11,26 @@ public record AddPasswordCommand(AddPasswordRequest Request) : IRequest<Result>;
 
 public class AddPasswordCommandHandler(
     IUserManager userManager,
-    IPasswordManager passwordManager,
-    IHttpContextAccessor httpContextAccessor) : IRequestHandler<AddPasswordCommand, Result>
+    IPasswordManager passwordManager) : IRequestHandler<AddPasswordCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IPasswordManager _passwordManager = passwordManager;
-    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(AddPasswordCommand request, CancellationToken cancellationToken)
     {
-        var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
-        if (subjectClaim is null)
+        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        if (!userResult.Succeeded)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error
-            {
-                Code = ErrorCode.BadRequest,
-                Description = "Invalid request"
-            });
+            var error = userResult.GetError();
+            return Results.ClientError(ClientErrorCode.Unauthorized, error);
         }
-        
-        var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
-        if (user is null)
+
+        if (!userResult.TryGetValue(out var user))
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error()
             {
-                Code = ErrorCode.NotFound,
-                Description = "User not found."
+                Code = ErrorCode.Unauthorized,
+                Description = "Unauthorized"
             });
         }
         

@@ -5,6 +5,8 @@ namespace eSecurity.Idp.Security.Identity.User;
 
 public interface IUserManager
 {
+    public ValueTask<TypedResult<UserEntity>> GetUserAsync(CancellationToken cancellationToken = default);
+    
     public ValueTask<UserEntity?> FindByEmailAsync(string email, CancellationToken cancellationToken = default);
     public ValueTask<UserEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default);
     public ValueTask<UserEntity?> FindByUsernameAsync(string name, CancellationToken cancellationToken = default);

@@ -12,32 +12,26 @@ public record GetUserLinkedAccountDataQuery : IRequest<Result>;
 
 public class GetUserLinkedAccountDataQueryHandler(
     IUserManager userManager,
-    ILinkedAccountManager linkedAccountManager,
-    IHttpContextAccessor httpContextAccessor) : IRequestHandler<GetUserLinkedAccountDataQuery, Result>
+    ILinkedAccountManager linkedAccountManager) : IRequestHandler<GetUserLinkedAccountDataQuery, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
-    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(GetUserLinkedAccountDataQuery request, CancellationToken cancellationToken)
     {
-        var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
-        if (subjectClaim is null)
+        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        if (!userResult.Succeeded)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error
-            {
-                Code = ErrorCode.BadRequest,
-                Description = "Invalid subject."
-            });
+            var error = userResult.GetError();
+            return Results.ClientError(ClientErrorCode.Unauthorized, error);
         }
-        
-        var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
-        if (user is null)
+
+        if (!userResult.TryGetValue(out var user))
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error()
             {
-                Code = ErrorCode.NotFound,
-                Description = "User not found."
+                Code = ErrorCode.Unauthorized,
+                Description = "Unauthorized"
             });
         }
 

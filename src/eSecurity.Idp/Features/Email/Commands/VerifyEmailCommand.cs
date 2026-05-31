@@ -14,34 +14,28 @@ public sealed record VerifyEmailCommand(VerifyEmailRequest Request) : IRequest<R
 public sealed class VerifyEmailCommandHandler(
     IUserManager userManager,
     IEmailManager emailManager,
-    IVerificationManager verificationManager,
-    IHttpContextAccessor httpContextAccessor) : IRequestHandler<VerifyEmailCommand, Result>
+    IVerificationManager verificationManager) : IRequestHandler<VerifyEmailCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IEmailManager _emailManager = emailManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
-    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(VerifyEmailCommand request,
         CancellationToken cancellationToken)
     {
-        var subjectClaim = _httpContext.User.FindFirst(AppClaimTypes.Sub);
-        if (subjectClaim is null)
+        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        if (!userResult.Succeeded)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error
-            {
-                Code = ErrorCode.BadRequest,
-                Description = "Invalid request"
-            });
+            var error = userResult.GetError();
+            return Results.ClientError(ClientErrorCode.Unauthorized, error);
         }
-        
-        var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
-        if (user is null)
+
+        if (!userResult.TryGetValue(out var user))
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error()
             {
-                Code = ErrorCode.NotFound,
-                Description = "User not found"
+                Code = ErrorCode.Unauthorized,
+                Description = "Unauthorized"
             });
         }
 

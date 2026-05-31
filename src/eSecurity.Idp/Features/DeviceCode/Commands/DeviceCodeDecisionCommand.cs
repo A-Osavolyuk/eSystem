@@ -15,14 +15,13 @@ namespace eSecurity.Idp.Features.DeviceCode.Commands;
 public sealed record DeviceCodeDecisionCommand(DeviceCodeDecisionRequest Request) : IRequest<Result>;
 
 public sealed class DeviceCodeDecisionCommandHandler(
-    IHttpContextAccessor httpContextAccessor,
     IDeviceCodeManager deviceCodeManager,
     ISessionManager sessionManager,
     IUserManager userManager,
     IClientManager clientManager,
     IConsentManager consentManager,
     ISessionAccessor sessionAccessor) 
-    : RequestHandlerBase<DeviceCodeDecisionCommand, Result>(httpContextAccessor)
+    : IRequestHandler<DeviceCodeDecisionCommand, Result>
 {
     private readonly IDeviceCodeManager _deviceCodeManager = deviceCodeManager;
     private readonly ISessionManager _sessionManager = sessionManager;
@@ -31,7 +30,7 @@ public sealed class DeviceCodeDecisionCommandHandler(
     private readonly IConsentManager _consentManager = consentManager;
     private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
 
-    public override async Task<Result> Handle(DeviceCodeDecisionCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(DeviceCodeDecisionCommand request, CancellationToken cancellationToken)
     {
         var deviceCode = await _deviceCodeManager.FindByCodeAsync(request.Request.UserCode, cancellationToken);
         if (deviceCode is null)
@@ -80,24 +79,20 @@ public sealed class DeviceCodeDecisionCommandHandler(
 
             deviceCode.SessionId = session.Id;
         }
-        
-        var subjectClaim = HttpContext.User.FindFirst(AppClaimTypes.Sub);
-        if (subjectClaim is null)
+
+        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        if (!userResult.Succeeded)
         {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error
-            {
-                Code = ErrorCode.BadRequest,
-                Description = "Invalid request"
-            });
+            var error = userResult.GetError();
+            return Results.ClientError(ClientErrorCode.Unauthorized, error);
         }
-        
-        var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
-        if (user is null)
+
+        if (!userResult.TryGetValue(out var user))
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error
+            return Results.ClientError(ClientErrorCode.Unauthorized, new Error()
             {
-                Code = ErrorCode.NotFound,
-                Description = "User not found"
+                Code = ErrorCode.Unauthorized,
+                Description = "Unauthorized"
             });
         }
 
