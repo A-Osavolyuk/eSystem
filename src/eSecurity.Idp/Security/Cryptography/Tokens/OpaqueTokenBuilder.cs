@@ -22,12 +22,10 @@ public sealed class OpaqueTokenBuildContext : TokenBuildContext
 }
 
 public class OpaqueTokenBuilder(
-    IKeyFactory keyFactory,
     ITokenManager tokenManager,
     IHasherProvider hasherProvider,
     IClientManager clientManager) : ITokenBuilder<OpaqueTokenBuildContext>
 {
-    private readonly IKeyFactory _keyFactory = keyFactory;
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IClientManager _clientManager = clientManager;
     private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
@@ -38,7 +36,7 @@ public class OpaqueTokenBuilder(
         var client = await _clientManager.FindByIdAsync(buildContext.ClientId, cancellationToken);
         if (client is null) throw new Exception("Client was not found");
 
-        var token = _keyFactory.Create(buildContext.TokenLength);
+        var token = RandomKeyFactory.Create(buildContext.TokenLength);
         var opaqueToken = new OpaqueTokenEntity
         {
             Id = Guid.CreateVersion7(),

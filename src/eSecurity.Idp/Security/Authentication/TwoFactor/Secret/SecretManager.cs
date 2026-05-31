@@ -6,12 +6,9 @@ using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Idp.Security.Authentication.TwoFactor.Secret;
 
-public sealed class SecretManager(
-    AuthDbContext context,
-    IKeyFactory keyFactory) : ISecretManager
+public sealed class SecretManager(AuthDbContext context) : ISecretManager
 {
     private readonly AuthDbContext _context = context;
-    private readonly IKeyFactory _keyFactory = keyFactory;
 
     public async ValueTask<UserSecretEntity?> GetAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
@@ -54,6 +51,4 @@ public sealed class SecretManager(
 
         return Results.Success(SuccessCodes.Ok);
     }
-
-    public string Generate() => _keyFactory.Create(20);
 }

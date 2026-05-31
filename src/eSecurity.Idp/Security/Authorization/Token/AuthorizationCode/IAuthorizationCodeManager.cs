@@ -13,6 +13,4 @@ public interface IAuthorizationCodeManager
     
     public ValueTask<Result> UseAsync(AuthorizationCodeEntity code, 
         CancellationToken cancellationToken = default);
-
-    public string Generate();
 }

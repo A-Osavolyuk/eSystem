@@ -2,9 +2,9 @@
 
 namespace eSecurity.Idp.Security.Cryptography.Keys;
 
-public class RandomKeyFactory : IKeyFactory
+public static class RandomKeyFactory
 {
-    public string Create(int length)
+    public static string Create(int length)
     {
         var keyBytes = KeyGeneration.GenerateRandomKey(length);
         var keyString = Base32Encoding.ToString(keyBytes);

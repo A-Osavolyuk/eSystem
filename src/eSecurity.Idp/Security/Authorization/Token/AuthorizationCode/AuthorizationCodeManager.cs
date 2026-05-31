@@ -6,12 +6,9 @@ using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Idp.Security.Authorization.Token.AuthorizationCode;
 
-public class AuthorizationCodeManager(
-    AuthDbContext context,
-    IKeyFactory keyFactory) : IAuthorizationCodeManager
+public class AuthorizationCodeManager(AuthDbContext context) : IAuthorizationCodeManager
 {
     private readonly AuthDbContext _context = context;
-    private readonly IKeyFactory _keyFactory = keyFactory;
 
     public async ValueTask<AuthorizationCodeEntity?> FindByCodeAsync(string code, 
         CancellationToken cancellationToken = default)
@@ -41,6 +38,4 @@ public class AuthorizationCodeManager(
         
         return Results.Success(SuccessCodes.Ok);
     }
-
-    public string Generate() => _keyFactory.Create(20);
 }

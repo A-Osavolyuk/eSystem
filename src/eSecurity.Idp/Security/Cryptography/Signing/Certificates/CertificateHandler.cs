@@ -8,10 +8,8 @@ namespace eSecurity.Idp.Security.Cryptography.Signing.Certificates;
 
 public class CertificateHandler(
     IDataProtectionProvider protection,
-    IKeyFactory keyFactory,
     IOptions<CertificateOptions> options) : ICertificateHandler
 {
-    private readonly IKeyFactory _keyFactory = keyFactory;
     private readonly CertificateOptions _options = options.Value;
     private readonly IDataProtector _passwordProtector = protection.CreateProtector(ProtectionPurposes.Password);
     private readonly IDataProtector _certificateProtector = protection.CreateProtector(ProtectionPurposes.Certificate);
@@ -31,7 +29,7 @@ public class CertificateHandler(
             DateTimeOffset.UtcNow.Subtract(TimeSpan.FromMinutes(1)),
             DateTimeOffset.UtcNow.Add(_options.CertificateLifetime));
 
-        var password = _keyFactory.Create(20);
+        var password = RandomKeyFactory.Create(20);
         var certificateBytes = certificate.Export(X509ContentType.Pkcs12, password);
 
         return new ProtectedCertificate

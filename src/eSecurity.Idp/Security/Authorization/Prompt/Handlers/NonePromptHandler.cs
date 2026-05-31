@@ -5,6 +5,7 @@ using eSecurity.Idp.Security.Authorization.Authorize;
 using eSecurity.Idp.Security.Authorization.Consents;
 using eSecurity.Idp.Security.Authorization.Scopes;
 using eSecurity.Idp.Security.Authorization.Token.AuthorizationCode;
+using eSecurity.Idp.Security.Cryptography.Keys;
 using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
@@ -94,7 +95,7 @@ public sealed class NonePromptHandler(
             ? AuthorizationProtocol.OpenIdConnect
             : AuthorizationProtocol.OAuth;
 
-        var code = _authorizationCodeManager.Generate();
+        var code = RandomKeyFactory.Create(20);
         var authorizationCode = new AuthorizationCodeEntity
         {
             Id = Guid.CreateVersion7(),

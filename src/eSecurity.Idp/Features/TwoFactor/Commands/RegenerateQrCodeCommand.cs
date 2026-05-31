@@ -3,6 +3,7 @@ using eSecurity.Idp.Security.Authentication.TwoFactor.Secret;
 using eSecurity.Idp.Security.Identity.Email;
 using eSecurity.Idp.Security.Identity.User;
 using eSecurity.Core.Security.Identity;
+using eSecurity.Idp.Security.Cryptography.Keys;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Identity.Claims;
@@ -45,7 +46,7 @@ public class RegenerateQrCodeCommandHandler(
             });
         }
 
-        var secret = _secretManager.Generate();
+        var secret = RandomKeyFactory.Create(20);
         var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
         if (email is null)
         {

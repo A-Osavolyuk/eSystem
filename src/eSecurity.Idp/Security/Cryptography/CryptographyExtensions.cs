@@ -50,7 +50,6 @@ public static class CryptographyExtensions
         });
 
         builder.Services.AddDataProtection();
-        builder.Services.AddTransient<IKeyFactory, RandomKeyFactory>();
         builder.Services.AddScoped<IHasherProvider, HasherProvider>();
         builder.Services.AddKeyedTransient<IHasher, Pbkdf2Hasher>(HashAlgorithm.Pbkdf2);
         builder.Services.AddKeyedTransient<IHasher, Sha256Hasher>(HashAlgorithm.Sha256);

@@ -17,13 +17,11 @@ public sealed class BackchannelAuthenticationCommandHandler(
     IClientManager clientManager,
     IUserResolverProvider userResolverProvider,
     ICibaRequestManager cibaRequestManager,
-    IKeyFactory keyFactory,
     IOptions<BackchannelAuthenticationOptions> options) : IRequestHandler<BackchannelAuthenticationCommand, Result>
 {
     private readonly IClientManager _clientManager = clientManager;
     private readonly IUserResolverProvider _userResolverProvider = userResolverProvider;
     private readonly ICibaRequestManager _cibaRequestManager = cibaRequestManager;
-    private readonly IKeyFactory _keyFactory = keyFactory;
     private readonly BackchannelAuthenticationOptions _options = options.Value;
 
     public async Task<Result> Handle(BackchannelAuthenticationCommand request, CancellationToken cancellationToken)
@@ -187,7 +185,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
         var cibaRequest = new CibaRequestEntity
         {
             Id = Guid.CreateVersion7(),
-            AuthReqId = _keyFactory.Create(_options.AuthReqIdLength),
+            AuthReqId = RandomKeyFactory.Create(_options.AuthReqIdLength),
             ClientId = client.Id,
             UserId = user.Id,
             State = CibaRequestState.Pending,

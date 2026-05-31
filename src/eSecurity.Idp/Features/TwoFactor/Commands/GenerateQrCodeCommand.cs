@@ -5,6 +5,7 @@ using eSecurity.Idp.Security.Cryptography.Protection.Constants;
 using eSecurity.Idp.Security.Identity.Email;
 using eSecurity.Idp.Security.Identity.User;
 using eSecurity.Core.Security.Identity;
+using eSecurity.Idp.Security.Cryptography.Keys;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Identity.Claims;
@@ -66,7 +67,7 @@ public class GenerateQrCodeCommandHandler(
         var userSecret = await _secretManager.GetAsync(user, cancellationToken);
         if (userSecret is null)
         {
-            var secret = _secretManager.Generate();
+            var secret = RandomKeyFactory.Create(20);
             var protectedSecret = protector.Protect(secret);
             userSecret = new UserSecretEntity
             {

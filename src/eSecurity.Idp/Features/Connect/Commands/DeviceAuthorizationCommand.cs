@@ -18,14 +18,11 @@ public sealed record DeviceAuthorizationCommand(DeviceAuthorizationRequest Reque
 public sealed class DeviceAuthorizationCommandHandler(
     IClientManager clientManager,
     IHasherProvider hasherProvider,
-    IKeyFactory keyFactory,
     IDeviceCodeManager deviceCodeManager,
     IOptions<OpenIdConfiguration> openIdConfiguration,
-    IOptions<DeviceAuthorizationOptions> deviceAuthorizationOptions) 
-    : IRequestHandler<DeviceAuthorizationCommand, Result>
+    IOptions<DeviceAuthorizationOptions> deviceAuthorizationOptions) : IRequestHandler<DeviceAuthorizationCommand, Result>
 {
     private readonly IClientManager _clientManager = clientManager;
-    private readonly IKeyFactory _keyFactory = keyFactory;
     private readonly IDeviceCodeManager _deviceCodeManager = deviceCodeManager;
     private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
     private readonly OpenIdConfiguration _options = openIdConfiguration.Value;
@@ -65,8 +62,8 @@ public sealed class DeviceAuthorizationCommandHandler(
             });
         }
         
-        var deviceCode = _keyFactory.Create(_deviceAuthorizationOptions.DeviceCodeLenght);
-        var userCode = _keyFactory.Create(_deviceAuthorizationOptions.UserCodeLenght);
+        var deviceCode = RandomKeyFactory.Create(_deviceAuthorizationOptions.DeviceCodeLenght);
+        var userCode = RandomKeyFactory.Create(_deviceAuthorizationOptions.UserCodeLenght);
         var deviceCodeEntity = new DeviceCodeEntity
         {
             Id = Guid.CreateVersion7(),
