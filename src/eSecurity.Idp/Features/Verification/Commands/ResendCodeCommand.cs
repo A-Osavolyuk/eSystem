@@ -49,21 +49,21 @@ public class ResendCodeCommandHandler(
             });
         }
 
-        if (user.CodeResendAttempts >= _options.MaxCodeResendAttempts)
+        if (user.ResendAttempts >= _options.MaxCodeResendAttempts)
         {
             return Results.Success(SuccessCodes.Ok, new ResendCodeResponse
             {
-                CodeResendAttempts = user.CodeResendAttempts,
+                CodeResendAttempts = user.ResendAttempts,
                 MaxCodeResendAttempts = _options.MaxCodeResendAttempts,
-                CodeResendAvailableDate = user.CodeResendAvailableDate
+                CodeResendAvailableDate = user.ResendAvailableAt
             });
         }
 
-        user.CodeResendAttempts += 1;
+        user.ResendAttempts += 1;
 
-        if (user.CodeResendAttempts == _options.MaxCodeResendAttempts)
+        if (user.ResendAttempts == _options.MaxCodeResendAttempts)
         {
-            user.CodeResendAvailableDate = DateTimeOffset.UtcNow.AddMinutes(
+            user.ResendAvailableAt = DateTimeOffset.UtcNow.AddMinutes(
                 _options.CodeResendUnavailableTime);
         }
 
@@ -110,9 +110,9 @@ public class ResendCodeCommandHandler(
 
         var response = new ResendCodeResponse
         {
-            CodeResendAttempts = user.CodeResendAttempts,
+            CodeResendAttempts = user.ResendAttempts,
             MaxCodeResendAttempts = _options.MaxCodeResendAttempts,
-            CodeResendAvailableDate = user.CodeResendAvailableDate
+            CodeResendAvailableDate = user.ResendAvailableAt
         };
         
         return Results.Success(SuccessCodes.Ok, response);

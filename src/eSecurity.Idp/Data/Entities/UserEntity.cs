@@ -11,8 +11,8 @@ public class UserEntity : Entity
     public bool AccountConfirmed { get; set; }
     public int FailedLoginAttempts { get; set; }
 
-    public int CodeResendAttempts { get; set; }
-    public DateTimeOffset? CodeResendAvailableDate { get; set; }
+    public int ResendAttempts { get; set; }
+    public DateTimeOffset? ResendAvailableAt { get; set; }
 
     public string ZoneInfo { get; set; } = string.Empty;
     public string Locale { get; set; } = string.Empty;
