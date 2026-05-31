@@ -1,5 +1,6 @@
 ﻿using eSecurity.Client.Common.Http;
 using eSecurity.Core.Requests;
+using eSecurity.Core.Requests.Email;
 
 namespace eSecurity.Client.Security.Identity;
 
@@ -34,15 +35,6 @@ public class EmailService(IApiClient apiClient) : IEmailService
                 Url = "/api/v1/Email/change"
             });
 
-    public async ValueTask<ApiResponse> VerifyEmailAsync(VerifyEmailRequest request)
-        => await _apiClient.SendAsync(
-            new ApiRequest
-            {
-                Method = HttpMethods.Post,
-                Data = request,
-                Url = "/api/v1/Email/verify"
-            });
-
     public async ValueTask<ApiResponse> ManageEmailAsync(ManageEmailRequest request)
         => await _apiClient.SendAsync(
             new ApiRequest
@@ -68,5 +60,31 @@ public class EmailService(IApiClient apiClient) : IEmailService
                 Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Email/reset"
+            });
+
+    public async ValueTask<ApiResponse> ConfirmEmailVerificationAsync(ConfirmEmailVerificationRequest request)
+        => await _apiClient.SendAsync(
+            new ApiRequest
+            {
+                Method = HttpMethods.Post,
+                Data = request,
+                Url = "/api/v1/Email/verification/confirm"
+            });
+
+    public async ValueTask<ApiResponse> SendEmailVerificationAsync(SendEmailVerificationRequest request)
+        => await _apiClient.SendAsync(
+            new ApiRequest
+            {
+                Method = HttpMethods.Post,
+                Data = request,
+                Url = "/api/v1/Email/verification/send"
+            });
+    public async ValueTask<ApiResponse> ResendEmailVerificationAsync(ResendEmailVerificationRequest request)
+        => await _apiClient.SendAsync(
+            new ApiRequest
+            {
+                Method = HttpMethods.Post,
+                Data = request,
+                Url = "/api/v1/Email/verification/resend"
             });
 }

@@ -48,17 +48,6 @@ public class EmailController(ISender sender) : ControllerBase
         return HttpContext.HandleResult(result);
     }
     
-    [EndpointSummary("Verify email")]
-    [EndpointDescription("Verify email")]
-    [ProducesResponseType(200)]
-    [HttpPost("verify")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> VerifyAsync([FromBody] VerifyEmailRequest request)
-    {
-        var result = await _sender.Send(new VerifyEmailCommand(request));
-        return HttpContext.HandleResult(result);
-    }
-    
     [EndpointSummary("Check email")]
     [EndpointDescription("Check email")]
     [ProducesResponseType(200)]
