@@ -1,5 +1,4 @@
-﻿using eSecurity.Idp.Security.Cryptography.Codes;
-using eSecurity.Idp.Security.Cryptography.Hashing;
+﻿using eSecurity.Idp.Security.Cryptography.Hashing;
 using eSecurity.Idp.Security.Cryptography.Hashing.Hashers;
 using eSecurity.Idp.Security.Cryptography.Keys;
 using eSecurity.Idp.Security.Cryptography.Signing;
@@ -51,7 +50,6 @@ public static class CryptographyExtensions
         });
 
         builder.Services.AddDataProtection();
-        builder.Services.AddTransient<ICodeFactory, CodeFactory>();
         builder.Services.AddTransient<IKeyFactory, RandomKeyFactory>();
         builder.Services.AddScoped<IHasherProvider, HasherProvider>();
         builder.Services.AddKeyedTransient<IHasher, Pbkdf2Hasher>(HashAlgorithm.Pbkdf2);

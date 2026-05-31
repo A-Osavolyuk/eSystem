@@ -1,6 +1,6 @@
 ﻿using eSecurity.Idp.Data;
 using eSecurity.Idp.Data.Entities;
-using eSecurity.Idp.Security.Cryptography.Codes;
+using eSecurity.Idp.Security.Cryptography;
 using eSecurity.Idp.Security.Cryptography.Hashing;
 using eSystem.Core.Messaging;
 using eSystem.Core.Primitives;
@@ -10,11 +10,9 @@ namespace eSecurity.Idp.Security.Authorization.Codes;
 
 public sealed class CodeManager(
     AuthDbContext context,
-    IHasherProvider hasherProvider,
-    ICodeFactory codeFactory) : ICodeManager
+    IHasherProvider hasherProvider) : ICodeManager
 {
     private readonly AuthDbContext _context = context;
-    private readonly ICodeFactory _codeFactory = codeFactory;
     private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Pbkdf2);
 
     public async ValueTask<CodeEntity?> FindAsync(UserEntity user, 
@@ -30,7 +28,7 @@ public sealed class CodeManager(
     public async ValueTask<string> CreateAsync(UserEntity user, 
         SenderType sender, CancellationToken cancellationToken = default)
     {
-        var code = _codeFactory.Create();
+        var code = CodeFactory.Create();
         var codeHash = _hasher.Hash(code);
 
         await _context.Codes.AddAsync(new CodeEntity
