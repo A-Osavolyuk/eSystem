@@ -221,4 +221,7 @@ public class EmailManager(AuthDbContext context) : IEmailManager
 
     public async ValueTask<bool> HasAsync(UserEntity user, EmailType type, CancellationToken cancellationToken = default)
         => await _context.UserEmails.AnyAsync(x => x.UserId == user.Id && x.Type == type, cancellationToken);
+
+    public async ValueTask<bool> OwnAsync(UserEntity user, string email, CancellationToken cancellationToken = default)
+        => await _context.UserEmails.AnyAsync(x => x.UserId == user.Id && x.Email == email, cancellationToken);
 }
