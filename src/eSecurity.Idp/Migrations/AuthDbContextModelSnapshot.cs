@@ -1563,12 +1563,6 @@ namespace eSecurity.Idp.Migrations
                     b.Property<bool>("AccountConfirmed")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("CodeResendAttempts")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTimeOffset?>("CodeResendAvailableDate")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<DateTimeOffset?>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -1584,6 +1578,12 @@ namespace eSecurity.Idp.Migrations
                         .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
+
+                    b.Property<int>("ResendAttempts")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("ResendAvailableAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
