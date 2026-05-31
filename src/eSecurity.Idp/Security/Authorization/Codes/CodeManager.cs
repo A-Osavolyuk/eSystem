@@ -25,7 +25,7 @@ public sealed class CodeManager(
         return codes.FirstOrDefault(c => _hasher.VerifyHash(code, c.CodeHash));
     }
 
-    public async ValueTask<string> CreateAsync(UserEntity user, 
+    public async ValueTask<TypedResult<string>> CreateAsync(UserEntity user, 
         SenderType sender, CancellationToken cancellationToken = default)
     {
         var code = CodeFactory.Create();
@@ -42,7 +42,7 @@ public sealed class CodeManager(
         }, cancellationToken);
 
         await _context.SaveChangesAsync(cancellationToken);
-        return code;
+        return TypedResult<string>.Success(code);
     }
 
     public async ValueTask<Result> ConsumeAsync(CodeEntity code, CancellationToken cancellationToken = default)

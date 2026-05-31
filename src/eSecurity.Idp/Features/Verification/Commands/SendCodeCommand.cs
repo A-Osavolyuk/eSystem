@@ -49,7 +49,22 @@ public class SendCodeCommandHandler(
             });
         }
         
-        var code = await _codeManager.CreateAsync(user, request.Request.Sender, cancellationToken);
+        var codeResult = await _codeManager.CreateAsync(user, request.Request.Sender, cancellationToken);
+        if (!codeResult.Succeeded)
+        {
+            var error = codeResult.GetError();
+            return Results.ServerError(ServerErrorCode.InternalServerError, error);
+        }
+
+        if (!codeResult.TryGetValue(out var code))
+        {
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+            {
+                Code = ErrorCode.ServerError,
+                Description = "Server error"
+            });
+        }
+        
         if (request.Request.Sender is SenderType.Email)
         {
             var emailContext = new CodeVerificationEmailContext()

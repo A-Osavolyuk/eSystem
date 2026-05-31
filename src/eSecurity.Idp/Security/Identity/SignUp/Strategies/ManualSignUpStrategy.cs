@@ -137,7 +137,22 @@ public sealed class ManualSignUpStrategy(
         var deviceResult = await _deviceManager.CreateAsync(newDevice, cancellationToken);
         if (!deviceResult.Succeeded) return deviceResult;
 
-        var code = await _codeManager.CreateAsync(user, SenderType.Email, cancellationToken);
+        var codeResult = await _codeManager.CreateAsync(user, SenderType.Email, cancellationToken);
+        if (!codeResult.Succeeded)
+        {
+            var error = codeResult.GetError();
+            return Results.ServerError(ServerErrorCode.InternalServerError, error);
+        }
+
+        if (!codeResult.TryGetValue(out var code))
+        {
+            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
+            {
+                Code = ErrorCode.ServerError,
+                Description = "Server error"
+            });
+        }
+        
         var emailContext = new CodeVerificationEmailContext
         {
             Subject = "Sign Up",
