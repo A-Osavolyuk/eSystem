@@ -124,6 +124,7 @@
         return QueryBuilder.Create()
             .WithUri(Links.Account.EmailVerifyPage)
             .WithQueryParam("type", EmailTypes.Primary)
+            .WithQueryParam("email", Email.Email)
             .WithQueryParam("return_url", Links.Settings.Emails)
             .Build();
     }

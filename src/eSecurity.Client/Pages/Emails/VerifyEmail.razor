@@ -2,9 +2,8 @@
 
 @using eSecurity.Client.Common.Validation.Validators
 @using eSecurity.Client.Security.Identity
-@using eSecurity.Core.Requests.Email
 @using eSecurity.Core.Requests.Email.Verification
-@using eSecurity.Core.Security.Identity.Constants
+
 @inherits PageBase
 
 @inject VerifyEmailValidator Validator
@@ -12,71 +11,22 @@
 
 @attribute [Authorize]
 
-@switch (Type)
-{
-    case EmailTypes.Primary: <PageTitle>Primary email verification</PageTitle> break;
-    case EmailTypes.Recovery: <PageTitle>Recovery email verification</PageTitle> break;
-    case EmailTypes.Secondary: <PageTitle>Secondary email verification</PageTitle> break;
-}
+<PageTitle>Email verification</PageTitle>
 
 <MudGrid Justify="Justify.Center" Spacing="1">
     <MudItem xs="4" Style="margin-top: 100px">
         <MudStack Spacing="1" Justify="Justify.Center">
             <MudPaper Outlined Class="pa-3">
-                @switch (Type)
-                {
-                    case EmailTypes.Primary:
-                    {
-                        <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline" Size="Size.Small">
-                            Primary email verification
-                        </MudTextM3>
-                        break;
-                    }
-                    case EmailTypes.Recovery:
-                    {
-                        <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline" Size="Size.Small">
-                            Recovery email verification
-                        </MudTextM3>
-                        break;
-                    }
-                    case EmailTypes.Secondary:
-                    {
-                        <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline" Size="Size.Small">
-                            Secondary email verification
-                        </MudTextM3>
-                        break;
-                    }
-                }
+                <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline" Size="Size.Small">
+                    Email verification
+                </MudTextM3>
             </MudPaper>
             <MudPaper Outlined Class="py-4 px-5">
                 <MudStack Spacing="2" Justify="Justify.Center">
-                    @switch (Type)
-                    {
-                        case EmailTypes.Primary:
-                        {
-                            <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
-                                We have sent an email with 6-digit code to email:
-                                <strong>@UserState.Email!</strong>
-                            </MudTextM3>
-                            break;
-                        }
-                        case EmailTypes.Recovery:
-                        {
-                            <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
-                                We have sent an email with 6-digit code to email:
-                                <strong>@Email</strong>
-                            </MudTextM3>
-                            break;
-                        }
-                        case EmailTypes.Secondary:
-                        {
-                            <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
-                                We have sent an email with 6-digit code to email:
-                                <strong>@Email</strong>
-                            </MudTextM3>
-                            break;
-                        }
-                    }
+                    <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
+                        We have sent an email with 6-digit code to email:
+                        <strong>@Email</strong>
+                    </MudTextM3>
                     <MudForm
                         @ref="_form"
                         Model="_model"
@@ -134,24 +84,12 @@
 
     private readonly PatternMask _mask = new("000000");
     private MudForm _form = new();
-    private string _to = string.Empty;
-
-    protected override void OnInitialized()
-    {
-        _to = Type switch
-        {
-            EmailTypes.Primary => UserState.Email,
-            EmailTypes.Recovery => Email,
-            EmailTypes.Secondary => Email,
-            _ => throw new NotSupportedException("Unsupported email type")
-        };
-    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            var request = new SendEmailVerificationRequest { Email = _to };
+            var request = new SendEmailVerificationRequest { Email = Email };
             var response = await EmailService.SendEmailVerificationAsync(request);
             Snackbar.Add(response.GetError().Description, response.Succeeded ? Severity.Success : Severity.Error);
         }
@@ -159,7 +97,7 @@
 
     private async Task OnResendAsync()
     {
-        var request = new ResendEmailVerificationRequest { Email = _to };
+        var request = new ResendEmailVerificationRequest { Email = Email };
         var result = await EmailService.ResendEmailVerificationAsync(request);
         if (!result.Succeeded)
         {
@@ -177,7 +115,7 @@
             var request = new ConfirmEmailVerificationRequest()
             {
                 Code = _model.Code,
-                Email = _to
+                Email = Email
             };
             
             var result = await EmailService.ConfirmEmailVerificationAsync(request);
