@@ -12,7 +12,7 @@ using eSecurity.Idp.Data;
 namespace eSecurity.Idp.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20260531134901_Initial")]
+    [Migration("20260601093957_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
