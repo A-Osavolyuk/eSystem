@@ -39,11 +39,11 @@
 @code {
     [Parameter] public UserEmailsModel Model { get; set; } = null!;
     
-    private void OnChange(string email)
+    private void OnChange(string? email)
     {
         var builder = QueryBuilder.Create()
             .WithUri(Links.Account.EmailManagePage)
-            .WithQueryParam("email", email)
+            .WithQueryParam("email", email!)
             .WithQueryParam("type", EmailTypes.Recovery)
             .WithQueryParam("return_url", Links.Settings.Emails);
         

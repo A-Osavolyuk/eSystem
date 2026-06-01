@@ -112,7 +112,8 @@
             Sender = SenderType.Email,
             Payload = new()
             {
-                { "To", UserState.Email }
+                { "To", UserState.Email },
+                { "Subject", "Access verification" }
             }
         };
 

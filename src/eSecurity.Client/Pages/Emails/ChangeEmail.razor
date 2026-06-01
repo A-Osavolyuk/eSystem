@@ -224,7 +224,8 @@
             Sender = SenderType.Email,
             Payload = new()
             {
-                { "To", _changeModel.NewEmail }
+                { "To", _changeModel.NewEmail },
+                { "Subject", "Email change" }
             }
         };
 
@@ -247,7 +248,8 @@
                 Sender = SenderType.Email,
                 Payload = new()
                 {
-                    { "To", _changeModel.NewEmail }
+                    { "To", _changeModel.NewEmail },
+                    { "Subject", "Email change" }
                 }
             };
             
