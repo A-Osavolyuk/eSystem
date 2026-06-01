@@ -36,7 +36,7 @@
                         Verified
                     </MudChip>
                 </MudTooltip>
-                
+
                 foreach (var linkedAccount in LinkedAccountData.LinkedAccounts)
                 {
                     <MudChip
@@ -66,7 +66,9 @@
             <MudMenu
                 Dense="true">
                 <ActivatorContent>
-                    <MudIcon Icon="@Icons.Material.Filled.MoreHoriz"/>
+                    <MudIcon
+                        Icon="@Icons.Material.Filled.MoreHoriz"
+                        @onclick="@(async () => await context.ToggleAsync())"/>
                 </ActivatorContent>
                 <ChildContent>
                     @if (!Email.IsVerified)
@@ -92,6 +94,7 @@
                                 </MudTextM3>
                             </MudMenuItem>
                         }
+
                         <MudDivider/>
                         <MudMenuItem Href=@(OnReset())>
                             <MudTextM3 Typo="TypoM3.Body" Size="Size.Medium" Color="Color.Error">
@@ -110,14 +113,11 @@
 </MudPaper>
 
 @code {
-    [Parameter] 
-    public UserEmailDto Email { get; set; } = new();
-    
-    [Parameter]
-    public UserLinkedAccountData LinkedAccountData { get; set; } = new();
+    [Parameter] public UserEmailDto Email { get; set; } = new();
 
-    [Parameter] 
-    public EventCallback OnRefresh { get; set; }
+    [Parameter] public UserLinkedAccountData LinkedAccountData { get; set; } = new();
+
+    [Parameter] public EventCallback OnRefresh { get; set; }
 
     private string OnVerify()
     {
@@ -166,4 +166,5 @@
             else Snackbar.Add(result.GetError().Description, Severity.Error);
         }
     }
+
 }
