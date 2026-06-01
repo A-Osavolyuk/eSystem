@@ -14,66 +14,71 @@
 <PageTitle>Email verification</PageTitle>
 
 <MudGrid Justify="Justify.Center" Spacing="1">
-    <MudItem xs="4" Style="margin-top: 100px">
+    <MudItem xs="3" Style="margin-top: 100px">
         <MudStack Spacing="1" Justify="Justify.Center">
-            <MudPaper Outlined Class="pa-3">
-                <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline" Size="Size.Small">
-                    Email verification
-                </MudTextM3>
-            </MudPaper>
-            <MudPaper Outlined Class="py-4 px-5">
-                <MudStack Spacing="2" Justify="Justify.Center">
+            <MudPaper Outlined Class="pt-4 pb-2 px-5">
+                <MudStack Spacing="3">
+                    <MudTextM3 Align="Align.Center" Typo="TypoM3.Headline" Size="Size.Small">
+                        Email verification
+                    </MudTextM3>
                     <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
                         We have sent an email with 6-digit code to email:
                         <strong>@Email</strong>
                     </MudTextM3>
-                    <MudForm
-                        @ref="_form"
-                        Model="_model"
-                        Validation="Validator.ValidateValue">
-                        <MudTextFieldExtended
-                            @bind-Value="_model.Code"
-                            Variant="Variant.Outlined"
-                            Margin="Margin.Dense"
-                            Placeholder="XXXXXX"
-                            Mask="_mask"
-                            Clearable="true"
-                            Immediate="true"/>
-                    </MudForm>
-                    <MudLoadingButton
-                        ButtonType="ButtonType.Button"
-                        Variant="Variant.Filled"
-                        Color="Color.Primary"
-                        Size="Size.Small"
-                        Disabled="@(_model.Code.Length <= 5)"
-                        OnClick="@(async () => await OnVerifyAsync())">
-                        Verify
-                    </MudLoadingButton>
-                    <MudButton
-                        Size="Size.Small"
-                        Variant="Variant.Text"
-                        Color="Color.Info"
-                        ButtonType="ButtonType.Button"
-                        Href="@ReturnUrl"
-                        OnClick="@(() => NavigationManager.NavigateTo(ReturnUrl))">
-                        Cancel
-                    </MudButton>
+                    <MudStack Spacing="2" Justify="Justify.Center">
+                        <MudForm
+                            @ref="_form"
+                            Model="_model"
+                            Validation="Validator.ValidateValue">
+                            <MudTextField
+                                @bind-Value="_model.Code"
+                                Variant="Variant.Outlined"
+                                Placeholder="XXXXXX"
+                                Mask="_mask"
+                                Clearable="true"
+                                Immediate="true"/>
+                        </MudForm>
+                        <MudLoadingButton
+                            ButtonType="ButtonType.Button"
+                            Variant="Variant.Filled"
+                            Color="Color.Primary"
+                            Size="Size.Medium"
+                            Disabled="@(_model.Code.Length <= 5)"
+                            OnClick="@(async () => await OnVerifyAsync())">
+                            Verify
+                        </MudLoadingButton>
+                        <MudButton
+                            Size="Size.Medium"
+                            Variant="Variant.Text"
+                            Color="Color.Info"
+                            ButtonType="ButtonType.Button"
+                            Href="@ReturnUrl"
+                            OnClick="@(() => NavigationManager.NavigateTo(ReturnUrl))">
+                            Cancel
+                        </MudButton>
+                    </MudStack>
                 </MudStack>
             </MudPaper>
-            <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
-                Didn't received an email?
-                <MudLink Typo="Typo.body2" OnClick="@(async () => await OnResendAsync())">
-                    Resend
-                </MudLink>
-            </MudTextM3>
+            @if (_canResend)
+            {
+                <MudPaper Outlined="true" Class="pa-3">
+                    <MudTextM3 Align="Align.Center" Typo="TypoM3.Body" Size="Size.Medium">
+                        Didn't received an email?
+                        <MudLink Typo="Typo.body2" OnClick="@(async () => await OnResendAsync())">
+                            Resend
+                        </MudLink>
+                    </MudTextM3>
+                </MudPaper>
+            }
         </MudStack>
     </MudItem>
 </MudGrid>
 
 @code {
+
     [SupplyParameterFromQuery(Name = "return_url")]
     public string ReturnUrl { get; set; } = null!;
-    
+
     [SupplyParameterFromQuery(Name = "email")]
     private string Email { get; set; } = string.Empty;
 
@@ -84,6 +89,7 @@
 
     private readonly PatternMask _mask = new("000000");
     private MudForm _form = new();
+    private bool _canResend = false;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -91,7 +97,16 @@
         {
             var request = new SendEmailVerificationRequest { Email = Email };
             var response = await EmailService.SendEmailVerificationAsync(request);
-            Snackbar.Add(response.GetError().Description, response.Succeeded ? Severity.Success : Severity.Error);
+            if (response.Succeeded)
+            {
+                _canResend = true;
+                StateHasChanged();
+            }
+            else
+            {
+                var error = response.GetError();
+                Snackbar.Add(error.Description, Severity.Error);
+            }
         }
     }
 
@@ -117,7 +132,7 @@
                 Code = _model.Code,
                 Email = Email
             };
-            
+
             var result = await EmailService.ConfirmEmailVerificationAsync(request);
             if (result.Succeeded)
             {
@@ -130,4 +145,5 @@
             }
         }
     }
+
 }
