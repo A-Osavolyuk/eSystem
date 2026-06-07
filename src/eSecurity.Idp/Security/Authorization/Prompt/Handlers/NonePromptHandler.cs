@@ -5,7 +5,7 @@ using eSecurity.Idp.Security.Authorization.Authorize;
 using eSecurity.Idp.Security.Authorization.Consents;
 using eSecurity.Idp.Security.Authorization.Scopes;
 using eSecurity.Idp.Security.Authorization.Token.AuthorizationCode;
-using eSecurity.Idp.Security.Cryptography.Keys;
+using eSecurity.Idp.Security.Cryptography;
 using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;

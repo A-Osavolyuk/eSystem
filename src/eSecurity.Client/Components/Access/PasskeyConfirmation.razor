@@ -3,6 +3,8 @@
 @using eSecurity.Client.Common.State
 @using eSecurity.Client.Security.Authorization.Verification
 @using eSecurity.Client.Security.Credentials.PublicKey
+@using eSecurity.Core.Requests.Verification
+@using eSecurity.Core.Responses.Verification
 @using eSecurity.WebAuthN
 
 @inject WebAuthNManager WebAuthNManager
@@ -90,13 +92,17 @@
 </MudStack>
 
 @code {
-    [Parameter] public EventCallback<Guid> OnAccessConfirmed { get; set; }
+    [Parameter] 
+    public EventCallback<Guid> OnAccessConfirmed { get; set; }
 
-    [Parameter] public EventCallback<VerificationMethod> OnMethodChanged { get; set; }
+    [Parameter] 
+    public EventCallback<VerificationMethod> OnMethodChanged { get; set; }
 
-    [Parameter] public ConfirmationContext Context { get; set; } = null!;
+    [Parameter] 
+    public ConfirmationContext Context { get; set; } = null!;
 
-    [Parameter] public UserVerificationData Model { get; set; } = new();
+    [Parameter] 
+    public UserVerificationData Model { get; set; } = new();
 
     private bool _isLoading;
     private bool _showError;
@@ -105,6 +111,7 @@
     {
         _isLoading = true;
         _showError = false;
+        
         var request = new GenerateRequestOptionsRequest { UserHint = UserState.Email };
         var result = await PasskeyService.GenerateRequestOptionsAsync(request);
 
@@ -114,9 +121,11 @@
         }
         else
         {
+            var error = result.GetError();
+            Snackbar.Add(error.Description, Severity.Error);
+            
             _showError = true;
             _isLoading = false;
-            Snackbar.Add(result.GetError().Description, Severity.Error);
         }
     }
 
@@ -126,26 +135,29 @@
         if (authenticateResult.Success)
         {
             var credential = authenticateResult.Get<PublicKeyCredential>();
-            var request = new VerificationRequest
+            var request = new VerifySoftwareKeyRequest
             {
                 Action = Context.Action,
                 Purpose = Context.Purpose,
-                Method = VerificationMethod.Passkey,
-                Payload = new PasskeyVerificationPayload
-                {
-                    Credential = credential,
-                }
+                Credential = credential
             };
             
-            var result = await VerificationService.VerifyAsync(request);
+            var result = await VerificationService.VerifySoftwareKeyAsync(request);
             if (result.Succeeded && result.TryGetValue<VerificationResponse>(out var response) && response is not null)
             {
                 _showError = false;
                 await OnAccessConfirmed.InvokeAsync(response.VerificationId);
             }
-            else Snackbar.Add(result.GetError().Description, Severity.Error);
+            else
+            {
+                var error = result.GetError();
+                Snackbar.Add(error.Description, Severity.Error);
+            }
         }
-        else _showError = true;
+        else
+        {
+            _showError = true;
+        }
 
         _isLoading = false;
     }

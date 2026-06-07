@@ -1,36 +1,35 @@
-﻿using eSecurity.Idp.Data.Entities;
-using eSecurity.Idp.Security.Credentials.PublicKey;
-using eSecurity.Idp.Security.Credentials.PublicKey.Credentials;
-using eSecurity.Idp.Security.Identity.User;
+﻿using eSecurity.Core.Requests.Verification;
 using eSecurity.Core.Responses;
 using eSecurity.Core.Responses.Verification;
 using eSecurity.Core.Security.Authorization.Verification;
+using eSecurity.Idp.Data.Entities;
+using eSecurity.Idp.Security.Authorization.Verification;
+using eSecurity.Idp.Security.Credentials.PublicKey;
+using eSecurity.Idp.Security.Credentials.PublicKey.Credentials;
+using eSecurity.Idp.Security.Identity.User;
 using eSecurity.WebAuthN.Constants;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Identity.Claims;
 
-namespace eSecurity.Idp.Security.Authorization.Verification.Passkey;
+namespace eSecurity.Idp.Features.Verification.SoftwareKey;
 
-public sealed class PasskeyVerificationStrategy(
-    IHttpContextAccessor httpContextAccessor,
+public sealed record VerifySoftwareKeyCommand(VerifySoftwareKeyRequest Request) : IRequest<Result>;
+
+public sealed class VerifySoftwareKeyCommandHandler(
     IUserManager userManager,
     IPasskeyManager passkeyManager,
+    IHttpContextAccessor httpContextAccessor,
     IVerificationManager verificationManager,
-    IOptions<VerificationConfiguration> options) : IVerificationStrategy
+    IOptions<VerificationConfiguration> options) : IRequestHandler<VerifySoftwareKeyCommand, Result>
 {
-    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly IUserManager _userManager = userManager;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly VerificationConfiguration _configuration = options.Value;
 
-    public async ValueTask<Result> ExecuteAsync(VerificationContext context,
-        CancellationToken cancellationToken = default)
+    public async Task<Result> Handle(VerifySoftwareKeyCommand request, CancellationToken cancellationToken = default)
     {
-        if (context is not PasskeyVerificationContext passkeyContext)
-            throw new InvalidOperationException("Invalid context type");
-        
         var userResult = await _userManager.GetUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
@@ -47,7 +46,7 @@ public sealed class PasskeyVerificationStrategy(
             });
         }
 
-        var credential = passkeyContext.Credential;
+        var credential = request.Request.Credential;
         var credentialId = CredentialUtils.ToBase64String(credential.Id);
 
         var passkey = await _passkeyManager.FindByCredentialIdAsync(credentialId, cancellationToken);
@@ -77,8 +76,8 @@ public sealed class PasskeyVerificationStrategy(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            Action = passkeyContext.Action,
-            Purpose = passkeyContext.Purpose,
+            Action = request.Request.Action,
+            Purpose = request.Request.Purpose,
             Status = VerificationStatus.Approved,
             Method = VerificationMethod.Passkey,
             ApprovedAt = DateTimeOffset.UtcNow,

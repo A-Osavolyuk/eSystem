@@ -9,7 +9,7 @@ using eSecurity.WebAuthN.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using Credentials_CredentialOptions = eSecurity.Idp.Security.Credentials.PublicKey.Credentials.CredentialOptions;
+using CredentialOptions = eSecurity.Idp.Security.Credentials.PublicKey.Credentials.CredentialOptions;
 
 namespace eSecurity.Idp.Features.Passkeys.Commands;
 
@@ -22,14 +22,14 @@ public class GenerateRequestOptionsCommandHandler(
     IChallengeFactory challengeFactory,
     IDeviceManager deviceManager,
     IPasskeyManager passkeyManager,
-    IOptions<Credentials_CredentialOptions> options) : IRequestHandler<GenerateRequestOptionsCommand, Result>
+    IOptions<CredentialOptions> options) : IRequestHandler<GenerateRequestOptionsCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly ISessionStorage _sessionStorage = sessionStorage;
     private readonly IChallengeFactory _challengeFactory = challengeFactory;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
-    private readonly Credentials_CredentialOptions _credentialOptions = options.Value;
+    private readonly CredentialOptions _credentialOptions = options.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(GenerateRequestOptionsCommand request, CancellationToken cancellationToken)

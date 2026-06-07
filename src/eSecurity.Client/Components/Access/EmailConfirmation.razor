@@ -1,7 +1,8 @@
 ﻿@using eSecurity.Client.Common.Confirmation
 @using eSecurity.Client.Common.State
 @using eSecurity.Client.Security.Authorization.Verification
-@using eSystem.Core.Messaging
+@using eSecurity.Core.Requests.Verification
+@using eSecurity.Core.Responses.Verification
 
 @inject UserState UserState
 @inject ISnackbar Snackbar
@@ -107,20 +108,16 @@
 
     private async Task OnSendAsync()
     {
-        var request = new SendCodeRequest
+        var result = await VerificationService.SendEmailOtpAsync();
+        if (result.Succeeded)
         {
-            Sender = SenderType.Email,
-            Payload = new()
-            {
-                { "To", UserState.Email },
-                { "Subject", "Access verification" }
-            }
-        };
-
-        var result = await VerificationService.SendCodeAsync(request);
-
-        if (result.Succeeded) _sendStage = false;
-        else Snackbar.Add(result.GetError().Description, Severity.Error);
+            _sendStage = false;
+        }
+        else
+        {
+            var error = result.GetError();
+            Snackbar.Add(error.Description, Severity.Error);
+        }
     }
 
     private async Task OnVerifyAsync()
@@ -129,23 +126,23 @@
 
         if (_form.IsValid)
         {
-            var request = new VerificationRequest
+            var request = new VerifyEmailOtpRequest()
             {
-                Action = Context.Action,
+                Code = _codeModel.Code,
                 Purpose = Context.Purpose,
-                Method = VerificationMethod.EmailOtp,
-                Payload = new TotpVerificationPayload
-                {
-                    Code = _codeModel.Code
-                }
+                Action = Context.Action
             };
             
-            var result = await VerificationService.VerifyAsync(request);
+            var result = await VerificationService.VerifyEmailOtpAsync(request);
             if (result.Succeeded && result.TryGetValue<VerificationResponse>(out var response) && response is not null)
             {
                 await OnAccessConfirmed.InvokeAsync(response.VerificationId);
             }
-            else Snackbar.Add(result.GetError().Description, Severity.Error);
+            else
+            {
+                var error = result.GetError();
+                Snackbar.Add(error.Description, Severity.Error);
+            }
         }
     }
 

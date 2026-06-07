@@ -1,5 +1,7 @@
 ﻿@using eSecurity.Client.Common.Confirmation
 @using eSecurity.Client.Security.Authorization.Verification
+@using eSecurity.Core.Requests.Verification
+@using eSecurity.Core.Responses.Verification
 
 @inject ISnackbar Snackbar
 @inject IVerificationService VerificationService
@@ -55,13 +57,17 @@
 </MudStack>
 
 @code {
-    [Parameter] public EventCallback<Guid> OnAccessConfirmed { get; set; }
+    [Parameter] 
+    public EventCallback<Guid> OnAccessConfirmed { get; set; }
 
-    [Parameter] public EventCallback<VerificationMethod> OnMethodChanged { get; set; }
+    [Parameter] 
+    public EventCallback<VerificationMethod> OnMethodChanged { get; set; }
 
-    [Parameter] public ConfirmationContext Context { get; set; } = null!;
+    [Parameter] 
+    public ConfirmationContext Context { get; set; } = null!;
 
-    [Parameter] public UserVerificationData Model { get; set; } = new();
+    [Parameter] 
+    public UserVerificationData Model { get; set; } = new();
 
     private CodeModel _codeModel = new();
     private readonly PatternMask _mask = new("000000");
@@ -69,23 +75,23 @@
 
     private async Task OnVerifyAsync()
     {
-        var request = new VerificationRequest
+        var request = new VerifyAuthenticatorAppRequest()
         {
             Action = Context.Action,
             Purpose = Context.Purpose,
-            Method = VerificationMethod.AuthenticatorApp,
-            Payload = new AuthenticatorAppVerificationPayload
-            {
-                Code = _codeModel.Code
-            }
+            Code = _codeModel.Code
         };
 
-        var result = await VerificationService.VerifyAsync(request);
+        var result = await VerificationService.VerifyAuthenticatorAppAsync(request);
         if (result.Succeeded && result.TryGetValue<VerificationResponse>(out var response) && response is not null)
         {
             await OnAccessConfirmed.InvokeAsync(response.VerificationId);
         }
-        else Snackbar.Add(result.GetError().Description, Severity.Error);
+        else
+        {
+            var error = result.GetError();
+            Snackbar.Add(error.Description, Severity.Error);
+        }
     }
 
 }

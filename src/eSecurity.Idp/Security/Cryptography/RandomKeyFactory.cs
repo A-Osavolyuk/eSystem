@@ -1,6 +1,6 @@
 ﻿using OtpNet;
 
-namespace eSecurity.Idp.Security.Cryptography.Keys;
+namespace eSecurity.Idp.Security.Cryptography;
 
 public static class RandomKeyFactory
 {

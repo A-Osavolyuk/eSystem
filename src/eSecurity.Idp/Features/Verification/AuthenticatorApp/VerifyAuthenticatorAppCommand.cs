@@ -1,37 +1,37 @@
-﻿using eSecurity.Idp.Data.Entities;
-using eSecurity.Idp.Security.Authentication.TwoFactor.Authenticator;
-using eSecurity.Idp.Security.Authentication.TwoFactor.Secret;
-using eSecurity.Idp.Security.Cryptography.Protection.Constants;
-using eSecurity.Idp.Security.Identity.User;
+﻿using eSecurity.Core.Requests.Verification;
 using eSecurity.Core.Responses;
 using eSecurity.Core.Responses.Verification;
 using eSecurity.Core.Security.Authorization.Verification;
+using eSecurity.Idp.Data.Entities;
+using eSecurity.Idp.Security.Authentication.TwoFactor.Authenticator;
+using eSecurity.Idp.Security.Authentication.TwoFactor.Secret;
+using eSecurity.Idp.Security.Authorization.Verification;
+using eSecurity.Idp.Security.Cryptography.Protection.Constants;
+using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Identity.Claims;
 using Microsoft.AspNetCore.DataProtection;
 
-namespace eSecurity.Idp.Security.Authorization.Verification.AuthenticationApp;
+namespace eSecurity.Idp.Features.Verification.AuthenticatorApp;
 
-public sealed class AuthenticationAppVerificationStrategy(
+public sealed record VerifyAuthenticatorAppCommand(VerifyAuthenticatorAppRequest Request) : IRequest<Result>;
+
+public sealed class VerifyAuthenticatorAppCommandHandler(
     IUserManager userManager,
-    IVerificationManager verificationManager,
     ISecretManager secretManager,
     IDataProtectionProvider protectionProvider,
-    IOptions<VerificationConfiguration> options) : IVerificationStrategy
+    IVerificationManager verificationManager,
+    IOptions<VerificationConfiguration> options) : IRequestHandler<VerifyAuthenticatorAppCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
-    private readonly IVerificationManager _verificationManager = verificationManager;
     private readonly ISecretManager _secretManager = secretManager;
     private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
+    private readonly IVerificationManager _verificationManager = verificationManager;
     private readonly VerificationConfiguration _configuration = options.Value;
 
-    public async ValueTask<Result> ExecuteAsync(VerificationContext context,
+    public async Task<Result> Handle(VerifyAuthenticatorAppCommand request, 
         CancellationToken cancellationToken = default)
     {
-        if (context is not AuthenticatorAppVerificationContext authenticationContext)
-            throw new InvalidOperationException("Invalid context type");
-        
         var userResult = await _userManager.GetUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
@@ -47,7 +47,7 @@ public sealed class AuthenticationAppVerificationStrategy(
                 Description = "Unauthorized"
             });
         }
-
+        
         var secret = await _secretManager.GetAsync(user, cancellationToken);
         if (secret is null)
         {
@@ -60,7 +60,7 @@ public sealed class AuthenticationAppVerificationStrategy(
 
         var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Secret);
         var unprotectedSecret = protector.Unprotect(secret.ProtectedSecret);
-        var verified = AuthenticatorUtils.VerifyCode(authenticationContext.Code, unprotectedSecret);
+        var verified = AuthenticatorUtils.VerifyCode(request.Request.Code, unprotectedSecret);
         if (!verified)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -74,8 +74,8 @@ public sealed class AuthenticationAppVerificationStrategy(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            Action = authenticationContext.Action,
-            Purpose = authenticationContext.Purpose,
+            Action = request.Request.Action,
+            Purpose = request.Request.Purpose,
             Method = VerificationMethod.AuthenticatorApp,
             Status = VerificationStatus.Approved,
             ApprovedAt = DateTimeOffset.UtcNow,

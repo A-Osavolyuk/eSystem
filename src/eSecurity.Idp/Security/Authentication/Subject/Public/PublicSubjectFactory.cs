@@ -1,4 +1,4 @@
-﻿using eSecurity.Idp.Security.Cryptography.Keys;
+﻿using eSecurity.Idp.Security.Cryptography;
 
 namespace eSecurity.Idp.Security.Authentication.Subject.Public;
 

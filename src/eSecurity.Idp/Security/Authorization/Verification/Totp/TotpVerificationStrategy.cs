@@ -2,6 +2,7 @@
 using eSecurity.Idp.Security.Authorization.Codes;
 using eSecurity.Idp.Security.Identity.User;
 using eSecurity.Core.Responses;
+using eSecurity.Core.Responses.Verification;
 using eSecurity.Core.Security.Authorization.Verification;
 using eSystem.Core.Messaging;
 using eSystem.Core.Primitives;

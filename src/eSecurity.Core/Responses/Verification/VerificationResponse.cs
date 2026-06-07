@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace eSecurity.Core.Responses;
+namespace eSecurity.Core.Responses.Verification;
 
 public sealed class VerificationResponse
 {

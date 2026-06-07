@@ -2,7 +2,7 @@
 using eSecurity.Idp.Security.Authentication.BackchannelAuthentication;
 using eSecurity.Idp.Security.Authentication.Ciba;
 using eSecurity.Idp.Security.Authentication.Client;
-using eSecurity.Idp.Security.Cryptography.Keys;
+using eSecurity.Idp.Security.Cryptography;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;

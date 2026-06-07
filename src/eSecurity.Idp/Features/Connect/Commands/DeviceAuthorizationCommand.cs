@@ -1,8 +1,8 @@
 ﻿using eSecurity.Idp.Data.Entities;
 using eSecurity.Idp.Security.Authentication.Client;
 using eSecurity.Idp.Security.Authorization.Token.DeviceCode;
+using eSecurity.Idp.Security.Cryptography;
 using eSecurity.Idp.Security.Cryptography.Hashing;
-using eSecurity.Idp.Security.Cryptography.Keys;
 using eSystem.Core.Enums;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;

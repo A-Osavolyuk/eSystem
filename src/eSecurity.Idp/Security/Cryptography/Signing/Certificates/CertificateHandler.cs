@@ -1,6 +1,5 @@
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using eSecurity.Idp.Security.Cryptography.Keys;
 using eSecurity.Idp.Security.Cryptography.Protection.Constants;
 using Microsoft.AspNetCore.DataProtection;
 
