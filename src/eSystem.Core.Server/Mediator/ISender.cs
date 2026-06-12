@@ -15,30 +15,71 @@ public sealed class Sender(IServiceProvider serviceProvider) : ISender
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
 
-    public async Task<TResponse> Send<TResponse>(IRequest<TResponse> request, 
+    public Task<TResponse> Send<TResponse>(IRequest<TResponse> request, 
         CancellationToken cancellationToken = default)
     {
-        var handlerType = typeof(IRequestHandler<,>).MakeGenericType(request.GetType(), typeof(TResponse));
+        var requestType = request.GetType();
+        var responseType = typeof(TResponse);
+        var handlerType = typeof(IRequestHandler<,>).MakeGenericType(requestType, responseType);
+        var behaviorType = typeof(IEnumerable<>)
+            .MakeGenericType(typeof(IPipelineBehavior<,>))
+            .MakeGenericType(requestType, responseType);
+        
         var handler = _serviceProvider.GetRequiredService(handlerType);
-        var method = handlerType.GetMethod(nameof(IRequestHandler<,>.Handle));
-        if (method is null) throw new NullReferenceException($"No handler found for {handlerType}");
+        var behaviors = ((IEnumerable<object>)_serviceProvider.GetRequiredService(behaviorType)).ToList();
 
-        if (method.Invoke(handler, [request, cancellationToken]) is not Task<TResponse> result) 
-            throw new NullReferenceException($"No result found for {handlerType}");
+        RequestHandlerDelegate<TResponse> pipeline = () =>
+        {
+            var method = handlerType.GetMethod(nameof(IRequestHandler<,>.Handle))!;
+            if (method is null)
+                throw new InvalidOperationException($"No handler found for {handlerType}");
+            
+            return (Task<TResponse>)method.Invoke(handler, [request, cancellationToken])!;
+        };
+        
+        foreach (var behavior in Enumerable.Reverse(behaviors))
+        {
+            var next = pipeline;
+            var method  = behavior.GetType().GetMethod(nameof(IPipelineBehavior<,>.Handle));
+            if (method is null)
+                throw new InvalidOperationException("Invalid behavior");
+            
+            pipeline = () => (Task<TResponse>)method.Invoke(behavior, [request, next, cancellationToken])!;
+        }
 
-        return await result;
+        return pipeline();
     }
 
-    public async Task Send(IRequest request, CancellationToken cancellationToken = default)
+    public Task Send(IRequest request, CancellationToken cancellationToken = default)
     {
-        var handlerType = typeof(IRequestHandler<>).MakeGenericType(request.GetType());
+        var requestType = request.GetType();
+        var handlerType = typeof(IRequestHandler<>).MakeGenericType(requestType);
+        var behaviorType = typeof(IEnumerable<>)
+            .MakeGenericType(typeof(IPipelineBehavior<>))
+            .MakeGenericType(requestType);
+        
         var handler = _serviceProvider.GetRequiredService(handlerType);
-        var method = handlerType.GetMethod(nameof(IRequestHandler<>.Handle));
-        if (method is null) throw new NullReferenceException($"No handler found for {handlerType}");
+        var behaviors = ((IEnumerable<object>)_serviceProvider.GetRequiredService(behaviorType)).ToList();
 
-        if (method.Invoke(handler, [request, cancellationToken]) is not Task result) 
-            throw new NullReferenceException($"No result found for {handlerType}");
+        RequestHandlerDelegate pipeline = () =>
+        {
+            var method = handlerType.GetMethod(nameof(IRequestHandler<>.Handle));
+            if (method is null) 
+                throw new InvalidOperationException($"No handler found for {handlerType}");
+            
+            return (Task)method.Invoke(handler, [request, cancellationToken])!;
+        };
+        
+        foreach (var behavior in Enumerable.Reverse(behaviors))
+        {
+            var next = pipeline;
+            var method  = behavior.GetType().GetMethod(nameof(IPipelineBehavior<>.Handle));
+            if (method is null)
+                throw new InvalidOperationException("Invalid behavior");
+            
+            pipeline = () => (Task)method.Invoke(behavior, [request, next, cancellationToken])!;
+        }
 
-        await result;
+        return pipeline();
     }
 }
