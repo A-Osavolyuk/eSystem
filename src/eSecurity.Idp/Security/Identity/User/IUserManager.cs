@@ -12,13 +12,16 @@ public interface IUserManager
     public ValueTask<UserEntity?> FindByUsernameAsync(string name, CancellationToken cancellationToken = default);
     public ValueTask<UserEntity?> FindByLoginAsync(string login, CancellationToken cancellationToken = default);
     public ValueTask<UserEntity?> FindBySubjectAsync(string subject, CancellationToken cancellationToken = default);
-    
-    public ValueTask<UserEntity?> FindByPhoneNumberAsync(string phoneNumber,
-        CancellationToken cancellationToken = default);
 
     public ValueTask<Result> CreateAsync(UserEntity user, CancellationToken cancellationToken = default);
-
+    
     public ValueTask<Result> UpdateAsync(UserEntity user, CancellationToken cancellationToken = default);
+    
+    public ValueTask<Result> AddResendAttemptAsync(UserEntity user, TimeSpan dueTime, 
+        CancellationToken cancellationToken = default);
 
-    public ValueTask<Result> DeleteAsync(UserEntity user, CancellationToken cancellationToken = default);
+    public ValueTask<Result> ResetResendAttemptsAsync(UserEntity user, TimeSpan dueTime, 
+        CancellationToken cancellationToken = default);
+
+    public ValueTask<Result> CleanResendAttemptsAsync(UserEntity user, CancellationToken cancellationToken = default);
 }

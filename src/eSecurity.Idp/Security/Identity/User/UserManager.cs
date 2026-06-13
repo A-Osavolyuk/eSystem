@@ -103,17 +103,6 @@ public sealed class UserManager(AuthDbContext context, IHttpContextAccessor http
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async ValueTask<UserEntity?> FindByPhoneNumberAsync(string phoneNumber,
-        CancellationToken cancellationToken = default)
-    {
-        var user = await _context.Users
-            .Where(x => _context.UserPhoneNumbers
-                .Any(e => e.UserId == x.Id && e.PhoneNumber == phoneNumber))
-            .FirstOrDefaultAsync(cancellationToken: cancellationToken);
-
-        return user;
-    }
-
     public async ValueTask<Result> CreateAsync(UserEntity user, CancellationToken cancellationToken = default)
     {
         var lockoutState = new UserLockoutStateEntity
@@ -141,12 +130,30 @@ public sealed class UserManager(AuthDbContext context, IHttpContextAccessor http
         return Results.Success(SuccessCodes.Ok);
     }
 
-    public async ValueTask<Result> DeleteAsync(UserEntity user,
+    public async ValueTask<Result> AddResendAttemptAsync(UserEntity user, TimeSpan dueTime, 
         CancellationToken cancellationToken = default)
     {
-        _context.Users.Remove(user);
-        await _context.SaveChangesAsync(cancellationToken);
+        user.ResendAttempts += 1;
+        user.ResendAvailableAt = DateTimeOffset.UtcNow.Add(dueTime);
 
-        return Results.Success(SuccessCodes.Ok);
+        return await UpdateAsync(user, cancellationToken);
+    }
+
+    public async ValueTask<Result> ResetResendAttemptsAsync(UserEntity user, TimeSpan dueTime, 
+        CancellationToken cancellationToken = default)
+    {
+        user.ResendAttempts = 0;
+        user.ResendAvailableAt = DateTimeOffset.UtcNow.Add(dueTime);
+
+        return await UpdateAsync(user, cancellationToken);
+    }
+
+    public async ValueTask<Result> CleanResendAttemptsAsync(UserEntity user, 
+        CancellationToken cancellationToken = default)
+    {
+        user.ResendAttempts = 0;
+        user.ResendAvailableAt = null;
+
+        return await UpdateAsync(user, cancellationToken);
     }
 }
