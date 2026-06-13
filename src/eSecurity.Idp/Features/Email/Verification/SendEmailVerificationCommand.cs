@@ -81,11 +81,8 @@ public sealed class SendEmailVerificationCommandHandler(
             });
         }
 
-        user.ResendAttempts = 0;
-        user.ResendAvailableAt = null;
-
-        var updateResult = await _userManager.UpdateAsync(user, cancellationToken);
-        if (!updateResult.Succeeded) return updateResult;
+        var result = await _userManager.ResetResendAttemptsAsync(user, TimeSpan.FromMinutes(2), cancellationToken);
+        if (!result.Succeeded) return result;
 
         var emailContext = new EmailVerificationContext()
         {

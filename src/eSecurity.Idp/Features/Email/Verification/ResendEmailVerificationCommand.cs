@@ -107,11 +107,8 @@ public sealed class ResendEmailVerificationCommandHandler(
 
         await _emailService.SendAsync(emailContext, cancellationToken);
 
-        user.ResendAttempts += 1;
-        user.ResendAvailableAt = DateTimeOffset.UtcNow.AddMinutes(2);
-
-        var updateResult = await _userManager.UpdateAsync(user, cancellationToken);
-        if (!updateResult.Succeeded) return updateResult;
+        var result = await _userManager.AddResendAttemptAsync(user, TimeSpan.FromMinutes(2), cancellationToken);
+        if (!result.Succeeded) return result;
 
         ResendEmailVerificationResponse response;
         if (user.ResendAttempts == 5)
