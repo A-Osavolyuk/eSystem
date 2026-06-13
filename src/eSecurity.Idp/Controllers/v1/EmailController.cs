@@ -1,6 +1,8 @@
 using eSecurity.Idp.Features.Email.Commands;
 using eSecurity.Core.Requests;
+using eSecurity.Core.Requests.Email.Change;
 using eSecurity.Core.Requests.Email.Verification;
+using eSecurity.Idp.Features.Email.Change;
 using eSecurity.Idp.Features.Email.Verification;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
@@ -48,6 +50,50 @@ public class EmailController(ISender sender) : ControllerBase
         return HttpContext.HandleResult(result);
     }
     
+    [EndpointSummary("Send email change")]
+    [EndpointDescription("Send email change")]
+    [ProducesResponseType(200)]
+    [HttpPost("change/send")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async ValueTask<IActionResult> SendEmailAsyncAsync([FromBody] SendEmailChangeRequest request)
+    {
+        var result = await _sender.Send(new SendEmailChangeCommand(request));
+        return HttpContext.HandleResult(result);
+    }
+    
+    [EndpointSummary("Resend email change")]
+    [EndpointDescription("Resend email change")]
+    [ProducesResponseType(200)]
+    [HttpPost("change/resend")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async ValueTask<IActionResult> ResendEmailAsyncAsync([FromBody] ResendEmailChangeRequest request)
+    {
+        var result = await _sender.Send(new ResendEmailChangeCommand(request));
+        return HttpContext.HandleResult(result);
+    }
+    
+    [EndpointSummary("Can change email")]
+    [EndpointDescription("Can change email")]
+    [ProducesResponseType(200)]
+    [HttpPost("change/can-change")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async ValueTask<IActionResult> CanChangeEmailAsync([FromBody] CanChangeEmailRequest request)
+    {
+        var result = await _sender.Send(new CanChangeEmailCommand(request));
+        return HttpContext.HandleResult(result);
+    }
+    
+    [EndpointSummary("Confirm email change")]
+    [EndpointDescription("Confirm email change")]
+    [ProducesResponseType(200)]
+    [HttpPost("change/confirm")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async ValueTask<IActionResult> ConfirmEmailChangeAsync([FromBody] ConfirmEmailChangeRequest request)
+    {
+        var result = await _sender.Send(new ConfirmEmailChangeCommand(request));
+        return HttpContext.HandleResult(result);
+    }
+    
     [EndpointSummary("Check email")]
     [EndpointDescription("Check email")]
     [ProducesResponseType(200)]
@@ -67,17 +113,6 @@ public class EmailController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> AddAsync([FromBody] AddEmailRequest request)
     {
         var result = await _sender.Send(new AddEmailCommand(request));
-        return HttpContext.HandleResult(result);
-    }
-    
-    [EndpointSummary("Change email")]
-    [EndpointDescription("Change email")]
-    [ProducesResponseType(200)]
-    [HttpPost("change")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> ChangeAsync([FromBody] ChangeEmailRequest request)
-    {
-        var result = await _sender.Send(new ChangeEmailCommand(request));
         return HttpContext.HandleResult(result);
     }
     

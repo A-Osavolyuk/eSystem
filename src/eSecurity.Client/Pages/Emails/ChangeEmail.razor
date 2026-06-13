@@ -1,11 +1,8 @@
 ﻿@page "/account/email/change"
 @using eSecurity.Client.Common.Confirmation
 @using eSecurity.Client.Common.Validation.Validators
-@using eSecurity.Client.Security.Authorization.Verification
 @using eSecurity.Client.Security.Identity
-@using eSecurity.Core.Responses.Verification
-@using eSystem.Core.Messaging
-@using eSecurity.Core.Security.Identity
+@using eSecurity.Core.Requests.Email.Change
 @using eSecurity.Core.Security.Identity.Constants
 
 @inherits PageBase
@@ -14,7 +11,6 @@
 
 @inject ChangeEmailValidator ChangeEmailValidator
 @inject CodeModelValidator Validator
-@inject IVerificationService VerificationService
 @inject IEmailService EmailService
 
 @switch (Type)
@@ -196,6 +192,9 @@
 
     [SupplyParameterFromQuery(Name = "type")]
     public string Type { get; set; } = string.Empty;
+    
+    [SupplyParameterFromQuery(Name = "email")]
+    public string Email { get; set; } = string.Empty;
 
     [SupplyParameterFromQuery(Name = "return_url")]
     public string ReturnUrl { get; set; } = null!;
@@ -220,17 +219,8 @@
 
     private async Task OnResendAsync()
     {
-        var request = new ResendCodeRequest
-        {
-            Sender = SenderType.Email,
-            Payload = new()
-            {
-                { "To", _changeModel.NewEmail },
-                { "Subject", "Email change" }
-            }
-        };
-
-        var result = await VerificationService.ResendCodeAsync(request);
+        var request = new ResendEmailChangeRequest { NewEmail = _changeModel.NewEmail };
+        var result = await EmailService.ResendEmailChangeAsync(request);
         if (!result.Succeeded)
         {
             var error = result.GetError();
@@ -244,48 +234,17 @@
 
         if (_changeForm.IsValid)
         {
-            var request = new SendCodeRequest
+            var request = new SendEmailChangeRequest { NewEmail = _changeModel.NewEmail };
+            var result = await EmailService.SendEmailChangeAsync(request);
+            if (result.Succeeded)
             {
-                Sender = SenderType.Email,
-                Payload = new()
-                {
-                    { "To", _changeModel.NewEmail },
-                    { "Subject", "Email change" }
-                }
-            };
-            
-            var result = await VerificationService.SendCodeAsync(request);
-            if (result.Succeeded) await _stepper.StepNextAsync();
-            else Snackbar.Add(result.GetError().Description, Severity.Error);
-        }
-    }
-
-    private async Task ChangeAsync(Guid verificationId)
-    {
-        var type = Type switch
-        {
-            EmailTypes.Primary => EmailType.Primary,
-            EmailTypes.Recovery => EmailType.Recovery,
-            _ => throw new NotSupportedException("Unsupported email type")
-        };
-
-        var request = new ChangeEmailRequest
-        {
-            VerificationId = verificationId,
-            Email = _changeModel.NewEmail,
-            Type = type,
-        };
-
-        var result = await EmailService.ChangeEmailAsync(request);
-
-        if (result.Succeeded)
-        {
-            Snackbar.Add("Email address was successfully changed", Severity.Success);
-            NavigationManager.NavigateTo(ReturnUrl);
-        }
-        else
-        {
-            Snackbar.Add(result.GetError().Description, Severity.Error);
+                await _stepper.StepNextAsync();
+            }
+            else
+            {
+                var error = result.GetError();
+                Snackbar.Add(error.Description, Severity.Error);
+            }
         }
     }
 
@@ -295,24 +254,23 @@
 
         if (_confirmForm.IsValid)
         {
-            var request = new VerificationRequest
+            var request = new ConfirmEmailChangeRequest
             {
-                Action = ActionType.Change,
-                Purpose = PurposeType.Email,
-                Method = VerificationMethod.EmailOtp,
-                Payload = new TotpVerificationPayload
-                {
-                    Code = _confirmModel.Code
-                }
+                Code = _confirmModel.Code,
+                NewEmail = _changeModel.NewEmail,
+                CurrentEmail = Email
             };
-            
-            var result = await VerificationService.VerifyAsync(request);
 
-            if (result.Succeeded && result.TryGetValue<VerificationResponse>(out var response) && response is not null)
+            var result = await EmailService.ConfirmEmailChangeAsync(request);
+            if (result.Succeeded)
             {
-                await ChangeAsync(response.VerificationId);
+                Snackbar.Add("Email address was successfully changed", Severity.Success);
+                NavigationManager.NavigateTo(ReturnUrl);
             }
-            else Snackbar.Add(result.GetError().Description, Severity.Error);
+            else
+            {
+                Snackbar.Add(result.GetError().Description, Severity.Error);
+            }
         }
     }
 

@@ -1,6 +1,6 @@
 ﻿using eSecurity.Client.Common.Http;
 using eSecurity.Core.Requests;
-using eSecurity.Core.Requests.Email;
+using eSecurity.Core.Requests.Email.Change;
 using eSecurity.Core.Requests.Email.Verification;
 
 namespace eSecurity.Client.Security.Identity;
@@ -25,15 +25,6 @@ public class EmailService(IApiClient apiClient) : IEmailService
                 Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Email/check"
-            });
-
-    public async ValueTask<ApiResponse> ChangeEmailAsync(ChangeEmailRequest request)
-        => await _apiClient.SendAsync(
-            new ApiRequest
-            {
-                Method = HttpMethods.Post,
-                Data = request,
-                Url = "/api/v1/Email/change"
             });
 
     public async ValueTask<ApiResponse> ManageEmailAsync(ManageEmailRequest request)
@@ -87,5 +78,41 @@ public class EmailService(IApiClient apiClient) : IEmailService
                 Method = HttpMethods.Post,
                 Data = request,
                 Url = "/api/v1/Email/verification/resend"
+            });
+
+    public async ValueTask<ApiResponse> SendEmailChangeAsync(SendEmailChangeRequest request)
+        => await _apiClient.SendAsync(
+            new ApiRequest
+            {
+                Method = HttpMethods.Post,
+                Data = request,
+                Url = "/api/v1/Email/change/send"
+            });
+
+    public async ValueTask<ApiResponse> ResendEmailChangeAsync(ResendEmailChangeRequest request)
+        => await _apiClient.SendAsync(
+            new ApiRequest
+            {
+                Method = HttpMethods.Post,
+                Data = request,
+                Url = "/api/v1/Email/change/resend"
+            });
+
+    public async ValueTask<ApiResponse> ConfirmEmailChangeAsync(ConfirmEmailChangeRequest request)
+        => await _apiClient.SendAsync(
+            new ApiRequest
+            {
+                Method = HttpMethods.Post,
+                Data = request,
+                Url = "/api/v1/Email/change/confirm"
+            });
+
+    public async ValueTask<ApiResponse> CanChangeEmailAsync(CanChangeEmailRequest request)
+        => await _apiClient.SendAsync(
+            new ApiRequest
+            {
+                Method = HttpMethods.Post,
+                Data = request,
+                Url = "/api/v1/Email/change/can-change"
             });
 }

@@ -62,24 +62,96 @@ public class EmailManager(AuthDbContext context) : IEmailManager
     public async ValueTask<Result> ChangeAsync(UserEntity user, string currentEmail, string newEmail,
         CancellationToken cancellationToken = default)
     {
-        var userEmail = await _context.UserEmails.FirstOrDefaultAsync(
-            x => x.UserId == user.Id && x.Email == currentEmail, cancellationToken);
-
-        if (userEmail is null)
+        var currentEmailEntity = await FindAsync(currentEmail, cancellationToken);
+        if (currentEmailEntity is null || currentEmailEntity.UserId != user.Id)
         {
-            return Results.ClientError(ClientErrorCode.NotFound, new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
-                Code = ErrorCode.NotFound,
-                Description = $"User doesn't have email {currentEmail}"
+                Code = ErrorCode.InvalidRequest,
+                Description = "'current_email' is invalid"
             });
         }
 
-        userEmail.Email = newEmail;
-        userEmail.NormalizedEmail = newEmail.ToUpperInvariant();
-        userEmail.IsVerified = true;
-        userEmail.VerifiedAt = DateTimeOffset.UtcNow;
+        if (!currentEmailEntity.IsVerified)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.UnverifiedEmail,
+                Description = "'current_email' is not verified yet"
+            });
+        }
 
-        _context.UserEmails.Update(userEmail);
+        if (currentEmailEntity.Type == EmailType.Secondary)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "You cannot change your secondary email"
+            });
+        }
+
+        if (currentEmailEntity.Type == EmailType.Primary && await HasExternalAccountAsync(user, cancellationToken))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "You cannot change your primary email, while you have linked external accounts"
+            });
+        }
+
+        if (currentEmailEntity.Type == EmailType.Secondary &&
+            !await HasAsync(user, EmailType.Primary, cancellationToken))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "You cannot change your recovery email, while you do not have primary one"
+            });
+        }
+
+        var newEmailEntity = await FindAsync(newEmail, cancellationToken);
+        if (newEmailEntity is null)
+        {
+            currentEmailEntity.Email = newEmail;
+            currentEmailEntity.NormalizedEmail = newEmail.ToUpperInvariant();
+
+            _context.UserEmails.Update(currentEmailEntity);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return Results.Success(SuccessCodes.Ok);
+        }
+
+        if (newEmailEntity.UserId != user.Id)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.EmailTaken,
+                Description = "This email address is already taken"
+            });
+        }
+
+        if (newEmailEntity.Type != EmailType.Secondary)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "You can change your current primary or recovery email only with your secondary one"
+            });
+        }
+
+        if (!newEmailEntity.IsVerified)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.UnverifiedEmail,
+                Description = "New email address is not verified yet"
+            });
+        }
+
+        newEmailEntity.Type = currentEmailEntity.Type;
+        currentEmailEntity.Type = EmailType.Secondary;
+        
+        _context.UserEmails.UpdateRange([newEmailEntity, currentEmailEntity]);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Results.Success(SuccessCodes.Ok);
@@ -173,11 +245,12 @@ public class EmailManager(AuthDbContext context) : IEmailManager
         var userEmail = await _context.UserEmails.FirstOrDefaultAsync(
             x => x.UserId == user.Id && x.Email == email, cancellationToken);
 
-        if (userEmail is null) return Results.ClientError(ClientErrorCode.BadRequest, new Error
-        {
-            Code = ErrorCode.BadRequest,
-            Description = "Invalid email"
-        });
+        if (userEmail is null)
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Invalid email"
+            });
 
         _context.UserEmails.Remove(userEmail);
         await _context.SaveChangesAsync(cancellationToken);
@@ -219,9 +292,16 @@ public class EmailManager(AuthDbContext context) : IEmailManager
             u => u.NormalizedEmail == normalizedEmail, cancellationToken);
     }
 
-    public async ValueTask<bool> HasAsync(UserEntity user, EmailType type, CancellationToken cancellationToken = default)
+    public async ValueTask<bool> HasAsync(UserEntity user, EmailType type,
+        CancellationToken cancellationToken = default)
         => await _context.UserEmails.AnyAsync(x => x.UserId == user.Id && x.Type == type, cancellationToken);
 
     public async ValueTask<bool> OwnAsync(UserEntity user, string email, CancellationToken cancellationToken = default)
         => await _context.UserEmails.AnyAsync(x => x.UserId == user.Id && x.Email == email, cancellationToken);
+
+    private async ValueTask<UserEmailEntity?> FindAsync(string email, CancellationToken cancellationToken)
+        => await _context.UserEmails.FirstOrDefaultAsync(x => x.Email == email, cancellationToken);
+
+    private async ValueTask<bool> HasExternalAccountAsync(UserEntity user, CancellationToken cancellationToken)
+        => await _context.UserLinkedAccounts.AnyAsync(x => x.UserId == user.Id, cancellationToken);
 }
