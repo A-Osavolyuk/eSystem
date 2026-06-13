@@ -12,9 +12,9 @@ namespace eSecurity.Idp.Controllers.v1;
 [ApiVersion("1.0")]
 [Produces(ContentTypes.Application.Json)]
 [Route("v{version:apiVersion}/[controller]")]
-public class AccountController(ISender sender) : ControllerBase
+public class AccountController(IMediator mediator) : ControllerBase
 {
-    private readonly ISender _sender = sender;
+    private readonly IMediator _mediator = mediator;
 
     [EndpointSummary("Get authentication session")]
     [EndpointDescription("Get authentication session")]
@@ -22,7 +22,7 @@ public class AccountController(ISender sender) : ControllerBase
     [HttpGet("session/{sid:guid}")]
     public async ValueTask<IActionResult> GetAuthenticationSessionAsync(Guid sid)
     {
-        var result = await _sender.Send(new GetAuthenticationSessionQuery(sid));
+        var result = await _mediator.Send(new GetAuthenticationSessionQuery(sid));
         return HttpContext.HandleResult(result);
     }
     
@@ -32,7 +32,7 @@ public class AccountController(ISender sender) : ControllerBase
     [HttpPost("sign-in")]
     public async ValueTask<IActionResult> SignInAsync([FromBody] SignInRequest request)
     {
-        var result = await _sender.Send(new SignInCommand(request));
+        var result = await _mediator.Send(new SignInCommand(request));
         return HttpContext.HandleResult(result);
     }
     
@@ -43,7 +43,7 @@ public class AccountController(ISender sender) : ControllerBase
     [RequireHeaders(HeaderTypes.XLocale, HeaderTypes.XTimezone)]
     public async ValueTask<IActionResult> SignUpAsync([FromBody] SignUpRequest request)
     {
-        var result = await _sender.Send(new SignUpCommand(request));
+        var result = await _mediator.Send(new SignUpCommand(request));
         return HttpContext.HandleResult(result);
     }
     
@@ -53,7 +53,7 @@ public class AccountController(ISender sender) : ControllerBase
     [HttpPost("sign-up/complete")]
     public async ValueTask<IActionResult> CompleteSignUpAsync([FromBody] CompleteSignUpRequest request)
     {
-        var result = await _sender.Send(new CompleteSignUpCommand(request));
+        var result = await _mediator.Send(new CompleteSignUpCommand(request));
         return HttpContext.HandleResult(result);
     }
     
@@ -63,7 +63,7 @@ public class AccountController(ISender sender) : ControllerBase
     [HttpPost("check")]
     public async ValueTask<IActionResult> CheckAsync([FromBody] CheckAccountRequest request)
     {
-        var result = await _sender.Send(new CheckAccountCommand(request));
+        var result = await _mediator.Send(new CheckAccountCommand(request));
         return HttpContext.HandleResult(result);
     }
 }

@@ -9,6 +9,8 @@ public static class MediatorExtensions
     {
         var builder = new MediatorConfigurationBuilder(services);
         configurations(builder);
+        
+        services.AddScoped<IMediator, Mediator>();
     }
 }
 
@@ -29,8 +31,6 @@ public sealed class MediatorConfigurationBuilder(IServiceCollection serviceColle
             foreach (var @interface in interfaces)
                 _serviceCollection.AddTransient(@interface, type);
         }
-
-        _serviceCollection.AddScoped<ISender, Sender>();
     }
 
     public void AddRequestHandler<TRequestHandler, TRequest, TResponse>()

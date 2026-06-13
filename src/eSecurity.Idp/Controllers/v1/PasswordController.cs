@@ -9,9 +9,9 @@ namespace eSecurity.Idp.Controllers.v1;
 [ApiVersion("1.0")]
 [Produces(ContentTypes.Application.Json)]
 [Route("v{version:apiVersion}/[controller]")]
-public class PasswordController(ISender sender) : ControllerBase
+public class PasswordController(IMediator mediator) : ControllerBase
 {
-    private readonly ISender _sender = sender;
+    private readonly IMediator _mediator = mediator;
     
     [EndpointSummary("Add password")]
     [EndpointDescription("Add password")]
@@ -20,7 +20,7 @@ public class PasswordController(ISender sender) : ControllerBase
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> AddAsync([FromBody] AddPasswordRequest request)
     {
-        var result = await _sender.Send(new AddPasswordCommand(request));
+        var result = await _mediator.Send(new AddPasswordCommand(request));
         return HttpContext.HandleResult(result);
     }
     
@@ -31,7 +31,7 @@ public class PasswordController(ISender sender) : ControllerBase
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> ChangeAsync([FromBody] ChangePasswordRequest request)
     {
-        var result = await _sender.Send(new ChangePasswordCommand(request));
+        var result = await _mediator.Send(new ChangePasswordCommand(request));
         return HttpContext.HandleResult(result);
     }
     
@@ -42,7 +42,7 @@ public class PasswordController(ISender sender) : ControllerBase
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> SetAsync([FromBody] SetPasswordRequest request)
     {
-        var result = await _sender.Send(new SetPasswordCommand(request));
+        var result = await _mediator.Send(new SetPasswordCommand(request));
         return HttpContext.HandleResult(result);
     }
     
@@ -53,7 +53,7 @@ public class PasswordController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> ResetAsync([FromBody] ResetPasswordRequest request)
     {
-        var result = await _sender.Send(new ResetPasswordCommand(request));
+        var result = await _mediator.Send(new ResetPasswordCommand(request));
         return HttpContext.HandleResult(result);
     }
     
@@ -64,7 +64,7 @@ public class PasswordController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> RequestForgotAsync([FromBody] ForgotPasswordRequest request)
     {
-        var result = await _sender.Send(new ForgotPasswordCommand(request));
+        var result = await _mediator.Send(new ForgotPasswordCommand(request));
         return HttpContext.HandleResult(result);
     }
     
@@ -75,7 +75,7 @@ public class PasswordController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> ConfirmForgotAsync([FromBody] ConfirmForgotPasswordRequest request)
     {
-        var result = await _sender.Send(new ConfirmForgotPasswordCommand(request));
+        var result = await _mediator.Send(new ConfirmForgotPasswordCommand(request));
         return HttpContext.HandleResult(result);
     }
 }

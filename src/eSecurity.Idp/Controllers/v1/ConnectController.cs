@@ -17,9 +17,9 @@ namespace eSecurity.Idp.Controllers.v1;
 [ApiVersion("1.0")]
 [Produces(ContentTypes.Application.Json)]
 [Route("v{version:apiVersion}/[controller]")]
-public class ConnectController(ISender sender) : ControllerBase
+public class ConnectController(IMediator mediator) : ControllerBase
 {
-    private readonly ISender _sender = sender;
+    private readonly IMediator _mediator = mediator;
 
     [EndpointSummary("OpenId configuration")]
     [EndpointDescription("OpenId configuration")]
@@ -27,7 +27,7 @@ public class ConnectController(ISender sender) : ControllerBase
     [HttpGet(".well-known/openid-configuration")]
     public async ValueTask<IActionResult> OpenIdConfigurationAsync()
     {
-        var result = await _sender.Send(new GetOpenidConfigurationQuery());
+        var result = await _mediator.Send(new GetOpenidConfigurationQuery());
         return HttpContext.HandleResult(result);
     }
 
@@ -37,7 +37,7 @@ public class ConnectController(ISender sender) : ControllerBase
     [HttpGet(".well-known/oauth-authorization-server")]
     public async ValueTask<IActionResult> OAuthAuthorizationServerAsync()
     {
-        var result = await _sender.Send(new GetOAuthAuthorizationServerQuery());
+        var result = await _mediator.Send(new GetOAuthAuthorizationServerQuery());
         return HttpContext.HandleResult(result);
     }
 
@@ -47,7 +47,7 @@ public class ConnectController(ISender sender) : ControllerBase
     [HttpGet(".well-known/jwks.json")]
     public async ValueTask<IActionResult> JsonWebKeyAsync()
     {
-        var result = await _sender.Send(new GetJwksQuery());
+        var result = await _mediator.Send(new GetJwksQuery());
         return HttpContext.HandleResult(result);
     }
 
@@ -57,7 +57,7 @@ public class ConnectController(ISender sender) : ControllerBase
     [HttpGet("clients/{clientId}")]
     public async ValueTask<IActionResult> GetClientInfoAsync(string clientId)
     {
-        var result = await _sender.Send(new GetClientInfoQuery(clientId));
+        var result = await _mediator.Send(new GetClientInfoQuery(clientId));
         return HttpContext.HandleResult(result);
     }
 
@@ -82,7 +82,7 @@ public class ConnectController(ISender sender) : ControllerBase
         }
 
 
-        var result = await _sender.Send(new GetUserInfoQuery());
+        var result = await _mediator.Send(new GetUserInfoQuery());
         return HttpContext.HandleResult(result);
     }
 
@@ -93,7 +93,7 @@ public class ConnectController(ISender sender) : ControllerBase
     [Consumes(ContentTypes.Application.XwwwFormUrlEncoded)]
     public async ValueTask<IActionResult> PostUserInfoAsync([FromForm] UserInfoRequest request)
     {
-        var result = await _sender.Send(new GetUserInfoQuery(request.AccessToken));
+        var result = await _mediator.Send(new GetUserInfoQuery(request.AccessToken));
         return HttpContext.HandleResult(result);
     }
 
@@ -105,7 +105,7 @@ public class ConnectController(ISender sender) : ControllerBase
     [Consumes(ContentTypes.Application.XwwwFormUrlEncoded)]
     public async ValueTask<IActionResult> TokenAsync([FromForm] IFormCollection form)
     {
-        var result = await _sender.Send(new TokenCommand(form));
+        var result = await _mediator.Send(new TokenCommand(form));
         return HttpContext.HandleResult(result);
     }
 
@@ -117,7 +117,7 @@ public class ConnectController(ISender sender) : ControllerBase
     [Consumes(ContentTypes.Application.XwwwFormUrlEncoded)]
     public async ValueTask<IActionResult> RevokeAsync([FromForm] IFormCollection request)
     {
-        var result = await _sender.Send(new RevokeCommand(request));
+        var result = await _mediator.Send(new RevokeCommand(request));
         return HttpContext.HandleResult(result);
     }
 
@@ -129,7 +129,7 @@ public class ConnectController(ISender sender) : ControllerBase
     [Consumes(ContentTypes.Application.XwwwFormUrlEncoded)]
     public async ValueTask<IActionResult> IntrospectionAsync([FromForm] IFormCollection request)
     {
-        var result = await _sender.Send(new IntrospectionCommand(request));
+        var result = await _mediator.Send(new IntrospectionCommand(request));
         return HttpContext.HandleResult(result);
     }
 
@@ -139,7 +139,7 @@ public class ConnectController(ISender sender) : ControllerBase
     [HttpGet("authorize")]
     public async ValueTask<IActionResult> AuthorizeAsync([FromQuery] AuthorizationRequest request)
     {
-        var result = await _sender.Send(new AuthorizationCommand(request));
+        var result = await _mediator.Send(new AuthorizationCommand(request));
         return HttpContext.HandleResult(result);
     }
     
@@ -150,7 +150,7 @@ public class ConnectController(ISender sender) : ControllerBase
     [Consumes(ContentTypes.Application.XwwwFormUrlEncoded)]
     public async ValueTask<IActionResult> PushedAuthorizationRequestAsync([FromForm] IFormCollection form)
     {
-        var result = await _sender.Send(new PushedAuthorizationRequestCommand(form));
+        var result = await _mediator.Send(new PushedAuthorizationRequestCommand(form));
         return HttpContext.HandleResult(result);
     }
 
@@ -160,7 +160,7 @@ public class ConnectController(ISender sender) : ControllerBase
     [HttpGet("end-session")]
     public async ValueTask<IActionResult> EndSessionAsync([FromQuery] EndSessionRequest request)
     {
-        var result = await _sender.Send(new EndSessionCommand(request));
+        var result = await _mediator.Send(new EndSessionCommand(request));
         return HttpContext.HandleResult(result);
     }
     
@@ -170,7 +170,7 @@ public class ConnectController(ISender sender) : ControllerBase
     [HttpGet("confirm-end-session")]
     public async ValueTask<IActionResult> ConfirmEndSessionAsync([FromQuery] ConfirmEndSessionRequest request)
     {
-        var result = await _sender.Send(new ConfirmEndSessionCommand(request));
+        var result = await _mediator.Send(new ConfirmEndSessionCommand(request));
         return HttpContext.HandleResult(result);
     }
 
@@ -181,7 +181,7 @@ public class ConnectController(ISender sender) : ControllerBase
     [HttpPost("device-authorization")]
     public async ValueTask<IActionResult> DeviceAuthorizationAsync([FromForm] DeviceAuthorizationRequest request)
     {
-        var result = await _sender.Send(new DeviceAuthorizationCommand(request));
+        var result = await _mediator.Send(new DeviceAuthorizationCommand(request));
         return HttpContext.HandleResult(result);
     }
 
@@ -193,7 +193,7 @@ public class ConnectController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> BackchannelAuthenticationAsync(
         [FromForm] BackchannelAuthenticationRequest request)
     {
-        var result = await _sender.Send(new BackchannelAuthenticationCommand(request));
+        var result = await _mediator.Send(new BackchannelAuthenticationCommand(request));
         return HttpContext.HandleResult(result);
     }
 }

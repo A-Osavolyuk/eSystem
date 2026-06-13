@@ -9,9 +9,9 @@ namespace eSecurity.Idp.Controllers.v1;
 [ApiVersion("1.0")]
 [Produces(ContentTypes.Application.Json)]
 [Route("v{version:apiVersion}/[controller]")]
-public class ConsentController(ISender sender) : ControllerBase
+public class ConsentController(IMediator mediator) : ControllerBase
 {
-    private readonly ISender _sender = sender;
+    private readonly IMediator _mediator = mediator;
     
     [EndpointSummary("Check consents")]
     [EndpointDescription("Check consents")]
@@ -19,7 +19,7 @@ public class ConsentController(ISender sender) : ControllerBase
     [HttpPost("check")]
     public async ValueTask<IActionResult> CheckAsync([FromBody] CheckConsentRequest request)
     {
-        var result = await _sender.Send(new CheckConsentCommand(request));
+        var result = await _mediator.Send(new CheckConsentCommand(request));
         return HttpContext.HandleResult(result);
     }
     
@@ -29,7 +29,7 @@ public class ConsentController(ISender sender) : ControllerBase
     [HttpPost("grant")]
     public async ValueTask<IActionResult> GrantAsync([FromBody] GrantConsentRequest request)
     {
-        var result = await _sender.Send(new GrantConsentCommand(request));
+        var result = await _mediator.Send(new GrantConsentCommand(request));
         return HttpContext.HandleResult(result);
     }
 }

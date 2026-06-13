@@ -9,9 +9,9 @@ namespace eSecurity.Idp.Controllers.v1;
 [ApiVersion("1.0")]
 [Produces(ContentTypes.Application.Json)]
 [Route("v{version:apiVersion}/[controller]")]
-public class UsernameController(ISender sender) : ControllerBase
+public class UsernameController(IMediator mediator) : ControllerBase
 {
-    private readonly ISender _sender = sender;
+    private readonly IMediator _mediator = mediator;
     
     [EndpointSummary("Set username")]
     [EndpointDescription("Set username")]
@@ -20,7 +20,7 @@ public class UsernameController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> SetAsync([FromBody] SetUsernameRequest request)
     {
-        var result = await _sender.Send(new SetUsernameCommand(request));
+        var result = await _mediator.Send(new SetUsernameCommand(request));
         return HttpContext.HandleResult(result);
     }
     
@@ -31,7 +31,7 @@ public class UsernameController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> CheckAsync([FromBody] CheckUsernameRequest request)
     {
-        var result = await _sender.Send(new CheckUsernameCommand(request));
+        var result = await _mediator.Send(new CheckUsernameCommand(request));
         return HttpContext.HandleResult(result);
     }
 }

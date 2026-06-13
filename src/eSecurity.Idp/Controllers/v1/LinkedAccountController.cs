@@ -10,9 +10,9 @@ namespace eSecurity.Idp.Controllers.v1;
 [Produces(ContentTypes.Application.Json)]
 [Route("v{version:apiVersion}/[controller]")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-public class LinkedAccountController(ISender sender) : ControllerBase
+public class LinkedAccountController(IMediator mediator) : ControllerBase
 {
-    private readonly ISender _sender = sender;
+    private readonly IMediator _mediator = mediator;
     
     [EndpointSummary("Disconnect linked account")]
     [EndpointDescription("Disconnect linked account")]
@@ -20,7 +20,7 @@ public class LinkedAccountController(ISender sender) : ControllerBase
     [HttpPost("disconnect")]
     public async ValueTask<IActionResult> DisconnectAsync([FromBody] DisconnectLinkedAccountRequest request)
     {
-        var result = await _sender.Send(new DisconnectLinkedAccountCommand(request));
+        var result = await _mediator.Send(new DisconnectLinkedAccountCommand(request));
         return HttpContext.HandleResult(result);
     }
 }

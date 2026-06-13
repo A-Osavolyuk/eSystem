@@ -9,9 +9,9 @@ namespace eSecurity.Idp.Controllers.v1;
 [Produces(ContentTypes.Application.Json)]
 [Route("v{version:apiVersion}/[controller]")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-public class UserController(ISender sender) : ControllerBase
+public class UserController(IMediator mediator) : ControllerBase
 {
-    private readonly ISender _sender = sender;
+    private readonly IMediator _mediator = mediator;
     
     [EndpointSummary("Get user's 2FA methods")]
     [EndpointDescription("Get user's 2FA methods")]
@@ -19,7 +19,7 @@ public class UserController(ISender sender) : ControllerBase
     [HttpGet("2fa/methods")]
     public async ValueTask<IActionResult> GetUserTwoFactorMethodsAsync()
     {
-        var result = await _sender.Send(new GetUserTwoFactorMethodsQuery());
+        var result = await _mediator.Send(new GetUserTwoFactorMethodsQuery());
         return HttpContext.HandleResult(result);
     }
     
@@ -29,7 +29,7 @@ public class UserController(ISender sender) : ControllerBase
     [HttpGet("verification/methods")]
     public async ValueTask<IActionResult> GetUserVerificationMethodsAsync()
     {
-        var result = await _sender.Send(new GetUserVerificationDataQuery());
+        var result = await _mediator.Send(new GetUserVerificationDataQuery());
         return HttpContext.HandleResult(result);
     }
     
@@ -39,7 +39,7 @@ public class UserController(ISender sender) : ControllerBase
     [HttpGet("linked-accounts")]
     public async ValueTask<IActionResult> GetUserLinkedAccountsAsync()
     {
-        var result = await _sender.Send(new GetUserLinkedAccountDataQuery());
+        var result = await _mediator.Send(new GetUserLinkedAccountDataQuery());
         return HttpContext.HandleResult(result);
     }
     
@@ -49,7 +49,7 @@ public class UserController(ISender sender) : ControllerBase
     [HttpGet("login-methods")]
     public async ValueTask<IActionResult> GetUserLoginMethodsAsync()
     {
-        var result = await _sender.Send(new GetUserLoginMethodsQuery());
+        var result = await _mediator.Send(new GetUserLoginMethodsQuery());
         return HttpContext.HandleResult(result);
     }
     
@@ -59,7 +59,7 @@ public class UserController(ISender sender) : ControllerBase
     [HttpGet("devices")]
     public async ValueTask<IActionResult> GetUserDevicesAsync()
     {
-        var result = await _sender.Send(new GetUserDevicesQuery());
+        var result = await _mediator.Send(new GetUserDevicesQuery());
         return HttpContext.HandleResult(result);
     }
     
@@ -69,7 +69,7 @@ public class UserController(ISender sender) : ControllerBase
     [HttpGet("emails")]
     public async ValueTask<IActionResult> GetUserEmailsAsync()
     {
-        var result = await _sender.Send(new GetUserEmailsQuery());
+        var result = await _mediator.Send(new GetUserEmailsQuery());
         return HttpContext.HandleResult(result);
     }
 }

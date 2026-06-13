@@ -2,13 +2,13 @@
 
 namespace eSystem.Core.Server.Mediator;
 
-public interface ISender
+public interface IMediator
 {
     public Task<TResponse> Send<TResponse>(IRequest<TResponse> request, 
         CancellationToken cancellationToken = default);
 }
 
-public sealed class Sender(IServiceProvider serviceProvider) : ISender
+public sealed class Mediator(IServiceProvider serviceProvider) : IMediator
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
 

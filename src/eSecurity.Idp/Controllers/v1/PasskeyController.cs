@@ -9,9 +9,9 @@ namespace eSecurity.Idp.Controllers.v1;
 [ApiVersion("1.0")]
 [Produces(ContentTypes.Application.Json)]
 [Route("v{version:apiVersion}/[controller]")]
-public class PasskeyController(ISender sender) : ControllerBase
+public class PasskeyController(IMediator mediator) : ControllerBase
 {
-    private readonly ISender _sender = sender;
+    private readonly IMediator _mediator = mediator;
     
     [EndpointSummary("Generate public key credential creation options")]
     [EndpointDescription("Generate public key credential creation options")]
@@ -20,7 +20,7 @@ public class PasskeyController(ISender sender) : ControllerBase
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> GenerateCreationOptionsAsync([FromBody] GenerateCreationOptionsRequest request)
     {
-        var result = await _sender.Send(new GenerateCreationOptionsCommand(request));
+        var result = await _mediator.Send(new GenerateCreationOptionsCommand(request));
         return HttpContext.HandleResult(result);
     }
     
@@ -31,7 +31,7 @@ public class PasskeyController(ISender sender) : ControllerBase
     [AllowAnonymous]
     public async ValueTask<IActionResult> GenerateRequestOptionsAsync([FromBody] GenerateRequestOptionsRequest request)
     {
-        var result = await _sender.Send(new GenerateRequestOptionsCommand(request));
+        var result = await _mediator.Send(new GenerateRequestOptionsCommand(request));
         return HttpContext.HandleResult(result);
     }
     
@@ -42,7 +42,7 @@ public class PasskeyController(ISender sender) : ControllerBase
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> CreateAsync([FromBody] CreatePasskeyRequest request)
     {
-        var result = await _sender.Send(new CreatePasskeyCommand(request));
+        var result = await _mediator.Send(new CreatePasskeyCommand(request));
         return HttpContext.HandleResult(result);
     }
     
@@ -53,7 +53,7 @@ public class PasskeyController(ISender sender) : ControllerBase
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> RemoveAsync([FromBody] RemovePasskeyRequest request)
     {
-        var result = await _sender.Send(new RemovePasskeyCommand(request));
+        var result = await _mediator.Send(new RemovePasskeyCommand(request));
         return HttpContext.HandleResult(result);
     }
     
@@ -64,7 +64,7 @@ public class PasskeyController(ISender sender) : ControllerBase
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> ChangeNameAsync([FromBody] ChangePasskeyNameRequest request)
     {
-        var result = await _sender.Send(new ChangePasskeyNameCommand(request));
+        var result = await _mediator.Send(new ChangePasskeyNameCommand(request));
         return HttpContext.HandleResult(result);
     }
 }

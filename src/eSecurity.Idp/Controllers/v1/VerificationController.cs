@@ -16,9 +16,9 @@ namespace eSecurity.Idp.Controllers.v1;
 [Produces(ContentTypes.Application.Json)]
 [Route("v{version:apiVersion}/[controller]")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-public class VerificationController(ISender sender) : ControllerBase
+public class VerificationController(IMediator mediator) : ControllerBase
 {
-    private readonly ISender _sender = sender;
+    private readonly IMediator _mediator = mediator;
     
     [EndpointSummary("Send code")]
     [EndpointDescription("Send code")]
@@ -26,7 +26,7 @@ public class VerificationController(ISender sender) : ControllerBase
     [HttpPost("code/send")]
     public async ValueTask<IActionResult> SendCodeAsync([FromBody] SendCodeRequest request)
     {
-        var result = await _sender.Send(new SendCodeCommand(request));
+        var result = await _mediator.Send(new SendCodeCommand(request));
         return HttpContext.HandleResult(result);
     }
     
@@ -36,7 +36,7 @@ public class VerificationController(ISender sender) : ControllerBase
     [HttpPost("code/resend")]
     public async ValueTask<IActionResult> ResendCodeAsync([FromBody] ResendCodeRequest request)
     {
-        var result = await _sender.Send(new ResendCodeCommand(request));
+        var result = await _mediator.Send(new ResendCodeCommand(request));
         return HttpContext.HandleResult(result);
     }
     
@@ -46,7 +46,7 @@ public class VerificationController(ISender sender) : ControllerBase
     [HttpPost("request-verification")]
     public async ValueTask<IActionResult> VerificationRequestAsync([FromBody] VerificationRequest request)
     {
-        var result = await _sender.Send(new VerificationCommand(request));
+        var result = await _mediator.Send(new VerificationCommand(request));
         return HttpContext.HandleResult(result);
     }
     
@@ -56,7 +56,7 @@ public class VerificationController(ISender sender) : ControllerBase
     [HttpPost("email-otp/send")]
     public async ValueTask<IActionResult> SendEmailOtpAsync()
     {
-        var result = await _sender.Send(new SendEmailOtpCommand());
+        var result = await _mediator.Send(new SendEmailOtpCommand());
         return HttpContext.HandleResult(result);
     }
     
@@ -66,7 +66,7 @@ public class VerificationController(ISender sender) : ControllerBase
     [HttpPost("email-otp/resend")]
     public async ValueTask<IActionResult> ResendEmailOtpAsync()
     {
-        var result = await _sender.Send(new ResendEmailOtpCommand());
+        var result = await _mediator.Send(new ResendEmailOtpCommand());
         return HttpContext.HandleResult(result);
     }
     
@@ -76,7 +76,7 @@ public class VerificationController(ISender sender) : ControllerBase
     [HttpPost("email-otp/verify")]
     public async ValueTask<IActionResult> VerifyEmailOtpAsync([FromBody] VerifyEmailOtpRequest request)
     {
-        var result = await _sender.Send(new VerifyEmailOtpCommand(request));
+        var result = await _mediator.Send(new VerifyEmailOtpCommand(request));
         return HttpContext.HandleResult(result);
     }
     
@@ -86,7 +86,7 @@ public class VerificationController(ISender sender) : ControllerBase
     [HttpPost("authenticator-app/verify")]
     public async ValueTask<IActionResult> VerifyAuthenticatorAppAsync([FromBody] VerifyAuthenticatorAppRequest request)
     {
-        var result = await _sender.Send(new VerifyAuthenticatorAppCommand(request));
+        var result = await _mediator.Send(new VerifyAuthenticatorAppCommand(request));
         return HttpContext.HandleResult(result);
     }
     
@@ -96,7 +96,7 @@ public class VerificationController(ISender sender) : ControllerBase
     [HttpPost("software-key/verify")]
     public async ValueTask<IActionResult> VerifySoftwareKeyAsync([FromBody] VerifySoftwareKeyRequest request)
     {
-        var result = await _sender.Send(new VerifySoftwareKeyCommand(request));
+        var result = await _mediator.Send(new VerifySoftwareKeyCommand(request));
         return HttpContext.HandleResult(result);
     }
 }

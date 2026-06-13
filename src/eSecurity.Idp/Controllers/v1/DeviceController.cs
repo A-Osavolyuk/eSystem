@@ -10,9 +10,9 @@ namespace eSecurity.Idp.Controllers.v1;
 [ApiVersion("1.0")]
 [Produces(ContentTypes.Application.Json)]
 [Route("v{version:apiVersion}/[controller]")]
-public class DeviceController(ISender sender) : ControllerBase
+public class DeviceController(IMediator mediator) : ControllerBase
 {
-    private readonly ISender _sender = sender;
+    private readonly IMediator _mediator = mediator;
     
     [EndpointSummary("Get device code info")]
     [EndpointDescription("Get device code info")]
@@ -20,7 +20,7 @@ public class DeviceController(ISender sender) : ControllerBase
     [HttpGet("device-code/{userCode}")]
     public async ValueTask<IActionResult> GetDeviceCodeInfo(string userCode)
     {
-        var result = await _sender.Send(new GetDeviceCodeInfoQuery(userCode));
+        var result = await _mediator.Send(new GetDeviceCodeInfoQuery(userCode));
         return HttpContext.HandleResult(result);
     }
     
@@ -30,7 +30,7 @@ public class DeviceController(ISender sender) : ControllerBase
     [HttpPost("device-code/check")]
     public async ValueTask<IActionResult> CheckDeviceCode([FromBody] CheckDeviceCodeRequest request)
     {
-        var result = await _sender.Send(new CheckDeviceCodeCommand(request));
+        var result = await _mediator.Send(new CheckDeviceCodeCommand(request));
         return HttpContext.HandleResult(result);
     }
     
@@ -41,7 +41,7 @@ public class DeviceController(ISender sender) : ControllerBase
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> DecisionAsync([FromBody] DeviceCodeDecisionRequest request)
     {
-        var result = await _sender.Send(new DeviceCodeDecisionCommand(request));
+        var result = await _mediator.Send(new DeviceCodeDecisionCommand(request));
         return HttpContext.HandleResult(result);
     }
 }

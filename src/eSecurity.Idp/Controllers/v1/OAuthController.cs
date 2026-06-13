@@ -12,9 +12,9 @@ namespace eSecurity.Idp.Controllers.v1;
 [ApiVersion("1.0")]
 [Produces(ContentTypes.Application.Json)]
 [Route("v{version:apiVersion}/[controller]")]
-public class OAuthController(ISender sender) : ControllerBase
+public class OAuthController(IMediator mediator) : ControllerBase
 {
-    private readonly ISender _sender = sender;
+    private readonly IMediator _mediator = mediator;
     
     [EndpointSummary("OAuth login")]
     [EndpointDescription("OAuth login")]
@@ -22,7 +22,7 @@ public class OAuthController(ISender sender) : ControllerBase
     [HttpGet("login")]
     public async ValueTask<IActionResult> OAuthLoginAsync(string provider, string returnUri, string state)
     {
-        var result = await _sender.Send(new OAuthLoginCommand(provider, returnUri, state));
+        var result = await _mediator.Send(new OAuthLoginCommand(provider, returnUri, state));
 
         if (result is ValueResult objectResult)
         {
@@ -42,7 +42,7 @@ public class OAuthController(ISender sender) : ControllerBase
     [HttpGet("handle")]
     public async ValueTask<IActionResult> HandleOAuthLoginAsync(string returnUri, string? remoteError = null)
     {
-        var result = await _sender.Send(new HandleLoginCommand(remoteError, returnUri));
+        var result = await _mediator.Send(new HandleLoginCommand(remoteError, returnUri));
         return HttpContext.HandleResult(result);
     }
 }

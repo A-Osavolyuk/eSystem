@@ -10,9 +10,9 @@ namespace eSecurity.Idp.Controllers.v1;
 [Produces(ContentTypes.Application.Json)]
 [Route("v{version:apiVersion}/[controller]")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-public class TwoFactorController(ISender sender) : ControllerBase
+public class TwoFactorController(IMediator mediator) : ControllerBase
 {
-    private readonly ISender _sender = sender;
+    private readonly IMediator _mediator = mediator;
 
     [EndpointSummary("Enable 2FA")]
     [EndpointDescription("Enable 2FA")]
@@ -20,7 +20,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [HttpPost("enable")]
     public async ValueTask<IActionResult> EnableAsync([FromBody] EnableTwoFactorRequest request)
     {
-        var result = await _sender.Send(new EnableTwoFactorCommand(request));
+        var result = await _mediator.Send(new EnableTwoFactorCommand(request));
         return HttpContext.HandleResult(result);
     }
 
@@ -30,7 +30,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [HttpPost("disable")]
     public async ValueTask<IActionResult> DisableAsync([FromBody] DisableTwoFactorRequest request)
     {
-        var result = await _sender.Send(new DisableTwoFactorCommand(request));
+        var result = await _mediator.Send(new DisableTwoFactorCommand(request));
         return HttpContext.HandleResult(result);
     }
 
@@ -41,7 +41,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> PreferAsync(
         [FromBody] PreferTwoFactorMethodRequest request)
     {
-        var result = await _sender.Send(new PreferTwoFactorMethodCommand(request));
+        var result = await _mediator.Send(new PreferTwoFactorMethodCommand(request));
         return HttpContext.HandleResult(result);
     }
 
@@ -51,7 +51,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [HttpPost("qr-code/generate")]
     public async ValueTask<IActionResult> GenerateQrCodeAsync()
     {
-        var result = await _sender.Send(new GenerateQrCodeCommand());
+        var result = await _mediator.Send(new GenerateQrCodeCommand());
         return HttpContext.HandleResult(result);
     }
 
@@ -61,7 +61,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [HttpPost("qr-code/regenerate")]
     public async ValueTask<IActionResult> RegenerateQrCodeAsync()
     {
-        var result = await _sender.Send(new RegenerateQrCodeCommand());
+        var result = await _mediator.Send(new RegenerateQrCodeCommand());
         return HttpContext.HandleResult(result);
     }
 
@@ -71,7 +71,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [HttpPost("recovery-codes/generate")]
     public async ValueTask<IActionResult> GenerateRecoveryCodesAsync()
     {
-        var result = await _sender.Send(new GenerateRecoveryCodesCommand());
+        var result = await _mediator.Send(new GenerateRecoveryCodesCommand());
         return HttpContext.HandleResult(result);
     }
 
@@ -81,7 +81,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     [HttpPost("recovery-codes/load")]
     public async ValueTask<IActionResult> LoadRecoveryCodesAsync()
     {
-        var result = await _sender.Send(new LoadRecoveryCodesCommand());
+        var result = await _mediator.Send(new LoadRecoveryCodesCommand());
         return HttpContext.HandleResult(result);
     }
 
@@ -92,7 +92,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> VerifyAuthenticatorAsync(
         [FromBody] VerifyAuthenticatorRequest request)
     {
-        var result = await _sender.Send(new VerifyAuthenticatorCommand(request));
+        var result = await _mediator.Send(new VerifyAuthenticatorCommand(request));
         return HttpContext.HandleResult(result);
     }
 
@@ -103,7 +103,7 @@ public class TwoFactorController(ISender sender) : ControllerBase
     public async ValueTask<IActionResult> ReconfigureAuthenticatorAsync(
         [FromBody] ReconfigureAuthenticatorRequest request)
     {
-        var result = await _sender.Send(new ReconfigureAuthenticatorCommand(request));
+        var result = await _mediator.Send(new ReconfigureAuthenticatorCommand(request));
         return HttpContext.HandleResult(result);
     }
 }
