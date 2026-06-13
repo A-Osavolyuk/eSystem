@@ -60,7 +60,7 @@ public class EmailService(IApiClient apiClient) : IEmailService
             {
                 Method = HttpMethods.Post,
                 Data = request,
-                Url = "/api/v1/Email/verification/send"
+                Url = "/api/v1/Email/verification/send-code"
             });
     public async ValueTask<ApiResponse> ResendEmailVerificationAsync(ResendEmailVerificationRequest request)
         => await _apiClient.SendAsync(
@@ -68,7 +68,7 @@ public class EmailService(IApiClient apiClient) : IEmailService
             {
                 Method = HttpMethods.Post,
                 Data = request,
-                Url = "/api/v1/Email/verification/resend"
+                Url = "/api/v1/Email/verification/resend-code"
             });
 
     public async ValueTask<ApiResponse> SendEmailChangeAsync(SendEmailChangeRequest request)
@@ -77,7 +77,7 @@ public class EmailService(IApiClient apiClient) : IEmailService
             {
                 Method = HttpMethods.Post,
                 Data = request,
-                Url = "/api/v1/Email/change/send"
+                Url = "/api/v1/Email/change/send-code"
             });
 
     public async ValueTask<ApiResponse> ResendEmailChangeAsync(ResendEmailChangeRequest request)
@@ -86,7 +86,7 @@ public class EmailService(IApiClient apiClient) : IEmailService
             {
                 Method = HttpMethods.Post,
                 Data = request,
-                Url = "/api/v1/Email/change/resend"
+                Url = "/api/v1/Email/change/resend-code"
             });
 
     public async ValueTask<ApiResponse> ConfirmEmailChangeAsync(ConfirmEmailChangeRequest request)

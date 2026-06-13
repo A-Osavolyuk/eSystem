@@ -31,7 +31,7 @@ public class EmailController(ISender sender) : ControllerBase
     [EndpointSummary("Send email verification")]
     [EndpointDescription("Send email verification")]
     [ProducesResponseType(200)]
-    [HttpPost("verification/send")]
+    [HttpPost("verification/send-code")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> SendVerificationAsync([FromBody] SendEmailVerificationRequest request)
     {
@@ -42,7 +42,7 @@ public class EmailController(ISender sender) : ControllerBase
     [EndpointSummary("Resend email verification")]
     [EndpointDescription("Resend email verification")]
     [ProducesResponseType(200)]
-    [HttpPost("verification/resend")]
+    [HttpPost("verification/resend-code")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> ResendVerificationAsync([FromBody] ResendEmailVerificationRequest request)
     {
@@ -53,7 +53,7 @@ public class EmailController(ISender sender) : ControllerBase
     [EndpointSummary("Send email change")]
     [EndpointDescription("Send email change")]
     [ProducesResponseType(200)]
-    [HttpPost("change/send")]
+    [HttpPost("change/send-code")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> SendEmailAsyncAsync([FromBody] SendEmailChangeRequest request)
     {
@@ -64,7 +64,7 @@ public class EmailController(ISender sender) : ControllerBase
     [EndpointSummary("Resend email change")]
     [EndpointDescription("Resend email change")]
     [ProducesResponseType(200)]
-    [HttpPost("change/resend")]
+    [HttpPost("change/resend-code")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async ValueTask<IActionResult> ResendEmailAsyncAsync([FromBody] ResendEmailChangeRequest request)
     {
