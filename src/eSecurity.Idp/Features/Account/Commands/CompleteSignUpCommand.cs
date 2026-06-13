@@ -9,7 +9,6 @@ using eSecurity.Core.Security.Identity;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
-using Session_SessionOptions = eSecurity.Idp.Security.Authentication.Session.SessionOptions;
 
 namespace eSecurity.Idp.Features.Account.Commands;
 
@@ -21,7 +20,7 @@ public sealed class CompleteSignUpCommandHandler(
     IUserManager userManager,
     IEmailManager emailManager,
     ICodeManager codeManager,
-    IOptions<Session_SessionOptions> options,
+    IOptions<SessionOptions> options,
     ISessionCookieFactory sessionCookieFactory) : IRequestHandler<CompleteSignUpCommand, Result>
 {
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
@@ -30,7 +29,7 @@ public sealed class CompleteSignUpCommandHandler(
     private readonly IEmailManager _emailManager = emailManager;
     private readonly ICodeManager _codeManager = codeManager;
     private readonly ISessionCookieFactory _sessionCookieFactory = sessionCookieFactory;
-    private readonly Session_SessionOptions _options = options.Value;
+    private readonly SessionOptions _options = options.Value;
 
     public async Task<Result> Handle(CompleteSignUpCommand request, CancellationToken cancellationToken = default)
     {
