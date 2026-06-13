@@ -6,9 +6,3 @@ public interface IRequestHandler<in TRequest, TResponse>
     public Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken = default);
 }
 
-public interface IRequestHandler<in TRequest>
-    where TRequest : IRequest
-{
-    public Task Handle(TRequest request, CancellationToken cancellationToken = default);
-}
-
