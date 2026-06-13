@@ -35,7 +35,11 @@ public static class HostApplicationBuilderExtensions
 
             builder.Services.AddDataBinding();
             builder.Services.AddTransient<RequestBufferingMiddleware>();
-            builder.Services.AddMediator<IAssemblyMarker>();
+            builder.Services.AddMediator(cfg =>
+            {
+                cfg.FromAssembly<IAssemblyMarker>();
+            });
+            
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddDistributedMemoryCache();
             builder.Services.ConfigureHttpJsonOptions(options =>

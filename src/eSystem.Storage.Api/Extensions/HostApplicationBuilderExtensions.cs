@@ -19,7 +19,10 @@ public static class HostApplicationBuilderExtensions
             builder.AddDocumentation();
             builder.AddExceptionHandling<GlobalExceptionHandler>();
             
-            builder.Services.AddMediator<IAssemblyMarker>();
+            builder.Services.AddMediator(cfg =>
+            {
+                cfg.FromAssembly<IAssemblyMarker>();
+            });
             builder.Services.AddProblemDetails();
             builder.Services.AddControllers();
             builder.Services.AddValidatorsFromAssemblyContaining(typeof(IAssemblyMarker));
