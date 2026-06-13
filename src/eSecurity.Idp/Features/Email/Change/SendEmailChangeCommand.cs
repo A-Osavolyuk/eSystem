@@ -1,5 +1,5 @@
 ﻿using eSecurity.Core.Requests.Email.Change;
-using eSecurity.Core.Responses.Email.Change;
+using eSecurity.Core.Responses;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Idp.Common.Messaging.Email;
 using eSecurity.Idp.Common.Messaging.Email.Builders;
@@ -123,7 +123,7 @@ public sealed class SendEmailChangeCommandHandler(
 
         await _emailService.SendAsync(emailContext, cancellationToken);
         
-        var response = new SendEmailChangeResponse()
+        var response = new CodeSendResponse()
         {
             MaxResendAttempts = 5,
             ResendInterval = (int)TimeSpan.FromMinutes(2).TotalSeconds

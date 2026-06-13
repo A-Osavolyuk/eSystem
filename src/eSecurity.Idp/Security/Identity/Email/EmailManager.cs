@@ -157,38 +157,6 @@ public class EmailManager(AuthDbContext context) : IEmailManager
         return Results.Success(SuccessCodes.Ok);
     }
 
-    public async ValueTask<Result> ManageAsync(UserEntity user, EmailType type, string email,
-        CancellationToken cancellationToken = default)
-    {
-        var currentEmail = await _context.UserEmails.FirstOrDefaultAsync(
-            x => x.Type == type && x.UserId == user.Id, cancellationToken);
-
-        if (currentEmail is not null)
-        {
-            currentEmail.Type = EmailType.Secondary;
-            _context.UserEmails.Update(currentEmail);
-        }
-
-        var nextEmail = await _context.UserEmails.FirstOrDefaultAsync(
-            x => x.Email == email && x.UserId == user.Id, cancellationToken);
-
-        if (nextEmail is null)
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error
-            {
-                Code = ErrorCode.BadRequest,
-                Description = $"User doesn't have email {email}."
-            });
-        }
-
-        nextEmail.Type = type;
-
-        _context.UserEmails.Update(nextEmail);
-        await _context.SaveChangesAsync(cancellationToken);
-
-        return Results.Success(SuccessCodes.Ok);
-    }
-
     public async ValueTask<Result> VerifyAsync(UserEntity user, string email,
         CancellationToken cancellationToken = default)
     {

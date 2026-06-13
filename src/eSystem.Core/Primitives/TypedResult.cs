@@ -24,4 +24,6 @@ public sealed class TypedResult<TValue>
         value = Value;
         return true;
     }
+
+    public TValue GetValue() => Value ?? throw new NullReferenceException("Value is null");
 }

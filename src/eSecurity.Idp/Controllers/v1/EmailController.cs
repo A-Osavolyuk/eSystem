@@ -137,15 +137,4 @@ public class EmailController(ISender sender) : ControllerBase
         var result = await _sender.Send(new RemoveEmailCommand(request));
         return HttpContext.HandleResult(result);
     }
-    
-    [EndpointSummary("Manage email")]
-    [EndpointDescription("Manage email")]
-    [ProducesResponseType(200)]
-    [HttpPost("manage")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> ManageAsync([FromBody] ManageEmailRequest request)
-    {
-        var result = await _sender.Send(new ManageEmailCommand(request));
-        return HttpContext.HandleResult(result);
-    }
 }

@@ -1,5 +1,5 @@
 ﻿using eSecurity.Core.Requests.Email.Change;
-using eSecurity.Core.Responses.Email.Change;
+using eSecurity.Core.Responses;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Idp.Common.Messaging.Email;
 using eSecurity.Idp.Common.Messaging.Email.Builders;
@@ -97,7 +97,7 @@ public sealed class ResendEmailChangeCommandHandler(
 
         if (user.ResendAttempts >= 5)
         {
-            return Results.Success(SuccessCodes.Ok, new ResendEmailChangeResponse()
+            return Results.Success(SuccessCodes.Ok, new CodeResendResponse()
             {
                 IsResendAvailable = false
             });
@@ -130,7 +130,7 @@ public sealed class ResendEmailChangeCommandHandler(
 
         var emailContext = new EmailVerificationContext()
         {
-            Code = code,
+            Code = codeResult.GetValue(),
             Subject = "New email verification",
             To = newEmail
         };
@@ -140,17 +140,17 @@ public sealed class ResendEmailChangeCommandHandler(
         var result = await _userManager.AddResendAttemptAsync(user, TimeSpan.FromMinutes(2), cancellationToken);
         if (!result.Succeeded) return result;
 
-        ResendEmailChangeResponse response;
+        CodeResendResponse response;
         if (user.ResendAttempts == 5)
         {
-            response = new ResendEmailChangeResponse
+            response = new CodeResendResponse
             {
                 IsResendAvailable = false
             };
         }
         else
         {
-            response = new ResendEmailChangeResponse
+            response = new CodeResendResponse
             {
                 IsResendAvailable = true,
                 ResendAvailableAt = user.ResendAvailableAt

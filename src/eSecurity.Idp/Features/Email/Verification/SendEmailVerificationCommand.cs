@@ -1,7 +1,5 @@
-﻿using eSecurity.Core.Requests.Email;
-using eSecurity.Core.Requests.Email.Verification;
-using eSecurity.Core.Responses.Email;
-using eSecurity.Core.Responses.Email.Verification;
+﻿using eSecurity.Core.Requests.Email.Verification;
+using eSecurity.Core.Responses;
 using eSecurity.Idp.Common.Messaging.Email;
 using eSecurity.Idp.Common.Messaging.Email.Builders;
 using eSecurity.Idp.Security.Authorization.Codes;
@@ -93,7 +91,7 @@ public sealed class SendEmailVerificationCommandHandler(
 
         await _emailService.SendAsync(emailContext, cancellationToken);
 
-        var response = new SendEmailVerificationResponse()
+        var response = new CodeSendResponse()
         {
             MaxResendAttempts = 5,
             ResendInterval = (int)TimeSpan.FromMinutes(2).TotalSeconds

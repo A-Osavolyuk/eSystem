@@ -23,9 +23,6 @@ public interface IEmailManager
     public ValueTask<Result> ChangeAsync(UserEntity user, string currentEmail, string newEmail,
         CancellationToken cancellationToken = default);
 
-    public ValueTask<Result> ManageAsync(UserEntity user, EmailType type, 
-        string email, CancellationToken cancellationToken = default);
-
     public ValueTask<Result> VerifyAsync(UserEntity user, string email, 
         CancellationToken cancellationToken = default);
     

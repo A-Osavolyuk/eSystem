@@ -27,15 +27,6 @@ public class EmailService(IApiClient apiClient) : IEmailService
                 Url = "/api/v1/Email/check"
             });
 
-    public async ValueTask<ApiResponse> ManageEmailAsync(ManageEmailRequest request)
-        => await _apiClient.SendAsync(
-            new ApiRequest
-            {
-                Method = HttpMethods.Post,
-                Data = request,
-                Url = "/api/v1/Email/manage"
-            });
-
     public async ValueTask<ApiResponse> RemoveEmailAsync(RemoveEmailRequest request)
         => await _apiClient.SendAsync(
             new ApiRequest

@@ -1,7 +1,5 @@
-﻿using eSecurity.Core.Requests.Email;
-using eSecurity.Core.Requests.Email.Verification;
-using eSecurity.Core.Responses.Email;
-using eSecurity.Core.Responses.Email.Verification;
+﻿using eSecurity.Core.Requests.Email.Verification;
+using eSecurity.Core.Responses;
 using eSecurity.Idp.Common.Messaging.Email;
 using eSecurity.Idp.Common.Messaging.Email.Builders;
 using eSecurity.Idp.Security.Authorization.Codes;
@@ -67,7 +65,7 @@ public sealed class ResendEmailVerificationCommandHandler(
         
         if (user.ResendAttempts >= 5)
         {
-            return Results.Success(SuccessCodes.Ok, new ResendEmailVerificationResponse
+            return Results.Success(SuccessCodes.Ok, new CodeResendResponse()
             {
                 IsResendAvailable = false
             });
@@ -110,17 +108,17 @@ public sealed class ResendEmailVerificationCommandHandler(
         var result = await _userManager.AddResendAttemptAsync(user, TimeSpan.FromMinutes(2), cancellationToken);
         if (!result.Succeeded) return result;
 
-        ResendEmailVerificationResponse response;
+        CodeResendResponse response;
         if (user.ResendAttempts == 5)
         {
-            response = new ResendEmailVerificationResponse
+            response = new CodeResendResponse
             {
                 IsResendAvailable = false
             };
         }
         else
         {
-            response = new ResendEmailVerificationResponse
+            response = new CodeResendResponse
             {
                 IsResendAvailable = true,
                 ResendAvailableAt = user.ResendAvailableAt

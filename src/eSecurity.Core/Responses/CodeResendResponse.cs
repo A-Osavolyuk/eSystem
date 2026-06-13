@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace eSecurity.Core.Responses.Email.Verification;
+namespace eSecurity.Core.Responses;
 
-public sealed class ResendEmailVerificationResponse
+public sealed class CodeResendResponse
 {
     [JsonPropertyName("is_resend_available")]
     public bool IsResendAvailable { get; set; }
