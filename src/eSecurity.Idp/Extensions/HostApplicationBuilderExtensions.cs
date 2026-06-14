@@ -37,7 +37,7 @@ public static class HostApplicationBuilderExtensions
             builder.Services.AddTransient<RequestBufferingMiddleware>();
             builder.Services.AddMediator(cfg =>
             {
-                cfg.FromAssembly<IAssemblyMarker>();
+                cfg.AddRequestHandlersFromAssembly<IAssemblyMarker>();
             });
             
             builder.Services.AddHttpContextAccessor();

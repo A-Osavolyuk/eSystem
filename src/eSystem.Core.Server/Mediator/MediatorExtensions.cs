@@ -18,7 +18,7 @@ public sealed class MediatorConfigurationBuilder(IServiceCollection serviceColle
 {
     private readonly IServiceCollection _serviceCollection = serviceCollection;
 
-    public void FromAssembly<TAssemblyMarker>() where TAssemblyMarker : notnull
+    public void AddRequestHandlersFromAssembly<TAssemblyMarker>() where TAssemblyMarker : notnull
     {
         var types = typeof(TAssemblyMarker).Assembly.GetTypes()
             .Where(t => t is { IsAbstract: false, IsInterface: false });

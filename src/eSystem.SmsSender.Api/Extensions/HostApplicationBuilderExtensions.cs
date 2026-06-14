@@ -25,7 +25,7 @@ public static class HostApplicationBuilderExtensions
             
             builder.Services.AddMediator(cfg =>
             {
-                cfg.FromAssembly<IAssemblyMarker>();
+                cfg.AddRequestHandlersFromAssembly<IAssemblyMarker>();
             });
             builder.Services.AddControllers();
 
