@@ -33,6 +33,21 @@ public sealed class MediatorConfigurationBuilder(IServiceCollection serviceColle
         }
     }
 
+    public void AddPipelineBehaviorsFromAssembly<TAssemblyMarker>() where TAssemblyMarker : notnull
+    {
+        var types = typeof(TAssemblyMarker).Assembly.GetTypes()
+            .Where(t => t is { IsAbstract: false, IsInterface: false });
+        
+        foreach (var type in types)
+        {
+            var interfaces = type.GetInterfaces()
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IPipelineBehavior<,>));
+
+            foreach (var @interface in interfaces)
+                _serviceCollection.AddTransient(@interface, type);
+        }
+    }
+
     public void AddRequestHandler<TRequestHandler, TRequest, TResponse>()
         where TRequestHandler : class, IRequestHandler<TRequest, TResponse>
         where TRequest : IRequest<TResponse>
