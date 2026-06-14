@@ -9,7 +9,7 @@ public static class MediatorExtensions
     {
         var builder = new MediatorConfigurationBuilder(services);
         configurations(builder);
-        
+
         services.AddScoped<IMediator, Mediator>();
     }
 }
@@ -37,7 +37,7 @@ public sealed class MediatorConfigurationBuilder(IServiceCollection serviceColle
     {
         var types = typeof(TAssemblyMarker).Assembly.GetTypes()
             .Where(t => t is { IsAbstract: false, IsInterface: false });
-        
+
         foreach (var type in types)
         {
             var interfaces = type.GetInterfaces()
@@ -50,7 +50,7 @@ public sealed class MediatorConfigurationBuilder(IServiceCollection serviceColle
 
     public void AddRequestHandler<TRequestHandler, TRequest, TResponse>()
         where TRequestHandler : class, IRequestHandler<TRequest, TResponse>
-        where TRequest : IRequest<TResponse>
+        where TRequest : class, IRequest<TResponse>
         where TResponse : notnull
     {
         _serviceCollection.AddTransient<IRequestHandler<TRequest, TResponse>, TRequestHandler>();
@@ -58,7 +58,7 @@ public sealed class MediatorConfigurationBuilder(IServiceCollection serviceColle
 
     public void AddPipelineBehavior<TPipeline, TRequest, TResponse>()
         where TPipeline : class, IPipelineBehavior<TRequest, TResponse>
-        where TRequest : IRequest<TResponse>
+        where TRequest : class, IRequest<TResponse>
     {
         _serviceCollection.AddTransient<IPipelineBehavior<TRequest, TResponse>, TPipeline>();
     }
@@ -76,7 +76,32 @@ public sealed class MediatorConfigurationBuilder(IServiceCollection serviceColle
 
         if (!implements)
             throw new InvalidOperationException($"{pipelineType.Name} must implement IPipelineBehavior<,>");
-        
+
         _serviceCollection.AddTransient(typeof(IPipelineBehavior<,>), pipelineType);
+    }
+
+    public void AddPipelineFailureHandler<TFailureHandler, TRequest, TResponse>()
+        where TFailureHandler : class, IPipelineFailureHandler<TRequest, TResponse>
+        where TRequest : class, IRequest<TResponse>
+    {
+        var serviceType = typeof(IPipelineFailureHandler<TRequest, TResponse>);
+        var implementationType = typeof(TFailureHandler);
+        var alreadyExists = _serviceCollection.Any(x => x.ServiceType == serviceType && 
+            x.ImplementationType == implementationType && x.Lifetime == ServiceLifetime.Transient);
+        
+        if (alreadyExists)
+            throw new InvalidOperationException(
+                $"Pipeline failure handler of type {typeof(TFailureHandler).Name} is already registered");
+        
+        _serviceCollection.AddTransient<IPipelineFailureHandler<TRequest, TResponse>, TFailureHandler>();
+    }
+
+    public void AddDefaultPipelineFailureHandler<TFailureHandler>()
+        where TFailureHandler : class, IDefaultPipelineFailureHandler
+    {
+        if (_serviceCollection.Any(x => x.ServiceType == typeof(IDefaultPipelineFailureHandler)))
+            throw new InvalidOperationException("Default pipeline failure handler is already registered");
+        
+        _serviceCollection.AddTransient<IDefaultPipelineFailureHandler, TFailureHandler>();
     }
 }
