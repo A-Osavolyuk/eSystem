@@ -2,6 +2,7 @@
 using eSecurity.Idp.Data.Entities;
 using eSecurity.Core.Security.Authentication.Lockout;
 using eSecurity.Core.Security.Identity;
+using eSecurity.Idp.Common.Validation;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Identity.Claims;
@@ -49,7 +50,7 @@ public sealed class UserManager(AuthDbContext context, IHttpContextAccessor http
 
     public async ValueTask<UserEntity?> FindByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
-        var normalizedEmail = email.ToUpper();
+        var normalizedEmail = Normalizer.Normalize(email);
         var user = await _context.Users
             .FirstOrDefaultAsync(u => _context.UserEmails
                 .Any(e => e.UserId == u.Id &&
@@ -69,7 +70,7 @@ public sealed class UserManager(AuthDbContext context, IHttpContextAccessor http
 
     public async ValueTask<UserEntity?> FindByUsernameAsync(string name, CancellationToken cancellationToken = default)
     {
-        var normalizedUserName = name.ToUpper();
+        var normalizedUserName = Normalizer.Normalize(name);
         var user = await _context.Users.Where(x => x.NormalizedUsername == normalizedUserName)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
@@ -78,7 +79,7 @@ public sealed class UserManager(AuthDbContext context, IHttpContextAccessor http
 
     public async ValueTask<UserEntity?> FindByLoginAsync(string login, CancellationToken cancellationToken = default)
     {
-        var normalizedValue = login.ToUpper();
+        var normalizedValue = Normalizer.Normalize(login);
         return await _context.Users
             .Where(user => user.NormalizedUsername == normalizedValue || user.Emails.Any(x =>
                 x.NormalizedEmail == normalizedValue &&
@@ -112,7 +113,7 @@ public sealed class UserManager(AuthDbContext context, IHttpContextAccessor http
             Type = LockoutType.None,
         };
 
-        user.NormalizedUsername = user.Username.ToUpper();
+        user.NormalizedUsername = Normalizer.Normalize(user.Username);
 
         await _context.Users.AddAsync(user, cancellationToken);
         await _context.LockoutStates.AddAsync(lockoutState, cancellationToken);

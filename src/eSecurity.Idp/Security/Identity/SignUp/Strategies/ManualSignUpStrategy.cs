@@ -12,6 +12,7 @@ using eSecurity.Core.Responses;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Idp.Common.Messaging.Email;
 using eSecurity.Idp.Common.Messaging.Email.Builders;
+using eSecurity.Idp.Common.Validation;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Messaging;
 using eSystem.Core.Primitives;
@@ -88,7 +89,7 @@ public sealed class ManualSignUpStrategy(
         {
             Id = Guid.CreateVersion7(),
             Username = manualPayload.Username,
-            NormalizedUsername = manualPayload.Username.ToUpperInvariant(),
+            NormalizedUsername = Normalizer.Normalize(manualPayload.Username),
             Locale = _httpContext.GetLocale()!,
             ZoneInfo = _httpContext.GetTimeZone()!,
         };

@@ -1,4 +1,5 @@
-﻿using eSecurity.Idp.Data.Entities;
+﻿using eSecurity.Idp.Common.Validation;
+using eSecurity.Idp.Data.Entities;
 using eSystem.Core.Localization.Locale;
 using eSystem.Core.Localization.Time;
 using eSystem.Core.Server.Data.Seeding;
@@ -15,7 +16,7 @@ public class UserSeed : Seed<UserEntity>
             {
                 Id = Guid.Parse("188c7286-b0b9-4cb1-8f7f-503c6349bc65"),
                 Username = "pipidastr",
-                NormalizedUsername = "PIPIDASTR".ToUpper(),
+                NormalizedUsername = Normalizer.Normalize("pipidastr"),
                 AccountConfirmed = true,
                 ZoneInfo = IanaTimeZones.Europe.Kiev,
                 Locale = Locales.Other.UkrainianUkraine

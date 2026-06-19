@@ -1,6 +1,7 @@
 ﻿using eSecurity.Idp.Data;
 using eSecurity.Idp.Data.Entities;
 using eSecurity.Core.Security.Identity;
+using eSecurity.Idp.Common.Validation;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 
@@ -47,7 +48,7 @@ public class EmailManager(AuthDbContext context) : IEmailManager
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
             Email = email,
-            NormalizedEmail = email.ToUpperInvariant(),
+            NormalizedEmail = Normalizer.Normalize(email),
             Type = type,
             IsVerified = true,
             VerifiedAt = DateTimeOffset.UtcNow
@@ -113,7 +114,7 @@ public class EmailManager(AuthDbContext context) : IEmailManager
         if (newEmailEntity is null)
         {
             currentEmailEntity.Email = newEmail;
-            currentEmailEntity.NormalizedEmail = newEmail.ToUpperInvariant();
+            currentEmailEntity.NormalizedEmail = Normalizer.Normalize(newEmail);
 
             _context.UserEmails.Update(currentEmailEntity);
             await _context.SaveChangesAsync(cancellationToken);
@@ -197,7 +198,7 @@ public class EmailManager(AuthDbContext context) : IEmailManager
         }
 
         userEmail.Email = newEmail;
-        userEmail.NormalizedEmail = newEmail.ToUpperInvariant();
+        userEmail.NormalizedEmail = Normalizer.Normalize(newEmail);
         userEmail.IsVerified = true;
         userEmail.VerifiedAt = DateTimeOffset.UtcNow;
 
@@ -243,7 +244,7 @@ public class EmailManager(AuthDbContext context) : IEmailManager
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
             Email = email,
-            NormalizedEmail = email.ToUpperInvariant(),
+            NormalizedEmail = Normalizer.Normalize(email),
             Type = type
         };
 
@@ -255,7 +256,7 @@ public class EmailManager(AuthDbContext context) : IEmailManager
 
     public async ValueTask<bool> IsTakenAsync(string email, CancellationToken cancellationToken = default)
     {
-        var normalizedEmail = email.ToUpperInvariant();
+        var normalizedEmail = Normalizer.Normalize(email);
         return await _context.UserEmails.AnyAsync(
             u => u.NormalizedEmail == normalizedEmail, cancellationToken);
     }

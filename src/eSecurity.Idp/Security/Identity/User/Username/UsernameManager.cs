@@ -1,4 +1,5 @@
-﻿using eSecurity.Idp.Data;
+﻿using eSecurity.Idp.Common.Validation;
+using eSecurity.Idp.Data;
 using eSecurity.Idp.Data.Entities;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
@@ -13,6 +14,7 @@ public class UsernameManager(AuthDbContext context) : IUsernameManager
         CancellationToken cancellationToken = default)
     {
         user.Username = username;
+        user.NormalizedUsername = Normalizer.Normalize(username);
         user.UsernameChangeDate = DateTimeOffset.UtcNow;
 
         _context.Users.Update(user);
@@ -21,11 +23,11 @@ public class UsernameManager(AuthDbContext context) : IUsernameManager
         return Results.Success(SuccessCodes.Ok);
     }
 
-    public async ValueTask<Result> ChangeAsync(UserEntity user, string username,
+    public async ValueTask<Result> ChangeAsync(UserEntity user, string username, 
         CancellationToken cancellationToken = default)
     {
         user.Username = username;
-        user.NormalizedUsername = username.ToUpper();
+        user.NormalizedUsername = Normalizer.Normalize(username);
         user.UsernameChangeDate = DateTimeOffset.UtcNow;
 
         _context.Users.Update(user);
@@ -34,10 +36,9 @@ public class UsernameManager(AuthDbContext context) : IUsernameManager
         return Results.Success(SuccessCodes.Ok);
     }
 
-    public async ValueTask<bool> IsTakenAsync(string username, 
-        CancellationToken cancellationToken = default)
+    public async ValueTask<bool> IsTakenAsync(string username, CancellationToken cancellationToken = default)
     {
-        var normalized = username.ToUpper();
+        var normalized = Normalizer.Normalize(username);
         return await _context.Users.AnyAsync(u => u.NormalizedUsername == normalized, cancellationToken);
     }
 }
