@@ -15,13 +15,13 @@ namespace eSecurity.Idp.Features.Verification.Commands;
 public record SendCodeCommand(SendCodeRequest Request) : IRequest<Result>;
 
 public class SendCodeCommandHandler(
-    IUserManager userManager,
+    ICurrentUserAccessor currentUserAccessor,
     ICodeManager codeManager,
     ISmsService smsService,
     IEmailService emailService,
     IHttpContextAccessor httpContextAccessor) : IRequestHandler<SendCodeCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly ICodeManager _codeManager = codeManager;
     private readonly ISmsService _smsService = smsService;
     private readonly IEmailService _emailService = emailService;
@@ -29,7 +29,7 @@ public class SendCodeCommandHandler(
 
     public async Task<Result> Handle(SendCodeCommand request, CancellationToken cancellationToken)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

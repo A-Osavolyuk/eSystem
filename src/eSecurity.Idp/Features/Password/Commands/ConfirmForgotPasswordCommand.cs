@@ -13,17 +13,17 @@ namespace eSecurity.Idp.Features.Password.Commands;
 public sealed record ConfirmForgotPasswordCommand(ConfirmForgotPasswordRequest Request) : IRequest<Result>;
 
 public sealed class ConfirmForgotPasswordCommandHandler(
-    IUserManager userManager, 
+    IUserQueryService userQueryService, 
     ICodeManager codeManager, 
     IVerificationManager verificationManager) : IRequestHandler<ConfirmForgotPasswordCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly ICodeManager _codeManager = codeManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
 
     public async Task<Result> Handle(ConfirmForgotPasswordCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
+        var user = await _userQueryService.GetByEmailAsync(request.Request.Email, cancellationToken);
         if (user is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error

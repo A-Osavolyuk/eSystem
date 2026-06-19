@@ -17,13 +17,13 @@ namespace eSecurity.Idp.Features.Verification.AuthenticatorApp;
 public sealed record VerifyAuthenticatorAppCommand(VerifyAuthenticatorAppRequest Request) : IRequest<Result>;
 
 public sealed class VerifyAuthenticatorAppCommandHandler(
-    IUserManager userManager,
+    ICurrentUserAccessor currentUserAccessor,
     ISecretManager secretManager,
     IDataProtectionProvider protectionProvider,
     IVerificationManager verificationManager,
     IOptions<VerificationConfiguration> options) : IRequestHandler<VerifyAuthenticatorAppCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly ISecretManager _secretManager = secretManager;
     private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
     private readonly IVerificationManager _verificationManager = verificationManager;
@@ -32,7 +32,7 @@ public sealed class VerifyAuthenticatorAppCommandHandler(
     public async Task<Result> Handle(VerifyAuthenticatorAppCommand request, 
         CancellationToken cancellationToken = default)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

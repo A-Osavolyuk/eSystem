@@ -14,19 +14,21 @@ namespace eSecurity.Idp.Features.Verification.EmailOtp;
 public sealed class SendEmailOtpCommand : IRequest<Result>;
 
 public sealed class SendEmailOtpCommandHandler(
-    IUserManager userManager,
+    ICurrentUserAccessor currentUserAccessor,
+    IUserResendAttemptsService resendAttemptsService,
     IEmailService emailService,
     IEmailQueryService emailQueryService,
     ICodeManager codeManager) : IRequestHandler<SendEmailOtpCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
+    private readonly IUserResendAttemptsService _resendAttemptsService = resendAttemptsService;
     private readonly IEmailService _emailService = emailService;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly ICodeManager _codeManager = codeManager;
 
     public async Task<Result> Handle(SendEmailOtpCommand request, CancellationToken cancellationToken = default)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();
@@ -52,10 +54,7 @@ public sealed class SendEmailOtpCommandHandler(
             });
         }
 
-        user.ResendAttempts = 0;
-        user.ResendAvailableAt = null;
-
-        var updateResult = await _userManager.UpdateAsync(user, cancellationToken);
+        var updateResult = await _resendAttemptsService.CleanAttemptsAsync(user, cancellationToken);
         if (!updateResult.Succeeded) return updateResult;
 
         var codeResult = await _codeManager.CreateAsync(user, SenderType.Email, cancellationToken);

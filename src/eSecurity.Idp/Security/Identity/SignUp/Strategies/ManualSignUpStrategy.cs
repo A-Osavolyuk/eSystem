@@ -29,7 +29,6 @@ public sealed class ManualSignUpPayload : SignUpPayload
 }
 
 public sealed class ManualSignUpStrategy(
-    IUserManager userManager,
     IUsernameManager usernameManager,
     IPasswordManager passwordManager,
     IRoleManager roleManager,
@@ -40,9 +39,9 @@ public sealed class ManualSignUpStrategy(
     IEmailQueryService emailQueryService,
     IEmailCommandService emailCommandService,
     IAuthenticationSessionManager sessionManager,
+    IUserCommandService userCommandService,
     IOptions<AccountOptions> options) : ISignUpStrategy
 {
-    private readonly IUserManager _userManager = userManager;
     private readonly IUsernameManager _usernameManager = usernameManager;
     private readonly IPasswordManager _passwordManager = passwordManager;
     private readonly IRoleManager _roleManager = roleManager;
@@ -52,6 +51,7 @@ public sealed class ManualSignUpStrategy(
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly IEmailCommandService _emailCommandService = emailCommandService;
     private readonly IAuthenticationSessionManager _sessionManager = sessionManager;
+    private readonly IUserCommandService _userCommandService = userCommandService;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly AccountOptions _options = options.Value;
 
@@ -86,16 +86,8 @@ public sealed class ManualSignUpStrategy(
             });
         }
 
-        var user = new UserEntity
-        {
-            Id = Guid.CreateVersion7(),
-            Username = manualPayload.Username,
-            NormalizedUsername = Normalizer.Normalize(manualPayload.Username),
-            Locale = _httpContext.GetLocale()!,
-            ZoneInfo = _httpContext.GetTimeZone()!,
-        };
-
-        var createResult = await _userManager.CreateAsync(user, cancellationToken);
+        var user = new UserEntity(manualPayload.Username);
+        var createResult = await _userCommandService.CreateAsync(user, cancellationToken);
         if (!createResult.Succeeded) return createResult;
 
         var passwordResult = await _passwordManager.AddAsync(user, manualPayload.Password, cancellationToken);

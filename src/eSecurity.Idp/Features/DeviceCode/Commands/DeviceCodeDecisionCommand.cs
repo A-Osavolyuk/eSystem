@@ -17,7 +17,7 @@ public sealed record DeviceCodeDecisionCommand(DeviceCodeDecisionRequest Request
 public sealed class DeviceCodeDecisionCommandHandler(
     IDeviceCodeManager deviceCodeManager,
     ISessionManager sessionManager,
-    IUserManager userManager,
+    ICurrentUserAccessor currentUserAccessor,
     IClientManager clientManager,
     IConsentManager consentManager,
     ISessionAccessor sessionAccessor) 
@@ -25,7 +25,7 @@ public sealed class DeviceCodeDecisionCommandHandler(
 {
     private readonly IDeviceCodeManager _deviceCodeManager = deviceCodeManager;
     private readonly ISessionManager _sessionManager = sessionManager;
-    private readonly IUserManager _userManager = userManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IClientManager _clientManager = clientManager;
     private readonly IConsentManager _consentManager = consentManager;
     private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
@@ -80,7 +80,7 @@ public sealed class DeviceCodeDecisionCommandHandler(
             deviceCode.SessionId = session.Id;
         }
 
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

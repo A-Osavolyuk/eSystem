@@ -10,17 +10,17 @@ namespace eSecurity.Idp.Features.Email.Change;
 public sealed record ConfirmEmailChangeCommand(ConfirmEmailChangeRequest Request) : IRequest<Result>;
 
 public sealed class ConfirmEmailChangeCommandHandler(
-    IUserManager userManager,
     ICodeManager codeManager,
+    ICurrentUserAccessor currentUserAccessor,
     IEmailCommandService emailCommandService) : IRequestHandler<ConfirmEmailChangeCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
     private readonly ICodeManager _codeManager = codeManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IEmailCommandService _emailCommandService = emailCommandService;
 
     public async Task<Result> Handle(ConfirmEmailChangeCommand request, CancellationToken cancellationToken = default)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

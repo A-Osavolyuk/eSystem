@@ -13,14 +13,14 @@ namespace eSecurity.Idp.Features.Connect.Commands;
 public record GrantConsentCommand(GrantConsentRequest Request) : IRequest<Result>;
 
 public class GrantConsentCommandHandler(
-    IUserManager userManager,
+    IUserQueryService userQueryService,
     IClientManager clientManager,
     IConsentManager consentManager,
     ISessionManager sessionManager,
     IOptions<OpenIdConfiguration> options,
     ISessionAccessor sessionAccessor) : IRequestHandler<GrantConsentCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IClientManager _clientManager = clientManager;
     private readonly IConsentManager _consentManager = consentManager;
     private readonly ISessionManager _sessionManager = sessionManager;
@@ -49,7 +49,7 @@ public class GrantConsentCommandHandler(
             });
         }
         
-        var user = await _userManager.FindByIdAsync(session.UserId, cancellationToken);
+        var user = await _userQueryService.GetByIdAsync(session.UserId, cancellationToken);
         if (user is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error

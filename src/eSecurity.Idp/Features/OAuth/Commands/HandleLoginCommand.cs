@@ -17,12 +17,12 @@ namespace eSecurity.Idp.Features.OAuth.Commands;
 public sealed record HandleLoginCommand(string? RemoteError, string ReturnUri) : IRequest<Result>;
 
 public sealed class HandleOAuthLoginCommandHandler(
-    IUserManager userManager,
+    IUserQueryService userQueryService,
     ISignUpResolver signUpResolver,
     ISignInResolver signInResolver,
     IHttpContextAccessor contextAccessor) : IRequestHandler<HandleLoginCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly ISignUpResolver _signUpResolver = signUpResolver;
     private readonly ISignInResolver _signInResolver = signInResolver;
     private readonly HttpContext _httpContext = contextAccessor.HttpContext!;
@@ -66,7 +66,7 @@ public sealed class HandleOAuthLoginCommandHandler(
                 .Build());
         }
 
-        var user = await _userManager.FindByEmailAsync(email, cancellationToken);
+        var user = await _userQueryService.GetByEmailAsync(email, cancellationToken);
         if (user is null)
         {
             var signUpStrategy = _signUpResolver.Resolve(SignUpType.OAuth);

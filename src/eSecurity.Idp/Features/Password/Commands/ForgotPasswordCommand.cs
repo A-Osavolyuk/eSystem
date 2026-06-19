@@ -13,12 +13,12 @@ namespace eSecurity.Idp.Features.Password.Commands;
 public sealed record ForgotPasswordCommand(ForgotPasswordRequest Request) : IRequest<Result>;
 
 public sealed class ForgotPasswordCommandHandler(
-    IUserManager userManager,
+    IUserQueryService userQueryService,
     IPasswordManager passwordManager,
     ICodeManager codeManager,
     IEmailService emailService) : IRequestHandler<ForgotPasswordCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IPasswordManager _passwordManager = passwordManager;
     private readonly ICodeManager _codeManager = codeManager;
     private readonly IEmailService _emailService = emailService;
@@ -26,7 +26,7 @@ public sealed class ForgotPasswordCommandHandler(
     public async Task<Result> Handle(ForgotPasswordCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByEmailAsync(request.Request.Email, cancellationToken);
+        var user = await _userQueryService.GetByEmailAsync(request.Request.Email, cancellationToken);
         if (user is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error

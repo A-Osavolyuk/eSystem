@@ -15,14 +15,14 @@ namespace eSecurity.Idp.Features.Email.Commands;
 public record RemoveEmailCommand(RemoveEmailRequest Request) : IRequest<Result>;
 
 public class RemoveEmailCommandHandler(
-    IUserManager userManager,
+    ICurrentUserAccessor currentUserAccessor,
     IPasskeyManager passkeyManager,
     ILinkedAccountManager linkedAccountManager,
     IEmailQueryService emailQueryService,
     IEmailCommandService emailCommandService,
     IVerificationManager verificationManager) : IRequestHandler<RemoveEmailCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
     private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
@@ -31,7 +31,7 @@ public class RemoveEmailCommandHandler(
 
     public async Task<Result> Handle(RemoveEmailCommand request, CancellationToken cancellationToken)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

@@ -14,13 +14,13 @@ using Microsoft.AspNetCore.DataProtection;
 namespace eSecurity.Idp.Security.Authorization.Verification.AuthenticationApp;
 
 public sealed class AuthenticationAppVerificationStrategy(
-    IUserManager userManager,
+    ICurrentUserAccessor currentUserAccessor,
     IVerificationManager verificationManager,
     ISecretManager secretManager,
     IDataProtectionProvider protectionProvider,
     IOptions<VerificationConfiguration> options) : IVerificationStrategy
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IVerificationManager _verificationManager = verificationManager;
     private readonly ISecretManager _secretManager = secretManager;
     private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
@@ -32,7 +32,7 @@ public sealed class AuthenticationAppVerificationStrategy(
         if (context is not AuthenticatorAppVerificationContext authenticationContext)
             throw new InvalidOperationException("Invalid context type");
         
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

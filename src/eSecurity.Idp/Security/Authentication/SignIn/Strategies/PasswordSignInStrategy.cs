@@ -22,7 +22,8 @@ using Session_SessionOptions = eSecurity.Idp.Security.Authentication.Session.Ses
 namespace eSecurity.Idp.Security.Authentication.SignIn.Strategies;
 
 public sealed class PasswordSignInStrategy(
-    IUserManager userManager,
+    IUserQueryService userQueryService,
+    IUserFailedLoginService failedLoginService,
     IEmailQueryService emailQueryService,
     IPasswordManager passwordManager,
     ILockoutManager lockoutManager,
@@ -36,7 +37,8 @@ public sealed class PasswordSignInStrategy(
     IOptions<Session_SessionOptions> sessionOptions,
     ISessionCookieFactory sessionCookieFactory) : ISignInStrategy
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly IUserQueryService _userQueryService = userQueryService;
+    private readonly IUserFailedLoginService _failedLoginService = failedLoginService;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly IPasswordManager _passwordManager = passwordManager;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
@@ -66,12 +68,12 @@ public sealed class PasswordSignInStrategy(
 
         if (_signInOptions.AllowUserNameLogin)
         {
-            user = await _userManager.FindByUsernameAsync(passwordPayload.Login, cancellationToken);
+            user = await _userQueryService.GetByUsernameAsync(passwordPayload.Login, cancellationToken);
         }
 
         if (user is null && _signInOptions.AllowEmailLogin)
         {
-            user = await _userManager.FindByEmailAsync(passwordPayload.Login, cancellationToken);
+            user = await _userQueryService.GetByEmailAsync(passwordPayload.Login, cancellationToken);
         }
 
         if (user is null)
@@ -166,9 +168,7 @@ public sealed class PasswordSignInStrategy(
 
         if (!await _passwordManager.CheckAsync(user, passwordPayload.Password, cancellationToken))
         {
-            user.FailedLoginAttempts += 1;
-
-            var updateResult = await _userManager.UpdateAsync(user, cancellationToken);
+            var updateResult = await _failedLoginService.IncrementAttemptAsync(user, cancellationToken);
             if (!updateResult.Succeeded) return updateResult;
 
             if (user.FailedLoginAttempts < _signInOptions.MaxFailedLoginAttempts)
@@ -203,9 +203,7 @@ public sealed class PasswordSignInStrategy(
 
         if (user.FailedLoginAttempts > 0)
         {
-            user.FailedLoginAttempts = 0;
-
-            var userUpdateResult = await _userManager.UpdateAsync(user, cancellationToken);
+            var userUpdateResult = await _failedLoginService.ResetAttemptsAsync(user, cancellationToken);
             if (!userUpdateResult.Succeeded) return userUpdateResult;
         }
 

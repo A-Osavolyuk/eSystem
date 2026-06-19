@@ -11,18 +11,18 @@ namespace eSecurity.Idp.Features.Email.Verification;
 public sealed record ConfirmEmailVerificationCommand(ConfirmEmailVerificationRequest Request) : IRequest<Result>;
 
 public sealed class ConfirmEmailVerificationCommandHandler(
-    IUserManager userManager,
+    ICurrentUserAccessor currentUserAccessor,
     IEmailCommandService emailCommandService,
     ICodeManager codeManager) : IRequestHandler<ConfirmEmailVerificationCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IEmailCommandService _emailCommandService = emailCommandService;
     private readonly ICodeManager _codeManager = codeManager;
 
     public async Task<Result> Handle(ConfirmEmailVerificationCommand request,
         CancellationToken cancellationToken = default)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

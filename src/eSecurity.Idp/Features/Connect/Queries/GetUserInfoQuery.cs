@@ -20,14 +20,14 @@ namespace eSecurity.Idp.Features.Connect.Queries;
 public record GetUserInfoQuery(string? AccessToken = null) : IRequest<Result>;
 
 public class GetUserInfoQueryHandler(
-    IUserManager userManager,
+    IUserQueryService userQueryService,
     IPhoneManager phoneManager,
     IPersonalDataManager personalDataManager,
     IHttpContextAccessor httpContextAccessor,
     IEmailQueryService emailQueryService,
     ITokenValidationProvider validationProvider) : IRequestHandler<GetUserInfoQuery, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IPhoneManager _phoneManager = phoneManager;
     private readonly IPersonalDataManager _personalDataManager = personalDataManager;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
@@ -88,7 +88,7 @@ public class GetUserInfoQueryHandler(
         }
 
         var subjectClaim = claimsPrincipal.Claims.First(x => x.Type is AppClaimTypes.Sub or ClaimTypes.NameIdentifier);
-        var user = await _userManager.FindBySubjectAsync(subjectClaim.Value, cancellationToken);
+        var user = await _userQueryService.GetBySubjectAsync(subjectClaim.Value, cancellationToken);
         if (user is null)
         {
             const string description = "The access token is invalid or the user does not exist";

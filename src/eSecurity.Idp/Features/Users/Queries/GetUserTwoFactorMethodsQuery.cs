@@ -10,15 +10,15 @@ namespace eSecurity.Idp.Features.Users.Queries;
 public record GetUserTwoFactorMethodsQuery : IRequest<Result>;
 
 public class GetUserProvidersQueryHandler(
-    IUserManager userManager,
+    ICurrentUserAccessor currentUserAccessor,
     ITwoFactorManager twoFactorManager) : IRequestHandler<GetUserTwoFactorMethodsQuery, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
 
     public async Task<Result> Handle(GetUserTwoFactorMethodsQuery request, CancellationToken cancellationToken)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

@@ -14,13 +14,13 @@ namespace eSecurity.Idp.Security.Authorization.Verification.Passkey;
 
 public sealed class PasskeyVerificationStrategy(
     IHttpContextAccessor httpContextAccessor,
-    IUserManager userManager,
+    ICurrentUserAccessor currentUserAccessor,
     IPasskeyManager passkeyManager,
     IVerificationManager verificationManager,
     IOptions<VerificationConfiguration> options) : IVerificationStrategy
 {
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
-    private readonly IUserManager _userManager = userManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
     private readonly VerificationConfiguration _configuration = options.Value;
@@ -31,7 +31,7 @@ public sealed class PasskeyVerificationStrategy(
         if (context is not PasskeyVerificationContext passkeyContext)
             throw new InvalidOperationException("Invalid context type");
         
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

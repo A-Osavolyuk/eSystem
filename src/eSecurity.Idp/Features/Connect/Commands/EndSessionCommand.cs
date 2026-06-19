@@ -20,16 +20,16 @@ public sealed class EndSessionCommandHandler(
     IEndSessionManager endSessionManager,
     IOptions<EndSessionOptions> options,
     IClientManager clientManager,
-    IUserManager userManager,
     ISessionManager sessionManager,
     ISessionAccessor sessionAccessor,
+    IUserQueryService userQueryService,
     ITokenValidationProvider tokenValidationProvider) : IRequestHandler<EndSessionCommand, Result>
 {
     private readonly IEndSessionManager _endSessionManager = endSessionManager;
     private readonly IClientManager _clientManager = clientManager;
-    private readonly IUserManager _userManager = userManager;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
+    private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly EndSessionOptions _options = options.Value;
     private readonly ITokenValidator _tokenValidator = tokenValidationProvider.CreateValidator(TokenKind.Jwt);
 
@@ -90,7 +90,7 @@ public sealed class EndSessionCommandHandler(
                 redirectUri = request.Request.PostLogoutRedirectUri;
             }
 
-            user = await _userManager.FindByLoginAsync(request.Request.LogoutHint!, cancellationToken);
+            user = await _userQueryService.GetByLoginAsync(request.Request.LogoutHint!, cancellationToken);
             if (user is null || session.UserId != user.Id)
             {
                 return Fallback(redirectUri, ErrorCode.InvalidRequest,
@@ -117,7 +117,7 @@ public sealed class EndSessionCommandHandler(
                     "id_token_hint is invalid", request.Request.State);
             }
 
-            user = await _userManager.FindBySubjectAsync(subClaim.Value, cancellationToken);
+            user = await _userQueryService.GetBySubjectAsync(subClaim.Value, cancellationToken);
             if (user is null)
             {
                 return Fallback(redirectUri, ErrorCode.InvalidRequest,

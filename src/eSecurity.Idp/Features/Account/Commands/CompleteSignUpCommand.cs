@@ -17,19 +17,19 @@ public sealed record CompleteSignUpCommand(CompleteSignUpRequest Request) : IReq
 public sealed class CompleteSignUpCommandHandler(
     IAuthenticationSessionManager authenticationSessionManager,
     ISessionManager sessionManager,
-    IUserManager userManager,
     ICodeManager codeManager,
     IEmailQueryService emailQueryService,
     IEmailCommandService emailCommandService,
     IOptions<SessionOptions> options,
+    IUserQueryService userQueryService,
     ISessionCookieFactory sessionCookieFactory) : IRequestHandler<CompleteSignUpCommand, Result>
 {
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly ISessionManager _sessionManager = sessionManager;
-    private readonly IUserManager _userManager = userManager;
     private readonly ICodeManager _codeManager = codeManager;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly IEmailCommandService _emailCommandService = emailCommandService;
+    private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly ISessionCookieFactory _sessionCookieFactory = sessionCookieFactory;
     private readonly SessionOptions _options = options.Value;
 
@@ -47,7 +47,7 @@ public sealed class CompleteSignUpCommandHandler(
             });
         }
 
-        var user = await _userManager.FindByIdAsync(authenticationSession.UserId.Value, cancellationToken);
+        var user = await _userQueryService.GetByIdAsync(authenticationSession.UserId.Value, cancellationToken);
         if (user is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error

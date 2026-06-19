@@ -10,16 +10,16 @@ namespace eSecurity.Idp.Features.Password.Commands;
 public sealed record ChangePasswordCommand(ChangePasswordRequest Request) : IRequest<Result>;
 
 public sealed class ChangePasswordCommandHandler(
-    IUserManager userManager,
+    ICurrentUserAccessor currentUserAccessor,
     IPasswordManager passwordManager) : IRequestHandler<ChangePasswordCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IPasswordManager _passwordManager = passwordManager;
 
     async Task<Result> IRequestHandler<ChangePasswordCommand, Result>.Handle(ChangePasswordCommand request,
             CancellationToken cancellationToken)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

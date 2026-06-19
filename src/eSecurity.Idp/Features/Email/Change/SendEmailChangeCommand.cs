@@ -17,19 +17,21 @@ namespace eSecurity.Idp.Features.Email.Change;
 public sealed record SendEmailChangeCommand(SendEmailChangeRequest Request) : IRequest<Result>;
 
 public sealed class SendEmailChangeCommandHandler(
-    IUserManager userManager,
+    ICurrentUserAccessor currentUserAccessor,
     IEmailService emailService,
     IEmailQueryService emailQueryService,
+    IUserResendAttemptsService resendAttemptsService,
     ICodeManager codeManager) : IRequestHandler<SendEmailChangeCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IEmailService _emailService = emailService;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
+    private readonly IUserResendAttemptsService _resendAttemptsService = resendAttemptsService;
     private readonly ICodeManager _codeManager = codeManager;
 
     public async Task<Result> Handle(SendEmailChangeCommand request, CancellationToken cancellationToken = default)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();
@@ -115,7 +117,7 @@ public sealed class SendEmailChangeCommandHandler(
             });
         }
 
-        var result = await _userManager.ResetResendAttemptsAsync(user, TimeSpan.FromMinutes(2), cancellationToken);
+        var result = await _resendAttemptsService.ResetAttemptsAsync(user, TimeSpan.FromMinutes(2), cancellationToken);
         if (!result.Succeeded) return result;
 
         var emailContext = new EmailVerificationContext()

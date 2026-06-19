@@ -14,19 +14,19 @@ namespace eSecurity.Idp.Features.TwoFactor.Commands;
 public record ReconfigureAuthenticatorCommand(ReconfigureAuthenticatorRequest Request) : IRequest<Result>;
 
 public class ReconfigureAuthenticatorCommandHandler(
-    IUserManager userManager,
     ISecretManager secretManager,
     IVerificationManager verificationManager,
+    ICurrentUserAccessor currentUserAccessor,
     IDataProtectionProvider protectionProvider) : IRequestHandler<ReconfigureAuthenticatorCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
     private readonly ISecretManager _secretManager = secretManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
 
     public async Task<Result> Handle(ReconfigureAuthenticatorCommand request, CancellationToken cancellationToken)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

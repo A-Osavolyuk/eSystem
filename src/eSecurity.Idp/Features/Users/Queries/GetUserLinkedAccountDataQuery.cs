@@ -11,15 +11,15 @@ namespace eSecurity.Idp.Features.Users.Queries;
 public record GetUserLinkedAccountDataQuery : IRequest<Result>;
 
 public class GetUserLinkedAccountDataQueryHandler(
-    IUserManager userManager,
+    ICurrentUserAccessor currentUserAccessor,
     ILinkedAccountManager linkedAccountManager) : IRequestHandler<GetUserLinkedAccountDataQuery, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
 
     public async Task<Result> Handle(GetUserLinkedAccountDataQuery request, CancellationToken cancellationToken)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

@@ -10,10 +10,10 @@ namespace eSecurity.Idp.Security.Authentication.BackchannelAuthentication;
 
 public sealed class IdTokenHintUserResolver(
     IJwtTokenValidationProvider validationProvider,
-    IUserManager userManager) : IUserResolver
+    IUserQueryService userQueryService) : IUserResolver
 {
     private readonly IJwtTokenValidationProvider _validationProvider = validationProvider;
-    private readonly IUserManager _userManager = userManager;
+    private readonly IUserQueryService _userQueryService = userQueryService;
 
     public async Task<TypedResult<UserEntity>> ResolveAsync(BackchannelAuthenticationRequest request,
         CancellationToken cancellationToken = default)
@@ -52,7 +52,7 @@ public sealed class IdTokenHintUserResolver(
             }
         }
         
-        var user = await _userManager.FindByIdAsync(Guid.Parse(subClaim.Value), cancellationToken);
+        var user = await _userQueryService.GetByIdAsync(Guid.Parse(subClaim.Value), cancellationToken);
         if (user is null)
         {
             return TypedResult<UserEntity>.Fail(new Error

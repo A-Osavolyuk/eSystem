@@ -16,24 +16,24 @@ namespace eSecurity.Idp.Features.Passkeys.Commands;
 public record GenerateCreationOptionsCommand(GenerateCreationOptionsRequest Request) : IRequest<Result>;
 
 public class GenerateCreationOptionsCommandHandler(
-    IUserManager userManager,
     IHttpContextAccessor httpContextAccessor,
     ISessionStorage sessionStorage,
     IChallengeFactory challengeFactory,
     IDeviceManager deviceManager,
+    ICurrentUserAccessor currentUserAccessor,
     IOptions<Credentials_CredentialOptions> options) : IRequestHandler<GenerateCreationOptionsCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
     private readonly ISessionStorage _sessionStorage = sessionStorage;
     private readonly IChallengeFactory _challengeFactory = challengeFactory;
     private readonly IDeviceManager _deviceManager = deviceManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly Credentials_CredentialOptions _credentialOptions = options.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(GenerateCreationOptionsCommand request,
         CancellationToken cancellationToken)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

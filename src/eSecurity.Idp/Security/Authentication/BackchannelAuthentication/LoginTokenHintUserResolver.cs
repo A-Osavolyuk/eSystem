@@ -10,10 +10,10 @@ namespace eSecurity.Idp.Security.Authentication.BackchannelAuthentication;
 public sealed class LoginTokenHintUserResolver(
     ITokenManager tokenManager,
     IHasherProvider hasherProvider,
-    IUserManager userManager) : IUserResolver
+    IUserQueryService userQueryService) : IUserResolver
 {
     private readonly ITokenManager _tokenManager = tokenManager;
-    private readonly IUserManager _userManager = userManager;
+    private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
 
     public async Task<TypedResult<UserEntity>> ResolveAsync(BackchannelAuthenticationRequest request,
@@ -48,7 +48,7 @@ public sealed class LoginTokenHintUserResolver(
             });
         }
 
-        var user = await _userManager.FindByIdAsync(Guid.Parse(token.Subject), cancellationToken);
+        var user = await _userQueryService.GetByIdAsync(Guid.Parse(token.Subject), cancellationToken);
         if (user is null)
         {
             return TypedResult<UserEntity>.Fail(new Error

@@ -10,13 +10,13 @@ namespace eSecurity.Idp.Features.TwoFactor.Commands;
 public record VerifyAuthenticatorCommand(VerifyAuthenticatorRequest Request) : IRequest<Result>;
 
 public class VerifyAuthenticatorCommandHandler(
-    IUserManager userManager) : IRequestHandler<VerifyAuthenticatorCommand, Result>
+    ICurrentUserAccessor currentUserAccessor) : IRequestHandler<VerifyAuthenticatorCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
 
     public async Task<Result> Handle(VerifyAuthenticatorCommand request, CancellationToken cancellationToken)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

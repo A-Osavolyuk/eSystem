@@ -16,12 +16,17 @@ public static class IdentityExtensions
         public void AddIdentity()
         {
             builder.Services.AddSignUpStrategies();
-            builder.Services.AddScoped<IUserManager, UserManager>();
             builder.Services.AddScoped<IUsernameManager, UsernameManager>();
             builder.Services.AddScoped<IPersonalDataManager, PersonalDataManager>();
             builder.Services.AddScoped<IPhoneManager, PhoneManager>();
             builder.Services.AddScoped<IPairwiseSubjectFactory, PairwiseSubjectFactory>();
 
+            builder.Services.AddScoped<ICurrentUserAccessor, CurrentUserAccessor>();
+            builder.Services.AddScoped<IUserQueryService, UserQueryService>();
+            builder.Services.AddScoped<IUserCommandService, UserCommandService>();
+            builder.Services.AddScoped<IUserFailedLoginService, UserFailedLoginService>();
+            builder.Services.AddScoped<IUserResendAttemptsService, UserResendAttemptsService>();
+            
             builder.Services.AddScoped<IEmailQueryService, EmailQueryService>();
             builder.Services.AddScoped<IEmailCommandService, EmailCommandService>();
             builder.Services.AddScoped<IEmailPolicyService, EmailPolicyService>();
@@ -83,8 +88,7 @@ public static class IdentityExtensions
         {
             var identityBuilder = new IdentityBuilder(builder.Services);
             configurator(identityBuilder);
-        
-            builder.Services.AddScoped<IUserManager, UserManager>();
+            
             builder.Services.AddScoped<IPersonalDataManager, PersonalDataManager>();
         }
     }

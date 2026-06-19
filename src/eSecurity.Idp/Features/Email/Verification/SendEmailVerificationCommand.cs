@@ -14,18 +14,20 @@ namespace eSecurity.Idp.Features.Email.Verification;
 public sealed record SendEmailVerificationCommand(SendEmailVerificationRequest Request) : IRequest<Result>;
 
 public sealed class SendEmailVerificationCommandHandler(
-    IUserManager userManager,
+    ICurrentUserAccessor currentUserAccessor,
+    IUserResendAttemptsService userResendAttemptsService,
     ICodeManager codeManager,
     IEmailService emailService) : IRequestHandler<SendEmailVerificationCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
+    private readonly IUserResendAttemptsService _userResendAttemptsService = userResendAttemptsService;
     private readonly ICodeManager _codeManager = codeManager;
     private readonly IEmailService _emailService = emailService;
 
     public async Task<Result> Handle(SendEmailVerificationCommand request,
         CancellationToken cancellationToken = default)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();
@@ -67,8 +69,11 @@ public sealed class SendEmailVerificationCommandHandler(
             });
         }
 
-        var result = await _userManager.ResetResendAttemptsAsync(user, TimeSpan.FromMinutes(2), cancellationToken);
-        if (!result.Succeeded) return result;
+        var result = await _userResendAttemptsService.ResetAttemptsAsync(user, 
+            TimeSpan.FromMinutes(2), cancellationToken);
+        
+        if (!result.Succeeded) 
+            return result;
 
         var emailContext = new EmailVerificationContext()
         {

@@ -10,15 +10,15 @@ namespace eSecurity.Idp.Features.Users.Queries;
 public record GetUserDevicesQuery : IRequest<Result>;
 
 public class GetUserDevicesQueryHandler(
-    IUserManager userManager,
+    ICurrentUserAccessor currentUserAccessor,
     IDeviceManager deviceManager) : IRequestHandler<GetUserDevicesQuery, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IDeviceManager _deviceManager = deviceManager;
 
     public async Task<Result> Handle(GetUserDevicesQuery request, CancellationToken cancellationToken)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

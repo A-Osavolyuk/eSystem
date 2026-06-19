@@ -16,14 +16,14 @@ namespace eSecurity.Idp.Features.Users.Queries;
 public record GetUserVerificationDataQuery : IRequest<Result>;
 
 public class GetUserVerificationMethodsQueryHandler(
-    IUserManager userManager,
+    ICurrentUserAccessor currentUserAccessor,
     IDeviceManager deviceManager,
     IPasskeyManager passkeyManager,
     IEmailQueryService emailQueryService,
     ITwoFactorManager twoFactorManager,
     IHttpContextAccessor httpContextAccessor) : IRequestHandler<GetUserVerificationDataQuery, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
@@ -32,7 +32,7 @@ public class GetUserVerificationMethodsQueryHandler(
 
     public async Task<Result> Handle(GetUserVerificationDataQuery request, CancellationToken cancellationToken)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

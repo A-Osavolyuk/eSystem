@@ -16,7 +16,7 @@ using eSystem.Core.Server.Security.Authorization.OAuth.Token.AuthorizationCode;
 namespace eSecurity.Idp.Security.Authorization.Token.AuthorizationCode;
 
 public class OidcAuthorizationCodeFlow(
-    IUserManager userManager,
+    IUserQueryService userQueryService,
     IPkceHandler pkceHandler,
     IClientManager clientManager,
     IAuthorizationCodeManager authorizationCodeManager,
@@ -24,7 +24,7 @@ public class OidcAuthorizationCodeFlow(
     IOptions<TokenConfigurations> options) : IAuthorizationCodeFlow
 {
     private readonly IClientManager _clientManager = clientManager;
-    private readonly IUserManager _userManager = userManager;
+    private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IPkceHandler _pkceHandler = pkceHandler;
     private readonly IAuthorizationCodeManager _authorizationCodeManager = authorizationCodeManager;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
@@ -61,7 +61,7 @@ public class OidcAuthorizationCodeFlow(
             });
         }
 
-        var user = await _userManager.FindByIdAsync(code.UserId, cancellationToken);
+        var user = await _userQueryService.GetByIdAsync(code.UserId, cancellationToken);
         if (user is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error

@@ -14,13 +14,13 @@ namespace eSecurity.Idp.Security.Authorization.Token.RefreshToken;
 public sealed class OAuthRefreshTokenFlow(
     IClientManager clientManager,
     ITokenManager tokenManager,
-    IUserManager userManager,
+    IUserQueryService userQueryService,
     ITokenFactoryProvider tokenFactoryProvider,
     IOptions<TokenConfigurations> options) : IRefreshTokenFlow
 {
     private readonly IClientManager _clientManager = clientManager;
     private readonly ITokenManager _tokenManager = tokenManager;
-    private readonly IUserManager _userManager = userManager;
+    private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
 
@@ -64,7 +64,7 @@ public sealed class OAuthRefreshTokenFlow(
             });
         }
 
-        var user = await _userManager.FindBySubjectAsync(token.Subject, cancellationToken);
+        var user = await _userQueryService.GetBySubjectAsync(token.Subject, cancellationToken);
         if (user is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error

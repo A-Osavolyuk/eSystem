@@ -16,13 +16,13 @@ namespace eSecurity.Idp.Security.Authorization.Token.DeviceCode;
 public sealed class OAuthDeviceCodeFlow(
     IClientManager clientManager,
     IDeviceCodeManager deviceCodeManager,
-    IUserManager userManager,
+    IUserQueryService userQueryService,
     ITokenFactoryProvider tokenFactoryProvider,
     IOptions<TokenConfigurations> tokenOptions) : IDeviceCodeFlow
 {
     private readonly IClientManager _clientManager = clientManager;
     private readonly IDeviceCodeManager _deviceCodeManager = deviceCodeManager;
-    private readonly IUserManager _userManager = userManager;
+    private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly TokenConfigurations _tokenConfigurations = tokenOptions.Value;
 
@@ -46,7 +46,7 @@ public sealed class OAuthDeviceCodeFlow(
         var deviceResult = await _deviceCodeManager.UpdateAsync(deviceCode, cancellationToken);
         if (deviceResult.Succeeded) return deviceResult;
 
-        var user = await _userManager.FindByIdAsync(deviceCode.UserId.Value, cancellationToken);
+        var user = await _userQueryService.GetByIdAsync(deviceCode.UserId.Value, cancellationToken);
         if (user is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error

@@ -9,15 +9,17 @@ namespace eSecurity.Idp.Features.TwoFactor.Commands;
 public record LoadRecoveryCodesCommand() : IRequest<Result>;
 
 public class LoadRecoveryCodesCommandHandler(
-    IUserManager userManager,
+    IUserQueryService userQueryService,
+    ICurrentUserAccessor currentUserAccessor,
     IRecoverManager recoverManager) : IRequestHandler<LoadRecoveryCodesCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly IUserQueryService _userQueryService = userQueryService;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IRecoverManager _recoverManager = recoverManager;
     
     public async Task<Result> Handle(LoadRecoveryCodesCommand request, CancellationToken cancellationToken)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

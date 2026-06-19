@@ -17,14 +17,16 @@ namespace eSecurity.Idp.Features.Verification.Commands;
 public record ResendCodeCommand(ResendCodeRequest Request) : IRequest<Result>;
 
 public class ResendCodeCommandHandler(
-    IUserManager userManager,
+    ICurrentUserAccessor currentUserAccessor,
+    IUserResendAttemptsService resendAttemptsService,
     ICodeManager codeManager,
     IOptions<CodeOptions> options,
     IEmailService emailService,
     ISmsService smsService,
     IHttpContextAccessor httpContextAccessor) : IRequestHandler<ResendCodeCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
+    private readonly IUserResendAttemptsService _resendAttemptsService = resendAttemptsService;
     private readonly ICodeManager _codeManager = codeManager;
     private readonly IEmailService _emailService = emailService;
     private readonly ISmsService _smsService = smsService;
@@ -33,7 +35,7 @@ public class ResendCodeCommandHandler(
     
     public async Task<Result> Handle(ResendCodeCommand request, CancellationToken cancellationToken)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();
@@ -59,15 +61,8 @@ public class ResendCodeCommandHandler(
             });
         }
 
-        user.ResendAttempts += 1;
-
-        if (user.ResendAttempts == _options.MaxCodeResendAttempts)
-        {
-            user.ResendAvailableAt = DateTimeOffset.UtcNow.AddMinutes(
-                _options.CodeResendUnavailableTime);
-        }
-
-        var userUpdateResult = await _userManager.UpdateAsync(user, cancellationToken);
+        var dueTime = TimeSpan.FromMinutes(_options.CodeResendUnavailableTime);
+        var userUpdateResult = await _resendAttemptsService.ResetAttemptsAsync(user, dueTime, cancellationToken);
         if (!userUpdateResult.Succeeded) return userUpdateResult;
         
         var codeResult = await _codeManager.CreateAsync(user, request.Request.Sender, cancellationToken);

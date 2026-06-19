@@ -14,19 +14,21 @@ namespace eSecurity.Idp.Features.Verification.EmailOtp;
 public sealed record ResendEmailOtpCommand : IRequest<Result>;
 
 public sealed class ResendEmailOtpCommandHandler(
-    IUserManager userManager,
+    ICurrentUserAccessor currentUserAccessor,
+    IUserResendAttemptsService resendAttemptsService,
     IEmailQueryService emailQueryService,
     IEmailService emailService,
     ICodeManager codeManager) : IRequestHandler<ResendEmailOtpCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
+    private readonly IUserResendAttemptsService _resendAttemptsService = resendAttemptsService;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly IEmailService _emailService = emailService;
     private readonly ICodeManager _codeManager = codeManager;
 
     public async Task<Result> Handle(ResendEmailOtpCommand request, CancellationToken cancellationToken = default)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();
@@ -93,12 +95,12 @@ public sealed class ResendEmailOtpCommandHandler(
         };
 
         await _emailService.SendAsync(emailContext, cancellationToken);
-
-        user.ResendAttempts += 1;
-        user.ResendAvailableAt = DateTimeOffset.UtcNow.AddMinutes(2);
         
-        var updateResult = await _userManager.UpdateAsync(user, cancellationToken);
-        if (!updateResult.Succeeded) return updateResult;
+        var updateResult = await _resendAttemptsService.ResetAttemptsAsync(user, 
+            TimeSpan.FromMinutes(2), cancellationToken);
+        
+        if (!updateResult.Succeeded) 
+            return updateResult;
 
         ResendEmailOtpResponse response;
         if (user.ResendAttempts == 5)

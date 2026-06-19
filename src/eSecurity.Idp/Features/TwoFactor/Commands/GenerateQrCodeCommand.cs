@@ -16,13 +16,15 @@ namespace eSecurity.Idp.Features.TwoFactor.Commands;
 public record GenerateQrCodeCommand() : IRequest<Result>;
 
 public class GenerateQrCodeCommandHandler(
-    IUserManager userManager,
+    IUserQueryService userQueryService,
+    ICurrentUserAccessor currentUserAccessor,
     IQrCodeFactory qrCodeFactory,
     ISecretManager secretManager,
     IEmailQueryService emailQueryService,
     IDataProtectionProvider protectionProvider) : IRequestHandler<GenerateQrCodeCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly IUserQueryService _userQueryService = userQueryService;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IQrCodeFactory _qrCodeFactory = qrCodeFactory;
     private readonly ISecretManager _secretManager = secretManager;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
@@ -32,7 +34,7 @@ public class GenerateQrCodeCommandHandler(
     {
         var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Secret);
         
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

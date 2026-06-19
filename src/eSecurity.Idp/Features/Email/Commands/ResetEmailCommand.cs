@@ -14,13 +14,13 @@ namespace eSecurity.Idp.Features.Email.Commands;
 public record ResetEmailCommand(ResetEmailRequest Request) : IRequest<Result>;
 
 public class ResetEmailCommandHandler(
-    IUserManager userManager,
+    ICurrentUserAccessor currentUserAccessor,
     IEmailCommandService emailCommandService,
     IEmailQueryService emailQueryService,
     IVerificationManager verificationManager,
     IOptions<AccountOptions> options) : IRequestHandler<ResetEmailCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IEmailCommandService _emailCommandService = emailCommandService;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly IVerificationManager _verificationManager = verificationManager;
@@ -30,7 +30,7 @@ public class ResetEmailCommandHandler(
     {
         var newEmail = request.Request.Email;
 
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

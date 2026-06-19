@@ -16,13 +16,13 @@ namespace eSecurity.Idp.Features.Verification.SoftwareKey;
 public sealed record VerifySoftwareKeyCommand(VerifySoftwareKeyRequest Request) : IRequest<Result>;
 
 public sealed class VerifySoftwareKeyCommandHandler(
-    IUserManager userManager,
+    ICurrentUserAccessor currentUserAccessor,
     IPasskeyManager passkeyManager,
     IHttpContextAccessor httpContextAccessor,
     IVerificationManager verificationManager,
     IOptions<VerificationConfiguration> options) : IRequestHandler<VerifySoftwareKeyCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
@@ -30,7 +30,7 @@ public sealed class VerifySoftwareKeyCommandHandler(
 
     public async Task<Result> Handle(VerifySoftwareKeyCommand request, CancellationToken cancellationToken = default)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

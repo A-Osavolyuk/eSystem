@@ -10,15 +10,15 @@ namespace eSecurity.Idp.Features.Users.Queries;
 public record GetUserEmailsQuery : IRequest<Result>;
 
 public class GetUserEmailsQueryHandler(
-    IUserManager userManager,
+    ICurrentUserAccessor currentUserAccessor,
     IEmailQueryService emailQueryService) : IRequestHandler<GetUserEmailsQuery, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
 
     public async Task<Result> Handle(GetUserEmailsQuery request, CancellationToken cancellationToken)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

@@ -13,19 +13,19 @@ namespace eSecurity.Idp.Features.Verification.EmailOtp;
 public sealed record VerifyEmailOtpCommand(VerifyEmailOtpRequest Request) : IRequest<Result>;
 
 public sealed class VerifyEmailOtpCommandHandler(
-    IUserManager userManager,
+    ICurrentUserAccessor currentUserAccessor,
     ICodeManager codeManager,
     IVerificationManager verificationManager,
     IOptions<VerificationConfiguration> options) : IRequestHandler<VerifyEmailOtpCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly ICodeManager _codeManager = codeManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
     private readonly VerificationConfiguration _configuration = options.Value;
 
     public async Task<Result> Handle(VerifyEmailOtpCommand request, CancellationToken cancellationToken = default)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

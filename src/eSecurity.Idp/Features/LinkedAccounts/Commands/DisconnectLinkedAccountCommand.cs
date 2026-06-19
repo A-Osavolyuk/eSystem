@@ -12,17 +12,17 @@ namespace eSecurity.Idp.Features.LinkedAccounts.Commands;
 public record DisconnectLinkedAccountCommand(DisconnectLinkedAccountRequest Request) : IRequest<Result>;
 
 public class DisconnectLinkedAccountCommandHandler(
-    IUserManager userManager,
     ILinkedAccountManager linkedAccountManager,
+    ICurrentUserAccessor currentUserAccessor,
     IVerificationManager verificationManager) : IRequestHandler<DisconnectLinkedAccountCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
     private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IVerificationManager _verificationManager = verificationManager;
 
     public async Task<Result> Handle(DisconnectLinkedAccountCommand request, CancellationToken cancellationToken)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

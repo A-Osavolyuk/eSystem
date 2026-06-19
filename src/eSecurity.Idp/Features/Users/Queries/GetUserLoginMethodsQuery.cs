@@ -16,7 +16,7 @@ namespace eSecurity.Idp.Features.Users.Queries;
 public record GetUserLoginMethodsQuery() : IRequest<Result>;
 
 public class GetUserLoginMethodsQueryHandler(
-    IUserManager userManager,
+    ICurrentUserAccessor currentUserAccessor,
     IPasskeyManager passkeyManager,
     IPasswordManager passwordManager,
     ITwoFactorManager twoFactorManager,
@@ -24,7 +24,7 @@ public class GetUserLoginMethodsQueryHandler(
     ILinkedAccountManager linkedAccountManager,
     IHttpContextAccessor accessor) : IRequestHandler<GetUserLoginMethodsQuery, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
     private readonly IPasswordManager _passwordManager = passwordManager;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
@@ -34,7 +34,7 @@ public class GetUserLoginMethodsQueryHandler(
 
     public async Task<Result> Handle(GetUserLoginMethodsQuery request, CancellationToken cancellationToken)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

@@ -12,17 +12,17 @@ namespace eSecurity.Idp.Features.TwoFactor.Commands;
 
 public record RegenerateQrCodeCommand : IRequest<Result>;
 public class RegenerateQrCodeCommandHandler(
-    IUserManager userManager,
     IQrCodeFactory qrCodeFactory,
+    ICurrentUserAccessor currentUserAccessor,
     IEmailQueryService emailQueryService) : IRequestHandler<RegenerateQrCodeCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
     private readonly IQrCodeFactory _qrCodeFactory = qrCodeFactory;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
 
     public async Task<Result> Handle(RegenerateQrCodeCommand request, CancellationToken cancellationToken)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

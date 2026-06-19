@@ -26,7 +26,7 @@ public sealed class PasskeyTwoFactorContext : TwoFactorContext
 
 public sealed class PasskeyTwoFactorStrategy(
     IAuthenticationSessionManager authenticationSessionManager,
-    IUserManager userManager,
+    IUserQueryService userQueryService,
     IHttpContextAccessor httpContextAccessor,
     IDeviceManager deviceManager,
     ILockoutManager lockoutManager,
@@ -34,14 +34,16 @@ public sealed class PasskeyTwoFactorStrategy(
     IPasskeyManager passkeyManager,
     IOptions<Session_SessionOptions> sessionOptions,
     IOptions<SignInOptions> signInOptions,
+    IUserFailedLoginService failedLoginService,
     ISessionCookieFactory sessionCookieFactory) : ITwoFactorStrategy<PasskeyTwoFactorContext>
 {
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
-    private readonly IUserManager _userManager = userManager;
+    private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
+    private readonly IUserFailedLoginService _failedLoginService = failedLoginService;
     private readonly ISessionCookieFactory _sessionCookieFactory = sessionCookieFactory;
     private readonly Session_SessionOptions _sessionOptions = sessionOptions.Value;
     private readonly SignInOptions _signInOptions = signInOptions.Value;
@@ -63,7 +65,7 @@ public sealed class PasskeyTwoFactorStrategy(
             });
         }
 
-        var user = await _userManager.FindByIdAsync(authenticationSession.UserId.Value, cancellationToken);
+        var user = await _userQueryService.GetByIdAsync(authenticationSession.UserId.Value, cancellationToken);
         if (user is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error
@@ -145,9 +147,7 @@ public sealed class PasskeyTwoFactorStrategy(
 
         if (user.FailedLoginAttempts > 0)
         {
-            user.FailedLoginAttempts = 0;
-
-            var userUpdateResult = await _userManager.UpdateAsync(user, cancellationToken);
+            var userUpdateResult = await _failedLoginService.ResetAttemptsAsync(user, cancellationToken);
             if (!userUpdateResult.Succeeded) return userUpdateResult;
         }
 

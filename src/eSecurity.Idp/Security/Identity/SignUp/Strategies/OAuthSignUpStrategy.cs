@@ -8,6 +8,7 @@ using eSecurity.Core.Security.Authorization.OAuth;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Idp.Common.Messaging.Email;
 using eSecurity.Idp.Common.Messaging.Email.Builders;
+using eSecurity.Idp.Common.Validation;
 using eSecurity.Idp.Security.Authorization.LinkedAccount;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;
@@ -27,7 +28,6 @@ public sealed class OAuthSignUpPayload : SignUpPayload
 }
 
 public sealed class OAuthSignUpStrategy(
-    IUserManager userManager,
     IRoleManager roleManager,
     ILinkedAccountManager providerManager,
     IDeviceManager deviceManager,
@@ -37,17 +37,17 @@ public sealed class OAuthSignUpStrategy(
     IOptions<Session_SessionOptions> sessionOptions,
     IEmailQueryService emailQueryService,
     IEmailCommandService emailCommandService,
+    IUserCommandService userCommandService,
     IEmailService emailService) : ISignUpStrategy
 {
-    private readonly IUserManager _userManager = userManager;
     private readonly IRoleManager _roleManager = roleManager;
     private readonly ILinkedAccountManager _providerManager = providerManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
-    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly IEmailCommandService _emailCommandService = emailCommandService;
+    private readonly IUserCommandService _userCommandService = userCommandService;
     private readonly IEmailService _emailService = emailService;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly Session_SessionOptions _sessionOptions = sessionOptions.Value;
@@ -84,13 +84,8 @@ public sealed class OAuthSignUpStrategy(
             });
         }
 
-        var user = new UserEntity
-        {
-            Id = Guid.CreateVersion7(),
-            Username = oauthPayload.Email,
-        };
-
-        var createResult = await _userManager.CreateAsync(user, cancellationToken: cancellationToken);
+        var user = new UserEntity(oauthPayload.Email);
+        var createResult = await _userCommandService.CreateAsync(user, cancellationToken: cancellationToken);
         if (!createResult.Succeeded) return createResult;
 
         var setResult = await _emailCommandService.AddAsync(user.Id, oauthPayload.Email, 

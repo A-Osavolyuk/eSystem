@@ -12,14 +12,14 @@ using eSystem.Core.Security.Identity.Claims;
 namespace eSecurity.Idp.Security.Authorization.Verification.Totp;
 
 public sealed class TotpVerificationStrategy(
-    IUserManager userManager,
     ICodeManager codeManager,
     IVerificationManager verificationManager,
+    ICurrentUserAccessor currentUserAccessor,
     IOptions<VerificationConfiguration> options) : IVerificationStrategy
 {
-    private readonly IUserManager _userManager = userManager;
     private readonly ICodeManager _codeManager = codeManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly VerificationConfiguration _configuration = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(VerificationContext context, 
@@ -28,7 +28,7 @@ public sealed class TotpVerificationStrategy(
         if (context is not TotpVerificationContext totpContext)
             throw new InvalidOperationException("Invalid context type");
         
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

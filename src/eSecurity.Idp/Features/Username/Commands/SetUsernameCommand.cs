@@ -11,11 +11,11 @@ public sealed record SetUsernameCommand(SetUsernameRequest Request) : IRequest<R
 
 public sealed class SetUsernameCommandHandler(
     ISessionManager sessionManager,
-    IUserManager userManager,
+    IUserQueryService userQueryService,
     IUsernameManager usernameManager) : IRequestHandler<SetUsernameCommand, Result>
 {
     private readonly ISessionManager _sessionManager = sessionManager;
-    private readonly IUserManager _userManager = userManager;
+    private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IUsernameManager _usernameManager = usernameManager;
 
     public async Task<Result> Handle(SetUsernameCommand request, CancellationToken cancellationToken)
@@ -30,7 +30,7 @@ public sealed class SetUsernameCommandHandler(
             });
         }
         
-        var user = await _userManager.FindByIdAsync(session.UserId, cancellationToken);
+        var user = await _userQueryService.GetByIdAsync(session.UserId, cancellationToken);
         if (user is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error

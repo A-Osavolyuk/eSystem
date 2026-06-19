@@ -16,7 +16,7 @@ public sealed class ConsentPromptHandler(
     ISessionManager sessionManager,
     IClientManager clientManager,
     IConsentManager consentManager,
-    IUserManager userManager,
+    IUserQueryService userQueryService,
     IOptions<OpenIdConfiguration> options,
     ISessionAccessor sessionAccessor,
     IPromptStateFactory stateFactory,
@@ -25,7 +25,7 @@ public sealed class ConsentPromptHandler(
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IClientManager _clientManager = clientManager;
     private readonly IConsentManager _consentManager = consentManager;
-    private readonly IUserManager _userManager = userManager;
+    private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
     private readonly IPromptStateFactory _stateFactory = stateFactory;
     private readonly RedirectManager _redirectManager = redirectManager;
@@ -62,7 +62,7 @@ public sealed class ConsentPromptHandler(
             return PromptResult.Failed(Results.Redirect(RedirectionCode.Found, uri));
         }
 
-        var user = await _userManager.FindByIdAsync(session.UserId, cancellationToken);
+        var user = await _userQueryService.GetByIdAsync(session.UserId, cancellationToken);
         if (user is null)
         {
             var uri = _redirectManager.GetRedirectUri(context.RedirectUri, ErrorCode.LoginRequired, 

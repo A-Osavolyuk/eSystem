@@ -16,19 +16,21 @@ namespace eSecurity.Idp.Features.Email.Change;
 public sealed record ResendEmailChangeCommand(ResendEmailChangeRequest Request) : IRequest<Result>;
 
 public sealed class ResendEmailChangeCommandHandler(
-    IUserManager userManager,
     IEmailService emailService,
     IEmailQueryService emailQueryService,
+    ICurrentUserAccessor currentUserAccessor,
+    IUserResendAttemptsService userResendAttemptsService,
     ICodeManager codeManager) : IRequestHandler<ResendEmailChangeCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
     private readonly IEmailService _emailService = emailService;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
+    private readonly IUserResendAttemptsService _userResendAttemptsService = userResendAttemptsService;
     private readonly ICodeManager _codeManager = codeManager;
 
     public async Task<Result> Handle(ResendEmailChangeCommand request, CancellationToken cancellationToken = default)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();
@@ -140,7 +142,7 @@ public sealed class ResendEmailChangeCommandHandler(
 
         await _emailService.SendAsync(emailContext, cancellationToken);
 
-        var result = await _userManager.AddResendAttemptAsync(user, TimeSpan.FromMinutes(2), cancellationToken);
+        var result = await _userResendAttemptsService.IncrementAttemptAsync(user, TimeSpan.FromMinutes(2), cancellationToken);
         if (!result.Succeeded) return result;
 
         CodeResendResponse response;

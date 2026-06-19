@@ -18,7 +18,7 @@ using Session_SessionOptions = eSecurity.Idp.Security.Authentication.Session.Ses
 namespace eSecurity.Idp.Security.Authentication.SignIn.Strategies;
 
 public sealed class PasskeySignInStrategy(
-    IUserManager userManager,
+    IUserQueryService userQueryService,
     IPasskeyManager passkeyManager,
     ISessionManager sessionManager,
     IDeviceManager deviceManager,
@@ -28,7 +28,7 @@ public sealed class PasskeySignInStrategy(
     IOptions<Session_SessionOptions> options,
     ISessionCookieFactory sessionCookieFactory) : ISignInStrategy
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
@@ -62,7 +62,7 @@ public sealed class PasskeySignInStrategy(
             });
         }
 
-        var user = await _userManager.FindByIdAsync(passkey.Device.UserId, cancellationToken);
+        var user = await _userQueryService.GetByIdAsync(passkey.Device.UserId, cancellationToken);
         if (user is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error

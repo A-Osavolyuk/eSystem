@@ -17,7 +17,7 @@ using Session_SessionOptions = eSecurity.Idp.Security.Authentication.Session.Ses
 namespace eSecurity.Idp.Security.Authentication.SignIn.Strategies;
 
 public sealed class OAuthSignInStrategy(
-    IUserManager userManager,
+    IUserQueryService userQueryService,
     IDeviceManager deviceManager,
     ILockoutManager lockoutManager,
     IHttpContextAccessor httpContextAccessor,
@@ -28,7 +28,7 @@ public sealed class OAuthSignInStrategy(
     IAuthenticationSessionManager authenticationSessionManager,
     IOptions<Session_SessionOptions> options) : ISignInStrategy
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
     private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
@@ -61,7 +61,7 @@ public sealed class OAuthSignInStrategy(
             });
         }
 
-        var user = await _userManager.FindByEmailAsync(oauthPayload.Email, cancellationToken);
+        var user = await _userQueryService.GetByEmailAsync(oauthPayload.Email, cancellationToken);
         if (user is null)
         {
             return Results.ClientError(ClientErrorCode.NotAcceptable, new Error

@@ -12,19 +12,17 @@ namespace eSecurity.Idp.Features.Email.Change;
 public sealed record CanChangeEmailCommand(CanChangeEmailRequest Request) : IRequest<Result>;
 
 public sealed class CanChangeEmailCommandHandler(
-    IUserManager userManager, 
     IEmailQueryService emailQueryService,
-    IEmailCommandService emailCommandService,
+    ICurrentUserAccessor currentUserAccessor,
     ILinkedAccountManager linkedAccountManager) : IRequestHandler<CanChangeEmailCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
-    private readonly IEmailCommandService _emailCommandService = emailCommandService;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
 
     public async Task<Result> Handle(CanChangeEmailCommand request, CancellationToken cancellationToken = default)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

@@ -14,14 +14,14 @@ using eSystem.Core.Server.Security.Authorization.OAuth.Token.AuthorizationCode;
 namespace eSecurity.Idp.Security.Authorization.Token.AuthorizationCode;
 
 public class OAuthAuthorizationCodeFlow(
-    IUserManager userManager,
+    IUserQueryService userQueryService,
     IPkceHandler pkceHandler,
     IClientManager clientManager,
     IAuthorizationCodeManager authorizationCodeManager,
     ITokenFactoryProvider tokenFactoryProvider,
     IOptions<TokenConfigurations> options) : IAuthorizationCodeFlow
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IPkceHandler _pkceHandler = pkceHandler;
     private readonly IClientManager _clientManager = clientManager;
     private readonly IAuthorizationCodeManager _authorizationCodeManager = authorizationCodeManager;
@@ -57,7 +57,7 @@ public class OAuthAuthorizationCodeFlow(
             });
         }
 
-        var user = await _userManager.FindByIdAsync(code.UserId, cancellationToken);
+        var user = await _userQueryService.GetByIdAsync(code.UserId, cancellationToken);
         if (user is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error

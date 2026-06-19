@@ -10,15 +10,15 @@ namespace eSecurity.Idp.Features.TwoFactor.Commands;
 public record PreferTwoFactorMethodCommand(PreferTwoFactorMethodRequest Request) : IRequest<Result>;
 
 public class PreferMethodCommandHandler(
-    IUserManager userManager,
+    ICurrentUserAccessor currentUserAccessor,
     ITwoFactorManager twoFactorManager) : IRequestHandler<PreferTwoFactorMethodCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
 
     public async Task<Result> Handle(PreferTwoFactorMethodCommand request, CancellationToken cancellationToken)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

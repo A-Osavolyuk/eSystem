@@ -19,7 +19,7 @@ namespace eSecurity.Idp.Features.Passkeys.Commands;
 public record CreatePasskeyCommand(CreatePasskeyRequest Request) : IRequest<Result>;
 
 public class CreatePasskeyCommandHandler(
-    IUserManager userManager,
+    ICurrentUserAccessor currentUserAccessor,
     IPasskeyManager passkeyManager,
     ITwoFactorManager twoFactorManager,
     IHttpContextAccessor httpContextAccessor,
@@ -27,7 +27,7 @@ public class CreatePasskeyCommandHandler(
     IDeviceManager deviceManager,
     IOptions<CredentialOptions> options) : IRequestHandler<CreatePasskeyCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly ISessionStorage _sessionStorage = sessionStorage;
@@ -38,7 +38,7 @@ public class CreatePasskeyCommandHandler(
     public async Task<Result> Handle(CreatePasskeyCommand request,
         CancellationToken cancellationToken)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

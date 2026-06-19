@@ -5,9 +5,9 @@ using eSystem.Core.Server.Security.Authentication.OpenIdConnect.BackchannelAuthe
 
 namespace eSecurity.Idp.Security.Authentication.BackchannelAuthentication;
 
-public sealed class LoginHintUserResolver(IUserManager userManager) : IUserResolver
+public sealed class LoginHintUserResolver(IUserQueryService userQueryService) : IUserResolver
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly IUserQueryService _userQueryService = userQueryService;
     
     public async Task<TypedResult<UserEntity>> ResolveAsync(BackchannelAuthenticationRequest request,
         CancellationToken cancellationToken = default)
@@ -21,7 +21,7 @@ public sealed class LoginHintUserResolver(IUserManager userManager) : IUserResol
             });
         }
         
-        var user = await _userManager.FindByLoginAsync(request.LoginHint, cancellationToken);
+        var user = await _userQueryService.GetByLoginAsync(request.LoginHint, cancellationToken);
         if (user is null)
         {
             return TypedResult<UserEntity>.Fail(new Error

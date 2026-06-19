@@ -10,14 +10,14 @@ public record GenerateRecoveryCodesCommand() : IRequest<Result>;
 
 public class GenerateRecoveryCodesCommandHandler(
     IRecoverManager recoverManager,
-    IUserManager userManager) : IRequestHandler<GenerateRecoveryCodesCommand, Result>
+    ICurrentUserAccessor currentUserAccessor) : IRequestHandler<GenerateRecoveryCodesCommand, Result>
 {
     private readonly IRecoverManager _recoverManager = recoverManager;
-    private readonly IUserManager _userManager = userManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
 
     public async Task<Result> Handle(GenerateRecoveryCodesCommand request, CancellationToken cancellationToken)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

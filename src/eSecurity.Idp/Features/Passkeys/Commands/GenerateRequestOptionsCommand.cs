@@ -16,7 +16,7 @@ namespace eSecurity.Idp.Features.Passkeys.Commands;
 public record GenerateRequestOptionsCommand(GenerateRequestOptionsRequest Request) : IRequest<Result>;
 
 public class GenerateRequestOptionsCommandHandler(
-    IUserManager userManager,
+    IUserQueryService userQueryService,
     IHttpContextAccessor httpContextAccessor,
     ISessionStorage sessionStorage,
     IChallengeFactory challengeFactory,
@@ -24,7 +24,7 @@ public class GenerateRequestOptionsCommandHandler(
     IPasskeyManager passkeyManager,
     IOptions<CredentialOptions> options) : IRequestHandler<GenerateRequestOptionsCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly ISessionStorage _sessionStorage = sessionStorage;
     private readonly IChallengeFactory _challengeFactory = challengeFactory;
     private readonly IDeviceManager _deviceManager = deviceManager;
@@ -45,7 +45,7 @@ public class GenerateRequestOptionsCommandHandler(
         
         if (!string.IsNullOrEmpty(request.Request.UserHint))
         {
-            var user = await _userManager.FindByLoginAsync(request.Request.UserHint, cancellationToken);
+            var user = await _userQueryService.GetByLoginAsync(request.Request.UserHint, cancellationToken);
             if (user is null)
             {
                 return Results.ClientError(ClientErrorCode.NotFound, new Error

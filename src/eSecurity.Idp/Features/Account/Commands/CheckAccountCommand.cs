@@ -12,17 +12,17 @@ namespace eSecurity.Idp.Features.Account.Commands;
 public record CheckAccountCommand(CheckAccountRequest Request) : IRequest<Result>;
 
 public class CheckAccountCommandHandler(
-    IUserManager userManager,
+    IUserQueryService userQueryService,
     ILockoutManager lockoutManager) : IRequestHandler<CheckAccountCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
 
     public async Task<Result> Handle(CheckAccountCommand request, CancellationToken cancellationToken)
     {
         CheckAccountResponse? response;
 
-        var user = await _userManager.FindByLoginAsync(request.Request.Login, cancellationToken);
+        var user = await _userQueryService.GetByLoginAsync(request.Request.Login, cancellationToken);
         if (user is null)
         {
             response = new CheckAccountResponse { Exists = false };

@@ -16,14 +16,14 @@ public record IntrospectionCommand(IFormCollection Form) : IRequest<Result>;
 
 public class IntrospectionCommandHandler(
     ITokenManager tokenManager,
-    IUserManager userManager,
+    IUserQueryService userQueryService,
     IHasherProvider hasherProvider,
     ISessionManager sessionManager,
     IOptions<TokenConfigurations> options,
     IFormBindingProvider bindingProvider) : IRequestHandler<IntrospectionCommand, Result>
 {
     private readonly ITokenManager _tokenManager = tokenManager;
-    private readonly IUserManager _userManager = userManager;
+    private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IHasherProvider _hasherProvider = hasherProvider;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IFormBindingProvider _bindingProvider = bindingProvider;
@@ -82,7 +82,7 @@ public class IntrospectionCommandHandler(
             var session = await _sessionManager.FindByIdAsync(token.SessionId.Value, cancellationToken);
             if (session is null) return Results.Success(SuccessCodes.Ok, IntrospectionResponse.Fail());
             
-            var user = await _userManager.FindByIdAsync(session.UserId, cancellationToken);
+            var user = await _userQueryService.GetByIdAsync(session.UserId, cancellationToken);
             if (user is null) return Results.Success(SuccessCodes.Ok, IntrospectionResponse.Fail());
 
             response.Subject = user.Id.ToString();

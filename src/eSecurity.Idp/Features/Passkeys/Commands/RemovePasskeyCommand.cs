@@ -20,23 +20,23 @@ public record RemovePasskeyCommand(RemovePasskeyRequest Request) : IRequest<Resu
 public class RemovePasskeyCommandHandler(
     IPasskeyManager passkeyManager,
     IPasswordManager passwordManager,
-    IUserManager userManager,
     IVerificationManager verificationManager,
     ITwoFactorManager twoFactorManager,
+    ICurrentUserAccessor currentUserAccessor,
     IEmailQueryService emailQueryService,
     IOptions<SignInOptions> options) : IRequestHandler<RemovePasskeyCommand, Result>
 {
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
     private readonly IPasswordManager _passwordManager = passwordManager;
-    private readonly IUserManager _userManager = userManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly SignInOptions _options = options.Value;
 
     public async Task<Result> Handle(RemovePasskeyCommand request, CancellationToken cancellationToken)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();

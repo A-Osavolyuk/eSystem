@@ -10,15 +10,15 @@ namespace eSecurity.Idp.Features.Password.Commands;
 public sealed record SetPasswordCommand(SetPasswordRequest Request) : IRequest<Result>;
 
 public sealed class SetPasswordCommandHandler(
-    IUserManager userManager,
+    ICurrentUserAccessor currentUserAccessor,
     IPasswordManager passwordManager) : IRequestHandler<SetPasswordCommand, Result>
 {
-    private readonly IUserManager _userManager = userManager;
+    private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IPasswordManager _passwordManager = passwordManager;
 
     public async Task<Result> Handle(SetPasswordCommand request, CancellationToken cancellationToken)
     {
-        var userResult = await _userManager.GetUserAsync(cancellationToken);
+        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
             var error = userResult.GetError();
