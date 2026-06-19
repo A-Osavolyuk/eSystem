@@ -3,7 +3,6 @@ using eSecurity.Core.Responses;
 using eSecurity.Idp.Common.Messaging.Email;
 using eSecurity.Idp.Common.Messaging.Email.Builders;
 using eSecurity.Idp.Security.Authorization.Codes;
-using eSecurity.Idp.Security.Identity.Email;
 using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Messaging;
 using eSystem.Core.Primitives;

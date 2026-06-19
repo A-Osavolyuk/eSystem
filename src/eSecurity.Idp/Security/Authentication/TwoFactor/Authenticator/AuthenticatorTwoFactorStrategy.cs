@@ -14,7 +14,6 @@ using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.DataProtection;
-using Session_SessionOptions = eSecurity.Idp.Security.Authentication.Session.SessionOptions;
 
 namespace eSecurity.Idp.Security.Authentication.TwoFactor.Authenticator;
 
@@ -33,7 +32,7 @@ public sealed class AuthenticatorTwoFactorStrategy(
     ISecretManager secretManager,
     IDataProtectionProvider protectionProvider,
     ISessionCookieFactory sessionCookieFactory,
-    IOptions<Session_SessionOptions> sessionOptions,
+    IOptions<SessionOptions> sessionOptions,
     IUserFailedLoginService failedLoginService,
     IOptions<SignInOptions> signInOptions) : ITwoFactorStrategy<AuthenticatorTwoFactorContext>
 {
@@ -47,7 +46,7 @@ public sealed class AuthenticatorTwoFactorStrategy(
     private readonly ISessionCookieFactory _sessionCookieFactory = sessionCookieFactory;
     private readonly IUserFailedLoginService _failedLoginService = failedLoginService;
     private readonly SignInOptions _signInOptions = signInOptions.Value;
-    private readonly Session_SessionOptions _sessionOptions = sessionOptions.Value;
+    private readonly SessionOptions _sessionOptions = sessionOptions.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async ValueTask<Result> ExecuteAsync(AuthenticatorTwoFactorContext context,

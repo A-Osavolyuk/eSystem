@@ -4,7 +4,6 @@ using eSecurity.Core.Security.Identity;
 using eSecurity.Idp.Common.Messaging.Email;
 using eSecurity.Idp.Common.Messaging.Email.Builders;
 using eSecurity.Idp.Common.Validation;
-using eSecurity.Idp.Data.Seeding;
 using eSecurity.Idp.Security.Authorization.Codes;
 using eSecurity.Idp.Security.Identity.Email;
 using eSecurity.Idp.Security.Identity.User;

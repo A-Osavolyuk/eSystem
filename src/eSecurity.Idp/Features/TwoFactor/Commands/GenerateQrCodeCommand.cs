@@ -8,7 +8,6 @@ using eSecurity.Core.Security.Identity;
 using eSecurity.Idp.Security.Cryptography;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Identity.Claims;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Idp.Features.TwoFactor.Commands;

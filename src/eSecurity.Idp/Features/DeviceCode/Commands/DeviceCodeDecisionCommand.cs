@@ -8,7 +8,6 @@ using eSecurity.Idp.Security.Authorization.Token.DeviceCode;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
-using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Idp.Features.DeviceCode.Commands;
 

@@ -1,6 +1,4 @@
-﻿using eSystem.Core.Primitives;
-
-namespace eSystem.Core.Server.Mediator;
+﻿namespace eSystem.Core.Server.Mediator;
 
 public interface IPipelineFailureHandler<in TRequest, TResponse>
     where TRequest : IRequest<TResponse>

@@ -3,12 +3,10 @@ using eSecurity.Idp.Security.Authentication.TwoFactor.Authenticator;
 using eSecurity.Idp.Security.Authentication.TwoFactor.Secret;
 using eSecurity.Idp.Security.Cryptography.Protection.Constants;
 using eSecurity.Idp.Security.Identity.User;
-using eSecurity.Core.Responses;
 using eSecurity.Core.Responses.Verification;
 using eSecurity.Core.Security.Authorization.Verification;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Identity.Claims;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Idp.Security.Authorization.Verification.AuthenticationApp;

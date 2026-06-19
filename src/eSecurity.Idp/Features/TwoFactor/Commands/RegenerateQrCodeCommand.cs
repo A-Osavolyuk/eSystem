@@ -1,12 +1,10 @@
 ﻿using eSecurity.Idp.Security.Authentication.TwoFactor.Authenticator;
-using eSecurity.Idp.Security.Authentication.TwoFactor.Secret;
 using eSecurity.Idp.Security.Identity.Email;
 using eSecurity.Idp.Security.Identity.User;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Idp.Security.Cryptography;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Idp.Features.TwoFactor.Commands;
 

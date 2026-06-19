@@ -1,5 +1,4 @@
 ﻿using eSecurity.Core.Requests.Verification;
-using eSecurity.Core.Responses;
 using eSecurity.Core.Responses.Verification;
 using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Idp.Data.Entities;

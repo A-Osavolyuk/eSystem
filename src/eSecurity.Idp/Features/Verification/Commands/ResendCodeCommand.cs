@@ -10,7 +10,6 @@ using eSecurity.Idp.Common.Messaging.Sms.Builders;
 using eSystem.Core.Messaging;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Idp.Features.Verification.Commands;
 

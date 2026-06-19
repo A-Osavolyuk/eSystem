@@ -2,13 +2,11 @@
 using eSecurity.Idp.Security.Credentials.PublicKey;
 using eSecurity.Idp.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Idp.Security.Identity.User;
-using eSecurity.Core.Responses;
 using eSecurity.Core.Responses.Verification;
 using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.WebAuthN.Constants;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Idp.Security.Authorization.Verification.Passkey;
 

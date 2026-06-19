@@ -1,9 +1,7 @@
 ﻿using eSecurity.Idp.Security.Authentication.Lockout;
-using eSecurity.Idp.Security.Identity.Email;
 using eSecurity.Idp.Security.Identity.User;
 using eSecurity.Core.Requests;
 using eSecurity.Core.Responses;
-using eSecurity.Core.Security.Identity;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 

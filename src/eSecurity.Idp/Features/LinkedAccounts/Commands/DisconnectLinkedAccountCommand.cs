@@ -5,7 +5,6 @@ using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Idp.Security.Authorization.LinkedAccount;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Idp.Features.LinkedAccounts.Commands;
 

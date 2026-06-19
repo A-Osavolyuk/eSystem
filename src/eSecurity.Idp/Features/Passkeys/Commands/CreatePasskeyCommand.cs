@@ -12,7 +12,6 @@ using eSecurity.WebAuthN.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Idp.Features.Passkeys.Commands;
 

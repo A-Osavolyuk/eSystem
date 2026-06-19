@@ -6,7 +6,6 @@ using eSecurity.Core.Requests;
 using eSecurity.Core.Security.Authorization.Verification;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Identity.Claims;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Idp.Features.TwoFactor.Commands;

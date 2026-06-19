@@ -1,5 +1,4 @@
-﻿using eSecurity.Core.Requests.Email;
-using eSecurity.Core.Requests.Email.Verification;
+﻿using eSecurity.Core.Requests.Email.Verification;
 using eSecurity.Idp.Security.Authorization.Codes;
 using eSecurity.Idp.Security.Identity.Email;
 using eSecurity.Idp.Security.Identity.User;

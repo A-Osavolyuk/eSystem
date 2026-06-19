@@ -1,5 +1,4 @@
 ﻿using eSecurity.Idp.Data.Entities;
-using eSystem.Core.Primitives;
 
 namespace eSecurity.Idp.Security.Identity.User;
 

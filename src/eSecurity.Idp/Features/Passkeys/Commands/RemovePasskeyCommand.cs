@@ -11,7 +11,6 @@ using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Core.Security.Identity;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Idp.Features.Passkeys.Commands;
 

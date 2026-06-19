@@ -12,7 +12,6 @@ using eSecurity.Core.Responses;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Idp.Common.Messaging.Email;
 using eSecurity.Idp.Common.Messaging.Email.Builders;
-using eSecurity.Idp.Common.Validation;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Messaging;
 using eSystem.Core.Primitives;

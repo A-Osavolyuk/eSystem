@@ -1,5 +1,4 @@
 ﻿using eSecurity.Core.Security.Authorization.Verification;
-using eSecurity.Idp.Security.Authorization.Verification.Totp;
 
 namespace eSecurity.Idp.Security.Authorization.Verification;
 

@@ -1,5 +1,4 @@
 ﻿using eSecurity.Core.Security.Identity;
-using eSecurity.Idp.Common.Validation;
 using eSecurity.Idp.Data.Entities;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;

@@ -3,7 +3,6 @@ using eSecurity.Idp.Security.Identity.User;
 using eSecurity.Core.Requests;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Security.Identity.Claims;
 
 namespace eSecurity.Idp.Features.TwoFactor.Commands;
 

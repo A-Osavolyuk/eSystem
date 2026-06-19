@@ -4,7 +4,6 @@ using eSecurity.Core.Requests.Verification;
 using eSecurity.Idp.Features.Verification.AuthenticatorApp;
 using eSecurity.Idp.Features.Verification.EmailOtp;
 using eSecurity.Idp.Features.Verification.SoftwareKey;
-using eSecurity.Idp.Security.Authorization.Constants;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 using VerificationRequest = eSecurity.Core.Requests.VerificationRequest;
