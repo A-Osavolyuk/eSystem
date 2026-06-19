@@ -51,10 +51,9 @@ public class AddEmailCommandHandler(
             });
         }
 
-        if (_options.RequireUniqueEmail)
+        if (await _emailQueryService.ExistsAsync(request.Request.Email, cancellationToken))
         {
-            var taken = await _emailQueryService.ExistsAsync(request.Request.Email, cancellationToken);
-            if (taken) return Results.ClientError(ClientErrorCode.BadRequest, new Error
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.EmailTaken,
                 Description = "Email is already taken"

@@ -49,11 +49,6 @@ public static class IdentityExtensions
             
                 cfg.ConfigureAccount(options =>
                 {
-                    options.RequireUniqueEmail = true;
-                    options.RequireUniqueRecoveryEmail = true;
-                    options.RequireUniquePhoneNumber = true;
-                    options.RequireUniqueUsername = true;
-            
                     options.PrimaryEmailMaxCount = 1;
                     options.SecondaryEmailMaxCount = 3;
                     options.RecoveryEmailMaxCount = 1;

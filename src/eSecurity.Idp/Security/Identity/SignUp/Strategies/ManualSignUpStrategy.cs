@@ -66,8 +66,7 @@ public sealed class ManualSignUpStrategy(
             });
         }
         
-        if (_options.RequireUniqueUsername && 
-            await _usernameManager.IsTakenAsync(manualPayload.Username, cancellationToken))
+        if (await _usernameManager.IsTakenAsync(manualPayload.Username, cancellationToken))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
@@ -76,7 +75,7 @@ public sealed class ManualSignUpStrategy(
             });
         }
 
-        if (_options.RequireUniqueEmail && await _emailQueryService.ExistsAsync(manualPayload.Email, cancellationToken))
+        if (await _emailQueryService.ExistsAsync(manualPayload.Email, cancellationToken))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {

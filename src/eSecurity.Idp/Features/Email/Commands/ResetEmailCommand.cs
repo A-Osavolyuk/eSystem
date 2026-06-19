@@ -55,17 +55,13 @@ public class ResetEmailCommandHandler(
             });
         }
 
-        if (_options.RequireUniqueEmail)
+        if (await _emailQueryService.ExistsAsync(request.Request.Email, cancellationToken))
         {
-            var isTaken = await _emailQueryService.ExistsAsync(request.Request.Email, cancellationToken);
-            if (isTaken)
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
-                return Results.ClientError(ClientErrorCode.BadRequest, new Error
-                {
-                    Code = ErrorCode.EmailTaken,
-                    Description = "User's primary email address is missing"
-                });
-            }
+                Code = ErrorCode.EmailTaken,
+                Description = "User's primary email address is missing"
+            });
         }
 
         var verification = await _verificationManager.FindByIdAsync(request.Request.VerificationId, cancellationToken);
