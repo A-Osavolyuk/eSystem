@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using eSecurity.Idp.Security.Authorization.Constants;
 using eSecurity.Idp.Security.Identity.Email;
-using eSecurity.Idp.Security.Identity.Phone;
 using eSecurity.Idp.Security.Identity.Privacy;
 using eSecurity.Idp.Security.Identity.User;
 using eSecurity.Core.Security.Identity;
@@ -21,14 +20,12 @@ public record GetUserInfoQuery(string? AccessToken = null) : IRequest<Result>;
 
 public class GetUserInfoQueryHandler(
     IUserQueryService userQueryService,
-    IPhoneManager phoneManager,
     IPersonalDataManager personalDataManager,
     IHttpContextAccessor httpContextAccessor,
     IEmailQueryService emailQueryService,
     ITokenValidationProvider validationProvider) : IRequestHandler<GetUserInfoQuery, Result>
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
-    private readonly IPhoneManager _phoneManager = phoneManager;
     private readonly IPersonalDataManager _personalDataManager = personalDataManager;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
@@ -117,12 +114,7 @@ public class GetUserInfoQueryHandler(
 
         if (scopes.Contains(ScopeTypes.Phone))
         {
-            var phoneNumber = await _phoneManager.FindByTypeAsync(user, PhoneNumberType.Primary, cancellationToken);
-            if (phoneNumber is not null)
-            {
-                response.PhoneNumber = phoneNumber.PhoneNumber;
-                response.PhoneNumberVerified = phoneNumber.IsVerified;
-            }
+            //TODO: Implement phone scope handling
         }
 
         var personalData = await _personalDataManager.GetAsync(user, cancellationToken);

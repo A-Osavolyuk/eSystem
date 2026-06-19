@@ -3,7 +3,6 @@ using System.Text.Json;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Idp.Security.Authentication.Subject;
 using eSecurity.Idp.Security.Identity.Email;
-using eSecurity.Idp.Security.Identity.Phone;
 using eSecurity.Idp.Security.Identity.Privacy;
 using eSystem.Core.Enums;
 using eSystem.Core.Primitives;
@@ -17,14 +16,12 @@ public sealed class IdTokenFactory(
     IOptions<TokenConfigurations> options,
     ITokenBuilderProvider tokenBuilderProvider,
     ISubjectProvider subjectProvider,
-    IPhoneManager phoneManager,
     IEmailQueryService emailQueryService,
     IPersonalDataManager personalDataManager) : ITokenFactory<IdTokenFactoryContext>
 {
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
     private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
     private readonly ISubjectProvider _subjectProvider = subjectProvider;
-    private readonly IPhoneManager _phoneManager = phoneManager;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly IPersonalDataManager _personalDataManager = personalDataManager;
 
@@ -100,12 +97,7 @@ public sealed class IdTokenFactory(
 
         if (scopes.Contains(ScopeTypes.Phone))
         {
-            var phone = await _phoneManager.FindByTypeAsync(context.User, PhoneNumberType.Primary, cancellationToken);
-            if (phone is not null)
-            {
-                claims.Add(new Claim(AppClaimTypes.PhoneNumber, phone.PhoneNumber));
-                claims.Add(new Claim(AppClaimTypes.PhoneNumberVerified, phone.IsVerified.ToString()));
-            }
+            //TODO: Implement phone scope handling
         }
 
         var personalData = await _personalDataManager.GetAsync(context.User, cancellationToken);
