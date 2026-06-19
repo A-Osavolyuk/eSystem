@@ -17,15 +17,15 @@ public sealed class IdTokenFactory(
     IOptions<TokenConfigurations> options,
     ITokenBuilderProvider tokenBuilderProvider,
     ISubjectProvider subjectProvider,
-    IEmailManager emailManager,
     IPhoneManager phoneManager,
+    IEmailQueryService emailQueryService,
     IPersonalDataManager personalDataManager) : ITokenFactory<IdTokenFactoryContext>
 {
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
     private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
     private readonly ISubjectProvider _subjectProvider = subjectProvider;
-    private readonly IEmailManager _emailManager = emailManager;
     private readonly IPhoneManager _phoneManager = phoneManager;
+    private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly IPersonalDataManager _personalDataManager = personalDataManager;
 
     public async ValueTask<TypedResult<string>> CreateAsync(
@@ -90,7 +90,7 @@ public sealed class IdTokenFactory(
 
         if (scopes.Contains(ScopeTypes.Email))
         {
-            var email = await _emailManager.FindByTypeAsync(context.User, EmailType.Primary, cancellationToken);
+            var email = await _emailQueryService.GetByTypeAsync(context.User.Id, EmailType.Primary, cancellationToken);
             if (email is not null)
             {
                 claims.Add(new Claim(AppClaimTypes.Email, email.Email));

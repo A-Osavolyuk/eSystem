@@ -3,6 +3,8 @@ using eSecurity.Core.Responses;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Idp.Common.Messaging.Email;
 using eSecurity.Idp.Common.Messaging.Email.Builders;
+using eSecurity.Idp.Common.Validation;
+using eSecurity.Idp.Data.Seeding;
 using eSecurity.Idp.Security.Authorization.Codes;
 using eSecurity.Idp.Security.Identity.Email;
 using eSecurity.Idp.Security.Identity.User;
@@ -16,13 +18,13 @@ public sealed record SendEmailChangeCommand(SendEmailChangeRequest Request) : IR
 
 public sealed class SendEmailChangeCommandHandler(
     IUserManager userManager,
-    IEmailManager emailManager,
     IEmailService emailService,
+    IEmailQueryService emailQueryService,
     ICodeManager codeManager) : IRequestHandler<SendEmailChangeCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
-    private readonly IEmailManager _emailManager = emailManager;
     private readonly IEmailService _emailService = emailService;
+    private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly ICodeManager _codeManager = codeManager;
 
     public async Task<Result> Handle(SendEmailChangeCommand request, CancellationToken cancellationToken = default)
@@ -53,9 +55,11 @@ public sealed class SendEmailChangeCommandHandler(
         }
 
         var newEmail = request.Request.NewEmail;
-        if (await _emailManager.OwnAsync(user, request.Request.NewEmail, cancellationToken))
+        var normalizedNewEmail = Normalizer.Normalize(newEmail);
+        var userEmails = await _emailQueryService.ListByUserAsync(user.Id, cancellationToken);
+        if (userEmails.Any(x => x.NormalizedEmail == normalizedNewEmail))
         {
-            var email = await _emailManager.FindByEmailAsync(user, request.Request.NewEmail, cancellationToken);
+            var email = userEmails.FirstOrDefault(x => x.NormalizedEmail == normalizedNewEmail);
             if (email is null)
             {
                 return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
@@ -85,7 +89,7 @@ public sealed class SendEmailChangeCommandHandler(
         }
         else
         {
-            if (await _emailManager.IsTakenAsync(request.Request.NewEmail, cancellationToken))
+            if (await _emailQueryService.ExistsAsync(newEmail, cancellationToken))
             {
                 return Results.ClientError(ClientErrorCode.BadRequest, new Error()
                 {

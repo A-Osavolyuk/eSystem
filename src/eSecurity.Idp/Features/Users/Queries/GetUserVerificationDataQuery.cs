@@ -19,14 +19,14 @@ public class GetUserVerificationMethodsQueryHandler(
     IUserManager userManager,
     IDeviceManager deviceManager,
     IPasskeyManager passkeyManager,
-    IEmailManager emailManager,
+    IEmailQueryService emailQueryService,
     ITwoFactorManager twoFactorManager,
     IHttpContextAccessor httpContextAccessor) : IRequestHandler<GetUserVerificationDataQuery, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
-    private readonly IEmailManager _emailManager = emailManager;
+    private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
@@ -60,7 +60,7 @@ public class GetUserVerificationMethodsQueryHandler(
             });
         }
 
-        var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
+        var email = await _emailQueryService.GetByTypeAsync(user.Id, EmailType.Primary, cancellationToken);
         if (email is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error

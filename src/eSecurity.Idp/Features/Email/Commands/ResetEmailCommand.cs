@@ -15,12 +15,14 @@ public record ResetEmailCommand(ResetEmailRequest Request) : IRequest<Result>;
 
 public class ResetEmailCommandHandler(
     IUserManager userManager,
-    IEmailManager emailManager,
+    IEmailCommandService emailCommandService,
+    IEmailQueryService emailQueryService,
     IVerificationManager verificationManager,
     IOptions<AccountOptions> options) : IRequestHandler<ResetEmailCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
-    private readonly IEmailManager _emailManager = emailManager;
+    private readonly IEmailCommandService _emailCommandService = emailCommandService;
+    private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly IVerificationManager _verificationManager = verificationManager;
     private readonly AccountOptions _options = options.Value;
 
@@ -44,7 +46,7 @@ public class ResetEmailCommandHandler(
             });
         }
 
-        var userCurrentEmail = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
+        var userCurrentEmail = await _emailQueryService.GetByTypeAsync(user.Id, EmailType.Primary, cancellationToken);
         if (userCurrentEmail is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -56,7 +58,7 @@ public class ResetEmailCommandHandler(
 
         if (_options.RequireUniqueEmail)
         {
-            var isTaken = await _emailManager.IsTakenAsync(request.Request.Email, cancellationToken);
+            var isTaken = await _emailQueryService.ExistsAsync(request.Request.Email, cancellationToken);
             if (isTaken)
             {
                 return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -80,7 +82,7 @@ public class ResetEmailCommandHandler(
         var verificationResult = await _verificationManager.ConsumeAsync(verification, cancellationToken);
         if (!verificationResult.Succeeded) return verificationResult;
 
-        var result = await _emailManager.ResetAsync(user, userCurrentEmail.Email, newEmail, cancellationToken);
+        var result = await _emailCommandService.ChangeAsync(user.Id, userCurrentEmail.Email, newEmail, cancellationToken);
         return result;
     }
 }

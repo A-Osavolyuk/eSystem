@@ -11,10 +11,10 @@ public record GetUserEmailsQuery : IRequest<Result>;
 
 public class GetUserEmailsQueryHandler(
     IUserManager userManager,
-    IEmailManager emailManager) : IRequestHandler<GetUserEmailsQuery, Result>
+    IEmailQueryService emailQueryService) : IRequestHandler<GetUserEmailsQuery, Result>
 {
     private readonly IUserManager _userManager = userManager;
-    private readonly IEmailManager _emailManager = emailManager;
+    private readonly IEmailQueryService _emailQueryService = emailQueryService;
 
     public async Task<Result> Handle(GetUserEmailsQuery request, CancellationToken cancellationToken)
     {
@@ -34,7 +34,7 @@ public class GetUserEmailsQueryHandler(
             });
         }
 
-        var emails = await _emailManager.GetAllAsync(user, cancellationToken);
+        var emails = await _emailQueryService.ListByUserAsync(user.Id, cancellationToken);
         var response = emails.Select(email => new UserEmailDto
         {
             Id = email.Id,

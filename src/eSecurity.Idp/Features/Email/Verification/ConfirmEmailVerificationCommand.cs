@@ -12,11 +12,11 @@ public sealed record ConfirmEmailVerificationCommand(ConfirmEmailVerificationReq
 
 public sealed class ConfirmEmailVerificationCommandHandler(
     IUserManager userManager,
-    IEmailManager emailManager,
+    IEmailCommandService emailCommandService,
     ICodeManager codeManager) : IRequestHandler<ConfirmEmailVerificationCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
-    private readonly IEmailManager _emailManager = emailManager;
+    private readonly IEmailCommandService _emailCommandService = emailCommandService;
     private readonly ICodeManager _codeManager = codeManager;
 
     public async Task<Result> Handle(ConfirmEmailVerificationCommand request,
@@ -48,16 +48,6 @@ public sealed class ConfirmEmailVerificationCommandHandler(
             });
         }
 
-        var ownEmail = await _emailManager.OwnAsync(user, email, cancellationToken);
-        if (!ownEmail)
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
-            {
-                Code = ErrorCode.InvalidRequest,
-                Description = "Email is invalid"
-            });
-        }
-
         var code = request.Request.Code;
         if (string.IsNullOrEmpty(code))
         {
@@ -81,7 +71,7 @@ public sealed class ConfirmEmailVerificationCommandHandler(
         var consumeResult = await _codeManager.ConsumeAsync(codeEntity, cancellationToken);
         if (!consumeResult.Succeeded) return consumeResult;
 
-        var verificationResult = await _emailManager.VerifyAsync(user, email, cancellationToken);
+        var verificationResult = await _emailCommandService.VerifyAsync(user.Id, email, cancellationToken);
         if (!verificationResult.Succeeded) return verificationResult;
 
         return Results.Success(SuccessCodes.Ok);

@@ -13,11 +13,9 @@ public record CheckAccountCommand(CheckAccountRequest Request) : IRequest<Result
 
 public class CheckAccountCommandHandler(
     IUserManager userManager,
-    IEmailManager emailManager,
     ILockoutManager lockoutManager) : IRequestHandler<CheckAccountCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
-    private readonly IEmailManager _emailManager = emailManager;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
 
     public async Task<Result> Handle(CheckAccountCommand request, CancellationToken cancellationToken)
@@ -39,27 +37,6 @@ public class CheckAccountCommandHandler(
                 Code = ErrorCode.InvalidLockoutState,
                 Description = "Invalid state"
             });
-        }
-
-        if (lockoutState.Enabled)
-        {
-            response = new CheckAccountResponse
-            {
-                Exists = true
-            };
-
-            return Results.Success(SuccessCodes.Ok, response);
-        }
-
-        var email = await _emailManager.FindByTypeAsync(user, EmailType.Recovery, cancellationToken);
-        if (email is null)
-        {
-            response = new CheckAccountResponse
-            {
-                Exists = true
-            };
-
-            return Results.Success(SuccessCodes.Ok, response);
         }
 
         response = new CheckAccountResponse

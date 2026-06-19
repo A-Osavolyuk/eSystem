@@ -13,11 +13,13 @@ public record AddEmailCommand(AddEmailRequest Request) : IRequest<Result>;
 
 public class AddEmailCommandHandler(
     IUserManager userManager,
-    IEmailManager emailManager,
+    IEmailQueryService emailQueryService,
+    IEmailCommandService emailCommandService,
     IOptions<AccountOptions> options) : IRequestHandler<AddEmailCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
-    private readonly IEmailManager _emailManager = emailManager;
+    private readonly IEmailQueryService _emailQueryService = emailQueryService;
+    private readonly IEmailCommandService _emailCommandService = emailCommandService;
     private readonly AccountOptions _options = options.Value;
 
     public async Task<Result> Handle(AddEmailCommand request, CancellationToken cancellationToken)
@@ -38,7 +40,9 @@ public class AddEmailCommandHandler(
             });
         }
 
-        var secondaryEmails = await _emailManager.GetAllAsync(user, EmailType.Secondary, cancellationToken);
+        var secondaryEmails = await _emailQueryService.ListByTypeAsync(
+            user.Id, EmailType.Secondary, cancellationToken);
+        
         if (secondaryEmails.Count >= _options.SecondaryEmailMaxCount)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -50,7 +54,7 @@ public class AddEmailCommandHandler(
 
         if (_options.RequireUniqueEmail)
         {
-            var taken = await _emailManager.IsTakenAsync(request.Request.Email, cancellationToken);
+            var taken = await _emailQueryService.ExistsAsync(request.Request.Email, cancellationToken);
             if (taken) return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.EmailTaken,
@@ -59,7 +63,7 @@ public class AddEmailCommandHandler(
         }
 
         var email = request.Request.Email;
-        var result = await _emailManager.AddAsync(user, email, EmailType.Secondary, cancellationToken);
+        var result = await _emailCommandService.AddAsync(user.Id, email, EmailType.Secondary, cancellationToken);
         
         return result;
     }

@@ -14,11 +14,11 @@ public record RegenerateQrCodeCommand : IRequest<Result>;
 public class RegenerateQrCodeCommandHandler(
     IUserManager userManager,
     IQrCodeFactory qrCodeFactory,
-    IEmailManager emailManager) : IRequestHandler<RegenerateQrCodeCommand, Result>
+    IEmailQueryService emailQueryService) : IRequestHandler<RegenerateQrCodeCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IQrCodeFactory _qrCodeFactory = qrCodeFactory;
-    private readonly IEmailManager _emailManager = emailManager;
+    private readonly IEmailQueryService _emailQueryService = emailQueryService;
 
     public async Task<Result> Handle(RegenerateQrCodeCommand request, CancellationToken cancellationToken)
     {
@@ -39,7 +39,7 @@ public class RegenerateQrCodeCommandHandler(
         }
 
         var secret = RandomKeyFactory.Create(20);
-        var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
+        var email = await _emailQueryService.GetByTypeAsync(user.Id, EmailType.Primary, cancellationToken);
         if (email is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error

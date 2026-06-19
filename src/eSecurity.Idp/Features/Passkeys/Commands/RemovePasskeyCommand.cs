@@ -21,17 +21,17 @@ public class RemovePasskeyCommandHandler(
     IPasskeyManager passkeyManager,
     IPasswordManager passwordManager,
     IUserManager userManager,
-    IEmailManager emailManager,
     IVerificationManager verificationManager,
     ITwoFactorManager twoFactorManager,
+    IEmailQueryService emailQueryService,
     IOptions<SignInOptions> options) : IRequestHandler<RemovePasskeyCommand, Result>
 {
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
     private readonly IPasswordManager _passwordManager = passwordManager;
     private readonly IUserManager _userManager = userManager;
-    private readonly IEmailManager _emailManager = emailManager;
     private readonly IVerificationManager _verificationManager = verificationManager;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
+    private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly SignInOptions _options = options.Value;
 
     public async Task<Result> Handle(RemovePasskeyCommand request, CancellationToken cancellationToken)
@@ -62,8 +62,9 @@ public class RemovePasskeyCommandHandler(
             });
         }
 
-        if ((!await _emailManager.HasAsync(user, EmailType.Primary, cancellationToken) &&
-             _options.RequireConfirmedEmail) || !await _passwordManager.HasAsync(user, cancellationToken))
+        var primaryEmail = await _emailQueryService.GetByTypeAsync(user.Id, EmailType.Primary, cancellationToken);
+        if ((primaryEmail is null && _options.RequireConfirmedEmail) || 
+            !await _passwordManager.HasAsync(user, cancellationToken))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {

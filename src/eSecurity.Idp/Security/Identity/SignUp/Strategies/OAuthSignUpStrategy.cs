@@ -32,19 +32,22 @@ public sealed class OAuthSignUpStrategy(
     ILinkedAccountManager providerManager,
     IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor,
-    IEmailManager emailManager,
     ISessionManager sessionManager,
     IAuthenticationSessionManager authenticationSessionManager,
     IOptions<Session_SessionOptions> sessionOptions,
+    IEmailQueryService emailQueryService,
+    IEmailCommandService emailCommandService,
     IEmailService emailService) : ISignUpStrategy
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IRoleManager _roleManager = roleManager;
     private readonly ILinkedAccountManager _providerManager = providerManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
-    private readonly IEmailManager _emailManager = emailManager;
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
+    private readonly IEmailQueryService _emailQueryService = emailQueryService;
+    private readonly IEmailCommandService _emailCommandService = emailCommandService;
     private readonly IEmailService _emailService = emailService;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly Session_SessionOptions _sessionOptions = sessionOptions.Value;
@@ -71,7 +74,7 @@ public sealed class OAuthSignUpStrategy(
             });
         }
 
-        var taken = await _emailManager.IsTakenAsync(oauthPayload.Email, cancellationToken);
+        var taken = await _emailQueryService.ExistsAsync(oauthPayload.Email, cancellationToken);
         if (taken)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -90,8 +93,11 @@ public sealed class OAuthSignUpStrategy(
         var createResult = await _userManager.CreateAsync(user, cancellationToken: cancellationToken);
         if (!createResult.Succeeded) return createResult;
 
-        var setResult = await _emailManager.SetAsync(user, oauthPayload.Email, EmailType.Primary, cancellationToken);
-        if (!setResult.Succeeded) return setResult;
+        var setResult = await _emailCommandService.AddAsync(user.Id, oauthPayload.Email, 
+            EmailType.Primary, cancellationToken);
+        
+        if (!setResult.Succeeded) 
+            return setResult;
 
         var role = await _roleManager.FindByNameAsync("User", cancellationToken);
         if (role is null)
@@ -126,7 +132,7 @@ public sealed class OAuthSignUpStrategy(
         var deviceResult = await _deviceManager.CreateAsync(newDevice, cancellationToken);
         if (!deviceResult.Succeeded) return deviceResult;
 
-        var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
+        var email = await _emailQueryService.GetByTypeAsync(user.Id, EmailType.Primary, cancellationToken);
         if (email is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error

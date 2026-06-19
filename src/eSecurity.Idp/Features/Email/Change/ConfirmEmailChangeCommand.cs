@@ -11,12 +11,12 @@ public sealed record ConfirmEmailChangeCommand(ConfirmEmailChangeRequest Request
 
 public sealed class ConfirmEmailChangeCommandHandler(
     IUserManager userManager,
-    IEmailManager emailManager,
-    ICodeManager codeManager) : IRequestHandler<ConfirmEmailChangeCommand, Result>
+    ICodeManager codeManager,
+    IEmailCommandService emailCommandService) : IRequestHandler<ConfirmEmailChangeCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
-    private readonly IEmailManager _emailManager = emailManager;
     private readonly ICodeManager _codeManager = codeManager;
+    private readonly IEmailCommandService _emailCommandService = emailCommandService;
 
     public async Task<Result> Handle(ConfirmEmailChangeCommand request, CancellationToken cancellationToken = default)
     {
@@ -76,7 +76,7 @@ public sealed class ConfirmEmailChangeCommandHandler(
         var codeResult = await _codeManager.ConsumeAsync(code, cancellationToken);
         if (!codeResult.Succeeded) return codeResult;
 
-        return await _emailManager.ChangeAsync(user, request.Request.CurrentEmail, 
+        return await _emailCommandService.ChangeAsync(user.Id, request.Request.CurrentEmail, 
             request.Request.NewEmail, cancellationToken);
     }
 }

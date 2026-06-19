@@ -15,12 +15,10 @@ public sealed record SendEmailVerificationCommand(SendEmailVerificationRequest R
 
 public sealed class SendEmailVerificationCommandHandler(
     IUserManager userManager,
-    IEmailManager emailManager,
     ICodeManager codeManager,
     IEmailService emailService) : IRequestHandler<SendEmailVerificationCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
-    private readonly IEmailManager _emailManager = emailManager;
     private readonly ICodeManager _codeManager = codeManager;
     private readonly IEmailService _emailService = emailService;
 
@@ -50,16 +48,6 @@ public sealed class SendEmailVerificationCommandHandler(
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "Email is required"
-            });
-        }
-
-        var ownEmail = await _emailManager.OwnAsync(user, email, cancellationToken);
-        if (!ownEmail)
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
-            {
-                Code = ErrorCode.InvalidRequest,
-                Description = "Email is invalid"
             });
         }
 

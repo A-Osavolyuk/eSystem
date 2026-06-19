@@ -50,12 +50,16 @@ public sealed class UserManager(AuthDbContext context, IHttpContextAccessor http
 
     public async ValueTask<UserEntity?> FindByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(email);
+
         var normalizedEmail = Normalizer.Normalize(email);
         var user = await _context.Users
             .FirstOrDefaultAsync(u => _context.UserEmails
-                .Any(e => e.UserId == u.Id &&
-                          e.Type == EmailType.Primary &&
-                          e.NormalizedEmail == normalizedEmail), cancellationToken);
+                    .Any(e => e.UserId == u.Id &&
+                              e.Type == EmailType.Primary &&
+                              e.NormalizedEmail == normalizedEmail),
+                cancellationToken
+            );
 
         return user;
     }
@@ -70,6 +74,8 @@ public sealed class UserManager(AuthDbContext context, IHttpContextAccessor http
 
     public async ValueTask<UserEntity?> FindByUsernameAsync(string name, CancellationToken cancellationToken = default)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+        
         var normalizedUserName = Normalizer.Normalize(name);
         var user = await _context.Users.Where(x => x.NormalizedUsername == normalizedUserName)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
@@ -79,6 +85,8 @@ public sealed class UserManager(AuthDbContext context, IHttpContextAccessor http
 
     public async ValueTask<UserEntity?> FindByLoginAsync(string login, CancellationToken cancellationToken = default)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(login);
+        
         var normalizedValue = Normalizer.Normalize(login);
         return await _context.Users
             .Where(user => user.NormalizedUsername == normalizedValue || user.Emails.Any(x =>
@@ -90,6 +98,8 @@ public sealed class UserManager(AuthDbContext context, IHttpContextAccessor http
     public async ValueTask<UserEntity?> FindBySubjectAsync(string subject,
         CancellationToken cancellationToken = default)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(subject);
+        
         var user = await _context.PublicSubjects
             .Where(x => x.Subject == subject)
             .Select(x => x.User)
@@ -97,15 +107,17 @@ public sealed class UserManager(AuthDbContext context, IHttpContextAccessor http
 
         if (user is not null)
             return user;
-        
+
         return await _context.PairwiseSubjects
             .Where(x => x.Subject == subject)
             .Select(x => x.User)
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async ValueTask<Result> CreateAsync(UserEntity user, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> CreateAsync(UserEntity? user, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(user);
+        
         var lockoutState = new UserLockoutStateEntity
         {
             Id = Guid.CreateVersion7(),
@@ -125,33 +137,41 @@ public sealed class UserManager(AuthDbContext context, IHttpContextAccessor http
     public async ValueTask<Result> UpdateAsync(UserEntity user,
         CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(user);
+        
         _context.Users.Update(user);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Results.Success(SuccessCodes.Ok);
     }
 
-    public async ValueTask<Result> AddResendAttemptAsync(UserEntity user, TimeSpan dueTime, 
+    public async ValueTask<Result> AddResendAttemptAsync(UserEntity user, TimeSpan dueTime,
         CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(user);
+        
         user.ResendAttempts += 1;
         user.ResendAvailableAt = DateTimeOffset.UtcNow.Add(dueTime);
 
         return await UpdateAsync(user, cancellationToken);
     }
 
-    public async ValueTask<Result> ResetResendAttemptsAsync(UserEntity user, TimeSpan dueTime, 
+    public async ValueTask<Result> ResetResendAttemptsAsync(UserEntity user, TimeSpan dueTime,
         CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(user);
+        
         user.ResendAttempts = 0;
         user.ResendAvailableAt = DateTimeOffset.UtcNow.Add(dueTime);
 
         return await UpdateAsync(user, cancellationToken);
     }
 
-    public async ValueTask<Result> CleanResendAttemptsAsync(UserEntity user, 
+    public async ValueTask<Result> CleanResendAttemptsAsync(UserEntity user,
         CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(user);
+        
         user.ResendAttempts = 0;
         user.ResendAvailableAt = null;
 

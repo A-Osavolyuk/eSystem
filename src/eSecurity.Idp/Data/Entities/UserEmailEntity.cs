@@ -1,12 +1,22 @@
 ﻿using eSecurity.Core.Security.Identity;
+using eSecurity.Idp.Common.Validation;
 using eSystem.Core.Server.Data.Entities;
 
 namespace eSecurity.Idp.Data.Entities;
 
-public class UserEmailEntity : Entity
+public class UserEmailEntity() : Entity
 {
-    public Guid Id { get; set; }
+    public UserEmailEntity(Guid userId, string email, EmailType type) : this()
+    {
+        Id = Guid.CreateVersion7();
+        UserId = userId;
+        Email = email;
+        NormalizedEmail = Normalizer.Normalize(email);
+        Type = type;
+    }
     
+    public Guid Id { get; init; }
+
     public string Email { get; set; } = string.Empty;
     public string NormalizedEmail { get; set; } = string.Empty;
     public EmailType Type { get; set; }
@@ -14,6 +24,6 @@ public class UserEmailEntity : Entity
 
     public DateTimeOffset? VerifiedAt { get; set; }
 
-    public Guid UserId { get; set; }
-    public UserEntity User { get; set; } = null!;
+    public Guid UserId { get; init; }
+    public UserEntity User { get; init; } = null!;
 }

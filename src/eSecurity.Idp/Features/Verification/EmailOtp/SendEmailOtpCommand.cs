@@ -16,12 +16,12 @@ public sealed class SendEmailOtpCommand : IRequest<Result>;
 public sealed class SendEmailOtpCommandHandler(
     IUserManager userManager,
     IEmailService emailService,
-    IEmailManager emailManager,
+    IEmailQueryService emailQueryService,
     ICodeManager codeManager) : IRequestHandler<SendEmailOtpCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IEmailService _emailService = emailService;
-    private readonly IEmailManager _emailManager = emailManager;
+    private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly ICodeManager _codeManager = codeManager;
 
     public async Task<Result> Handle(SendEmailOtpCommand request, CancellationToken cancellationToken = default)
@@ -42,7 +42,7 @@ public sealed class SendEmailOtpCommandHandler(
             });
         }
 
-        var primaryEmail = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
+        var primaryEmail = await _emailQueryService.GetByTypeAsync(user.Id, EmailType.Primary, cancellationToken);
         if (primaryEmail is null)
         {
             return Results.ServerError(ServerErrorCode.InternalServerError, new Error()

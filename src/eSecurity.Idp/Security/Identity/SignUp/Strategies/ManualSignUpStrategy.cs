@@ -34,10 +34,11 @@ public sealed class ManualSignUpStrategy(
     IPasswordManager passwordManager,
     IRoleManager roleManager,
     IDeviceManager deviceManager,
-    IEmailManager emailManager,
     IHttpContextAccessor httpContextAccessor,
     IEmailService emailService,
     ICodeManager codeManager,
+    IEmailQueryService emailQueryService,
+    IEmailCommandService emailCommandService,
     IAuthenticationSessionManager sessionManager,
     IOptions<AccountOptions> options) : ISignUpStrategy
 {
@@ -46,9 +47,10 @@ public sealed class ManualSignUpStrategy(
     private readonly IPasswordManager _passwordManager = passwordManager;
     private readonly IRoleManager _roleManager = roleManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
-    private readonly IEmailManager _emailManager = emailManager;
     private readonly IEmailService _emailService = emailService;
     private readonly ICodeManager _codeManager = codeManager;
+    private readonly IEmailQueryService _emailQueryService = emailQueryService;
+    private readonly IEmailCommandService _emailCommandService = emailCommandService;
     private readonly IAuthenticationSessionManager _sessionManager = sessionManager;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly AccountOptions _options = options.Value;
@@ -75,8 +77,7 @@ public sealed class ManualSignUpStrategy(
             });
         }
 
-        if (_options.RequireUniqueEmail && 
-            await _emailManager.IsTakenAsync(manualPayload.Email, cancellationToken))
+        if (_options.RequireUniqueEmail && await _emailQueryService.ExistsAsync(manualPayload.Email, cancellationToken))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
@@ -100,8 +101,8 @@ public sealed class ManualSignUpStrategy(
         var passwordResult = await _passwordManager.AddAsync(user, manualPayload.Password, cancellationToken);
         if (!passwordResult.Succeeded) return passwordResult;
 
-        var setResult = await _emailManager.SetAsync(user, manualPayload.Email,
-            EmailType.Primary, cancellationToken);
+        var setResult = await _emailCommandService.AddAsync(user.Id, 
+            manualPayload.Email, EmailType.Primary, cancellationToken);
 
         if (!setResult.Succeeded) return setResult;
 

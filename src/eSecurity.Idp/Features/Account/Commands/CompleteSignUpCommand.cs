@@ -1,11 +1,11 @@
 ﻿using eSecurity.Idp.Data.Entities;
 using eSecurity.Idp.Security.Authentication.Session;
 using eSecurity.Idp.Security.Authorization.Codes;
-using eSecurity.Idp.Security.Identity.Email;
 using eSecurity.Idp.Security.Identity.User;
 using eSecurity.Core.Requests;
 using eSecurity.Core.Responses;
 using eSecurity.Core.Security.Identity;
+using eSecurity.Idp.Security.Identity.Email;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
@@ -18,16 +18,18 @@ public sealed class CompleteSignUpCommandHandler(
     IAuthenticationSessionManager authenticationSessionManager,
     ISessionManager sessionManager,
     IUserManager userManager,
-    IEmailManager emailManager,
     ICodeManager codeManager,
+    IEmailQueryService emailQueryService,
+    IEmailCommandService emailCommandService,
     IOptions<SessionOptions> options,
     ISessionCookieFactory sessionCookieFactory) : IRequestHandler<CompleteSignUpCommand, Result>
 {
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IUserManager _userManager = userManager;
-    private readonly IEmailManager _emailManager = emailManager;
     private readonly ICodeManager _codeManager = codeManager;
+    private readonly IEmailQueryService _emailQueryService = emailQueryService;
+    private readonly IEmailCommandService _emailCommandService = emailCommandService;
     private readonly ISessionCookieFactory _sessionCookieFactory = sessionCookieFactory;
     private readonly SessionOptions _options = options.Value;
 
@@ -68,7 +70,7 @@ public sealed class CompleteSignUpCommandHandler(
         var codeResult = await _codeManager.ConsumeAsync(code, cancellationToken);
         if (!codeResult.Succeeded) return codeResult;
 
-        var primaryEmail = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
+        var primaryEmail = await _emailQueryService.GetByTypeAsync(user.Id, EmailType.Primary, cancellationToken);
         if (primaryEmail is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error
@@ -78,7 +80,7 @@ public sealed class CompleteSignUpCommandHandler(
             });
         }
 
-        var emailResult = await _emailManager.VerifyAsync(user, primaryEmail.Email, cancellationToken);
+        var emailResult = await _emailCommandService.VerifyAsync(user.Id, primaryEmail.Email, cancellationToken);
         if (!emailResult.Succeeded) return emailResult;
 
         var session = new SessionEntity

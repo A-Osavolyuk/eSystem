@@ -23,12 +23,12 @@ namespace eSecurity.Idp.Security.Authentication.SignIn.Strategies;
 
 public sealed class PasswordSignInStrategy(
     IUserManager userManager,
+    IEmailQueryService emailQueryService,
     IPasswordManager passwordManager,
     ILockoutManager lockoutManager,
     IDeviceManager deviceManager,
     ISessionManager sessionManager,
     IHttpContextAccessor accessor,
-    IEmailManager emailManager,
     ITwoFactorManager twoFactorManager,
     IAuthenticationSessionManager authenticationSessionManager,
     IPasskeyManager passkeyManager,
@@ -37,11 +37,11 @@ public sealed class PasswordSignInStrategy(
     ISessionCookieFactory sessionCookieFactory) : ISignInStrategy
 {
     private readonly IUserManager _userManager = userManager;
+    private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly IPasswordManager _passwordManager = passwordManager;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ISessionManager _sessionManager = sessionManager;
-    private readonly IEmailManager _emailManager = emailManager;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
@@ -115,7 +115,7 @@ public sealed class PasswordSignInStrategy(
             if (!result.Succeeded) return result;
         }
 
-        var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
+        var email = await _emailQueryService.GetByTypeAsync(user.Id, EmailType.Primary, cancellationToken);
         if (email is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error

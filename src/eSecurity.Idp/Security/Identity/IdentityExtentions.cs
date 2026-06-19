@@ -19,9 +19,12 @@ public static class IdentityExtensions
             builder.Services.AddScoped<IUserManager, UserManager>();
             builder.Services.AddScoped<IUsernameManager, UsernameManager>();
             builder.Services.AddScoped<IPersonalDataManager, PersonalDataManager>();
-            builder.Services.AddScoped<IEmailManager, EmailManager>();
             builder.Services.AddScoped<IPhoneManager, PhoneManager>();
             builder.Services.AddScoped<IPairwiseSubjectFactory, PairwiseSubjectFactory>();
+
+            builder.Services.AddScoped<IEmailQueryService, EmailQueryService>();
+            builder.Services.AddScoped<IEmailCommandService, EmailCommandService>();
+            builder.Services.AddScoped<IEmailPolicyService, EmailPolicyService>();
         
             builder.ConfigureIdentity(cfg =>
             {

@@ -1,5 +1,6 @@
 ﻿using eSecurity.Core.Requests.Email.Change;
 using eSecurity.Core.Security.Identity;
+using eSecurity.Idp.Common.Validation;
 using eSecurity.Idp.Security.Authorization.LinkedAccount;
 using eSecurity.Idp.Security.Identity.Email;
 using eSecurity.Idp.Security.Identity.User;
@@ -12,11 +13,13 @@ public sealed record CanChangeEmailCommand(CanChangeEmailRequest Request) : IReq
 
 public sealed class CanChangeEmailCommandHandler(
     IUserManager userManager, 
-    IEmailManager emailManager,
+    IEmailQueryService emailQueryService,
+    IEmailCommandService emailCommandService,
     ILinkedAccountManager linkedAccountManager) : IRequestHandler<CanChangeEmailCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
-    private readonly IEmailManager _emailManager = emailManager;
+    private readonly IEmailQueryService _emailQueryService = emailQueryService;
+    private readonly IEmailCommandService _emailCommandService = emailCommandService;
     private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
 
     public async Task<Result> Handle(CanChangeEmailCommand request, CancellationToken cancellationToken = default)
@@ -55,7 +58,9 @@ public sealed class CanChangeEmailCommandHandler(
             });
         }
 
-        var currentEmail = await _emailManager.FindByEmailAsync(user, request.Request.CurrentEmail, cancellationToken);
+        var userEmails = await _emailQueryService.ListByUserAsync(user.Id, cancellationToken);
+        var currentNormalizedEmail = Normalizer.Normalize(request.Request.CurrentEmail);
+        var currentEmail = userEmails.FirstOrDefault(x => x.NormalizedEmail == currentNormalizedEmail);
         if (currentEmail is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error()
@@ -85,7 +90,7 @@ public sealed class CanChangeEmailCommandHandler(
 
         if (currentEmail.Type == EmailType.Recovery)
         {
-            if (!await _emailManager.HasAsync(user, EmailType.Primary, cancellationToken))
+            if (userEmails.All(x => x.Type != EmailType.Primary))
             {
                 return Results.ClientError(ClientErrorCode.BadRequest, new Error()
                 {
@@ -104,9 +109,10 @@ public sealed class CanChangeEmailCommandHandler(
             });
         }
 
-        if (await _emailManager.OwnAsync(user, request.Request.NewEmail, cancellationToken))
+        var newNormalizedEmail = Normalizer.Normalize(request.Request.NewEmail);
+        if (userEmails.Any(x => x.NormalizedEmail == newNormalizedEmail))
         {
-            var email = await _emailManager.FindByEmailAsync(user, request.Request.NewEmail, cancellationToken);
+            var email = userEmails.FirstOrDefault(x => x.NormalizedEmail == newNormalizedEmail);
             if (email is null)
             {
                 return Results.ServerError(ServerErrorCode.InternalServerError, new Error()

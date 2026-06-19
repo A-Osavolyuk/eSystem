@@ -15,12 +15,12 @@ public sealed record ResendEmailOtpCommand : IRequest<Result>;
 
 public sealed class ResendEmailOtpCommandHandler(
     IUserManager userManager,
-    IEmailManager emailManager,
+    IEmailQueryService emailQueryService,
     IEmailService emailService,
     ICodeManager codeManager) : IRequestHandler<ResendEmailOtpCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
-    private readonly IEmailManager _emailManager = emailManager;
+    private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly IEmailService _emailService = emailService;
     private readonly ICodeManager _codeManager = codeManager;
 
@@ -59,7 +59,7 @@ public sealed class ResendEmailOtpCommandHandler(
             });
         }
         
-        var primaryEmail = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
+        var primaryEmail = await _emailQueryService.GetByTypeAsync(user.Id, EmailType.Primary, cancellationToken);
         if (primaryEmail is null)
         {
             return Results.ServerError(ServerErrorCode.InternalServerError, new Error()

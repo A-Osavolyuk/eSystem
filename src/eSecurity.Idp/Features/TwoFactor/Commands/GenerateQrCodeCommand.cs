@@ -19,13 +19,13 @@ public class GenerateQrCodeCommandHandler(
     IUserManager userManager,
     IQrCodeFactory qrCodeFactory,
     ISecretManager secretManager,
-    IEmailManager emailManager,
+    IEmailQueryService emailQueryService,
     IDataProtectionProvider protectionProvider) : IRequestHandler<GenerateQrCodeCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
     private readonly IQrCodeFactory _qrCodeFactory = qrCodeFactory;
     private readonly ISecretManager _secretManager = secretManager;
-    private readonly IEmailManager _emailManager = emailManager;
+    private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
 
     public async Task<Result> Handle(GenerateQrCodeCommand request, CancellationToken cancellationToken)
@@ -47,8 +47,8 @@ public class GenerateQrCodeCommandHandler(
                 Description = "Unauthorized"
             });
         }
-        
-        var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
+
+        var email = await _emailQueryService.GetByTypeAsync(user.Id, EmailType.Primary, cancellationToken);
         if (email is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error

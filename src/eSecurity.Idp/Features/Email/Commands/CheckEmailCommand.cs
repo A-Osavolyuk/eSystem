@@ -7,13 +7,13 @@ namespace eSecurity.Idp.Features.Email.Commands;
 
 public record CheckEmailCommand(CheckEmailRequest Request) : IRequest<Result>;
 
-public class CheckEmailCommandHandler(IEmailManager emailManager) : IRequestHandler<CheckEmailCommand, Result>
+public class CheckEmailCommandHandler(IEmailQueryService emailQueryService) : IRequestHandler<CheckEmailCommand, Result>
 {
-    private readonly IEmailManager _emailManager = emailManager;
+    private readonly IEmailQueryService _emailQueryService = emailQueryService;
 
     public async Task<Result> Handle(CheckEmailCommand request, CancellationToken cancellationToken)
     {
-        var isTaken = await _emailManager.IsTakenAsync(request.Request.Email, cancellationToken);
+        var isTaken = await _emailQueryService.ExistsAsync(request.Request.Email, cancellationToken);
         if (isTaken)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error

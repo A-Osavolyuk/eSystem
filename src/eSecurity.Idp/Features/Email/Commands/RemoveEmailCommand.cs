@@ -16,15 +16,17 @@ public record RemoveEmailCommand(RemoveEmailRequest Request) : IRequest<Result>;
 
 public class RemoveEmailCommandHandler(
     IUserManager userManager,
-    IEmailManager emailManager,
     IPasskeyManager passkeyManager,
     ILinkedAccountManager linkedAccountManager,
+    IEmailQueryService emailQueryService,
+    IEmailCommandService emailCommandService,
     IVerificationManager verificationManager) : IRequestHandler<RemoveEmailCommand, Result>
 {
     private readonly IUserManager _userManager = userManager;
-    private readonly IEmailManager _emailManager = emailManager;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
     private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
+    private readonly IEmailQueryService _emailQueryService = emailQueryService;
+    private readonly IEmailCommandService _emailCommandService = emailCommandService;
     private readonly IVerificationManager _verificationManager = verificationManager;
 
     public async Task<Result> Handle(RemoveEmailCommand request, CancellationToken cancellationToken)
@@ -45,7 +47,7 @@ public class RemoveEmailCommandHandler(
             });
         }
 
-        var email = await _emailManager.FindByEmailAsync(user, request.Request.Email, cancellationToken);
+        var email = await _emailQueryService.GetByEmailAsync(user.Id, request.Request.Email, cancellationToken);
         if (email is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error
@@ -90,7 +92,7 @@ public class RemoveEmailCommandHandler(
         var verificationResult = await _verificationManager.ConsumeAsync(verification, cancellationToken);
         if (!verificationResult.Succeeded) return verificationResult;
 
-        var result = await _emailManager.RemoveAsync(user, request.Request.Email, cancellationToken);
+        var result = await _emailCommandService.RemoveAsync(user.Id, request.Request.Email, cancellationToken);
         return result;
     }
 }

@@ -21,16 +21,16 @@ public record GetUserInfoQuery(string? AccessToken = null) : IRequest<Result>;
 
 public class GetUserInfoQueryHandler(
     IUserManager userManager,
-    IEmailManager emailManager,
     IPhoneManager phoneManager,
     IPersonalDataManager personalDataManager,
     IHttpContextAccessor httpContextAccessor,
+    IEmailQueryService emailQueryService,
     ITokenValidationProvider validationProvider) : IRequestHandler<GetUserInfoQuery, Result>
 {
     private readonly IUserManager _userManager = userManager;
-    private readonly IEmailManager _emailManager = emailManager;
     private readonly IPhoneManager _phoneManager = phoneManager;
     private readonly IPersonalDataManager _personalDataManager = personalDataManager;
+    private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly ITokenValidator _validator = validationProvider.CreateValidator(TokenKind.Jwt);
 
@@ -107,7 +107,7 @@ public class GetUserInfoQueryHandler(
         var scopes = scopeClaim.Value.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         if (scopes.Contains(ScopeTypes.Email))
         {
-            var email = await _emailManager.FindByTypeAsync(user, EmailType.Primary, cancellationToken);
+            var email = await _emailQueryService.GetByTypeAsync(user.Id, EmailType.Primary, cancellationToken);
             if (email is not null)
             {
                 response.Email = email.Email;
