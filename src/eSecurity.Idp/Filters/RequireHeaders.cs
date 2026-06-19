@@ -2,7 +2,7 @@
 using eSystem.Core.Primitives;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace eSecurity.Idp.Common.Filters;
+namespace eSecurity.Idp.Filters;
 
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false)]
 public class RequireHeaders(params string[] headers) : Attribute, IAsyncActionFilter

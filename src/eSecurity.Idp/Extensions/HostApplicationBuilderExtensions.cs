@@ -1,7 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using eSecurity.Idp.Common.Errors;
-using eSecurity.Idp.Common.Middlewares;
 using eSecurity.Idp.Conventions;
 using eSecurity.Idp.Common.Binding;
 using eSecurity.Idp.Common.Mapping;
@@ -9,6 +8,7 @@ using eSecurity.Idp.Common.Messaging;
 using eSecurity.Idp.Common.Storage;
 using eSecurity.Idp.Security;
 using eSecurity.Idp.Data;
+using eSecurity.Idp.Middlewares;
 using eSystem.Core.Server.Documentation;
 using eSystem.Core.Server.Errors;
 using eSystem.Core.Server.Versioning;

@@ -1,4 +1,4 @@
-﻿namespace eSecurity.Idp.Common.Middlewares;
+﻿namespace eSecurity.Idp.Middlewares;
 
 public class RequestBufferingMiddleware : IMiddleware
 {

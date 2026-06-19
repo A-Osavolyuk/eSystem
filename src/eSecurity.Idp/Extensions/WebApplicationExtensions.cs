@@ -1,5 +1,5 @@
-using eSecurity.Idp.Common.Middlewares;
 using eSecurity.Idp.Data;
+using eSecurity.Idp.Middlewares;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Primitives;
 using eSystem.Core.Server.Data;
