@@ -14,26 +14,34 @@ public sealed class ApiResponse
     
     public Error GetError() => Error;
 
-    public bool TryGetValue<TValue>(out TValue? value)
+    public bool TryGetValue<TValue>(out TValue value)
     {
         if (string.IsNullOrWhiteSpace(Result))
         {
-            value = default;
+            value = default!;
             return false;
         }
 
         try
         {
-            value = JsonSerializer.Deserialize<TValue>(Result, new JsonSerializerOptions
+            var deserializedValue = JsonSerializer.Deserialize<TValue>(Result, new JsonSerializerOptions
             {
                 WriteIndented = true,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             });
+
+            if (deserializedValue is null)
+            {
+                value = default!;
+                return false;
+            }
+
+            value = deserializedValue;
             return true;
         }
         catch (JsonException)
         {
-            value = default;
+            value = default!;
             return false;
         }
     }
