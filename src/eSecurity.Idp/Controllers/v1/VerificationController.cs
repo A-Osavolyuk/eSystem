@@ -1,12 +1,9 @@
-using eSecurity.Idp.Features.Verification.Commands;
-using eSecurity.Core.Requests;
 using eSecurity.Core.Requests.Verification;
 using eSecurity.Idp.Features.Verification.AuthenticatorApp;
 using eSecurity.Idp.Features.Verification.EmailOtp;
 using eSecurity.Idp.Features.Verification.SoftwareKey;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
-using VerificationRequest = eSecurity.Core.Requests.VerificationRequest;
 
 namespace eSecurity.Idp.Controllers.v1;
 
@@ -19,43 +16,13 @@ public class VerificationController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
     
-    [EndpointSummary("Send code")]
-    [EndpointDescription("Send code")]
-    [ProducesResponseType(200)]
-    [HttpPost("code/send")]
-    public async ValueTask<IActionResult> SendCodeAsync([FromBody] SendCodeRequest request)
-    {
-        var result = await _mediator.Send(new SendCodeCommand(request));
-        return HttpContext.HandleResult(result);
-    }
-    
-    [EndpointSummary("Resend code")]
-    [EndpointDescription("Resend code")]
-    [ProducesResponseType(200)]
-    [HttpPost("code/resend")]
-    public async ValueTask<IActionResult> ResendCodeAsync([FromBody] ResendCodeRequest request)
-    {
-        var result = await _mediator.Send(new ResendCodeCommand(request));
-        return HttpContext.HandleResult(result);
-    }
-    
-    [EndpointSummary("Verification request")]
-    [EndpointDescription("Verification request")]
-    [ProducesResponseType(200)]
-    [HttpPost("request-verification")]
-    public async ValueTask<IActionResult> VerificationRequestAsync([FromBody] VerificationRequest request)
-    {
-        var result = await _mediator.Send(new VerificationCommand(request));
-        return HttpContext.HandleResult(result);
-    }
-    
     [EndpointSummary("Send email OTP")]
     [EndpointDescription("Send email OTP")]
     [ProducesResponseType(200)]
     [HttpPost("email-otp/send")]
-    public async ValueTask<IActionResult> SendEmailOtpAsync()
+    public async ValueTask<IActionResult> SendEmailOtpAsync([FromBody] SendEmailOtpRequest request)
     {
-        var result = await _mediator.Send(new SendEmailOtpCommand());
+        var result = await _mediator.Send(new SendEmailOtpCommand(request));
         return HttpContext.HandleResult(result);
     }
     
@@ -63,9 +30,9 @@ public class VerificationController(IMediator mediator) : ControllerBase
     [EndpointDescription("Resend email OTP")]
     [ProducesResponseType(200)]
     [HttpPost("email-otp/resend")]
-    public async ValueTask<IActionResult> ResendEmailOtpAsync()
+    public async ValueTask<IActionResult> ResendEmailOtpAsync([FromBody] ResendEmailOtpRequest request)
     {
-        var result = await _mediator.Send(new ResendEmailOtpCommand());
+        var result = await _mediator.Send(new ResendEmailOtpCommand(request));
         return HttpContext.HandleResult(result);
     }
     

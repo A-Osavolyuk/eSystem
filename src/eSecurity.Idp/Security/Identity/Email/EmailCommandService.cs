@@ -9,11 +9,11 @@ namespace eSecurity.Idp.Security.Identity.Email;
 
 public sealed class EmailCommandService(
     IEmailQueryService query,
-    IEmailPolicyService policy,
+    IEmailPolicy policy,
     AuthDbContext context) : IEmailCommandService
 {
     private readonly IEmailQueryService _query = query;
-    private readonly IEmailPolicyService _policy = policy;
+    private readonly IEmailPolicy _policy = policy;
     private readonly AuthDbContext _context = context;
 
     public async ValueTask<Result> AddAsync(Guid userId, string email, EmailType type,
@@ -94,6 +94,44 @@ public sealed class EmailCommandService(
         }
 
         await _context.SaveChangesAsync(cancellationToken);
+        return Results.Success(SuccessCodes.Ok);
+    }
+
+    public async ValueTask<Result> ResetAsync(Guid userId, string currentEmail, 
+        string newEmail, CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(currentEmail);
+        ArgumentException.ThrowIfNullOrWhiteSpace(newEmail);
+
+        var currentEmailEntity = await _query.GetByEmailAsync(userId, currentEmail, cancellationToken);
+        var newEmailEntity = await _query.GetByEmailAsync(userId, newEmail, cancellationToken);
+
+        if (currentEmailEntity is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidEmail,
+                Description = "Current email is invalid"
+            });
+        }
+
+        if (newEmailEntity is not null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.EmailTaken,
+                Description = "New email is already taken"
+            });
+        }
+
+        var canResetResult = _policy.CanReset(userId, currentEmailEntity);
+        if (!canResetResult.Succeeded) return canResetResult;
+
+        currentEmailEntity.Email = newEmail;
+        currentEmailEntity.NormalizedEmail = Normalizer.Normalize(newEmail);
+
+        await _context.SaveChangesAsync(cancellationToken);
+
         return Results.Success(SuccessCodes.Ok);
     }
 

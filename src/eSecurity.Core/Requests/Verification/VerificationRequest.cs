@@ -5,9 +5,6 @@ namespace eSecurity.Core.Requests.Verification;
 
 public abstract class VerificationRequest
 {
-    [JsonPropertyName("action")]
-    public required ActionType Action { get; set; }
-
-    [JsonPropertyName("purpose")]
-    public required PurposeType Purpose { get; set; }
+    [JsonPropertyName("operation_type")]
+    public OperationType OperationType { get; set; }
 }

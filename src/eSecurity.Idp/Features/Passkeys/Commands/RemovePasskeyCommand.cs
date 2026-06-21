@@ -19,18 +19,20 @@ public record RemovePasskeyCommand(RemovePasskeyRequest Request) : IRequest<Resu
 public class RemovePasskeyCommandHandler(
     IPasskeyManager passkeyManager,
     IPasswordManager passwordManager,
-    IVerificationManager verificationManager,
     ITwoFactorManager twoFactorManager,
     ICurrentUserAccessor currentUserAccessor,
     IEmailQueryService emailQueryService,
+    IVerificationQueryService verificationQueryService,
+    IVerificationCommandService verificationCommandService,
     IOptions<SignInOptions> options) : IRequestHandler<RemovePasskeyCommand, Result>
 {
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
     private readonly IPasswordManager _passwordManager = passwordManager;
-    private readonly IVerificationManager _verificationManager = verificationManager;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
+    private readonly IVerificationQueryService _verificationQueryService = verificationQueryService;
+    private readonly IVerificationCommandService _verificationCommandService = verificationCommandService;
     private readonly SignInOptions _options = options.Value;
 
     public async Task<Result> Handle(RemovePasskeyCommand request, CancellationToken cancellationToken)
@@ -72,17 +74,19 @@ public class RemovePasskeyCommandHandler(
             });
         }
 
-        var verification = await _verificationManager.FindByIdAsync(request.Request.VerificationId, cancellationToken);
-        if (verification?.Status is not VerificationStatus.Approved)
+        var verification = await _verificationQueryService.GetByIdAsync(user.Id, 
+            request.Request.VerificationId, cancellationToken);
+        
+        if (verification is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
-                Description = "Unverified request."
+                Description = "Invalid verification request"
             });
         }
 
-        var verificationResult = await _verificationManager.ConsumeAsync(verification, cancellationToken);
+        var verificationResult = await _verificationCommandService.ConsumeAsync(verification, cancellationToken);
         if (!verificationResult.Succeeded) return verificationResult;
 
         var passkeys = await _passkeyManager.GetAllAsync(user, cancellationToken);

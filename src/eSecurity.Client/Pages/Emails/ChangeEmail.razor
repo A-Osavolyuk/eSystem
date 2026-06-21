@@ -1,8 +1,11 @@
 ﻿@page "/account/email/change"
 @using eSecurity.Client.Common.Confirmation
 @using eSecurity.Client.Common.Validation.Validators
+@using eSecurity.Client.Security.Authorization.Verification
 @using eSecurity.Client.Security.Identity
 @using eSecurity.Core.Requests.Email.Change
+@using eSecurity.Core.Requests.Verification
+@using eSecurity.Core.Responses.Verification
 @using eSecurity.Core.Security.Identity.Constants
 
 @inherits PageBase
@@ -12,6 +15,7 @@
 @inject ChangeEmailValidator ChangeEmailValidator
 @inject CodeModelValidator Validator
 @inject IEmailService EmailService
+@inject IVerificationService VerificationService
 
 @switch (Type)
 {
@@ -207,20 +211,20 @@
     private MudForm _changeForm = new();
     private MudForm _confirmForm = new();
     private ConfirmationContext? _confirmationContext;
+    private Guid _verificationId;
 
     protected override void OnInitialized()
     {
         _confirmationContext = new ConfirmationContext
         {
-            Purpose = PurposeType.Email,
-            Action = ActionType.Change
+            Operation = OperationType.ChangeEmail
         };
     }
 
     private async Task OnResendAsync()
     {
-        var request = new ResendEmailChangeRequest { NewEmail = _changeModel.NewEmail };
-        var result = await EmailService.ResendEmailChangeAsync(request);
+        var request = new ResendEmailOtpRequest { VerificationId = _verificationId };
+        var result = await VerificationService.ResendEmailOtpAsync(request);
         if (!result.Succeeded)
         {
             var error = result.GetError();
@@ -234,10 +238,11 @@
 
         if (_changeForm.IsValid)
         {
-            var request = new SendEmailChangeRequest { NewEmail = _changeModel.NewEmail };
+            var request = new SendEmailChangeOtpRequest { NewEmail = _changeModel.NewEmail };
             var result = await EmailService.SendEmailChangeAsync(request);
-            if (result.Succeeded)
+            if (result.Succeeded && result.TryGetValue<SendEmailOtpResponse>(out var response))
             {
+                _verificationId = response.VerificationId;
                 await _stepper.StepNextAsync();
             }
             else
@@ -254,14 +259,15 @@
 
         if (_confirmForm.IsValid)
         {
-            var request = new ConfirmEmailChangeRequest
+            var request = new ChangeEmailRequest
             {
+                VerificationId = _verificationId,
                 Code = _confirmModel.Code,
                 NewEmail = _changeModel.NewEmail,
                 CurrentEmail = Email
             };
 
-            var result = await EmailService.ConfirmEmailChangeAsync(request);
+            var result = await EmailService.ChangeEmailAsync(request);
             if (result.Succeeded)
             {
                 Snackbar.Add("Email address was successfully changed", Severity.Success);

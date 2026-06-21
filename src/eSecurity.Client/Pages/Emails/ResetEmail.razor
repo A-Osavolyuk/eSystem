@@ -4,8 +4,9 @@
 @using eSecurity.Client.Common.Validation.Validators
 @using eSecurity.Client.Security.Authorization.Verification
 @using eSecurity.Client.Security.Identity
+@using eSecurity.Core.Requests.Email.Reset
+@using eSecurity.Core.Requests.Verification
 @using eSecurity.Core.Responses.Verification
-@using eSystem.Core.Messaging
 
 @inherits PageBase
 
@@ -161,29 +162,24 @@
     private MudForm _resetForm = new();
     private MudForm _confirmForm = new();
     private ConfirmationContext? _confirmationContext;
+    private Guid _verificationId;
 
     protected override void OnInitialized()
     {
         _confirmationContext = new ConfirmationContext
         {
-            Action = ActionType.Reset,
-            Purpose = PurposeType.Email
+            Operation = OperationType.ResetEmail
         };
     }
 
     private async Task OnResendAsync()
     {
-        var request = new ResendCodeRequest
+        var request = new ResendEmailOtpRequest
         {
-            Sender = SenderType.Email,
-            Payload = new()
-            {
-                { "To", _resetModel.NewEmail },
-                { "Subject", "Email reset" }
-            }
+            VerificationId = _verificationId
         };
         
-        var result = await VerificationService.ResendCodeAsync(request);
+        var result = await VerificationService.ResendEmailOtpAsync(request);
         if (!result.Succeeded)
         {
             var error = result.GetError();
@@ -207,20 +203,23 @@
 
     private async Task SendCodeAsync()
     {
-        var request = new SendCodeRequest
+        var request = new SendEmailResetOtpRequest
         {
-            Sender = SenderType.Email,
-            Payload = new()
-            {
-                { "To", _resetModel.NewEmail },
-                { "Subject", "Email reset" }
-            }
+            CurrentEmail = UserState.Email,
+            NewEmail = _resetModel.NewEmail
         };
         
-        var result = await VerificationService.SendCodeAsync(request);
-
-        if (result.Succeeded) await _stepper.StepNextAsync();
-        else Snackbar.Add(result.GetError().Description, Severity.Error);
+        var result = await EmailService.SendEmailResetAsync(request);
+        if (result.Succeeded && result.TryGetValue<SendEmailOtpResponse>(out var response))
+        {
+            _verificationId = response.VerificationId;
+            await _stepper.StepNextAsync();
+        }
+        else
+        {
+            var error = result.GetError();
+            Snackbar.Add(error.Description, Severity.Error);
+        }
     }
 
     private async Task OnVerifyAsync()
@@ -229,43 +228,23 @@
 
         if (_confirmForm.IsValid)
         {
-            var request = new VerificationRequest
+            var request = new ResetEmailRequest
             {
-                Action = ActionType.Reset,
-                Purpose = PurposeType.Email,
-                Method = VerificationMethod.EmailOtp,
-                Payload = new TotpVerificationPayload
-                {
-                    Code = _confirmModel.Code
-                }
+                VerificationId = _verificationId,
+                CurrentEmail = UserState.Email,
+                NewEmail = _resetModel.NewEmail,
+                Code = _confirmModel.Code
             };
-            
-            var result = await VerificationService.VerifyAsync(request);
+        
+            var result = await EmailService.ResetEmailAsync(request);
 
-            if (result.Succeeded && result.TryGetValue<VerificationResponse>(out var response) && response is not null)
+            if (result.Succeeded)
             {
-                await VerifyAsync(response.VerificationId);
+                Snackbar.Add("Email was successfully reset", Severity.Success);
+                NavigationManager.NavigateTo(ReturnUrl);
             }
             else Snackbar.Add(result.GetError().Description, Severity.Error);
         }
-    }
-
-    private async Task VerifyAsync(Guid verificationId)
-    {
-        var request = new ResetEmailRequest
-        {
-            VerificationId = verificationId,
-            Email = _resetModel.NewEmail,
-        };
-        
-        var result = await EmailService.ResetEmailAsync(request);
-
-        if (result.Succeeded)
-        {
-            Snackbar.Add("Email was successfully reset", Severity.Success);
-            NavigationManager.NavigateTo(ReturnUrl);
-        }
-        else Snackbar.Add(result.GetError().Description, Severity.Error);
     }
 
 }

@@ -8,12 +8,11 @@ public class ConfirmationManager(IDialogService dialogService)
 {
     private readonly IDialogService _dialogService = dialogService;
 
-    public async ValueTask<DialogResult> InitiateAsync(PurposeType purpose, ActionType action)
+    public async ValueTask<DialogResult> InitiateAsync(OperationType operationType)
     {
         var context = new ConfirmationContext
         {
-            Action = action,
-            Purpose = purpose
+            Operation = operationType
         };
 
         var parameters = new DialogParameters<AccessConfirmationDialog>

@@ -108,7 +108,13 @@
 
     private async Task OnSendAsync()
     {
-        var result = await VerificationService.SendEmailOtpAsync();
+        var request = new SendEmailOtpRequest()
+        {
+            OperationType = Context.Operation,
+            Email = UserState.Email
+        };
+        
+        var result = await VerificationService.SendEmailOtpAsync(request);
         if (result.Succeeded)
         {
             _sendStage = false;
@@ -129,8 +135,7 @@
             var request = new VerifyEmailOtpRequest()
             {
                 Code = _codeModel.Code,
-                Purpose = Context.Purpose,
-                Action = Context.Action
+                OperationType = Context.Operation
             };
             
             var result = await VerificationService.VerifyEmailOtpAsync(request);

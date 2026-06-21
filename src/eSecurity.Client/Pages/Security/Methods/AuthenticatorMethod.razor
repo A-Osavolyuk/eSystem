@@ -79,9 +79,7 @@
 
     private async Task ShowAsync()
     {
-        var confirmationResult = await ConfirmationManager.InitiateAsync(
-            PurposeType.AuthenticatorApp, ActionType.Reconfigure);
-
+        var confirmationResult = await ConfirmationManager.InitiateAsync(OperationType.ReconfigureAuthenticatorApp);
         if (!confirmationResult!.Canceled)
         {
             _verificationId = confirmationResult.Data as Guid? ?? Guid.Empty;

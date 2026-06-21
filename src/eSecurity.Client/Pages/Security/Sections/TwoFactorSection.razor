@@ -81,7 +81,7 @@ else
 
     private async Task OnDisableAsync()
     {
-        var confirmationResult = await ConfirmationManager.InitiateAsync(PurposeType.TwoFactor, ActionType.Disable);
+        var confirmationResult = await ConfirmationManager.InitiateAsync(OperationType.DisableTwoFactor);
         if (!confirmationResult!.Canceled)
         {
             var result = await TwoFactorService.DisableAsync();

@@ -14,12 +14,12 @@ public sealed record ConfirmForgotPasswordCommand(ConfirmForgotPasswordRequest R
 
 public sealed class ConfirmForgotPasswordCommandHandler(
     IUserQueryService userQueryService, 
-    ICodeManager codeManager, 
-    IVerificationManager verificationManager) : IRequestHandler<ConfirmForgotPasswordCommand, Result>
+    ICodeManager codeManager,
+    IVerificationCommandService verificationCommandService) : IRequestHandler<ConfirmForgotPasswordCommand, Result>
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly ICodeManager _codeManager = codeManager;
-    private readonly IVerificationManager _verificationManager = verificationManager;
+    private readonly IVerificationCommandService _verificationCommandService = verificationCommandService;
 
     public async Task<Result> Handle(ConfirmForgotPasswordCommand request, CancellationToken cancellationToken)
     {
@@ -33,7 +33,7 @@ public sealed class ConfirmForgotPasswordCommandHandler(
             });
         }
 
-        var code = await _codeManager.FindAsync(user, request.Request.Code, cancellationToken);
+        var code = await _codeManager.FindByCodeAsync(user, request.Request.Code, cancellationToken);
         if (code is null || code.ExpiredAt < DateTimeOffset.UtcNow)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error
@@ -50,15 +50,13 @@ public sealed class ConfirmForgotPasswordCommandHandler(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            Purpose = PurposeType.Password,
-            Action = ActionType.Reset,
+            Operation = OperationType.ResetPassword,
             Status = VerificationStatus.Approved,
             Method = VerificationMethod.EmailOtp,
-            ApprovedAt = DateTimeOffset.UtcNow,
             ExpiredAt = DateTimeOffset.UtcNow.AddMinutes(15)
         };
         
-        var verificationResult = await _verificationManager.CreateAsync(requestEntity, cancellationToken);
+        var verificationResult = await _verificationCommandService.CreateAsync(requestEntity, cancellationToken);
         if (verificationResult.Succeeded) return verificationResult;
 
         var response = new ConfirmForgotPasswordResponse { VerificationId = requestEntity.Id };

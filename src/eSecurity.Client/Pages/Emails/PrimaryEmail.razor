@@ -150,9 +150,7 @@
 
     private async Task OnDisconnectAsync(LinkedAccountType type)
     {
-        var confirmationResult = await ConfirmationManager.InitiateAsync(
-            PurposeType.LinkedAccount, ActionType.Disconnect);
-
+        var confirmationResult = await ConfirmationManager.InitiateAsync(OperationType.DisconnectExternalAccount);
         if (!confirmationResult.Canceled)
         {
             var verificationId = confirmationResult.Data as Guid? ?? Guid.Empty;

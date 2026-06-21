@@ -14,12 +14,14 @@ public record ReconfigureAuthenticatorCommand(ReconfigureAuthenticatorRequest Re
 
 public class ReconfigureAuthenticatorCommandHandler(
     ISecretManager secretManager,
-    IVerificationManager verificationManager,
+    IVerificationQueryService verificationQueryService,
+    IVerificationCommandService verificationCommandService,
     ICurrentUserAccessor currentUserAccessor,
     IDataProtectionProvider protectionProvider) : IRequestHandler<ReconfigureAuthenticatorCommand, Result>
 {
     private readonly ISecretManager _secretManager = secretManager;
-    private readonly IVerificationManager _verificationManager = verificationManager;
+    private readonly IVerificationQueryService _verificationQueryService = verificationQueryService;
+    private readonly IVerificationCommandService _verificationCommandService = verificationCommandService;
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
 
@@ -41,17 +43,19 @@ public class ReconfigureAuthenticatorCommandHandler(
             });
         }
 
-        var verification = await _verificationManager.FindByIdAsync(request.Request.VerificationId, cancellationToken);
-        if (verification?.Status is not VerificationStatus.Approved)
+        var verification = await _verificationQueryService.GetByIdAsync(user.Id, 
+            request.Request.VerificationId, cancellationToken);
+        
+        if (verification is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
-                Description = "Unverified request."
+                Description = "Invalid verification request"
             });
         }
 
-        var verificationResult = await _verificationManager.ConsumeAsync(verification, cancellationToken);
+        var verificationResult = await _verificationCommandService.ConsumeAsync(verification, cancellationToken);
         if (!verificationResult.Succeeded) return verificationResult;
 
         var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Secret);

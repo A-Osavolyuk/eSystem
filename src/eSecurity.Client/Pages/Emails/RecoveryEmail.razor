@@ -131,7 +131,7 @@
 
     private async Task OnRemove(string email)
     {
-        var confirmationResult = await ConfirmationManager.InitiateAsync(PurposeType.Email, ActionType.Remove);
+        var confirmationResult = await ConfirmationManager.InitiateAsync(OperationType.RemoveEmail);
         if (!confirmationResult!.Canceled)
         { 
             var verificationId = confirmationResult.Data as Guid? ?? Guid.Empty;

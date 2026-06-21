@@ -1,8 +1,11 @@
 ﻿@page "/account/email/manage"
 
 @using eSecurity.Client.Common.Validation.Validators
+@using eSecurity.Client.Security.Authorization.Verification
 @using eSecurity.Client.Security.Identity
 @using eSecurity.Core.Requests.Email.Change
+@using eSecurity.Core.Requests.Verification
+@using eSecurity.Core.Responses.Verification
 
 @inherits PageBase
 
@@ -10,6 +13,7 @@
 
 @inject CodeModelValidator Validator
 @inject IEmailService EmailService
+@inject IVerificationService VerificationService
 
 <PageTitle>Manage email</PageTitle>
 
@@ -90,19 +94,21 @@
     private MudForm _form = new();
     private bool _canResend = false;
     private PatternMask _mask = new("000000");
+    private Guid _verificationId;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            var request = new SendEmailChangeRequest()
+            var request = new SendEmailChangeOtpRequest()
             {
                 NewEmail = NewEmail
             };
             
             var result = await EmailService.SendEmailChangeAsync(request);
-            if (result.Succeeded)
+            if (result.Succeeded && result.TryGetValue<SendEmailOtpResponse>(out var response))
             {
+                _verificationId = response.VerificationId;
                 _canResend = true;
                 StateHasChanged();
             }
@@ -116,12 +122,8 @@
 
     private async Task OnResendAsync()
     {
-        var request = new ResendEmailChangeRequest()
-        {
-            NewEmail = NewEmail
-        };
-
-        var result = await EmailService.ResendEmailChangeAsync(request);
+        var request = new ResendEmailOtpRequest { VerificationId = _verificationId };
+        var result = await VerificationService.ResendEmailOtpAsync(request);
         if (!result.Succeeded)
         {
             var error = result.GetError();
@@ -135,14 +137,15 @@
 
         if (_form.IsValid)
         {
-            var request = new ConfirmEmailChangeRequest()
+            var request = new ChangeEmailRequest()
             {
+                VerificationId = _verificationId,
                 Code = _model.Code,
                 CurrentEmail = CurrentEmail,
                 NewEmail = NewEmail
             };
 
-            var result = await EmailService.ConfirmEmailChangeAsync(request);
+            var result = await EmailService.ChangeEmailAsync(request);
 
             if (result.Succeeded)
             {

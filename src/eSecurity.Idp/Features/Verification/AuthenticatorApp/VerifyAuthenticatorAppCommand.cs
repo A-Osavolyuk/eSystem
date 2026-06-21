@@ -19,13 +19,13 @@ public sealed class VerifyAuthenticatorAppCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
     ISecretManager secretManager,
     IDataProtectionProvider protectionProvider,
-    IVerificationManager verificationManager,
+    IVerificationCommandService verificationCommandService,
     IOptions<VerificationConfiguration> options) : IRequestHandler<VerifyAuthenticatorAppCommand, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly ISecretManager _secretManager = secretManager;
     private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
-    private readonly IVerificationManager _verificationManager = verificationManager;
+    private readonly IVerificationCommandService _verificationCommandService = verificationCommandService;
     private readonly VerificationConfiguration _configuration = options.Value;
 
     public async Task<Result> Handle(VerifyAuthenticatorAppCommand request, 
@@ -73,15 +73,13 @@ public sealed class VerifyAuthenticatorAppCommandHandler(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            Action = request.Request.Action,
-            Purpose = request.Request.Purpose,
+            Operation = request.Request.OperationType,
             Method = VerificationMethod.AuthenticatorApp,
             Status = VerificationStatus.Approved,
-            ApprovedAt = DateTimeOffset.UtcNow,
             ExpiredAt = DateTimeOffset.UtcNow.Add(_configuration.Timestamp)
         };
 
-        var verificationResult = await _verificationManager.CreateAsync(requestEntity, cancellationToken);
+        var verificationResult = await _verificationCommandService.CreateAsync(requestEntity, cancellationToken);
         if (!verificationResult.Succeeded) 
             return verificationResult;
 

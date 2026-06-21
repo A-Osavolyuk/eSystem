@@ -6,6 +6,7 @@
 @using eSecurity.Client.Security.Authentication.TwoFactor
 @using eSecurity.Client.Security.Authorization.Verification
 @using eSecurity.Client.Security.Identity
+@using eSecurity.Core.Requests.Verification
 @using eSecurity.Core.Responses.Verification
 @inherits PageBase
 
@@ -296,8 +297,7 @@
     {
         _confirmationContext = new ConfirmationContext
         {
-            Purpose = PurposeType.TwoFactor,
-            Action = ActionType.Enable,
+            Operation = OperationType.EnableTwoFactor
         };
     }
 
@@ -324,20 +324,15 @@
     {
         _showError = false;
         
-        var request = new VerificationRequest
+        var request = new VerifyAuthenticatorAppRequest
         {
-            Action = ActionType.Enable,
-            Purpose = PurposeType.TwoFactor,
-            Method = VerificationMethod.AuthenticatorApp,
-            Payload = new AuthenticatorAppVerificationPayload
-            {
-                Code = _model.Code
-            }
+            OperationType = OperationType.EnableTwoFactor,
+            Code = _model.Code
         };
         
-        var result = await VerificationService.VerifyAsync(request);
+        var result = await VerificationService.VerifyAuthenticatorAppAsync(request);
 
-        if (result.Succeeded && result.TryGetValue<VerificationResponse>(out var response) && response is not null)
+        if (result.Succeeded && result.TryGetValue<VerificationResponse>(out var response))
         {
             _verificationId = response.VerificationId;
             await GenerateRecoveryCodesAsync();

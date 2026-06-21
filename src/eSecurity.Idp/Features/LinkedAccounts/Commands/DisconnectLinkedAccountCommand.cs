@@ -13,11 +13,13 @@ public record DisconnectLinkedAccountCommand(DisconnectLinkedAccountRequest Requ
 public class DisconnectLinkedAccountCommandHandler(
     ILinkedAccountManager linkedAccountManager,
     ICurrentUserAccessor currentUserAccessor,
-    IVerificationManager verificationManager) : IRequestHandler<DisconnectLinkedAccountCommand, Result>
+    IVerificationQueryService verificationQueryService,
+    IVerificationCommandService verificationCommandService) : IRequestHandler<DisconnectLinkedAccountCommand, Result>
 {
     private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
-    private readonly IVerificationManager _verificationManager = verificationManager;
+    private readonly IVerificationQueryService _verificationQueryService = verificationQueryService;
+    private readonly IVerificationCommandService _verificationCommandService = verificationCommandService;
 
     public async Task<Result> Handle(DisconnectLinkedAccountCommand request, CancellationToken cancellationToken)
     {
@@ -37,17 +39,19 @@ public class DisconnectLinkedAccountCommandHandler(
             });
         }
 
-        var verification = await _verificationManager.FindByIdAsync(request.Request.VerificationId, cancellationToken);
-        if (verification?.Status is not VerificationStatus.Approved)
+        var verification = await _verificationQueryService.GetByIdAsync(user.Id, 
+            request.Request.VerificationId, cancellationToken);
+        
+        if (verification is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
-                Description = "Unverified request."
+                Description = "Invalid verification request"
             });
         }
 
-        var verificationResult = await _verificationManager.ConsumeAsync(verification, cancellationToken);
+        var verificationResult = await _verificationCommandService.ConsumeAsync(verification, cancellationToken);
         if (!verificationResult.Succeeded) return verificationResult;
 
         var linkedAccount = await _linkedAccountManager.GetAsync(user, request.Request.Type, cancellationToken);

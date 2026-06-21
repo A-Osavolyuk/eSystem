@@ -1,9 +1,4 @@
-﻿using eSecurity.Core.Security.Authorization.Verification;
-using eSecurity.Idp.Security.Authorization.Verification.AuthenticationApp;
-using eSecurity.Idp.Security.Authorization.Verification.Passkey;
-using eSecurity.Idp.Security.Authorization.Verification.Totp;
-
-namespace eSecurity.Idp.Security.Authorization.Verification;
+﻿namespace eSecurity.Idp.Security.Authorization.Verification;
 
 public static class VerificationExtensions
 {
@@ -11,10 +6,8 @@ public static class VerificationExtensions
     {
         services.Configure(configure);
         
-        services.AddScoped<IVerificationManager, VerificationManager>();
-        services.AddScoped<IVerificationStrategyResolver, VerificationStrategyResolver>();
-        services.AddKeyedScoped<IVerificationStrategy, TotpVerificationStrategy>(VerificationMethod.EmailOtp);
-        services.AddKeyedScoped<IVerificationStrategy, PasskeyVerificationStrategy>(VerificationMethod.Passkey);
-        services.AddKeyedScoped<IVerificationStrategy, AuthenticationAppVerificationStrategy>(VerificationMethod.AuthenticatorApp);
+        services.AddScoped<IVerificationPolicy, VerificationPolicy>();
+        services.AddScoped<IVerificationQueryService, VerificationQueryService>();
+        services.AddScoped<IVerificationCommandService, VerificationCommandService>();
     }
 }

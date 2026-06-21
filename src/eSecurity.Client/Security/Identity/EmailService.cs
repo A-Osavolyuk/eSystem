@@ -1,6 +1,7 @@
 ﻿using eSecurity.Client.Common.Http;
 using eSecurity.Core.Requests;
 using eSecurity.Core.Requests.Email.Change;
+using eSecurity.Core.Requests.Email.Reset;
 using eSecurity.Core.Requests.Email.Verification;
 
 namespace eSecurity.Client.Security.Identity;
@@ -36,16 +37,7 @@ public class EmailService(IApiClient apiClient) : IEmailService
                 Url = "/api/v1/Email/remove"
             });
 
-    public async ValueTask<ApiResponse> ResetEmailAsync(ResetEmailRequest request)
-        => await _apiClient.SendAsync(
-            new ApiRequest
-            {
-                Method = HttpMethods.Post,
-                Data = request,
-                Url = "/api/v1/Email/reset"
-            });
-
-    public async ValueTask<ApiResponse> ConfirmEmailVerificationAsync(ConfirmEmailVerificationRequest request)
+    public async ValueTask<ApiResponse> VerifyEmailAsync(VerifyEmailRequest request)
         => await _apiClient.SendAsync(
             new ApiRequest
             {
@@ -54,42 +46,25 @@ public class EmailService(IApiClient apiClient) : IEmailService
                 Url = "/api/v1/Email/verification/confirm"
             });
 
-    public async ValueTask<ApiResponse> SendEmailVerificationAsync(SendEmailVerificationRequest request)
+    public async ValueTask<ApiResponse> SendEmailVerificationAsync(SendEmailVerificationOtpRequest otpRequest)
         => await _apiClient.SendAsync(
             new ApiRequest
             {
                 Method = HttpMethods.Post,
-                Data = request,
-                Url = "/api/v1/Email/verification/send-code"
-            });
-    public async ValueTask<ApiResponse> ResendEmailVerificationAsync(ResendEmailVerificationRequest request)
-        => await _apiClient.SendAsync(
-            new ApiRequest
-            {
-                Method = HttpMethods.Post,
-                Data = request,
-                Url = "/api/v1/Email/verification/resend-code"
+                Data = otpRequest,
+                Url = "/api/v1/Email/verification/send-otp"
             });
 
-    public async ValueTask<ApiResponse> SendEmailChangeAsync(SendEmailChangeRequest request)
+    public async ValueTask<ApiResponse> SendEmailChangeAsync(SendEmailChangeOtpRequest otpRequest)
         => await _apiClient.SendAsync(
             new ApiRequest
             {
                 Method = HttpMethods.Post,
-                Data = request,
-                Url = "/api/v1/Email/change/send-code"
+                Data = otpRequest,
+                Url = "/api/v1/Email/change/send-otp"
             });
 
-    public async ValueTask<ApiResponse> ResendEmailChangeAsync(ResendEmailChangeRequest request)
-        => await _apiClient.SendAsync(
-            new ApiRequest
-            {
-                Method = HttpMethods.Post,
-                Data = request,
-                Url = "/api/v1/Email/change/resend-code"
-            });
-
-    public async ValueTask<ApiResponse> ConfirmEmailChangeAsync(ConfirmEmailChangeRequest request)
+    public async ValueTask<ApiResponse> ChangeEmailAsync(ChangeEmailRequest request)
         => await _apiClient.SendAsync(
             new ApiRequest
             {
@@ -98,12 +73,21 @@ public class EmailService(IApiClient apiClient) : IEmailService
                 Url = "/api/v1/Email/change/confirm"
             });
 
-    public async ValueTask<ApiResponse> CanChangeEmailAsync(CanChangeEmailRequest request)
+    public async ValueTask<ApiResponse> SendEmailResetAsync(SendEmailResetOtpRequest otpRequest)
+        => await _apiClient.SendAsync(
+            new ApiRequest
+            {
+                Method = HttpMethods.Post,
+                Data = otpRequest,
+                Url = "/api/v1/Email/reset/send-otp"
+            });
+
+    public async ValueTask<ApiResponse> ResetEmailAsync(ResetEmailRequest request)
         => await _apiClient.SendAsync(
             new ApiRequest
             {
                 Method = HttpMethods.Post,
                 Data = request,
-                Url = "/api/v1/Email/change/can-change"
+                Url = "/api/v1/Email/reset/confirm"
             });
 }

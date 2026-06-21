@@ -1,13 +1,17 @@
 ﻿@page "/account/email/verify"
 
 @using eSecurity.Client.Common.Validation.Validators
+@using eSecurity.Client.Security.Authorization.Verification
 @using eSecurity.Client.Security.Identity
 @using eSecurity.Core.Requests.Email.Verification
+@using eSecurity.Core.Requests.Verification
+@using eSecurity.Core.Responses.Verification
 
 @inherits PageBase
 
 @inject VerifyEmailValidator Validator
 @inject IEmailService EmailService
+@inject IVerificationService VerificationService
 
 @attribute [Authorize]
 
@@ -90,21 +94,23 @@
     private readonly PatternMask _mask = new("000000");
     private MudForm _form = new();
     private bool _canResend = false;
+    private Guid _verificationId;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            var request = new SendEmailVerificationRequest { Email = Email };
-            var response = await EmailService.SendEmailVerificationAsync(request);
-            if (response.Succeeded)
+            var request = new SendEmailVerificationOtpRequest { Email = Email };
+            var result = await EmailService.SendEmailVerificationAsync(request);
+            if (result.Succeeded && result.TryGetValue<SendEmailOtpResponse>(out var response))
             {
                 _canResend = true;
+                _verificationId = response.VerificationId;
                 StateHasChanged();
             }
             else
             {
-                var error = response.GetError();
+                var error = result.GetError();
                 Snackbar.Add(error.Description, Severity.Error);
             }
         }
@@ -112,8 +118,8 @@
 
     private async Task OnResendAsync()
     {
-        var request = new ResendEmailVerificationRequest { Email = Email };
-        var result = await EmailService.ResendEmailVerificationAsync(request);
+        var request = new ResendEmailOtpRequest { VerificationId = _verificationId };
+        var result = await VerificationService.ResendEmailOtpAsync(request);
         if (!result.Succeeded)
         {
             var error = result.GetError();
@@ -127,13 +133,14 @@
 
         if (_form.IsValid)
         {
-            var request = new ConfirmEmailVerificationRequest()
+            var request = new VerifyEmailRequest()
             {
+                VerificationId = _verificationId,
                 Code = _model.Code,
                 Email = Email
             };
 
-            var result = await EmailService.ConfirmEmailVerificationAsync(request);
+            var result = await EmailService.VerifyEmailAsync(request);
             if (result.Succeeded)
             {
                 NavigationManager.NavigateTo(ReturnUrl);

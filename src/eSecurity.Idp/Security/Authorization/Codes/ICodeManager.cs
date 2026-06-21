@@ -6,7 +6,7 @@ namespace eSecurity.Idp.Security.Authorization.Codes;
 
 public interface ICodeManager
 {
-    public ValueTask<CodeEntity?> FindAsync(UserEntity user, 
+    public ValueTask<CodeEntity?> FindByCodeAsync(UserEntity user, 
         string code, CancellationToken cancellationToken = default);
     
     public ValueTask<TypedResult<string>> CreateAsync(UserEntity user, 

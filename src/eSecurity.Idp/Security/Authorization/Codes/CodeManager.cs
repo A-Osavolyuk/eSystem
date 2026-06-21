@@ -15,7 +15,7 @@ public sealed class CodeManager(
     private readonly AuthDbContext _context = context;
     private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Pbkdf2);
 
-    public async ValueTask<CodeEntity?> FindAsync(UserEntity user, 
+    public async ValueTask<CodeEntity?> FindByCodeAsync(UserEntity user, 
         string code, CancellationToken cancellationToken = default)
     {
         var codes = await _context.Codes

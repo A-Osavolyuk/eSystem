@@ -13,11 +13,13 @@ public record DisableTwoFactorCommand(DisableTwoFactorRequest Request) : IReques
 public class DisableTwoFactorCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
     ITwoFactorManager twoFactorManager,
-    IVerificationManager verificationManager) : IRequestHandler<DisableTwoFactorCommand, Result>
+    IVerificationQueryService verificationQueryService,
+    IVerificationCommandService verificationCommandService) : IRequestHandler<DisableTwoFactorCommand, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
-    private readonly IVerificationManager _verificationManager = verificationManager;
+    private readonly IVerificationQueryService _verificationQueryService = verificationQueryService;
+    private readonly IVerificationCommandService _verificationCommandService = verificationCommandService;
 
     public async Task<Result> Handle(DisableTwoFactorCommand request, CancellationToken cancellationToken)
     {
@@ -46,17 +48,19 @@ public class DisableTwoFactorCommandHandler(
             });
         }
         
-        var verification = await _verificationManager.FindByIdAsync(request.Request.VerificationId, cancellationToken);
-        if (verification?.Status is not VerificationStatus.Approved)
+        var verification = await _verificationQueryService.GetByIdAsync(user.Id, 
+            request.Request.VerificationId, cancellationToken);
+        
+        if (verification is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
-                Description = "Unverified request."
+                Description = "Invalid verification request"
             });
         }
 
-        var verificationResult = await _verificationManager.ConsumeAsync(verification, cancellationToken);
+        var verificationResult = await _verificationCommandService.ConsumeAsync(verification, cancellationToken);
         if (!verificationResult.Succeeded) return verificationResult;
         
         var methodResult = await _twoFactorManager.UnsubscribeAsync(user, cancellationToken);

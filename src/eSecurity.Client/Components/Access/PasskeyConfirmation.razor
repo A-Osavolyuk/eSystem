@@ -137,8 +137,7 @@
             var credential = authenticateResult.Get<PublicKeyCredential>();
             var request = new VerifySoftwareKeyRequest
             {
-                Action = Context.Action,
-                Purpose = Context.Purpose,
+                OperationType = Context.Operation,
                 Credential = credential
             };
             

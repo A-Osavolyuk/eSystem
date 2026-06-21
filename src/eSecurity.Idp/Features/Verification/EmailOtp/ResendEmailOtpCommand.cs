@@ -1,8 +1,10 @@
-﻿using eSecurity.Core.Responses.Verification;
-using eSecurity.Core.Security.Identity;
+﻿using eSecurity.Core.Requests.Verification;
+using eSecurity.Core.Responses.Verification;
+using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Idp.Common.Messaging.Email;
 using eSecurity.Idp.Common.Messaging.Email.Builders;
 using eSecurity.Idp.Security.Authorization.Codes;
+using eSecurity.Idp.Security.Authorization.Verification;
 using eSecurity.Idp.Security.Identity.Email;
 using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Messaging;
@@ -11,19 +13,21 @@ using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Idp.Features.Verification.EmailOtp;
 
-public sealed record ResendEmailOtpCommand : IRequest<Result>;
+public sealed record ResendEmailOtpCommand(ResendEmailOtpRequest Request) : IRequest<Result>;
 
 public sealed class ResendEmailOtpCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
     IUserResendAttemptsService resendAttemptsService,
     IEmailQueryService emailQueryService,
     IEmailService emailService,
+    IVerificationQueryService verificationQueryService,
     ICodeManager codeManager) : IRequestHandler<ResendEmailOtpCommand, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IUserResendAttemptsService _resendAttemptsService = resendAttemptsService;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly IEmailService _emailService = emailService;
+    private readonly IVerificationQueryService _verificationQueryService = verificationQueryService;
     private readonly ICodeManager _codeManager = codeManager;
 
     public async Task<Result> Handle(ResendEmailOtpCommand request, CancellationToken cancellationToken = default)
@@ -35,19 +39,35 @@ public sealed class ResendEmailOtpCommandHandler(
             return Results.ClientError(ClientErrorCode.Unauthorized, error);
         }
 
-        if (!userResult.TryGetValue(out var user))
+        var user = userResult.GetValue();
+        var verificationRequest = await _verificationQueryService.GetByIdAsync(user.Id,
+            request.Request.VerificationId, cancellationToken);
+
+        if (verificationRequest is null)
         {
-            return Results.ClientError(ClientErrorCode.Unauthorized, new Error()
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
-                Code = ErrorCode.Unauthorized,
-                Description = "Unauthorized"
+                Code = ErrorCode.InvalidRequest,
+                Description = "'verification_id' is invalid"
             });
         }
 
+        if (verificationRequest.Status != VerificationStatus.Pending || 
+            string.IsNullOrWhiteSpace(verificationRequest.Target))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Invalid verification request"
+            });
+        }
+        
         if (user.ResendAttempts >= 5)
         {
             return Results.Success(SuccessCodes.Ok, new ResendEmailOtpResponse()
             {
+                VerificationId = verificationRequest.Id,
+                ExpiresAt = verificationRequest.ExpiredAt,
                 IsResendAvailable = false
             });
         }
@@ -61,8 +81,10 @@ public sealed class ResendEmailOtpCommandHandler(
             });
         }
         
-        var primaryEmail = await _emailQueryService.GetByTypeAsync(user.Id, EmailType.Primary, cancellationToken);
-        if (primaryEmail is null)
+        var targetEmail = await _emailQueryService.GetByEmailAsync(user.Id, 
+            verificationRequest.Target, cancellationToken);
+        
+        if (targetEmail is null)
         {
             return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
             {
@@ -77,21 +99,12 @@ public sealed class ResendEmailOtpCommandHandler(
             var error = codeResult.GetError();
             return Results.ServerError(ServerErrorCode.InternalServerError, error);
         }
-
-        if (!codeResult.TryGetValue(out var code))
-        {
-            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
-            {
-                Code = ErrorCode.ServerError,
-                Description = "Server error"
-            });
-        }
-
+        
         var emailContext = new EmailVerificationContext
         {
-            Code = code,
+            Code = codeResult.GetValue(),
             Subject = "Access confirmation",
-            To = primaryEmail.Email
+            To = targetEmail.Email
         };
 
         await _emailService.SendAsync(emailContext, cancellationToken);
@@ -107,6 +120,8 @@ public sealed class ResendEmailOtpCommandHandler(
         {
             response = new ResendEmailOtpResponse()
             {
+                VerificationId = verificationRequest.Id,
+                ExpiresAt = verificationRequest.ExpiredAt,
                 IsResendAvailable = false
             };
         }
@@ -114,6 +129,8 @@ public sealed class ResendEmailOtpCommandHandler(
         {
             response = new ResendEmailOtpResponse()
             {
+                VerificationId = verificationRequest.Id,
+                ExpiresAt = verificationRequest.ExpiredAt,
                 IsResendAvailable = true,
                 ResendAvailableAt = user.ResendAvailableAt
             };

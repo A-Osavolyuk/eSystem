@@ -10,10 +10,12 @@ public sealed class VerificationRequestConfiguration : IEntityTypeConfiguration<
     {
         builder.HasKey(x => x.Id);
         
-        builder.Property(x => x.Action).HasEnumConversion();
-        builder.Property(x => x.Purpose).HasEnumConversion();
         builder.Property(x => x.Status).HasEnumConversion();
         builder.Property(x => x.Method).HasEnumConversion();
+        builder.Property(x => x.Operation).HasEnumConversion();
+
+        builder.Property(x => x.Payload).HasColumnType("jsonb");
+        builder.Property(x => x.Target).HasMaxLength(50);
         
         builder.HasOne(x => x.User)
             .WithMany()

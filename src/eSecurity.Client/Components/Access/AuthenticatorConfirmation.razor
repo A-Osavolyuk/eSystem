@@ -77,8 +77,7 @@
     {
         var request = new VerifyAuthenticatorAppRequest()
         {
-            Action = Context.Action,
-            Purpose = Context.Purpose,
+            OperationType = Context.Operation,
             Code = _codeModel.Code
         };
 

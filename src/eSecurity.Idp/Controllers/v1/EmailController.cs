@@ -1,8 +1,10 @@
-using eSecurity.Idp.Features.Email.Commands;
 using eSecurity.Core.Requests;
 using eSecurity.Core.Requests.Email.Change;
+using eSecurity.Core.Requests.Email.Reset;
 using eSecurity.Core.Requests.Email.Verification;
+using eSecurity.Idp.Features.Email;
 using eSecurity.Idp.Features.Email.Change;
+using eSecurity.Idp.Features.Email.Reset;
 using eSecurity.Idp.Features.Email.Verification;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
@@ -22,64 +24,31 @@ public class EmailController(IMediator mediator) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("verification/confirm")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> ConfirmVerificationAsync([FromBody] ConfirmEmailVerificationRequest request)
+    public async ValueTask<IActionResult> VerifyEmailAsync([FromBody] VerifyEmailRequest request)
     {
-        var result = await _mediator.Send(new ConfirmEmailVerificationCommand(request));
+        var result = await _mediator.Send(new VerifyEmailCommand(request));
         return HttpContext.HandleResult(result);
     }
     
-    [EndpointSummary("Send email verification")]
-    [EndpointDescription("Send email verification")]
+    [EndpointSummary("Email verification")]
+    [EndpointDescription("Email verification")]
     [ProducesResponseType(200)]
-    [HttpPost("verification/send-code")]
+    [HttpPost("verification/sent-otp")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> SendVerificationAsync([FromBody] SendEmailVerificationRequest request)
+    public async ValueTask<IActionResult> SendEmailVerificationOtpAsync([FromBody] SendEmailVerificationOtpRequest otpRequest)
     {
-        var result = await _mediator.Send(new SendEmailVerificationCommand(request));
-        return HttpContext.HandleResult(result);
-    }
-    
-    [EndpointSummary("Resend email verification")]
-    [EndpointDescription("Resend email verification")]
-    [ProducesResponseType(200)]
-    [HttpPost("verification/resend-code")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> ResendVerificationAsync([FromBody] ResendEmailVerificationRequest request)
-    {
-        var result = await _mediator.Send(new ResendEmailVerificationCommand(request));
+        var result = await _mediator.Send(new SendEmailVerificationOtpCommand(otpRequest));
         return HttpContext.HandleResult(result);
     }
     
     [EndpointSummary("Send email change")]
     [EndpointDescription("Send email change")]
     [ProducesResponseType(200)]
-    [HttpPost("change/send-code")]
+    [HttpPost("change/send-otp")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> SendEmailAsyncAsync([FromBody] SendEmailChangeRequest request)
+    public async ValueTask<IActionResult> SendEmailChangeOtpAsync([FromBody] SendEmailChangeOtpRequest otpRequest)
     {
-        var result = await _mediator.Send(new SendEmailChangeCommand(request));
-        return HttpContext.HandleResult(result);
-    }
-    
-    [EndpointSummary("Resend email change")]
-    [EndpointDescription("Resend email change")]
-    [ProducesResponseType(200)]
-    [HttpPost("change/resend-code")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> ResendEmailAsyncAsync([FromBody] ResendEmailChangeRequest request)
-    {
-        var result = await _mediator.Send(new ResendEmailChangeCommand(request));
-        return HttpContext.HandleResult(result);
-    }
-    
-    [EndpointSummary("Can change email")]
-    [EndpointDescription("Can change email")]
-    [ProducesResponseType(200)]
-    [HttpPost("change/can-change")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> CanChangeEmailAsync([FromBody] CanChangeEmailRequest request)
-    {
-        var result = await _mediator.Send(new CanChangeEmailCommand(request));
+        var result = await _mediator.Send(new SendEmailChangeOtpCommand(otpRequest));
         return HttpContext.HandleResult(result);
     }
     
@@ -88,9 +57,31 @@ public class EmailController(IMediator mediator) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("change/confirm")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> ConfirmEmailChangeAsync([FromBody] ConfirmEmailChangeRequest request)
+    public async ValueTask<IActionResult> ChangeEmailAsync([FromBody] ChangeEmailRequest request)
     {
-        var result = await _mediator.Send(new ConfirmEmailChangeCommand(request));
+        var result = await _mediator.Send(new ChangeEmailCommand(request));
+        return HttpContext.HandleResult(result);
+    }
+    
+    [EndpointSummary("Send email reset")]
+    [EndpointDescription("Send email reset")]
+    [ProducesResponseType(200)]
+    [HttpPost("reset/send-otp")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async ValueTask<IActionResult> SendEmailResetOtpAsync([FromBody] SendEmailResetOtpRequest otpRequest)
+    {
+        var result = await _mediator.Send(new SendEmailResetOtpCommand(otpRequest));
+        return HttpContext.HandleResult(result);
+    }
+    
+    [EndpointSummary("Confirm email reset")]
+    [EndpointDescription("Confirm email reset")]
+    [ProducesResponseType(200)]
+    [HttpPost("reset/confirm")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async ValueTask<IActionResult> ResetEmailAsync([FromBody] ResetEmailRequest request)
+    {
+        var result = await _mediator.Send(new ResetEmailCommand(request));
         return HttpContext.HandleResult(result);
     }
     
@@ -113,17 +104,6 @@ public class EmailController(IMediator mediator) : ControllerBase
     public async ValueTask<IActionResult> AddAsync([FromBody] AddEmailRequest request)
     {
         var result = await _mediator.Send(new AddEmailCommand(request));
-        return HttpContext.HandleResult(result);
-    }
-    
-    [EndpointSummary("Reset email")]
-    [EndpointDescription("Reset email")]
-    [ProducesResponseType(200)]
-    [HttpPost("reset")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> ResetAsync([FromBody] ResetEmailRequest request)
-    {
-        var result = await _mediator.Send(new ResetEmailCommand(request));
         return HttpContext.HandleResult(result);
     }
     

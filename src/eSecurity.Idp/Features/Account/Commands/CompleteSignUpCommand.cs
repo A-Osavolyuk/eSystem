@@ -57,7 +57,7 @@ public sealed class CompleteSignUpCommandHandler(
             });
         }
 
-        var code = await _codeManager.FindAsync(user, request.Request.Code, cancellationToken);
+        var code = await _codeManager.FindByCodeAsync(user, request.Request.Code, cancellationToken);
         if (code is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error

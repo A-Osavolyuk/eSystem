@@ -10,8 +10,13 @@ public interface IEmailCommandService
 
     ValueTask<Result> ChangeAsync(Guid userId, string currentEmail, string newEmail,
         CancellationToken cancellationToken = default);
+    
+    ValueTask<Result> ResetAsync(Guid userId, string currentEmail, string newEmail,
+        CancellationToken cancellationToken = default);
 
-    ValueTask<Result> VerifyAsync(Guid userId, string email, CancellationToken cancellationToken = default);
+    ValueTask<Result> VerifyAsync(Guid userId, string email, 
+        CancellationToken cancellationToken = default);
 
-    ValueTask<Result> RemoveAsync(Guid userId, string email, CancellationToken cancellationToken = default);
+    ValueTask<Result> RemoveAsync(Guid userId, string email, 
+        CancellationToken cancellationToken = default);
 }

@@ -13,11 +13,13 @@ public sealed record ResetPasswordCommand(ResetPasswordRequest Request) : IReque
 public sealed class ResetPasswordCommandHandler(
     IUserQueryService userQueryService,
     IPasswordManager passwordManager,
-    IVerificationManager verificationManager) : IRequestHandler<ResetPasswordCommand, Result>
+    IVerificationQueryService verificationQueryService,
+    IVerificationCommandService verificationCommandService) : IRequestHandler<ResetPasswordCommand, Result>
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IPasswordManager _passwordManager = passwordManager;
-    private readonly IVerificationManager _verificationManager = verificationManager;
+    private readonly IVerificationQueryService _verificationQueryService = verificationQueryService;
+    private readonly IVerificationCommandService _verificationCommandService = verificationCommandService;
 
     public async Task<Result> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
     {
@@ -40,17 +42,19 @@ public sealed class ResetPasswordCommandHandler(
             });
         }
 
-        var verification = await _verificationManager.FindByIdAsync(request.Request.VerificationId, cancellationToken);
-        if (verification?.Status is not VerificationStatus.Approved)
+        var verification = await _verificationQueryService.GetByIdAsync(user.Id, 
+            request.Request.VerificationId, cancellationToken);
+        
+        if (verification is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
-                Description = "Unverified request."
+                Description = "Invalid verification request"
             });
         }
         
-        var verificationResult = await _verificationManager.ConsumeAsync(verification, cancellationToken);
+        var verificationResult = await _verificationCommandService.ConsumeAsync(verification, cancellationToken);
         if (!verificationResult.Succeeded) return verificationResult;
 
         var result = await _passwordManager.ResetAsync(user, request.Request.Password, cancellationToken);

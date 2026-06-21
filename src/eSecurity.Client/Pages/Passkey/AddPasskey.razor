@@ -164,10 +164,9 @@
 
     protected override void OnInitialized()
     {
-        _context = new()
+        _context = new ConfirmationContext
         {
-            Action = ActionType.Create,
-            Purpose = PurposeType.Passkey
+            Operation = OperationType.CreateSoftwareKey
         };
     }
 

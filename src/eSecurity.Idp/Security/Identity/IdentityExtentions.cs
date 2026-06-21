@@ -27,7 +27,7 @@ public static class IdentityExtensions
             
             builder.Services.AddScoped<IEmailQueryService, EmailQueryService>();
             builder.Services.AddScoped<IEmailCommandService, EmailCommandService>();
-            builder.Services.AddScoped<IEmailPolicyService, EmailPolicyService>();
+            builder.Services.AddScoped<IEmailPolicy, EmailPolicy>();
         
             builder.ConfigureIdentity(cfg =>
             {
