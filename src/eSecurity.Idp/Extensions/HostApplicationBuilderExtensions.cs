@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using eSecurity.Idp.Behaviors;
 using eSecurity.Idp.Common.Errors;
 using eSecurity.Idp.Conventions;
 using eSecurity.Idp.Common.Binding;
@@ -38,6 +39,7 @@ public static class HostApplicationBuilderExtensions
             builder.Services.AddMediator(cfg =>
             {
                 cfg.AddRequestHandlersFromAssembly<IAssemblyMarker>();
+                cfg.AddPipelineBehavior(typeof(ValidationBehavior<,>));
             });
             
             builder.Services.AddHttpContextAccessor();
