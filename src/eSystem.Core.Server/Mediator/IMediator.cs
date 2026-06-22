@@ -68,10 +68,6 @@ public sealed class Mediator(IServiceProvider serviceProvider) : IMediator
                     return result.Value!;
             }
 
-            var defaultFailureHandler = _serviceProvider.GetService<IDefaultPipelineFailureHandler>();
-            if (defaultFailureHandler is not null)
-                return await defaultFailureHandler.HandleAsync<TResponse>(ex, cancellationToken);
-
             throw;
         }
     }

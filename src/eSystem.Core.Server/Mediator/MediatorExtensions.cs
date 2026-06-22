@@ -95,13 +95,4 @@ public sealed class MediatorConfigurationBuilder(IServiceCollection serviceColle
         
         _serviceCollection.AddTransient<IPipelineFailureHandler<TRequest, TResponse>, TFailureHandler>();
     }
-
-    public void AddDefaultPipelineFailureHandler<TFailureHandler>()
-        where TFailureHandler : class, IDefaultPipelineFailureHandler
-    {
-        if (_serviceCollection.Any(x => x.ServiceType == typeof(IDefaultPipelineFailureHandler)))
-            throw new InvalidOperationException("Default pipeline failure handler is already registered");
-        
-        _serviceCollection.AddTransient<IDefaultPipelineFailureHandler, TFailureHandler>();
-    }
 }
