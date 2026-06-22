@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -822,14 +823,12 @@ namespace eSecurity.Idp.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Action = table.Column<string>(type: "text", nullable: false),
-                    Purpose = table.Column<string>(type: "text", nullable: false),
                     Method = table.Column<string>(type: "text", nullable: false),
                     Status = table.Column<string>(type: "text", nullable: false),
+                    Operation = table.Column<string>(type: "text", nullable: false),
+                    Target = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    Payload = table.Column<Dictionary<string, string>>(type: "jsonb", nullable: true),
                     ExpiredAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    ApprovedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    ConsumedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    CancelledAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
