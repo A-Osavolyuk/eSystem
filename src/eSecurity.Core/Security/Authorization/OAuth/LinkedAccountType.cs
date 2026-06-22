@@ -7,6 +7,9 @@ namespace eSecurity.Core.Security.Authorization.OAuth;
 [JsonConverter(typeof(JsonEnumValueConverter<LinkedAccountType>))]
 public enum LinkedAccountType
 {
+    [EnumValue("none")]
+    None,
+    
     [EnumValue("google")]
     Google,
     

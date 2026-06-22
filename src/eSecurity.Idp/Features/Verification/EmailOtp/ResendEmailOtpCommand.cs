@@ -1,4 +1,5 @@
-﻿using eSecurity.Core.Requests.Verification;
+﻿using System.Text.Json.Serialization;
+using eSecurity.Core.Requests.Verification;
 using eSecurity.Core.Responses.Verification;
 using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Idp.Common.Messaging.Email;
@@ -13,7 +14,11 @@ using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Idp.Features.Verification.EmailOtp;
 
-public sealed record ResendEmailOtpCommand(ResendEmailOtpRequest Request) : IRequest<Result>;
+public sealed record ResendEmailOtpCommand : IRequest<Result>
+{
+    [JsonPropertyName("verification_id")]
+    public Guid VerificationId { get; set; }
+}
 
 public sealed class ResendEmailOtpCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
@@ -41,7 +46,7 @@ public sealed class ResendEmailOtpCommandHandler(
 
         var user = userResult.GetValue();
         var verificationRequest = await _verificationQueryService.GetByIdAsync(user.Id,
-            request.Request.VerificationId, cancellationToken);
+            request.VerificationId, cancellationToken);
 
         if (verificationRequest is null)
         {

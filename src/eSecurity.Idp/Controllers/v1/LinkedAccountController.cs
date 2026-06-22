@@ -1,5 +1,5 @@
-using eSecurity.Idp.Features.LinkedAccounts.Commands;
 using eSecurity.Core.Requests;
+using eSecurity.Idp.Features.LinkedAccounts;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 
@@ -18,9 +18,9 @@ public class LinkedAccountController(IMediator mediator) : ControllerBase
     [EndpointDescription("Disconnect linked account")]
     [ProducesResponseType(200)]
     [HttpPost("disconnect")]
-    public async ValueTask<IActionResult> DisconnectAsync([FromBody] DisconnectLinkedAccountRequest request)
+    public async ValueTask<IActionResult> DisconnectAsync([FromBody] DisconnectLinkedAccountCommand command)
     {
-        var result = await _mediator.Send(new DisconnectLinkedAccountCommand(request));
+        var result = await _mediator.Send(command);
         return HttpContext.HandleResult(result);
     }
 }

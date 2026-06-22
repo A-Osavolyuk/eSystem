@@ -1,4 +1,5 @@
 ﻿using eSecurity.Idp.Data.Entities;
+using eSecurity.Idp.Features.Connect;
 using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Primitives;
 using eSystem.Core.Server.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
@@ -9,10 +10,10 @@ public sealed class LoginHintUserResolver(IUserQueryService userQueryService) : 
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
     
-    public async Task<TypedResult<UserEntity>> ResolveAsync(BackchannelAuthenticationRequest request,
+    public async Task<TypedResult<UserEntity>> ResolveAsync(BackchannelAuthenticationCommand command,
         CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrEmpty(request.LoginHint))
+        if (string.IsNullOrEmpty(command.LoginHint))
         {
             return TypedResult<UserEntity>.Fail(new Error
             {
@@ -21,7 +22,7 @@ public sealed class LoginHintUserResolver(IUserQueryService userQueryService) : 
             });
         }
         
-        var user = await _userQueryService.GetByLoginAsync(request.LoginHint, cancellationToken);
+        var user = await _userQueryService.GetByLoginAsync(command.LoginHint, cancellationToken);
         if (user is null)
         {
             return TypedResult<UserEntity>.Fail(new Error

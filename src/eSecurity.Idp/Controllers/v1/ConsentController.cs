@@ -1,5 +1,5 @@
-﻿using eSecurity.Idp.Features.Connect.Commands;
-using eSecurity.Core.Requests;
+﻿using eSecurity.Core.Requests;
+using eSecurity.Idp.Features.Connect;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 
@@ -17,9 +17,9 @@ public class ConsentController(IMediator mediator) : ControllerBase
     [EndpointDescription("Check consents")]
     [ProducesResponseType(200)]
     [HttpPost("check")]
-    public async ValueTask<IActionResult> CheckAsync([FromBody] CheckConsentRequest request)
+    public async ValueTask<IActionResult> CheckAsync([FromBody] CheckConsentCommand command)
     {
-        var result = await _mediator.Send(new CheckConsentCommand(request));
+        var result = await _mediator.Send(command);
         return HttpContext.HandleResult(result);
     }
     
@@ -27,9 +27,9 @@ public class ConsentController(IMediator mediator) : ControllerBase
     [EndpointDescription("Grant consents")]
     [ProducesResponseType(200)]
     [HttpPost("grant")]
-    public async ValueTask<IActionResult> GrantAsync([FromBody] GrantConsentRequest request)
+    public async ValueTask<IActionResult> GrantAsync([FromBody] GrantConsentCommand command)
     {
-        var result = await _mediator.Send(new GrantConsentCommand(request));
+        var result = await _mediator.Send(command);
         return HttpContext.HandleResult(result);
     }
 }

@@ -1,0 +1,39 @@
+﻿using System.Text.Json.Serialization;
+using eSecurity.Core.Security.Authentication.SignIn;
+using eSecurity.Idp.Security.Authentication.SignIn;
+using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
+
+namespace eSecurity.Idp.Features.Account;
+
+public sealed class SignInCommand : IRequest<Result>
+{
+    [JsonPropertyName("payload")]
+    public required SignInPayload Payload { get; set; }
+}
+
+public class SignInCommandHandler(ISignInResolver signInResolver) : IRequestHandler<SignInCommand, Result>
+{
+    private readonly ISignInResolver _signInResolver = signInResolver;
+
+    public async Task<Result> Handle(SignInCommand request, CancellationToken cancellationToken)
+    {
+        var type = request.Payload switch
+        {
+            PasswordSignInPayload => SignInType.Password,
+            PasskeySignInPayload => SignInType.Passkey,
+            OAuthSignInPayload => SignInType.OAuth,
+            TwoFactorSignInPayload => SignInType.TwoFactor,
+            _ => throw new NotSupportedException("Unknown payload")
+        };
+        
+        if (type == SignInType.OAuth) return Results.ClientError(ClientErrorCode.BadRequest, new Error
+        {
+            Code = ErrorCode.BadRequest,
+            Description = "Unsupported for manual call"
+        });
+        
+        var strategy = _signInResolver.Resolve(type);
+        return await strategy.ExecuteAsync(request.Payload, cancellationToken);
+    }
+}

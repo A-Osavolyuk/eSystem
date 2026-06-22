@@ -1,4 +1,5 @@
-﻿using eSecurity.Idp.Features.Email.Change;
+﻿using eSecurity.Idp.Common.Validation.Validators.Standard;
+using eSecurity.Idp.Features.Email.Change;
 using FluentValidation;
 
 namespace eSecurity.Idp.Common.Validation.Validators.Email;
@@ -13,12 +14,10 @@ public sealed class ChangeEmailCommandValidator : AbstractValidator<ChangeEmailC
 
         RuleFor(x => x.CurrentEmail)
             .Cascade(CascadeMode.Stop)
-            .NotEmpty().WithMessage("'current_email' is required")
-            .EmailAddress().WithMessage("'current_email' is invalid");
+            .SetValidator(new EmailValidator("current_email"));
 
         RuleFor(x => x.NewEmail)
             .Cascade(CascadeMode.Stop)
-            .NotEmpty().WithMessage("'new_email' is required")
-            .EmailAddress().WithMessage("'new_email' is invalid");
+            .SetValidator(new EmailValidator("new_email"));
     }
 }

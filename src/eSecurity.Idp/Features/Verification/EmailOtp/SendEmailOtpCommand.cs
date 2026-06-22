@@ -1,4 +1,5 @@
-﻿using eSecurity.Core.Requests.Verification;
+﻿using System.Text.Json.Serialization;
+using eSecurity.Core.Requests.Verification;
 using eSecurity.Core.Responses.Verification;
 using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Idp.Common.Messaging.Email;
@@ -14,7 +15,14 @@ using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Idp.Features.Verification.EmailOtp;
 
-public sealed record SendEmailOtpCommand(SendEmailOtpRequest Request) : IRequest<Result>;
+public sealed record SendEmailOtpCommand : IRequest<Result>
+{
+    [JsonPropertyName("email")]
+    public required string Email { get; set; }
+    
+    [JsonPropertyName("operation_type")]
+    public required OperationType OperationType { get; set; }
+}
 
 public sealed class SendEmailOtpCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
@@ -33,15 +41,6 @@ public sealed class SendEmailOtpCommandHandler(
 
     public async Task<Result> Handle(SendEmailOtpCommand request, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrEmpty(request.Request.Email))
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
-            {
-                Code = ErrorCode.InvalidRequest,
-                Description = "'email' is required"
-            });
-        }
-        
         var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
@@ -50,7 +49,7 @@ public sealed class SendEmailOtpCommandHandler(
         }
 
         var user = userResult.GetValue();
-        var userEmail = await _emailQueryService.GetByEmailAsync(user.Id, request.Request.Email, cancellationToken);
+        var userEmail = await _emailQueryService.GetByEmailAsync(user.Id, request.Email, cancellationToken);
         if (userEmail is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error()
@@ -74,8 +73,8 @@ public sealed class SendEmailOtpCommandHandler(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            Operation = request.Request.OperationType,
-            Target = request.Request.Email,
+            Operation = request.OperationType,
+            Target = request.Email,
             Status = VerificationStatus.Pending,
             ExpiredAt = DateTimeOffset.UtcNow.AddMinutes(5)
         };

@@ -1,5 +1,5 @@
-﻿using eSecurity.Idp.Features.Username.Commands;
-using eSecurity.Core.Requests;
+﻿using eSecurity.Core.Requests;
+using eSecurity.Idp.Features.Users;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 

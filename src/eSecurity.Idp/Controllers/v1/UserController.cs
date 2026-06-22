@@ -1,4 +1,4 @@
-using eSecurity.Idp.Features.Users.Queries;
+using eSecurity.Idp.Features.Users;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 

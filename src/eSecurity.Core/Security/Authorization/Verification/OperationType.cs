@@ -7,6 +7,9 @@ namespace eSecurity.Core.Security.Authorization.Verification;
 [JsonConverter(typeof(JsonEnumValueConverter<OperationType>))]
 public enum OperationType
 {
+    [EnumValue("none")]
+    None,
+    
     [EnumValue("change_email")]
     ChangeEmail,
     

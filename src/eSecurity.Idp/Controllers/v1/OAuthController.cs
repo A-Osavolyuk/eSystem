@@ -1,5 +1,5 @@
 ﻿using eSecurity.Idp.Common.Responses;
-using eSecurity.Idp.Features.OAuth.Commands;
+using eSecurity.Idp.Features.OAuth;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;

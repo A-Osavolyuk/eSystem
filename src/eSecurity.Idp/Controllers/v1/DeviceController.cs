@@ -1,6 +1,5 @@
-using eSecurity.Idp.Features.DeviceCode.Commands;
-using eSecurity.Idp.Features.DeviceCode.Queries;
 using eSecurity.Core.Requests;
+using eSecurity.Idp.Features.DeviceCode;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 
@@ -28,9 +27,9 @@ public class DeviceController(IMediator mediator) : ControllerBase
     [EndpointDescription("Check device code")]
     [ProducesResponseType(200)]
     [HttpPost("device-code/check")]
-    public async ValueTask<IActionResult> CheckDeviceCode([FromBody] CheckDeviceCodeRequest request)
+    public async ValueTask<IActionResult> CheckDeviceCode([FromBody] CheckDeviceCodeCommand command)
     {
-        var result = await _mediator.Send(new CheckDeviceCodeCommand(request));
+        var result = await _mediator.Send(command);
         return HttpContext.HandleResult(result);
     }
     
@@ -39,9 +38,9 @@ public class DeviceController(IMediator mediator) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("device-code/decision")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> DecisionAsync([FromBody] DeviceCodeDecisionRequest request)
+    public async ValueTask<IActionResult> DecisionAsync([FromBody] DeviceCodeDecisionCommand command)
     {
-        var result = await _mediator.Send(new DeviceCodeDecisionCommand(request));
+        var result = await _mediator.Send(command);
         return HttpContext.HandleResult(result);
     }
 }

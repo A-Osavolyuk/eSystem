@@ -7,6 +7,9 @@ namespace eSystem.Core.Security.Authentication.OpenIdConnect;
 [JsonConverter(typeof(JsonEnumValueConverter<DeviceCodeDecision>))]
 public enum DeviceCodeDecision
 {
+    [EnumValue("none")]
+    None,
+    
     [EnumValue("approved")]
     Approved,
     

@@ -1,6 +1,4 @@
-using eSecurity.Idp.Features.Account.Commands;
-using eSecurity.Idp.Features.Account.Queries;
-using eSecurity.Core.Requests;
+using eSecurity.Idp.Features.Account;
 using eSecurity.Idp.Filters;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
@@ -30,9 +28,9 @@ public class AccountController(IMediator mediator) : ControllerBase
     [EndpointDescription("Sign in")]
     [ProducesResponseType(200)]
     [HttpPost("sign-in")]
-    public async ValueTask<IActionResult> SignInAsync([FromBody] SignInRequest request)
+    public async ValueTask<IActionResult> SignInAsync([FromBody] SignInCommand command)
     {
-        var result = await _mediator.Send(new SignInCommand(request));
+        var result = await _mediator.Send(command);
         return HttpContext.HandleResult(result);
     }
     
@@ -41,9 +39,9 @@ public class AccountController(IMediator mediator) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("sign-up")]
     [RequireHeaders(HeaderTypes.XLocale, HeaderTypes.XTimezone)]
-    public async ValueTask<IActionResult> SignUpAsync([FromBody] SignUpRequest request)
+    public async ValueTask<IActionResult> SignUpAsync([FromBody] SignUpCommand command)
     {
-        var result = await _mediator.Send(new SignUpCommand(request));
+        var result = await _mediator.Send(command);
         return HttpContext.HandleResult(result);
     }
     
@@ -51,9 +49,9 @@ public class AccountController(IMediator mediator) : ControllerBase
     [EndpointDescription("Complete sign up")]
     [ProducesResponseType(200)]
     [HttpPost("sign-up/complete")]
-    public async ValueTask<IActionResult> CompleteSignUpAsync([FromBody] CompleteSignUpRequest request)
+    public async ValueTask<IActionResult> CompleteSignUpAsync([FromBody] CompleteSignUpCommand command)
     {
-        var result = await _mediator.Send(new CompleteSignUpCommand(request));
+        var result = await _mediator.Send(command);
         return HttpContext.HandleResult(result);
     }
     
@@ -61,9 +59,9 @@ public class AccountController(IMediator mediator) : ControllerBase
     [EndpointDescription("Check")]
     [ProducesResponseType(200)]
     [HttpPost("check")]
-    public async ValueTask<IActionResult> CheckAsync([FromBody] CheckAccountRequest request)
+    public async ValueTask<IActionResult> CheckAsync([FromBody] CheckAccountCommand command)
     {
-        var result = await _mediator.Send(new CheckAccountCommand(request));
+        var result = await _mediator.Send(command);
         return HttpContext.HandleResult(result);
     }
 }

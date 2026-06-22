@@ -1,4 +1,5 @@
-﻿using eSecurity.Core.Requests.Verification;
+﻿using System.Text.Json.Serialization;
+using eSecurity.Core.Requests.Verification;
 using eSecurity.Core.Responses.Verification;
 using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Idp.Data.Entities;
@@ -6,13 +7,21 @@ using eSecurity.Idp.Security.Authorization.Verification;
 using eSecurity.Idp.Security.Credentials.PublicKey;
 using eSecurity.Idp.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Idp.Security.Identity.User;
+using eSecurity.WebAuthN;
 using eSecurity.WebAuthN.Constants;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Idp.Features.Verification.SoftwareKey;
 
-public sealed record VerifySoftwareKeyCommand(VerifySoftwareKeyRequest Request) : IRequest<Result>;
+public sealed record VerifySoftwareKeyCommand : IRequest<Result>
+{
+    [JsonPropertyName("credential")]
+    public required PublicKeyCredential Credential { get; set; }
+    
+    [JsonPropertyName("operation_type")]
+    public OperationType OperationType { get; set; }
+}
 
 public sealed class VerifySoftwareKeyCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
@@ -37,7 +46,7 @@ public sealed class VerifySoftwareKeyCommandHandler(
         }
 
         var user = userResult.GetValue();
-        var credential = request.Request.Credential;
+        var credential = request.Credential;
         var credentialId = CredentialUtils.ToBase64String(credential.Id);
 
         var passkey = await _passkeyManager.FindByCredentialIdAsync(credentialId, cancellationToken);
@@ -67,7 +76,7 @@ public sealed class VerifySoftwareKeyCommandHandler(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            Operation = request.Request.OperationType,
+            Operation = request.OperationType,
             Status = VerificationStatus.Approved,
             Method = VerificationMethod.Passkey,
             ExpiredAt = DateTimeOffset.UtcNow.Add(_configuration.Timestamp),

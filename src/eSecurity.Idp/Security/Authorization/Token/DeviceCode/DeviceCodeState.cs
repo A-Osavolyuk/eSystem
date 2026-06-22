@@ -7,6 +7,9 @@ namespace eSecurity.Idp.Security.Authorization.Token.DeviceCode;
 [JsonConverter(typeof(JsonEnumValueConverter<DeviceCodeState>))]
 public enum DeviceCodeState
 {
+    [EnumValue("none")]
+    None,
+    
     [EnumValue("pending")]
     Pending,
     

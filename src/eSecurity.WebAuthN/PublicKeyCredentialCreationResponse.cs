@@ -2,7 +2,7 @@
 
 namespace eSecurity.WebAuthN;
 
-public class PublicKeyCredentialCreationResponse
+public sealed class PublicKeyCredentialCreationResponse
 {
     [JsonPropertyName("id")]
     public required string Id { get; set; } = null!;
@@ -17,7 +17,7 @@ public class PublicKeyCredentialCreationResponse
     public required CredentialResponse Response { get; set; } = null!;
 }
 
-public class CredentialResponse
+public sealed class CredentialResponse
 {
     [JsonPropertyName("attestationObject")]
     public required string AttestationObject { get; set; } = null!;

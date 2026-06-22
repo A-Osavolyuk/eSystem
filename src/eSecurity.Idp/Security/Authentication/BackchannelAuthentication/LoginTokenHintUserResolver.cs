@@ -1,4 +1,5 @@
 ﻿using eSecurity.Idp.Data.Entities;
+using eSecurity.Idp.Features.Connect;
 using eSecurity.Idp.Security.Authorization.Token;
 using eSecurity.Idp.Security.Cryptography.Hashing;
 using eSecurity.Idp.Security.Identity.User;
@@ -16,10 +17,10 @@ public sealed class LoginTokenHintUserResolver(
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
 
-    public async Task<TypedResult<UserEntity>> ResolveAsync(BackchannelAuthenticationRequest request,
+    public async Task<TypedResult<UserEntity>> ResolveAsync(BackchannelAuthenticationCommand command,
         CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrEmpty(request.LoginTokenHint))
+        if (string.IsNullOrEmpty(command.LoginTokenHint))
         {
             return TypedResult<UserEntity>.Fail(new Error
             {
@@ -28,7 +29,7 @@ public sealed class LoginTokenHintUserResolver(
             });
         }
         
-        var hash = _hasher.Hash(request.LoginTokenHint);
+        var hash = _hasher.Hash(command.LoginTokenHint);
         var token = await _tokenManager.FindByHashAsync(hash, cancellationToken);
         if (token?.TokenType is not OpaqueTokenType.LoginToken)
         {

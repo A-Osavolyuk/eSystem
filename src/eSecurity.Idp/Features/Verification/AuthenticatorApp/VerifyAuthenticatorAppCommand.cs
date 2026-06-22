@@ -1,4 +1,5 @@
-﻿using eSecurity.Core.Requests.Verification;
+﻿using System.Text.Json.Serialization;
+using eSecurity.Core.Requests.Verification;
 using eSecurity.Core.Responses.Verification;
 using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Idp.Data.Entities;
@@ -13,7 +14,14 @@ using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Idp.Features.Verification.AuthenticatorApp;
 
-public sealed record VerifyAuthenticatorAppCommand(VerifyAuthenticatorAppRequest Request) : IRequest<Result>;
+public sealed record VerifyAuthenticatorAppCommand : IRequest<Result>
+{
+    [JsonPropertyName("code")]
+    public required string Code { get; set; }
+    
+    [JsonPropertyName("operation_type")]
+    public OperationType OperationType { get; set; }
+}
 
 public sealed class VerifyAuthenticatorAppCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
@@ -38,15 +46,7 @@ public sealed class VerifyAuthenticatorAppCommandHandler(
             return Results.ClientError(ClientErrorCode.Unauthorized, error);
         }
 
-        if (!userResult.TryGetValue(out var user))
-        {
-            return Results.ClientError(ClientErrorCode.Unauthorized, new Error()
-            {
-                Code = ErrorCode.Unauthorized,
-                Description = "Unauthorized"
-            });
-        }
-        
+        var user = userResult.GetValue();
         var secret = await _secretManager.GetAsync(user, cancellationToken);
         if (secret is null)
         {
@@ -59,7 +59,7 @@ public sealed class VerifyAuthenticatorAppCommandHandler(
 
         var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Secret);
         var unprotectedSecret = protector.Unprotect(secret.ProtectedSecret);
-        var verified = AuthenticatorUtils.VerifyCode(request.Request.Code, unprotectedSecret);
+        var verified = AuthenticatorUtils.VerifyCode(request.Code, unprotectedSecret);
         if (!verified)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -73,7 +73,7 @@ public sealed class VerifyAuthenticatorAppCommandHandler(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            Operation = request.Request.OperationType,
+            Operation = request.OperationType,
             Method = VerificationMethod.AuthenticatorApp,
             Status = VerificationStatus.Approved,
             ExpiredAt = DateTimeOffset.UtcNow.Add(_configuration.Timestamp)

@@ -1,4 +1,5 @@
-﻿using eSecurity.Core.Requests.Verification;
+﻿using System.Text.Json.Serialization;
+using eSecurity.Core.Requests.Verification;
 using eSecurity.Core.Responses.Verification;
 using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Idp.Security.Authorization.Codes;
@@ -9,7 +10,17 @@ using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Idp.Features.Verification.EmailOtp;
 
-public sealed record VerifyEmailOtpCommand(VerifyEmailOtpRequest Request) : IRequest<Result>;
+public sealed record VerifyEmailOtpCommand : IRequest<Result>
+{
+    [JsonPropertyName("verification_id")]
+    public Guid VerificationId { get; set; }
+    
+    [JsonPropertyName("code")]
+    public required string Code { get; set; }
+
+    [JsonPropertyName("operation_type")]
+    public required OperationType OperationType { get; set; }
+}
 
 public sealed class VerifyEmailOtpCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
@@ -27,15 +38,6 @@ public sealed class VerifyEmailOtpCommandHandler(
 
     public async Task<Result> Handle(VerifyEmailOtpCommand request, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrEmpty(request.Request.Code))
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
-            {
-                Code = ErrorCode.InvalidRequest,
-                Description = "'code' is required"
-            });
-        }
-        
         var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
         if (!userResult.Succeeded)
         {
@@ -45,7 +47,7 @@ public sealed class VerifyEmailOtpCommandHandler(
 
         var user = userResult.GetValue();
         var verificationRequest = await _verificationQueryService.GetByIdAsync(user.Id,
-            request.Request.VerificationId, cancellationToken);
+            request.VerificationId, cancellationToken);
 
         if (verificationRequest is null)
         {
@@ -66,7 +68,7 @@ public sealed class VerifyEmailOtpCommandHandler(
             });
         }
         
-        var code = await _codeManager.FindByCodeAsync(user, request.Request.Code, cancellationToken);
+        var code = await _codeManager.FindByCodeAsync(user, request.Code, cancellationToken);
         if (code is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error()

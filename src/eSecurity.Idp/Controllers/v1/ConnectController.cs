@@ -1,5 +1,4 @@
-﻿using eSecurity.Idp.Features.Connect.Commands;
-using eSecurity.Idp.Features.Connect.Queries;
+﻿using eSecurity.Idp.Features.Connect;
 using eSecurity.Idp.Security.Authentication.EndSession;
 using eSecurity.Idp.Security.Authorization;
 using eSecurity.Idp.Security.Authorization.Constants;
@@ -158,9 +157,9 @@ public class ConnectController(IMediator mediator) : ControllerBase
     [EndpointDescription("End session")]
     [ProducesResponseType(200)]
     [HttpGet("end-session")]
-    public async ValueTask<IActionResult> EndSessionAsync([FromQuery] EndSessionRequest request)
+    public async ValueTask<IActionResult> EndSessionAsync([FromQuery] EndSessionCommand command)
     {
-        var result = await _mediator.Send(new EndSessionCommand(request));
+        var result = await _mediator.Send(command);
         return HttpContext.HandleResult(result);
     }
     
@@ -168,9 +167,9 @@ public class ConnectController(IMediator mediator) : ControllerBase
     [EndpointDescription("Confirm end session")]
     [ProducesResponseType(200)]
     [HttpGet("confirm-end-session")]
-    public async ValueTask<IActionResult> ConfirmEndSessionAsync([FromQuery] ConfirmEndSessionRequest request)
+    public async ValueTask<IActionResult> ConfirmEndSessionAsync([FromQuery] ConfirmEndSessionCommand command)
     {
-        var result = await _mediator.Send(new ConfirmEndSessionCommand(request));
+        var result = await _mediator.Send(command);
         return HttpContext.HandleResult(result);
     }
 
@@ -179,9 +178,9 @@ public class ConnectController(IMediator mediator) : ControllerBase
     [ProducesResponseType(200)]
     [Consumes(ContentTypes.Application.XwwwFormUrlEncoded)]
     [HttpPost("device-authorization")]
-    public async ValueTask<IActionResult> DeviceAuthorizationAsync([FromForm] DeviceAuthorizationRequest request)
+    public async ValueTask<IActionResult> DeviceAuthorizationAsync([FromForm] DeviceAuthorizationCommand command)
     {
-        var result = await _mediator.Send(new DeviceAuthorizationCommand(request));
+        var result = await _mediator.Send(command);
         return HttpContext.HandleResult(result);
     }
 
@@ -191,9 +190,9 @@ public class ConnectController(IMediator mediator) : ControllerBase
     [Consumes(ContentTypes.Application.XwwwFormUrlEncoded)]
     [HttpPost("backchannel-authentication")]
     public async ValueTask<IActionResult> BackchannelAuthenticationAsync(
-        [FromForm] BackchannelAuthenticationRequest request)
+        [FromForm] BackchannelAuthenticationCommand command)
     {
-        var result = await _mediator.Send(new BackchannelAuthenticationCommand(request));
+        var result = await _mediator.Send(command);
         return HttpContext.HandleResult(result);
     }
 }

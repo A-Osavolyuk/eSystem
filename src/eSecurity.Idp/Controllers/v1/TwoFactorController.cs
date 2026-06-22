@@ -1,5 +1,5 @@
-using eSecurity.Idp.Features.TwoFactor.Commands;
 using eSecurity.Core.Requests;
+using eSecurity.Idp.Features.TwoFactor;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 
@@ -18,9 +18,9 @@ public class TwoFactorController(IMediator mediator) : ControllerBase
     [EndpointDescription("Enable 2FA")]
     [ProducesResponseType(200)]
     [HttpPost("enable")]
-    public async ValueTask<IActionResult> EnableAsync([FromBody] EnableTwoFactorRequest request)
+    public async ValueTask<IActionResult> EnableAsync([FromBody] EnableTwoFactorCommand command)
     {
-        var result = await _mediator.Send(new EnableTwoFactorCommand(request));
+        var result = await _mediator.Send(command);
         return HttpContext.HandleResult(result);
     }
 
@@ -28,9 +28,9 @@ public class TwoFactorController(IMediator mediator) : ControllerBase
     [EndpointDescription("Disable 2FA")]
     [ProducesResponseType(200)]
     [HttpPost("disable")]
-    public async ValueTask<IActionResult> DisableAsync([FromBody] DisableTwoFactorRequest request)
+    public async ValueTask<IActionResult> DisableAsync([FromBody] DisableTwoFactorCommand command)
     {
-        var result = await _mediator.Send(new DisableTwoFactorCommand(request));
+        var result = await _mediator.Send(command);
         return HttpContext.HandleResult(result);
     }
 
@@ -38,10 +38,9 @@ public class TwoFactorController(IMediator mediator) : ControllerBase
     [EndpointDescription("Prefer 2FA method")]
     [ProducesResponseType(200)]
     [HttpPost("prefer")]
-    public async ValueTask<IActionResult> PreferAsync(
-        [FromBody] PreferTwoFactorMethodRequest request)
+    public async ValueTask<IActionResult> PreferAsync([FromBody] PreferTwoFactorMethodCommand command)
     {
-        var result = await _mediator.Send(new PreferTwoFactorMethodCommand(request));
+        var result = await _mediator.Send(command);
         return HttpContext.HandleResult(result);
     }
 
@@ -89,10 +88,9 @@ public class TwoFactorController(IMediator mediator) : ControllerBase
     [EndpointDescription("Verify authenticator")]
     [ProducesResponseType(200)]
     [HttpPost("authenticator/verify")]
-    public async ValueTask<IActionResult> VerifyAuthenticatorAsync(
-        [FromBody] VerifyAuthenticatorRequest request)
+    public async ValueTask<IActionResult> VerifyAuthenticatorAsync([FromBody] VerifyAuthenticatorCommand command)
     {
-        var result = await _mediator.Send(new VerifyAuthenticatorCommand(request));
+        var result = await _mediator.Send(command);
         return HttpContext.HandleResult(result);
     }
 
@@ -101,9 +99,9 @@ public class TwoFactorController(IMediator mediator) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("authenticator/reconfigure")]
     public async ValueTask<IActionResult> ReconfigureAuthenticatorAsync(
-        [FromBody] ReconfigureAuthenticatorRequest request)
+        [FromBody] ReconfigureAuthenticatorCommand command)
     {
-        var result = await _mediator.Send(new ReconfigureAuthenticatorCommand(request));
+        var result = await _mediator.Send(command);
         return HttpContext.HandleResult(result);
     }
 }

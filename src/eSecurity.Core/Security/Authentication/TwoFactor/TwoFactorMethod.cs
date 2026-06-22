@@ -7,6 +7,9 @@ namespace eSecurity.Core.Security.Authentication.TwoFactor;
 [JsonConverter(typeof(JsonEnumValueConverter<TwoFactorMethod>))]
 public enum TwoFactorMethod
 {
+    [JsonPropertyName("none")]
+    None,
+    
     [EnumValue("authenticator_app")]
     AuthenticatorApp,
     

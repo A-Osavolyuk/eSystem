@@ -1,0 +1,76 @@
+﻿using eSecurity.Idp.Security.Authorization.Token;
+using eSystem.Core.Enums;
+using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Security.Authorization.OAuth;
+using eSystem.Core.Server.Binding;
+using eSystem.Core.Server.Security.Authentication.OpenIdConnect.Discovery;
+using eSystem.Core.Server.Security.Authorization.OAuth.Token;
+
+namespace eSecurity.Idp.Features.Connect;
+
+public record TokenCommand(IFormCollection Form) : IRequest<Result>;
+
+public class TokenCommandHandler(
+    ITokenStrategyResolver tokenStrategyResolver,
+    IFormBindingProvider bindingProvider,
+    IOptions<OpenIdConfiguration> options) : IRequestHandler<TokenCommand, Result>
+{
+    private readonly ITokenStrategyResolver _tokenStrategyResolver = tokenStrategyResolver;
+    private readonly IFormBindingProvider _bindingProvider = bindingProvider;
+    private readonly OpenIdConfiguration _configuration = options.Value;
+
+    public async Task<Result> Handle(TokenCommand request, CancellationToken cancellationToken)
+    {
+        if (!request.Form.TryGetValue("grant_type", out var grantTypeString) || string.IsNullOrEmpty(grantTypeString))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "grant_type is required"
+            });
+        }
+        
+        var grantType = EnumHelper.FromString<GrantType>(grantTypeString.ToString());
+        if (grantType is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
+            {
+                Code = ErrorCode.InvalidGrant,
+                Description = "grant_type is invalid."
+            });
+        }
+        
+        if (!_configuration.GrantTypesSupported.Contains(grantType.Value))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
+            {
+                Code = ErrorCode.InvalidGrant,
+                Description = $"'{grantType}' grant type is not supported"
+            });
+        }
+
+        if (!request.Form.TryGetValue("client_id", out var clientId) || string.IsNullOrEmpty(clientId))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "client_id is required"
+            });
+        }
+
+        var binder = _bindingProvider.GetRequiredBinder<TokenRequest>();
+        var tokenResult = await binder.BindAsync(request.Form, cancellationToken);
+        if (!tokenResult.Succeeded || !tokenResult.TryGetValue(out var tokenRequest))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
+            {
+                Code = ErrorCode.UnsupportedGrantType,
+                Description = $"'{grantType}' grant type is allowed, but not supported"
+            });
+        }
+
+        var strategy = _tokenStrategyResolver.Resolve(grantType.Value);
+        return await strategy.ExecuteAsync(tokenRequest, cancellationToken);
+    }
+}

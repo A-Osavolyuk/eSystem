@@ -1,4 +1,5 @@
-﻿using eSecurity.Idp.Features.Email.Change;
+﻿using eSecurity.Idp.Common.Validation.Validators.Standard;
+using eSecurity.Idp.Features.Email.Change;
 using FluentValidation;
 
 namespace eSecurity.Idp.Common.Validation.Validators.Email;
@@ -8,7 +9,6 @@ public sealed class SendEmailChangeOtpCommandValidator : AbstractValidator<SendE
     public SendEmailChangeOtpCommandValidator()
     {
         RuleFor(x => x.NewEmail)
-            .NotEmpty().WithMessage("'new_email' is empty")
-            .EmailAddress().WithMessage("'new_email' is invalid");
+            .SetValidator(new EmailValidator("new_email"));
     }
 }
