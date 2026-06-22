@@ -1,4 +1,4 @@
-﻿using eSecurity.Core.Requests.Email.Change;
+﻿using System.Text.Json.Serialization;
 using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Idp.Security.Authorization.Codes;
 using eSecurity.Idp.Security.Authorization.Verification;
@@ -9,7 +9,20 @@ using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Idp.Features.Email.Change;
 
-public sealed record ChangeEmailCommand(ChangeEmailRequest Request) : IRequest<Result>;
+public sealed class ChangeEmailCommand : IRequest<Result>
+{
+    [JsonPropertyName("verification_id")]
+    public required Guid VerificationId { get; set; }
+    
+    [JsonPropertyName("code")]
+    public required string Code { get; set; }
+    
+    [JsonPropertyName("new_email")]
+    public required string NewEmail { get; set; }
+    
+    [JsonPropertyName("current_email")]
+    public required string CurrentEmail { get; set; }
+}
 
 public sealed class ChangeEmailCommandHandler(
     ICodeManager codeManager,
@@ -33,43 +46,8 @@ public sealed class ChangeEmailCommandHandler(
             return Results.ClientError(ClientErrorCode.Unauthorized, error);
         }
 
-        if (!userResult.TryGetValue(out var user))
-        {
-            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
-            {
-                Code = ErrorCode.ServerError,
-                Description = "Server error"
-            });
-        }
-
-        if (string.IsNullOrEmpty(request.Request.CurrentEmail))
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
-            {
-                Code = ErrorCode.InvalidRequest,
-                Description = "'current_email' is required"
-            });
-        }
-        
-        if (string.IsNullOrEmpty(request.Request.NewEmail))
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
-            {
-                Code = ErrorCode.InvalidRequest,
-                Description = "'new_email' is required"
-            });
-        }
-        
-        if (string.IsNullOrEmpty(request.Request.Code))
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
-            {
-                Code = ErrorCode.InvalidRequest,
-                Description = "'code' is required"
-            });
-        }
-
-        var code = await _codeManager.FindByCodeAsync(user, request.Request.Code, cancellationToken);
+        var user = userResult.GetValue();
+        var code = await _codeManager.FindByCodeAsync(user, request.Code, cancellationToken);
         if (code is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error()
@@ -83,7 +61,7 @@ public sealed class ChangeEmailCommandHandler(
         if (!codeResult.Succeeded) return codeResult;
         
         var verificationRequest = await _verificationQueryService.GetByIdAsync(user.Id,
-            request.Request.VerificationId, cancellationToken);
+            request.VerificationId, cancellationToken);
 
         if (verificationRequest is null)
         {
@@ -106,7 +84,7 @@ public sealed class ChangeEmailCommandHandler(
         var verificationResult = await _verificationCommandService.ConsumeAsync(verificationRequest, cancellationToken);
         if (!verificationResult.Succeeded) return verificationResult;
 
-        return await _emailCommandService.ChangeAsync(user.Id, request.Request.CurrentEmail, 
-            request.Request.NewEmail, cancellationToken);
+        return await _emailCommandService.ChangeAsync(user.Id, request.CurrentEmail, 
+            request.NewEmail, cancellationToken);
     }
 }

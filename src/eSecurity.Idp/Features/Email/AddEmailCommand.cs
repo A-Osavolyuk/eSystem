@@ -1,4 +1,5 @@
-﻿using eSecurity.Core.Requests;
+﻿using System.Text.Json.Serialization;
+using eSecurity.Core.Requests;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Idp.Security.Identity.Email;
 using eSecurity.Idp.Security.Identity.Options;
@@ -8,7 +9,11 @@ using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Idp.Features.Email;
 
-public record AddEmailCommand(AddEmailRequest Request) : IRequest<Result>;
+public record AddEmailCommand : IRequest<Result>
+{
+    [JsonPropertyName("email")]
+    public required string Email { get; set; }
+}
 
 public class AddEmailCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
@@ -33,12 +38,11 @@ public class AddEmailCommandHandler(
         }
 
         var user = userResult.GetValue();
-
         var userEmails = await _emailQueryService.ListByUserAsync(user.Id, cancellationToken);
         var canAddResult = _emailPolicy.CanAdd(userEmails, EmailType.Secondary);
         if (!canAddResult.Succeeded) return canAddResult;
 
-        if (await _emailQueryService.ExistsAsync(request.Request.Email, cancellationToken))
+        if (await _emailQueryService.ExistsAsync(request.Email, cancellationToken))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
@@ -47,7 +51,7 @@ public class AddEmailCommandHandler(
             });
         }
 
-        var email = request.Request.Email;
+        var email = request.Email;
         return await _emailCommandService.AddAsync(user.Id, email, EmailType.Secondary, cancellationToken);
     }
 }

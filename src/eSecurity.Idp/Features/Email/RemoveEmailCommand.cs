@@ -1,5 +1,5 @@
-﻿using eSecurity.Core.Requests;
-using eSecurity.Core.Security.Authorization.Verification;
+﻿using System.Text.Json.Serialization;
+using eSecurity.Core.Requests;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Idp.Security.Authorization.LinkedAccount;
 using eSecurity.Idp.Security.Authorization.Verification;
@@ -11,7 +11,14 @@ using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Idp.Features.Email;
 
-public record RemoveEmailCommand(RemoveEmailRequest Request) : IRequest<Result>;
+public record RemoveEmailCommand(RemoveEmailRequest Request) : IRequest<Result>
+{
+    [JsonPropertyName("verification_id")]
+    public required Guid VerificationId { get; set; }
+    
+    [JsonPropertyName("email")]
+    public required string Email { get; set; }
+}
 
 public class RemoveEmailCommandHandler(
     ICurrentUserAccessor currentUserAccessor,

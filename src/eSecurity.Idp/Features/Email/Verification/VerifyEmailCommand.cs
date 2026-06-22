@@ -1,4 +1,5 @@
-﻿using eSecurity.Core.Requests.Email.Verification;
+﻿using System.Text.Json.Serialization;
+using eSecurity.Core.Requests.Email.Verification;
 using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Idp.Security.Authorization.Codes;
 using eSecurity.Idp.Security.Authorization.Verification;
@@ -9,7 +10,17 @@ using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Idp.Features.Email.Verification;
 
-public sealed record VerifyEmailCommand(VerifyEmailRequest Request) : IRequest<Result>;
+public sealed record VerifyEmailCommand : IRequest<Result>
+{
+    [JsonPropertyName("verification_id")]
+    public required Guid VerificationId { get; set; }
+    
+    [JsonPropertyName("email")] 
+    public required string Email { get; set; }
+    
+    [JsonPropertyName("code")] 
+    public required string Code { get; set; }
+}
 
 public sealed class VerifyEmailCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
@@ -35,27 +46,7 @@ public sealed class VerifyEmailCommandHandler(
         }
 
         var user = userResult.GetValue();
-        var email = request.Request.Email;
-        if (string.IsNullOrEmpty(email))
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
-            {
-                Code = ErrorCode.InvalidRequest,
-                Description = "Email is required"
-            });
-        }
-
-        var code = request.Request.Code;
-        if (string.IsNullOrEmpty(code))
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
-            {
-                Code = ErrorCode.InvalidRequest,
-                Description = "Code is required"
-            });
-        }
-
-        var codeEntity = await _codeManager.FindByCodeAsync(user, code, cancellationToken);
+        var codeEntity = await _codeManager.FindByCodeAsync(user, request.Code, cancellationToken);
         if (codeEntity is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error()
@@ -69,7 +60,7 @@ public sealed class VerifyEmailCommandHandler(
         if (!consumeResult.Succeeded) return consumeResult;
         
         var verificationRequest = await _verificationQueryService.GetByIdAsync(user.Id,
-            request.Request.VerificationId, cancellationToken);
+            request.VerificationId, cancellationToken);
 
         if (verificationRequest is null)
         {
@@ -92,6 +83,6 @@ public sealed class VerifyEmailCommandHandler(
         var verificationResult = await _verificationCommandService.ConsumeAsync(verificationRequest, cancellationToken);
         if (!verificationResult.Succeeded) return verificationResult;
         
-        return await _emailCommandService.VerifyAsync(user.Id, email, cancellationToken);
+        return await _emailCommandService.VerifyAsync(user.Id, request.Email, cancellationToken);
     }
 }

@@ -1,4 +1,5 @@
-﻿using eSecurity.Core.Requests.Email.Reset;
+﻿using System.Text.Json.Serialization;
+using eSecurity.Core.Requests.Email.Reset;
 using eSecurity.Core.Responses.Verification;
 using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Idp.Common.Messaging.Email;
@@ -14,7 +15,14 @@ using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Idp.Features.Email.Reset;
 
-public sealed record SendEmailResetOtpCommand(SendEmailResetOtpRequest Request) : IRequest<Result>;
+public sealed record SendEmailResetOtpCommand : IRequest<Result>
+{
+    [JsonPropertyName("current_email")]
+    public required string CurrentEmail { get; set; }
+    
+    [JsonPropertyName("new_email")]
+    public required string NewEmail { get; set; }
+}
 
 public sealed class SendEmailResetCommandOtpHandler(
     ICurrentUserAccessor currentUserAccessor,
@@ -46,25 +54,7 @@ public sealed class SendEmailResetCommandOtpHandler(
         }
 
         var user = userResult.GetValue();
-        if (string.IsNullOrWhiteSpace(request.Request.CurrentEmail))
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
-            {
-                Code = ErrorCode.InvalidRequest,
-                Description = "'current_email' is required"
-            });
-        }
-        
-        if (string.IsNullOrWhiteSpace(request.Request.NewEmail))
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
-            {
-                Code = ErrorCode.InvalidRequest,
-                Description = "'new_email' is required"
-            });
-        }
-
-        if (await _emailQueryService.ExistsAsync(request.Request.NewEmail, cancellationToken))
+        if (await _emailQueryService.ExistsAsync(request.NewEmail, cancellationToken))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
@@ -74,7 +64,7 @@ public sealed class SendEmailResetCommandOtpHandler(
         }
 
         var currentEmail = await _emailQueryService.GetByEmailAsync(
-            user.Id, request.Request.CurrentEmail, cancellationToken);
+            user.Id, request.CurrentEmail, cancellationToken);
 
         if (currentEmail is null)
         {
@@ -106,7 +96,7 @@ public sealed class SendEmailResetCommandOtpHandler(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            Target = request.Request.NewEmail,
+            Target = request.NewEmail,
             Operation = OperationType.ResetEmail,
             Method = VerificationMethod.EmailOtp,
             Status = VerificationStatus.Pending,
@@ -119,7 +109,7 @@ public sealed class SendEmailResetCommandOtpHandler(
 
         var emailContext = new EmailVerificationContext()
         {
-            To = request.Request.NewEmail,
+            To = request.NewEmail,
             Subject = "Email reset",
             Code = codeResult.GetValue()
         };

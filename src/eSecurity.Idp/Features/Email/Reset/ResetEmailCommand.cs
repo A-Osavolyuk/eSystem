@@ -1,5 +1,4 @@
-﻿using eSecurity.Core.Requests.Email.Reset;
-using eSecurity.Core.Security.Authorization.Verification;
+﻿using System.Text.Json.Serialization;
 using eSecurity.Idp.Security.Authorization.Codes;
 using eSecurity.Idp.Security.Authorization.Verification;
 using eSecurity.Idp.Security.Identity.Email;
@@ -9,7 +8,20 @@ using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Idp.Features.Email.Reset;
 
-public sealed record ResetEmailCommand(ResetEmailRequest Request) : IRequest<Result>;
+public sealed record ResetEmailCommand : IRequest<Result>
+{
+    [JsonPropertyName("verification_id")]
+    public required Guid VerificationId { get; set; }
+
+    [JsonPropertyName("code")]
+    public required string Code { get; set; }
+
+    [JsonPropertyName("current_email")]
+    public required string CurrentEmail { get; set; }
+
+    [JsonPropertyName("new_email")]
+    public required string NewEmail { get; set; }
+}
 
 public sealed class ResetEmailCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
@@ -34,35 +46,7 @@ public sealed class ResetEmailCommandHandler(
         }
 
         var user = userResult.GetValue();
-
-        if (string.IsNullOrWhiteSpace(request.Request.Code))
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
-            {
-                Code = ErrorCode.InvalidEmail,
-                Description = "'code' is required"
-            });
-        }
-        
-        if (string.IsNullOrWhiteSpace(request.Request.CurrentEmail))
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
-            {
-                Code = ErrorCode.InvalidEmail,
-                Description = "'current_email' is required"
-            });
-        }
-        
-        if (string.IsNullOrWhiteSpace(request.Request.NewEmail))
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
-            {
-                Code = ErrorCode.InvalidEmail,
-                Description = "'new_email' is required"
-            });
-        }
-        
-        var code = await _codeManager.FindByCodeAsync(user, request.Request.Code, cancellationToken);
+        var code = await _codeManager.FindByCodeAsync(user, request.Code, cancellationToken);
         if (code is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error()
@@ -73,7 +57,7 @@ public sealed class ResetEmailCommandHandler(
         }
 
         var verificationRequest = await _verificationQueryService.GetByIdAsync(user.Id,
-            request.Request.VerificationId, cancellationToken);
+            request.VerificationId, cancellationToken);
 
         if (verificationRequest is null)
         {
@@ -90,7 +74,7 @@ public sealed class ResetEmailCommandHandler(
         var verificationResult = await _verificationCommandService.ConsumeAsync(verificationRequest, cancellationToken);
         if (!verificationResult.Succeeded) return consumeResult;
         
-        return await _emailCommandService.ResetAsync(user.Id, request.Request.CurrentEmail, 
-            request.Request.NewEmail, cancellationToken);
+        return await _emailCommandService.ResetAsync(user.Id, request.CurrentEmail, 
+            request.NewEmail, cancellationToken);
     }
 }

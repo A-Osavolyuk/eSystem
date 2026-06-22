@@ -1,4 +1,4 @@
-﻿using eSecurity.Core.Requests.Email.Change;
+﻿using System.Text.Json.Serialization;
 using eSecurity.Core.Responses.Verification;
 using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Core.Security.Identity;
@@ -16,7 +16,11 @@ using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Idp.Features.Email.Change;
 
-public sealed record SendEmailChangeOtpCommand(SendEmailChangeOtpRequest OtpRequest) : IRequest<Result>;
+public sealed record SendEmailChangeOtpCommand : IRequest<Result>
+{
+    [JsonPropertyName("new_email")]
+    public required string NewEmail { get; set; }
+}
 
 public sealed class SendEmailChangeCommandOtpHandler(
     ICurrentUserAccessor currentUserAccessor,
@@ -42,25 +46,8 @@ public sealed class SendEmailChangeCommandOtpHandler(
             return Results.ClientError(ClientErrorCode.Unauthorized, error);
         }
 
-        if (!userResult.TryGetValue(out var user))
-        {
-            return Results.ServerError(ServerErrorCode.InternalServerError, new Error()
-            {
-                Code = ErrorCode.ServerError,
-                Description = "Server error"
-            });
-        }
-
-        if (string.IsNullOrEmpty(request.OtpRequest.NewEmail))
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
-            {
-                Code = ErrorCode.InvalidRequest,
-                Description = "new_email is required"
-            });
-        }
-
-        var newEmail = request.OtpRequest.NewEmail;
+        var user = userResult.GetValue();
+        var newEmail = request.NewEmail;
         var normalizedNewEmail = Normalizer.Normalize(newEmail);
         var userEmails = await _emailQueryService.ListByUserAsync(user.Id, cancellationToken);
         if (userEmails.Any(x => x.NormalizedEmail == normalizedNewEmail))
@@ -128,7 +115,7 @@ public sealed class SendEmailChangeCommandOtpHandler(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            Target = request.OtpRequest.NewEmail,
+            Target = request.NewEmail,
             Operation = OperationType.ChangeEmail,
             Method = VerificationMethod.EmailOtp,
             Status = VerificationStatus.Pending,

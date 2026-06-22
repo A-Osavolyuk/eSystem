@@ -1,4 +1,5 @@
-﻿using eSecurity.Core.Requests.Email.Verification;
+﻿using System.Text.Json.Serialization;
+using eSecurity.Core.Requests.Email.Verification;
 using eSecurity.Core.Responses.Verification;
 using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Idp.Common.Messaging.Email;
@@ -13,7 +14,11 @@ using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Idp.Features.Email.Verification;
 
-public sealed record SendEmailVerificationOtpCommand(SendEmailVerificationOtpRequest OtpRequest) : IRequest<Result>;
+public sealed record SendEmailVerificationOtpCommand : IRequest<Result>
+{
+    [JsonPropertyName("email")] 
+    public required string Email { get; set; }
+}
 
 public sealed class SendEmailVerificationCommandOtpHandler(
     ICurrentUserAccessor currentUserAccessor,
@@ -39,16 +44,6 @@ public sealed class SendEmailVerificationCommandOtpHandler(
         }
 
         var user = userResult.GetValue();
-        var email = request.OtpRequest.Email;
-        if (string.IsNullOrEmpty(email))
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
-            {
-                Code = ErrorCode.InvalidRequest,
-                Description = "Email is required"
-            });
-        }
-        
         var result = await _userResendAttemptsService.ResetAttemptsAsync(user, 
             TimeSpan.FromMinutes(2), cancellationToken);
         
@@ -66,7 +61,7 @@ public sealed class SendEmailVerificationCommandOtpHandler(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            Target = email,
+            Target = request.Email,
             Operation = OperationType.VerifyEmail,
             Method = VerificationMethod.EmailOtp,
             Status = VerificationStatus.Pending,
@@ -80,7 +75,7 @@ public sealed class SendEmailVerificationCommandOtpHandler(
         {
             Code = codeResult.GetValue(),
             Subject = "Email verification",
-            To = email
+            To = request.Email
         };
 
         await _emailService.SendAsync(emailContext, cancellationToken);
