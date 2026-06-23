@@ -11,7 +11,7 @@ public sealed class ParBinder : IFormBinder<PushedAuthorizationRequest>
     public async Task<TypedResult<PushedAuthorizationRequest>> BindAsync(
         IFormCollection form, CancellationToken cancellationToken = default)
     {
-        if (!form.TryGetValue("response_type", out var responseTypeString))
+        if (!form.TryGetValue("response_type", out var responseTypeStringValue))
         {
             return TypedResult<PushedAuthorizationRequest>.Fail(new Error
             {
@@ -20,8 +20,8 @@ public sealed class ParBinder : IFormBinder<PushedAuthorizationRequest>
             });
         }
 
-        var responseType = EnumHelper.FromString<ResponseType>(responseTypeString);
-        if (responseType is null)
+        var responseTypeString = responseTypeStringValue.ToString();
+        if (!EnumHelper.TryParseFromString<ResponseType>(responseTypeString, out var responseType))
         {
             return TypedResult<PushedAuthorizationRequest>.Fail(new Error
             {
@@ -53,9 +53,8 @@ public sealed class ParBinder : IFormBinder<PushedAuthorizationRequest>
         var state = form["state"];
         var prompt = form["prompt"];
         var codeChallenge = form["code_challenge"];
-        var codeChallengeMethodString = form["code_challenge_method"];
-        var codeChallengeMethod = EnumHelper.FromString<ChallengeMethod>(
-            codeChallengeMethodString);
+        var codeChallengeMethodString = form["code_challenge_method"].ToString();
+        var codeChallengeMethod = EnumHelper.ParseFromString<ChallengeMethod>(codeChallengeMethodString);
 
         var request = new PushedAuthorizationRequest
         {

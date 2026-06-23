@@ -78,7 +78,7 @@ public sealed class ManualAuthorizationFlowHandler(
             return Results.Redirect(RedirectionCode.Found, uri);
         }
 
-        var responseType = EnumHelper.FromString<ResponseType>(request.ResponseType);
+        var responseType = EnumHelper.ParseFromString<ResponseType>(request.ResponseType);
         if (responseType is null)
         {
             var uri = _redirectManager.GetRedirectUri(redirectUri, ErrorCode.UnsupportedResponseType, 
@@ -132,7 +132,7 @@ public sealed class ManualAuthorizationFlowHandler(
             var promptStrings = request.Prompt.Split(" ").ToList();
             foreach (var promptString in promptStrings)
             {
-                var prompt = EnumHelper.FromString<PromptType>(promptString);
+                var prompt = EnumHelper.ParseFromString<PromptType>(promptString);
                 if (prompt is null)
                 {
                     var uri = _redirectManager.GetRedirectUri(redirectUri, ErrorCode.InvalidRequest, 
@@ -187,11 +187,9 @@ public sealed class ManualAuthorizationFlowHandler(
         ChallengeMethod? codeChallengeMethod = null;
         if (hasCodeChallenge && hasCodeChallengeMethod)
         {
-            var challengeMethod = EnumHelper.FromString<ChallengeMethod>(
-                request.CodeChallengeMethod
-            );
-
-            if (challengeMethod is null)
+            var methodString = request.CodeChallengeMethod;
+            if (string.IsNullOrWhiteSpace(methodString) ||
+                EnumHelper.TryParseFromString<ChallengeMethod>(methodString, out var challengeMethod))
             {
                 var uri = _redirectManager.GetRedirectUri(redirectUri, ErrorCode.InvalidRequest, 
                     "code_challenge_method is invalid", request.State);

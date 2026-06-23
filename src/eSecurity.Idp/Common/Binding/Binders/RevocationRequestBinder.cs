@@ -20,11 +20,11 @@ public sealed class RevocationRequestBinder : IFormBinder<RevocationRequest>
             }));
         }
 
-        var tokenTypeHintString = form["token_type_hint"];
+        var tokenTypeHintString = form["token_type_hint"].ToString();
         var result = new RevocationRequest
         {
             Token = token.ToString(),
-            TokenTypeHint = EnumHelper.FromString<TokenTypeHint>(tokenTypeHintString)?.Value
+            TokenTypeHint = EnumHelper.ParseFromString<TokenTypeHint>(tokenTypeHintString)?.Value
         };
         
         return Task.FromResult(TypedResult<RevocationRequest>.Success(result));

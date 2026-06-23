@@ -17,11 +17,13 @@ public class JwtTokenValidator(IJwtTokenValidationProvider validationProvider) :
             return TokenValidationResult.Fail();
         
         var securityToken = _handler.ReadJwtToken(token);
-        if (securityToken is null)
+        if (securityToken is null ||
+            !EnumHelper.TryParseFromString<JwtTokenType>(securityToken.Header.Typ, out var tokenType))
+        {
             return TokenValidationResult.Fail();
+        }
 
-        var tokenType = EnumHelper.FromStringOrThrow<JwtTokenType>(securityToken.Header.Typ).Value;
-        var validator = _validationProvider.CreateValidator(tokenType);
+        var validator = _validationProvider.CreateValidator(tokenType.Value);
         return await validator.ValidateAsync(token, cancellationToken);
     }
 }

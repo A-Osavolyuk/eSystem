@@ -12,7 +12,7 @@ public sealed class AuthorizationCodeRequestBinder : IFormBinder<AuthorizationCo
     public Task<TypedResult<AuthorizationCodeRequest>> BindAsync(IFormCollection form,
         CancellationToken cancellationToken = default)
     {
-        var grantType = EnumHelper.FromString<GrantType>(form["grant_type"].ToString());
+        var grantType = EnumHelper.ParseFromString<GrantType>(form["grant_type"].ToString());
         if (grantType is null)
         {
             return Task.FromResult(TypedResult<AuthorizationCodeRequest>.Fail(new Error
@@ -32,7 +32,7 @@ public sealed class AuthorizationCodeRequestBinder : IFormBinder<AuthorizationCo
             CodeVerifier = form["code_verifier"].ToString(),
             RedirectUri = form["redirect_uri"].ToString(),
             ClientAssertion = form["client_assertion"].ToString(),
-            ClientAssertionType = EnumHelper.FromString<AssertionType>(assertionsTypeString)?.Value,
+            ClientAssertionType = EnumHelper.ParseFromString<AssertionType>(assertionsTypeString)?.Value,
         });
         
         return Task.FromResult(result);

@@ -28,7 +28,7 @@ public sealed class TokenRequestBinder(IFormBindingProvider bindingProvider) : I
             });
         }
         
-        var grantType = EnumHelper.FromString<GrantType>(grantTypeString);
+        var grantType = EnumHelper.ParseFromString<GrantType>(grantTypeString);
         if (grantType is null)
         {
             return TypedResult<TokenRequest>.Fail(new Error

@@ -8,6 +8,19 @@ public sealed class NullableEnumValueConverter<TEnum> : ValueConverter<TEnum?, s
 {
     public NullableEnumValueConverter() 
         : base(
-            v => v == null ? null : EnumHelper.GetString(v.Value), 
-            v => v == null ? null : EnumHelper.FromStringOrThrow<TEnum>(v).Value) { }
+            v => v == null ? null : GetString(v.Value), 
+            v => v == null ? null : FromString(v)) { }
+
+    private static string GetString(TEnum value)
+    {
+        return EnumHelper.GetString(value);
+    }
+
+    private static TEnum FromString(string value)
+    {
+        if (!EnumHelper.TryParseFromString<TEnum>(value, out var enumValue))
+            throw new NotSupportedException($"Invalid enum value key '{value}'");
+
+        return enumValue.Value;
+    }
 }

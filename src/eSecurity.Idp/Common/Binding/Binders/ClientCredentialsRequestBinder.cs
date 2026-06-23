@@ -12,7 +12,7 @@ public sealed class ClientCredentialsRequestBinder : IFormBinder<ClientCredentia
     public Task<TypedResult<ClientCredentialsRequest>> BindAsync(IFormCollection form,
         CancellationToken cancellationToken = default)
     {
-        var grantType = EnumHelper.FromString<GrantType>(form["grant_type"].ToString());
+        var grantType = EnumHelper.ParseFromString<GrantType>(form["grant_type"].ToString());
         if (grantType is null)
         {
             return Task.FromResult(TypedResult<ClientCredentialsRequest>.Fail(new Error
@@ -30,7 +30,7 @@ public sealed class ClientCredentialsRequestBinder : IFormBinder<ClientCredentia
             ClientSecret = form["client_secret"],
             Scope = form["scope"],
             ClientAssertion = form["client_assertion"],
-            ClientAssertionType = EnumHelper.FromString<AssertionType>(assertionsTypeString)?.Value,
+            ClientAssertionType = EnumHelper.ParseFromString<AssertionType>(assertionsTypeString)?.Value,
         });
         
         return Task.FromResult(result);

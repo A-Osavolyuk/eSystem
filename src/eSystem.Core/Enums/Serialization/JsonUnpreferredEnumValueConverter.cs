@@ -14,7 +14,7 @@ public sealed class JsonUnpreferredEnumValueConverter<TEnum> : JsonConverter<TEn
         if (string.IsNullOrEmpty(value))
             throw new JsonException("Value cannot be null or empty");
         
-        var enumValue = EnumHelper.FromString<TEnum>(value);
+        var enumValue = EnumHelper.ParseFromString<TEnum>(value);
         if (enumValue is null)
             throw new JsonException($"Invalid enum value '{value}'");
         

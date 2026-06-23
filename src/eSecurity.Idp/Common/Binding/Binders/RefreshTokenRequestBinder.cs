@@ -12,7 +12,7 @@ public sealed class RefreshTokenRequestBinder : IFormBinder<RefreshTokenRequest>
     public Task<TypedResult<RefreshTokenRequest>> BindAsync(IFormCollection form,
         CancellationToken cancellationToken = default)
     {
-        var grantType = EnumHelper.FromString<GrantType>(form["grant_type"].ToString());
+        var grantType = EnumHelper.ParseFromString<GrantType>(form["grant_type"].ToString());
         if (grantType is null)
         {
             return Task.FromResult(TypedResult<RefreshTokenRequest>.Fail(new Error
@@ -30,7 +30,7 @@ public sealed class RefreshTokenRequestBinder : IFormBinder<RefreshTokenRequest>
             ClientSecret = form["client_secret"],
             RefreshToken = form["refresh_token"],
             ClientAssertion = form["client_assertion"],
-            ClientAssertionType = EnumHelper.FromString<AssertionType>(assertionsTypeString)?.Value
+            ClientAssertionType = EnumHelper.ParseFromString<AssertionType>(assertionsTypeString)?.Value
         });
         
         return Task.FromResult(result);

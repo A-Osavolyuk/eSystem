@@ -12,7 +12,7 @@ public sealed class TokenExchangeRequestBinder : IFormBinder<TokenExchangeReques
     public Task<TypedResult<TokenExchangeRequest>> BindAsync(IFormCollection form,
         CancellationToken cancellationToken = default)
     {
-        var grantType = EnumHelper.FromString<GrantType>(form["grant_type"].ToString());
+        var grantType = EnumHelper.ParseFromString<GrantType>(form["grant_type"].ToString());
         if (grantType is null)
         {
             return Task.FromResult(TypedResult<TokenExchangeRequest>.Fail(new Error
@@ -33,10 +33,10 @@ public sealed class TokenExchangeRequestBinder : IFormBinder<TokenExchangeReques
             Audience = form["audience"],
             SubjectToken = form["subject_token"],
             ClientAssertion = form["client_assertion"],
-            ClientAssertionType = EnumHelper.FromString<AssertionType>(assertionsTypeString)?.Value,
-            ActorTokenType = EnumHelper.FromString<TokenType>(form["actor_token_type"])?.Value,
-            RequestTokenType = EnumHelper.FromString<TokenType>(form["request_token_type"])?.Value,
-            SubjectTokenType = EnumHelper.FromString<TokenType>(form["subject_token_type"])?.Value,
+            ClientAssertionType = EnumHelper.ParseFromString<AssertionType>(assertionsTypeString)?.Value,
+            ActorTokenType = EnumHelper.ParseFromString<TokenType>(form["actor_token_type"].ToString())?.Value,
+            RequestTokenType = EnumHelper.ParseFromString<TokenType>(form["request_token_type"].ToString())?.Value,
+            SubjectTokenType = EnumHelper.ParseFromString<TokenType>(form["subject_token_type"].ToString())?.Value,
         });
         
         return Task.FromResult(result);

@@ -125,7 +125,7 @@ public sealed class PushedAuthorizationRequestCommandHandler(
             var promptStrings = par.Prompt.Split(" ").ToList();
             foreach (var promptString in promptStrings)
             {
-                var prompt = EnumHelper.FromString<PromptType>(promptString);
+                var prompt = EnumHelper.ParseFromString<PromptType>(promptString);
                 if (prompt is null)
                 {
                     return Results.ClientError(ClientErrorCode.BadRequest, new Error

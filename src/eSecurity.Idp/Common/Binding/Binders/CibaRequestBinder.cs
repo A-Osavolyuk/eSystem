@@ -11,7 +11,7 @@ public sealed class CibaRequestBinder : IFormBinder<CibaRequest>
 {
     public Task<TypedResult<CibaRequest>> BindAsync(IFormCollection form, CancellationToken cancellationToken = default)
     {
-        var grantType = EnumHelper.FromString<GrantType>(form["grant_type"].ToString());
+        var grantType = EnumHelper.ParseFromString<GrantType>(form["grant_type"].ToString());
         if (grantType is null)
         {
             return Task.FromResult(TypedResult<CibaRequest>.Fail(new Error
@@ -28,7 +28,7 @@ public sealed class CibaRequestBinder : IFormBinder<CibaRequest>
             ClientId = form["client_id"].ToString(),
             AuthReqId = form["auth_req_id"].ToString(),
             ClientAssertion = form["client_assertion"],
-            ClientAssertionType = EnumHelper.FromString<AssertionType>(assertionsTypeString)?.Value,
+            ClientAssertionType = EnumHelper.ParseFromString<AssertionType>(assertionsTypeString)?.Value,
             ClientSecret = form["client_secret"],
         });
         

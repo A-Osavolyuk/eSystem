@@ -110,7 +110,7 @@ public sealed class DeviceAuthorizationCommandHandler(
             var acrStrings = request.AcrValues.Split(" ").ToList();
             foreach (var acrString in acrStrings)
             {
-                var acrValue = EnumHelper.FromString<AuthenticationContextClassReference>(acrString);
+                var acrValue = EnumHelper.ParseFromString<AuthenticationContextClassReference>(acrString);
                 if (acrValue is null)
                 {
                     return Results.ClientError(ClientErrorCode.BadRequest, new Error

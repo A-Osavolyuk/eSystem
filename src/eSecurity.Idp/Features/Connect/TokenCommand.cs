@@ -31,7 +31,7 @@ public class TokenCommandHandler(
             });
         }
         
-        var grantType = EnumHelper.FromString<GrantType>(grantTypeString.ToString());
+        var grantType = EnumHelper.ParseFromString<GrantType>(grantTypeString.ToString());
         if (grantType is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error

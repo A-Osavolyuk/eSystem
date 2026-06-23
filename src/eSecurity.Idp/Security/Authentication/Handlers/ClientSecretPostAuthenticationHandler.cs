@@ -71,7 +71,8 @@ public class ClientSecretPostAuthenticationHandler(
     
     protected override async Task HandleChallengeAsync(AuthenticationProperties properties)
     {
-        var error = EnumHelper.FromString<ErrorCode>(Context.Items["error"]?.ToString());
+        var errorString = Context.Items["error"]?.ToString() ?? string.Empty;
+        var error = EnumHelper.ParseFromString<ErrorCode>(errorString);
         if (error is null || error.Value is ErrorCode.ServerError)
         {
             Response.StatusCode = StatusCodes.Status500InternalServerError;
