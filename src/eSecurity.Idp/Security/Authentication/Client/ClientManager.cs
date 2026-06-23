@@ -59,22 +59,6 @@ public class ClientManager(AuthDbContext context) : IClientManager
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async ValueTask<List<string>> GetAudiencesAsync(
-        CancellationToken cancellationToken = default)
-    {
-        return await _context.ClientAudiences
-            .Select(x => x.Audience)
-            .ToListAsync(cancellationToken);
-    }
-
-    public async ValueTask<Result> CreateAsync(ClientEntity entity, CancellationToken cancellationToken = default)
-    {
-        await _context.Clients.AddAsync(entity, cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
-        
-        return Results.Success(SuccessCodes.Ok);
-    }
-
     public async ValueTask<Result> RelateAsync(ClientEntity client, SessionEntity session,
         CancellationToken cancellationToken = default)
     {

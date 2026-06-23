@@ -1,7 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
-using eSecurity.Idp.Security.Authentication.Client;
 using eSecurity.Idp.Security.Cryptography.Signing.Certificates;
 using eSecurity.Idp.Security.Cryptography.Tokens;
 using TokenValidationResult = eSystem.Core.Server.Security.Authorization.OAuth.Token.Validation.TokenValidationResult;
@@ -9,11 +8,9 @@ using TokenValidationResult = eSystem.Core.Server.Security.Authorization.OAuth.T
 namespace eSecurity.Idp.Security.Authorization.Token.Validation;
 
 public class AccessTokenValidator(
-    IClientManager clientManager,
     ICertificateProvider certificateProvider,
     IOptions<TokenConfigurations> options) : IJwtTokenValidator
 {
-    private readonly IClientManager _clientManager = clientManager;
     private readonly ICertificateProvider _certificateProvider = certificateProvider;
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
     private readonly JwtSecurityTokenHandler _handler = new JwtSecurityTokenHandler();
@@ -35,7 +32,7 @@ public class AccessTokenValidator(
             ValidateIssuer = true,
             ValidIssuer = _tokenConfigurations.Issuer,
             ValidateAudience = true,
-            ValidAudiences = await _clientManager.GetAudiencesAsync(cancellationToken),
+            ValidAudience = "api://esecurity",
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new RsaSecurityKey(publicKey),
             ValidateLifetime = true,
