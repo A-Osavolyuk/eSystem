@@ -15,7 +15,4 @@ public class Result
 
         return Error;
     }
-
-    public TResponse Match<TResponse>(Func<Result, TResponse> success, Func<Result, TResponse> failure)
-        => Succeeded ? success(this) : failure(this);
 }
