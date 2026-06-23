@@ -12,13 +12,13 @@ namespace eSecurity.Idp.Security.Authorization.Token.TokenExchange.Delegation;
 
 public sealed class JwtTokenDelegationHandler(
     ITokenClaimsExtractor claimsExtractor,
-    IClientManager clientManager,
     ITokenBuilderProvider tokenBuilderProvider,
+    IClientQueryService clientQueryService,
     IOptions<TokenConfigurations> options) : ITokenDelegationHandler
 {
     private readonly ITokenClaimsExtractor _claimsExtractor = claimsExtractor;
-    private readonly IClientManager _clientManager = clientManager;
     private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
+    private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly TokenConfigurations _configurations = options.Value;
 
     public async ValueTask<Result> HandleAsync(TokenExchangeFlowContext context,
@@ -74,7 +74,7 @@ public sealed class JwtTokenDelegationHandler(
             });
         }
 
-        var client = await _clientManager.FindByIdAsync(context.ClientId, cancellationToken);
+        var client = await _clientQueryService.GetByIdAsync(context.ClientId, cancellationToken);
         if (client is null)
         {
             return Results.ClientError(ClientErrorCode.Unauthorized, new Error
@@ -86,7 +86,8 @@ public sealed class JwtTokenDelegationHandler(
 
         if (!string.IsNullOrEmpty(context.Audience))
         {
-            if (!client.IsValidAudience(context.Audience))
+            var clientAudiences = await _clientQueryService.GetSupportedAudiencesAsync(client, cancellationToken);
+            if (clientAudiences.All(x => x.Audience != context.Audience))
             {
                 return Results.ClientError(ClientErrorCode.BadRequest, new Error
                 {

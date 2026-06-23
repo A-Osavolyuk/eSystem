@@ -38,17 +38,17 @@ public sealed record EndSessionCommand : IRequest<Result>
 public sealed class EndSessionCommandHandler(
     IEndSessionManager endSessionManager,
     IOptions<EndSessionOptions> options,
-    IClientManager clientManager,
     ISessionManager sessionManager,
     ISessionAccessor sessionAccessor,
     IUserQueryService userQueryService,
+    IClientQueryService clientQueryService,
     ITokenValidationProvider tokenValidationProvider) : IRequestHandler<EndSessionCommand, Result>
 {
     private readonly IEndSessionManager _endSessionManager = endSessionManager;
-    private readonly IClientManager _clientManager = clientManager;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
     private readonly IUserQueryService _userQueryService = userQueryService;
+    private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly EndSessionOptions _options = options.Value;
     private readonly ITokenValidator _tokenValidator = tokenValidationProvider.CreateValidator(TokenKind.Jwt);
 
@@ -91,7 +91,7 @@ public sealed class EndSessionCommandHandler(
 
         if (string.IsNullOrEmpty(request.IdTokenHint))
         {
-            client = await _clientManager.FindByIdAsync(request.ClientId!, cancellationToken);
+            client = await _clientQueryService.GetByIdAsync(request.ClientId!, cancellationToken);
             if (client is null)
             {
                 return Fallback(redirectUri, ErrorCode.InvalidRequest,
@@ -100,7 +100,8 @@ public sealed class EndSessionCommandHandler(
 
             if (!string.IsNullOrEmpty(request.PostLogoutRedirectUri))
             {
-                if (!client.HasUri(request.PostLogoutRedirectUri, UriType.PostLogoutRedirect))
+                var clientUris = await _clientQueryService.GetUrisAsync(client, cancellationToken);
+                if (clientUris.All(x => x.Type != UriType.PostLogoutRedirect && x.Uri != request.PostLogoutRedirectUri))
                 {
                     return Fallback(redirectUri, ErrorCode.InvalidRequest,
                         "post_logout_redirect_uri is invalid", request.PostLogoutRedirectUri);
@@ -143,7 +144,7 @@ public sealed class EndSessionCommandHandler(
                     "id_token_hint is invalid", request.State);
             }
 
-            client = await _clientManager.FindByIdAsync(audClaim.Value, cancellationToken);
+            client = await _clientQueryService.GetByIdAsync(audClaim.Value, cancellationToken);
             if (client is null)
             {
                 return Fallback(redirectUri, ErrorCode.InvalidRequest,
@@ -152,7 +153,8 @@ public sealed class EndSessionCommandHandler(
 
             if (!string.IsNullOrEmpty(request.PostLogoutRedirectUri))
             {
-                if (!client.HasUri(request.PostLogoutRedirectUri, UriType.PostLogoutRedirect))
+                var clientUris = await _clientQueryService.GetUrisAsync(client, cancellationToken);
+                if (clientUris.All(x => x.Type != UriType.PostLogoutRedirect && x.Uri != request.PostLogoutRedirectUri))
                 {
                     return Fallback(redirectUri, ErrorCode.InvalidRequest,
                         "post_logout_redirect_uri is invalid", request.PostLogoutRedirectUri);

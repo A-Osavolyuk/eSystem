@@ -10,10 +10,10 @@ public sealed record GetDeviceCodeInfoQuery(string UserCode) : IRequest<Result>;
 
 public sealed class GetDeviceCodeInfoQueryHandler(
     IDeviceCodeManager deviceCodeManager,
-    IClientManager clientManager) : IRequestHandler<GetDeviceCodeInfoQuery, Result>
+    IClientQueryService clientQueryService) : IRequestHandler<GetDeviceCodeInfoQuery, Result>
 {
     private readonly IDeviceCodeManager _deviceCodeManager = deviceCodeManager;
-    private readonly IClientManager _clientManager = clientManager;
+    private readonly IClientQueryService _clientQueryService = clientQueryService;
 
     public async Task<Result> Handle(GetDeviceCodeInfoQuery request, CancellationToken cancellationToken)
     {
@@ -36,7 +36,7 @@ public sealed class GetDeviceCodeInfoQueryHandler(
             });
         }
 
-        var client = await _clientManager.FindByIdAsync(deviceCode.ClientId, cancellationToken);
+        var client = await _clientQueryService.GetByIdAsync(deviceCode.ClientId, cancellationToken);
         if (client is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error

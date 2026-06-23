@@ -32,21 +32,21 @@ public sealed record DeviceAuthorizationCommand : IRequest<Result>
 }
 
 public sealed class DeviceAuthorizationCommandHandler(
-    IClientManager clientManager,
     IHasherProvider hasherProvider,
     IDeviceCodeManager deviceCodeManager,
+    IClientQueryService clientQueryService,
     IOptions<OpenIdConfiguration> openIdConfiguration,
     IOptions<DeviceAuthorizationOptions> deviceAuthorizationOptions) : IRequestHandler<DeviceAuthorizationCommand, Result>
 {
-    private readonly IClientManager _clientManager = clientManager;
     private readonly IDeviceCodeManager _deviceCodeManager = deviceCodeManager;
+    private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
     private readonly OpenIdConfiguration _options = openIdConfiguration.Value;
     private readonly DeviceAuthorizationOptions _deviceAuthorizationOptions = deviceAuthorizationOptions.Value;
 
     public async Task<Result> Handle(DeviceAuthorizationCommand request, CancellationToken cancellationToken)
     {
-        var client = await _clientManager.FindByIdAsync(request.ClientId, cancellationToken);
+        var client = await _clientQueryService.GetByIdAsync(request.ClientId, cancellationToken);
         if (client is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -66,8 +66,11 @@ public sealed class DeviceAuthorizationCommandHandler(
                 Description = $"Scopes are not supported: {string.Join(", ", invalidScopes)}."
             });
         }
+
+        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(
+            client, cancellationToken);
         
-        var allowedScopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList();
+        var allowedScopes = clientScopes.Select(x => x.Scope.Value).ToList();
         var unallowedScopes = scopes.Except(allowedScopes).ToList();
         if (unallowedScopes.Count > 0)
         {

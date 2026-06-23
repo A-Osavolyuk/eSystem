@@ -16,19 +16,19 @@ namespace eSecurity.Idp.Security.Authorization.Prompt.Handlers;
 
 public sealed class NonePromptHandler(
     ISessionManager sessionManager,
-    IClientManager clientManager,
     IUserQueryService userQueryService,
     IConsentManager consentManager,
     IAuthorizationCodeManager authorizationCodeManager,
     ISessionAccessor sessionAccessor,
+    IClientQueryService clientQueryService,
     RedirectManager redirectManager) : IPromptHandler
 {
     private readonly ISessionManager _sessionManager = sessionManager;
-    private readonly IClientManager _clientManager = clientManager;
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IConsentManager _consentManager = consentManager;
     private readonly IAuthorizationCodeManager _authorizationCodeManager = authorizationCodeManager;
     private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
+    private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly RedirectManager _redirectManager = redirectManager;
 
     public bool CanHandle(PromptType promptType) => promptType == PromptType.None;
@@ -53,7 +53,7 @@ public sealed class NonePromptHandler(
             return PromptResult.Failed(Results.Redirect(RedirectionCode.Found, uri));
         }
 
-        var client = await _clientManager.FindByIdAsync(context.ClientId, cancellationToken);
+        var client = await _clientQueryService.GetByIdAsync(context.ClientId, cancellationToken);
         if (client is null)
         {
             var uri = _redirectManager.GetRedirectUri(context.RedirectUri, ErrorCode.LoginRequired, 

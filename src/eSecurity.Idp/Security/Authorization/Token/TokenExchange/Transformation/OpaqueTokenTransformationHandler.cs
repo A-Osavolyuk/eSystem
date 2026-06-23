@@ -12,13 +12,13 @@ namespace eSecurity.Idp.Security.Authorization.Token.TokenExchange.Transformatio
 public sealed class OpaqueTokenTransformationHandler(
     IHasherProvider hasherProvider,
     ITokenManager tokenManager,
-    IClientManager clientManager,
     IOptions<TokenConfigurations> options,
+    IClientQueryService clientQueryService,
     ITokenBuilderProvider tokenBuilderProvider) : ITokenTransformationHandler
 {
     private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
     private readonly ITokenManager _tokenManager = tokenManager;
-    private readonly IClientManager _clientManager = clientManager;
+    private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly TokenConfigurations _configurations = options.Value;
     private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
 
@@ -45,7 +45,7 @@ public sealed class OpaqueTokenTransformationHandler(
             });
         }
 
-        var client = await _clientManager.FindByIdAsync(context.ClientId, cancellationToken);
+        var client = await _clientQueryService.GetByIdAsync(context.ClientId, cancellationToken);
         if (client is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -55,13 +55,16 @@ public sealed class OpaqueTokenTransformationHandler(
             });
         }
 
+        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(client, cancellationToken);
+        var clientAudiences = await _clientQueryService.GetSupportedAudiencesAsync(client, cancellationToken);
+        
         var tokenContext = new OpaqueTokenBuildContext
         {
             TokenLength = _configurations.OpaqueTokenLength,
             TokenType = OpaqueTokenType.AccessToken,
             ClientId = client.Id,
-            Audiences = client.Audiences.Select(x => x.Audience).ToList(),
-            Scopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
+            Audiences = clientAudiences.Select(x => x.Audience).ToList(),
+            Scopes = clientScopes.Select(x => x.Scope.Value).ToList(),
             ExpiredAt = DateTimeOffset.UtcNow.Add(_configurations.DefaultAccessTokenLifetime),
             IssuedAt = DateTimeOffset.UtcNow,
             Subject = token.Subject,
@@ -69,7 +72,7 @@ public sealed class OpaqueTokenTransformationHandler(
 
         if (!string.IsNullOrEmpty(context.Audience))
         {
-            if (!client.IsValidAudience(context.Audience))
+            if (clientAudiences.All(x => x.Audience != context.Audience))
             {
                 return Results.ClientError(ClientErrorCode.BadRequest, new Error
                 {
@@ -87,7 +90,7 @@ public sealed class OpaqueTokenTransformationHandler(
             .Select(x => x.ClientScope.Scope.Value)
             .ToHashSet();
 
-        if (!scopes.All(s => subjectScopes.Contains(s)))
+        if (!scopes.All(subjectScopes.Contains))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {

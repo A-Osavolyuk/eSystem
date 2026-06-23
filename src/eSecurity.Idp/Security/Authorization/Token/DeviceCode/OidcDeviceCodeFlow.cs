@@ -16,26 +16,28 @@ using eSystem.Core.Server.Security.Authorization.OAuth.Token.DeviceCode;
 namespace eSecurity.Idp.Security.Authorization.Token.DeviceCode;
 
 public sealed class OidcDeviceCodeFlow(
-    IClientManager clientManager,
     IDeviceCodeManager deviceCodeManager,
     IUserQueryService userQueryService,
     ISessionManager sessionManager,
     ITokenFactoryProvider tokenFactoryProvider,
+    IClientQueryService clientQueryService,
+    IClientCommandService clientCommandService,
     IOptions<TokenConfigurations> tokenOptions,
     ISessionAccessor sessionAccessor) : IDeviceCodeFlow
 {
-    private readonly IClientManager _clientManager = clientManager;
     private readonly IDeviceCodeManager _deviceCodeManager = deviceCodeManager;
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
+    private readonly IClientQueryService _clientQueryService = clientQueryService;
+    private readonly IClientCommandService _clientCommandService = clientCommandService;
     private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
     private readonly TokenConfigurations _tokenConfigurations = tokenOptions.Value;
 
     public async ValueTask<Result> ExecuteAsync(DeviceCodeEntity deviceCode, DeviceCodeFlowContext context,
         CancellationToken cancellationToken = default)
     {
-        var client = await _clientManager.FindByIdAsync(context.ClientId, cancellationToken);
+        var client = await _clientQueryService.GetByIdAsync(context.ClientId, cancellationToken);
         if (client is null || deviceCode.UserId is null || deviceCode.SessionId is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -116,10 +118,11 @@ public sealed class OidcDeviceCodeFlow(
             
         response.AccessToken = accessToken;
 
-        var clientResult = await _clientManager.RelateAsync(client, session, cancellationToken);
+        var clientResult = await _clientCommandService.RelateAsync(client.Id, session.Id, cancellationToken);
         if (!clientResult.Succeeded) return clientResult;
 
-        if (client.AllowOfflineAccess && client.HasScope(ScopeTypes.OfflineAccess))
+        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(client, cancellationToken);
+        if (client.AllowOfflineAccess && clientScopes.Any(x => x.Scope.Value == ScopeTypes.OfflineAccess))
         {
             var refreshTokenFactoryContext = new RefreshTokenFactoryContext
             {
@@ -149,8 +152,9 @@ public sealed class OidcDeviceCodeFlow(
             
             response.RefreshToken = refreshToken;
         }
-        
-        if (client.HasGrantType(GrantType.Ciba))
+
+        var clientGrantTypes = await _clientQueryService.GetSupportedGrantTypesAsync(client, cancellationToken);
+        if (clientGrantTypes.Any(x => x.Grant.Grant == GrantType.Ciba))
         {
             var loginTokenFactoryContext = new LoginTokenFactoryContext
             {

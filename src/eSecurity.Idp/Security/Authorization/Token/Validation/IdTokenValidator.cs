@@ -10,12 +10,12 @@ using TokenValidationResult = eSystem.Core.Server.Security.Authorization.OAuth.T
 namespace eSecurity.Idp.Security.Authorization.Token.Validation;
 
 public class IdTokenValidator(
-    IClientManager clientManager,
     ICertificateProvider certificateProvider,
+    IClientQueryService clientQueryService,
     IOptions<TokenConfigurations> options) : IJwtTokenValidator
 {
-    private readonly IClientManager _clientManager = clientManager;
     private readonly ICertificateProvider _certificateProvider = certificateProvider;
+    private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
     private readonly JwtSecurityTokenHandler _handler = new JwtSecurityTokenHandler();
 
@@ -48,7 +48,7 @@ public class IdTokenValidator(
         var audClaim = securityToken.Claims.FirstOrDefault(x => x.Type == AppClaimTypes.Aud);
         if (audClaim is null) return TokenValidationResult.Fail();
 
-        var client = await _clientManager.FindByIdAsync(audClaim.Value, cancellationToken);
+        var client = await _clientQueryService.GetByIdAsync(audClaim.Value, cancellationToken);
         if (client is null) return TokenValidationResult.Fail();
 
         validationParameters.ValidAudience = client.Id.ToString();

@@ -18,22 +18,24 @@ namespace eSecurity.Idp.Security.Authorization.Token.AuthorizationCode;
 public class OidcAuthorizationCodeFlow(
     IUserQueryService userQueryService,
     IPkceHandler pkceHandler,
-    IClientManager clientManager,
     IAuthorizationCodeManager authorizationCodeManager,
     ITokenFactoryProvider tokenFactoryProvider,
+    IClientQueryService clientQueryService,
+    IClientCommandService clientCommandService,
     IOptions<TokenConfigurations> options) : IAuthorizationCodeFlow
 {
-    private readonly IClientManager _clientManager = clientManager;
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IPkceHandler _pkceHandler = pkceHandler;
     private readonly IAuthorizationCodeManager _authorizationCodeManager = authorizationCodeManager;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
+    private readonly IClientQueryService _clientQueryService = clientQueryService;
+    private readonly IClientCommandService _clientCommandService = clientCommandService;
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(AuthorizationCodeEntity code,
         AuthorizationCodeFlowContext context, CancellationToken cancellationToken = default)
     {
-        var client = await _clientManager.FindByIdAsync(context.ClientId, cancellationToken);
+        var client = await _clientQueryService.GetByIdAsync(context.ClientId, cancellationToken);
         if (client is null)
         {
             return Results.ClientError(ClientErrorCode.Unauthorized, new Error
@@ -43,7 +45,9 @@ public class OidcAuthorizationCodeFlow(
             });
         }
 
-        if (client.Id != code.ClientId || !client.HasUri(context.RedirectUri!, UriType.Redirect))
+        var clientUris = await _clientQueryService.GetUrisAsync(client, cancellationToken);
+        if (client.Id != code.ClientId || 
+            clientUris.All(x => x.Type != UriType.Redirect && x.Uri != context.RedirectUri))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
@@ -52,7 +56,10 @@ public class OidcAuthorizationCodeFlow(
             });
         }
 
-        if (!client.HasGrantType(context.GrantType))
+        var clientGrantTypes = await _clientQueryService.GetSupportedGrantTypesAsync(
+            client, cancellationToken);
+        
+        if (clientGrantTypes.All(x => x.Grant.Grant != context.GrantType))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
@@ -147,10 +154,11 @@ public class OidcAuthorizationCodeFlow(
 
         response.AccessToken = accessToken;
 
-        var clientResult = await _clientManager.RelateAsync(client, session, cancellationToken);
+        var clientResult = await _clientCommandService.RelateAsync(client.Id, session.Id, cancellationToken);
         if (!clientResult.Succeeded) return clientResult;
 
-        if (client.AllowOfflineAccess && client.HasScope(ScopeTypes.OfflineAccess))
+        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(client, cancellationToken);
+        if (client.AllowOfflineAccess && clientScopes.Any(x => x.Scope.Value == ScopeTypes.OfflineAccess))
         {
             var refreshTokenFactoryContext = new RefreshTokenFactoryContext
             {

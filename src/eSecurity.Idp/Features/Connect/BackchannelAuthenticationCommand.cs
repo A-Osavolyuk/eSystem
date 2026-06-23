@@ -51,12 +51,12 @@ public sealed record BackchannelAuthenticationCommand : IRequest<Result>
 }
 
 public sealed class BackchannelAuthenticationCommandHandler(
-    IClientManager clientManager,
+    IClientQueryService clientQueryService,
     IUserResolverProvider userResolverProvider,
     ICibaRequestManager cibaRequestManager,
     IOptions<BackchannelAuthenticationOptions> options) : IRequestHandler<BackchannelAuthenticationCommand, Result>
 {
-    private readonly IClientManager _clientManager = clientManager;
+    private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly IUserResolverProvider _userResolverProvider = userResolverProvider;
     private readonly ICibaRequestManager _cibaRequestManager = cibaRequestManager;
     private readonly BackchannelAuthenticationOptions _options = options.Value;
@@ -72,7 +72,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
             });
         }
 
-        var client = await _clientManager.FindByIdAsync(request.ClientId, cancellationToken);
+        var client = await _clientQueryService.GetByIdAsync(request.ClientId, cancellationToken);
         if (client is null)
         {
             return Results.ClientError(ClientErrorCode.Unauthorized, new Error
@@ -82,7 +82,10 @@ public sealed class BackchannelAuthenticationCommandHandler(
             });
         }
 
-        if (!client.HasGrantType(GrantType.Ciba))
+        var clientGrantTypes = await _clientQueryService.GetSupportedGrantTypesAsync(
+            client, cancellationToken);
+        
+        if (clientGrantTypes.All(x => x.Grant.Grant != GrantType.Ciba))
         {
             return Results.ClientError(ClientErrorCode.Unauthorized, new Error
             {
@@ -100,8 +103,9 @@ public sealed class BackchannelAuthenticationCommandHandler(
             });
         }
 
+        var clientUris = await _clientQueryService.GetUrisAsync(client, cancellationToken);
         if (client.NotificationDeliveryMode is NotificationDeliveryMode.Ping or NotificationDeliveryMode.Push &&
-            !client.HasUri(UriType.NotificationEndpoint))
+            clientUris.All(x => x.Type != UriType.NotificationEndpoint))
         {
             return Results.ClientError(ClientErrorCode.Unauthorized, new Error
             {
@@ -129,7 +133,14 @@ public sealed class BackchannelAuthenticationCommandHandler(
             });
         }
 
-        if (!client.HasScopes(scopes, out var unsupportedScopes))
+        var allowedScopes = await _clientQueryService.GetAllowedScopesAsync(
+            client, cancellationToken);
+
+        var unsupportedScopes = scopes
+            .Except(allowedScopes.Select(x => x.Scope.Value))
+            .ToList();
+        
+        if (unsupportedScopes.Count > 0)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {

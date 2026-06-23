@@ -10,12 +10,12 @@ using eSystem.Core.Server.Security.Authorization.OAuth.Token.ClientCredentials;
 namespace eSecurity.Idp.Security.Authorization.Token.ClientCredentials;
 
 public sealed class ClientCredentialsStrategy(
-    IClientManager clientManager,
     ITokenFactoryProvider tokenFactoryProvider,
+    IClientQueryService clientQueryService,
     IOptions<TokenConfigurations> options) : ITokenStrategy
 {
-    private readonly IClientManager _clientManager = clientManager;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
+    private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(TokenRequest tokenRequest,
@@ -42,7 +42,7 @@ public sealed class ClientCredentialsStrategy(
             });
         }
 
-        var client = await _clientManager.FindByIdAsync(request.ClientId, cancellationToken);
+        var client = await _clientQueryService.GetByIdAsync(request.ClientId, cancellationToken);
         if (client is null)
         {
             return Results.ClientError(ClientErrorCode.Unauthorized, new Error
@@ -52,7 +52,8 @@ public sealed class ClientCredentialsStrategy(
             });
         }
 
-        if (!client.HasGrantType(request.GrantType))
+        var clientGrantTypes = await _clientQueryService.GetSupportedGrantTypesAsync(client, cancellationToken);
+        if (clientGrantTypes.All(x => x.Grant.Grant != request.GrantType))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
@@ -61,7 +62,8 @@ public sealed class ClientCredentialsStrategy(
             });
         }
 
-        var grantedScopes = client.AllowedScopes.Select(x => x.Scope.Value);
+        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(client, cancellationToken);
+        var grantedScopes = clientScopes.Select(x => x.Scope.Value);
         var requestScopes = request.Scope!.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         var allowedScopes = grantedScopes.Intersect(requestScopes).ToList();
 

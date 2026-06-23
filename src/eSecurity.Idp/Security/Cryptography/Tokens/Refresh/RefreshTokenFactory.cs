@@ -1,4 +1,5 @@
-﻿using eSecurity.Idp.Security.Authentication.Subject;
+﻿using eSecurity.Idp.Security.Authentication.Client;
+using eSecurity.Idp.Security.Authentication.Subject;
 using eSecurity.Idp.Security.Authorization.Token;
 using eSystem.Core.Primitives;
 
@@ -7,10 +8,12 @@ namespace eSecurity.Idp.Security.Cryptography.Tokens.Refresh;
 public sealed class RefreshTokenFactory(
     IOptions<TokenConfigurations> options,
     ITokenBuilderProvider tokenBuilderProvider,
+    IClientQueryService clientQueryService,
     ISubjectProvider subjectProvider) : ITokenFactory<RefreshTokenFactoryContext>
 {
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
     private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
+    private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly ISubjectProvider _subjectProvider = subjectProvider;
 
     public async ValueTask<TypedResult<string>> CreateAsync(
@@ -18,14 +21,20 @@ public sealed class RefreshTokenFactory(
         TokenFactoryOptions? options = null, 
         CancellationToken cancellationToken = default)
     {
+        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(
+            context.Client, cancellationToken);
+
+        var clientAudiences = await _clientQueryService.GetSupportedAudiencesAsync(
+            context.Client, cancellationToken);
+        
         IEnumerable<string> scopes;
         if (options is null || options.AllowedScopes.Count == 0)
         {
-            scopes = context.Client.AllowedScopes.Select(x => x.Scope.Value);
+            scopes = clientScopes.Select(x => x.Scope.Value);
         }
         else
         {
-            scopes = context.Client.AllowedScopes
+            scopes = clientScopes
                 .Where(x => options.AllowedScopes.Contains(x.Scope.Value))
                 .Select(x => x.Scope.Value);
         }
@@ -41,7 +50,7 @@ public sealed class RefreshTokenFactory(
                 TokenLength = _tokenConfigurations.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.RefreshToken,
                 ClientId = context.Client.Id,
-                Audiences = context.Client.Audiences.Select(x => x.Audience).ToList(),
+                Audiences = clientAudiences.Select(x => x.Audience).ToList(),
                 Scopes = scopes.ToList(),
                 ExpiredAt = DateTimeOffset.UtcNow.Add(lifetime),
                 Subject = context.Client.Id.ToString()
@@ -64,7 +73,7 @@ public sealed class RefreshTokenFactory(
                 TokenLength = _tokenConfigurations.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.RefreshToken,
                 ClientId = context.Client.Id,
-                Audiences = context.Client.Audiences.Select(x => x.Audience).ToList(),
+                Audiences = clientAudiences.Select(x => x.Audience).ToList(),
                 Scopes = scopes.ToList(),
                 ExpiredAt = DateTimeOffset.UtcNow.Add(lifetime),
                 Subject = subject,

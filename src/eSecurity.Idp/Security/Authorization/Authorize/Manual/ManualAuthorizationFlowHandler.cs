@@ -10,14 +10,14 @@ using eSystem.Core.Server.Security.Authentication.OpenIdConnect.Discovery;
 namespace eSecurity.Idp.Security.Authorization.Authorize.Manual;
 
 public sealed class ManualAuthorizationFlowHandler(
-    IClientManager clientManager,
     IOptions<OpenIdConfiguration> options,
     IPromptsProcessor promptsProcessor,
+    IClientQueryService clientQueryService,
     RedirectManager redirectManager) : IAuthorizationFlowHandler
 {
-    private readonly IClientManager _clientManager = clientManager;
     private readonly OpenIdConfiguration _configuration = options.Value;
     private readonly IPromptsProcessor _promptsProcessor = promptsProcessor;
+    private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly RedirectManager _redirectManager = redirectManager;
 
     public async ValueTask<Result> HandleAsync(AuthorizationRequest request,
@@ -31,7 +31,7 @@ public sealed class ManualAuthorizationFlowHandler(
             return Results.Redirect(RedirectionCode.Found, uri);
         }
 
-        var client = await _clientManager.FindByIdAsync(request.ClientId, cancellationToken);
+        var client = await _clientQueryService.GetByIdAsync(request.ClientId, cancellationToken);
         if (client is null)
         {
             var uri = _redirectManager.GetRedirectUri(ErrorCode.InvalidRequest, 
@@ -40,10 +40,12 @@ public sealed class ManualAuthorizationFlowHandler(
             return Results.Redirect(RedirectionCode.Found, uri);
         }
 
+        var clientUris = await _clientQueryService.GetUrisAsync(client, cancellationToken);
+        
         string redirectUri;
         if (string.IsNullOrEmpty(request.RedirectUri))
         {
-            var redirectUris = client.Uris
+            var redirectUris = clientUris
                 .Where(x => x.Type == UriType.Redirect)
                 .ToList();
 
@@ -59,7 +61,7 @@ public sealed class ManualAuthorizationFlowHandler(
         }
         else
         {
-            if (!client.HasUri(request.RedirectUri, UriType.Redirect))
+            if (clientUris.All(x => x.Type != UriType.Redirect && x.Uri != request.RedirectUri))
             {
                 var uri = _redirectManager.GetRedirectUri(ErrorCode.InvalidRequest, 
                     "redirect_uri is invalid");
@@ -95,7 +97,10 @@ public sealed class ManualAuthorizationFlowHandler(
             return Results.Redirect(RedirectionCode.Found, uri);
         }
 
-        if (client.ResponseTypes.All(x => x.ResponseType.Type != responseType.Value))
+        var clientResponseTypes = await _clientQueryService.GetSupportedResponseTypesAsync(
+            client, cancellationToken);
+        
+        if (clientResponseTypes.All(x => x.ResponseType.Type != responseType.Value))
         {
             var uri = _redirectManager.GetRedirectUri(redirectUri, ErrorCode.UnsupportedResponseType, 
                 $"{responseType.Value.GetString()} is not supported by client", request.State);
@@ -111,8 +116,11 @@ public sealed class ManualAuthorizationFlowHandler(
             return Results.Redirect(RedirectionCode.Found, uri);
         }
 
+        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(
+            client, cancellationToken);
+        
         var scopes = request.Scope.Split(" ").ToList();
-        var allowedScopes = client.AllowedScopes.Select(x => x.Scope.Value);
+        var allowedScopes = clientScopes.Select(x => x.Scope.Value);
         if (!ScopesValidator.Validate(allowedScopes, scopes, out var invalidScopes))
         {
             var errorDescription = $"{string.Join(", ", invalidScopes)} are not supported scopes by client";

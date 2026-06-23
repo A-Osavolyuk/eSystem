@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using eSecurity.Idp.Security.Authentication.Client;
 using eSecurity.Idp.Security.Authentication.Session;
 using eSecurity.Idp.Security.Authorization.Token;
 using eSecurity.Idp.Security.Cryptography.Hashing;
@@ -20,12 +21,14 @@ public class IntrospectionCommandHandler(
     IHasherProvider hasherProvider,
     ISessionManager sessionManager,
     IOptions<TokenConfigurations> options,
+    IClientQueryService clientQueryService,
     IFormBindingProvider bindingProvider) : IRequestHandler<IntrospectionCommand, Result>
 {
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IHasherProvider _hasherProvider = hasherProvider;
     private readonly ISessionManager _sessionManager = sessionManager;
+    private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly IFormBindingProvider _bindingProvider = bindingProvider;
     private readonly TokenConfigurations _configurations = options.Value;
 
@@ -63,13 +66,16 @@ public class IntrospectionCommandHandler(
             _ => throw new NotSupportedException("Unsupported token type")
         };
 
+        var clientAudiences = await _clientQueryService.GetSupportedAudiencesAsync(
+            token.Client, cancellationToken);
+        
         var response = new IntrospectionResponse
         {
             Active = true,
             TokenType = tokenType,
             ClientId = token.Client.Id,
             Issuer = _configurations.Issuer,
-            Audience = JsonSerializer.Serialize(token.Client.Audiences),
+            Audience = JsonSerializer.Serialize(clientAudiences.Select(x => x.Audience)),
             IssuedAt = token.IssuedAt.ToUnixTimeSeconds(),
             NotBefore = token.NotBefore?.ToUnixTimeSeconds(),
             Expiration = token.ExpiredAt.ToUnixTimeSeconds(),

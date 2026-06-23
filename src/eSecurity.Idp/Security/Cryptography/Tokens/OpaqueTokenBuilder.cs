@@ -23,16 +23,16 @@ public sealed class OpaqueTokenBuildContext : TokenBuildContext
 public class OpaqueTokenBuilder(
     ITokenManager tokenManager,
     IHasherProvider hasherProvider,
-    IClientManager clientManager) : ITokenBuilder<OpaqueTokenBuildContext>
+    IClientQueryService clientQueryService) : ITokenBuilder<OpaqueTokenBuildContext>
 {
     private readonly ITokenManager _tokenManager = tokenManager;
-    private readonly IClientManager _clientManager = clientManager;
+    private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
 
     public async ValueTask<string> BuildAsync(OpaqueTokenBuildContext buildContext,
         CancellationToken cancellationToken = default)
     {
-        var client = await _clientManager.FindByIdAsync(buildContext.ClientId, cancellationToken);
+        var client = await _clientQueryService.GetByIdAsync(buildContext.ClientId, cancellationToken);
         if (client is null) throw new Exception("Client was not found");
 
         var token = RandomKeyFactory.Create(buildContext.TokenLength);
@@ -52,7 +52,10 @@ public class OpaqueTokenBuilder(
 
         if (buildContext.TokenType is not OpaqueTokenType.LoginToken && buildContext.Audiences.Count > 0)
         {
-            opaqueToken.Audiences = client.Audiences
+            var clientAudiences = await _clientQueryService.GetSupportedAudiencesAsync(
+                client, cancellationToken);
+            
+            opaqueToken.Audiences = clientAudiences
                 .Where(aud => buildContext.Audiences.Contains(aud.Audience))
                 .Select(aud => new OpaqueTokenAudienceEntity
                 {
@@ -65,7 +68,10 @@ public class OpaqueTokenBuilder(
 
         if (buildContext.TokenType is not OpaqueTokenType.LoginToken && buildContext.Scopes.Count > 0)
         {
-            opaqueToken.Scopes = client.AllowedScopes
+            var clientScopes = await _clientQueryService.GetAllowedScopesAsync(
+                client, cancellationToken);
+            
+            opaqueToken.Scopes = clientScopes
                 .Where(scope => buildContext.Scopes.Contains(scope.Scope.Value))
                 .Select(scope => new OpaqueTokenScopeEntity
                 {

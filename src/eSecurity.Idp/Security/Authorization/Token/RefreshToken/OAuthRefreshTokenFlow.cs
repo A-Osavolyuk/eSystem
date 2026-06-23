@@ -12,22 +12,22 @@ using eSystem.Core.Server.Security.Authorization.OAuth.Token.RefreshToken;
 namespace eSecurity.Idp.Security.Authorization.Token.RefreshToken;
 
 public sealed class OAuthRefreshTokenFlow(
-    IClientManager clientManager,
     ITokenManager tokenManager,
     IUserQueryService userQueryService,
     ITokenFactoryProvider tokenFactoryProvider,
+    IClientQueryService clientQueryService,
     IOptions<TokenConfigurations> options) : IRefreshTokenFlow
 {
-    private readonly IClientManager _clientManager = clientManager;
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
+    private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(OpaqueTokenEntity token, RefreshTokenFlowContext flowContext,
         CancellationToken cancellationToken = default)
     {
-        var client = await _clientManager.FindByIdAsync(flowContext.ClientId, cancellationToken);
+        var client = await _clientQueryService.GetByIdAsync(flowContext.ClientId, cancellationToken);
         if (client is null)
         {
             return Results.ClientError(ClientErrorCode.Unauthorized, new Error
@@ -37,7 +37,8 @@ public sealed class OAuthRefreshTokenFlow(
             });
         }
 
-        if (!client.HasGrantType(flowContext.GrantType))
+        var clientGrantTypes = await _clientQueryService.GetSupportedGrantTypesAsync(client, cancellationToken);
+        if (clientGrantTypes.All(x => x.Grant.Grant != flowContext.GrantType))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {

@@ -32,7 +32,8 @@ public static class AuthenticationExtensions
         builder.Services.AddScoped<IAuthenticationSessionManager, AuthenticationSessionManager>();
         
         builder.Services.AddScoped<IPkceHandler, PkceHandler>();
-        builder.Services.AddScoped<IClientManager, ClientManager>();
+        builder.Services.AddScoped<IClientQueryService, ClientQueryService>();
+        builder.Services.AddScoped<IClientCommandService, ClientCommandService>();
         builder.Services.AddScoped<ICibaRequestManager, CibaRequestManager>();
             
         builder.Services.AddBackchannelAuthentication(options =>

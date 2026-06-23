@@ -27,16 +27,16 @@ public sealed class DeviceCodeDecisionCommandHandler(
     IDeviceCodeManager deviceCodeManager,
     ISessionManager sessionManager,
     ICurrentUserAccessor currentUserAccessor,
-    IClientManager clientManager,
     IConsentManager consentManager,
+    IClientQueryService clientQueryService,
     ISessionAccessor sessionAccessor) 
     : IRequestHandler<DeviceCodeDecisionCommand, Result>
 {
     private readonly IDeviceCodeManager _deviceCodeManager = deviceCodeManager;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
-    private readonly IClientManager _clientManager = clientManager;
     private readonly IConsentManager _consentManager = consentManager;
+    private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
 
     public async Task<Result> Handle(DeviceCodeDecisionCommand request, CancellationToken cancellationToken)
@@ -117,7 +117,7 @@ public sealed class DeviceCodeDecisionCommandHandler(
             return result.Succeeded ? result : Results.Success(SuccessCodes.Ok);
         }
         
-        var client = await _clientManager.FindByIdAsync(deviceCode.ClientId, cancellationToken);
+        var client = await _clientQueryService.GetByIdAsync(deviceCode.ClientId, cancellationToken);
         if (client is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error
@@ -127,11 +127,14 @@ public sealed class DeviceCodeDecisionCommandHandler(
             });
         }
 
+        var allowedScopes = await _clientQueryService.GetAllowedScopesAsync(
+            client, cancellationToken);
+        
         var scopes = deviceCode.Scopes.Select(x => x.Scope).ToList();
         var consent = await _consentManager.FindAsync(user, client, cancellationToken);
         if (consent is null)
         {
-            var clientScopes = client.AllowedScopes
+            var clientScopes = allowedScopes
                 .Where(x => scopes.Contains(x.Scope.Value))
                 .ToList();
 
@@ -156,7 +159,7 @@ public sealed class DeviceCodeDecisionCommandHandler(
         {
             if (!consent.HasScopes(scopes, out var remainingScopes))
             {
-                var clientScopes = client.AllowedScopes
+                var clientScopes = allowedScopes
                     .Where(x => remainingScopes.Contains(x.Scope.Value))
                     .ToList();
                 

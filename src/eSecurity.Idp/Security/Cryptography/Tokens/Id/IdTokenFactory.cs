@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
 using eSecurity.Core.Security.Identity;
+using eSecurity.Idp.Security.Authentication.Client;
 using eSecurity.Idp.Security.Authentication.Subject;
 using eSecurity.Idp.Security.Identity.Email;
 using eSecurity.Idp.Security.Identity.Privacy;
@@ -17,12 +18,14 @@ public sealed class IdTokenFactory(
     ITokenBuilderProvider tokenBuilderProvider,
     ISubjectProvider subjectProvider,
     IEmailQueryService emailQueryService,
+    IClientQueryService clientQueryService,
     IPersonalDataManager personalDataManager) : ITokenFactory<IdTokenFactoryContext>
 {
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
     private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
     private readonly ISubjectProvider _subjectProvider = subjectProvider;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
+    private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly IPersonalDataManager _personalDataManager = personalDataManager;
 
     public async ValueTask<TypedResult<string>> CreateAsync(
@@ -30,16 +33,22 @@ public sealed class IdTokenFactory(
         TokenFactoryOptions? options = null, 
         CancellationToken cancellationToken = default)
     {
+        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(
+            context.Client, cancellationToken);
+
+        var clientAudiences = await _clientQueryService.GetSupportedAudiencesAsync(
+            context.Client, cancellationToken);
+        
         List<string> scopes;
         if (options is null || options.AllowedScopes.Count == 0)
         {
-            scopes = context.Client.AllowedScopes
+            scopes = clientScopes
                 .Select(x => x.Scope.Value)
                 .ToList();
         }
         else
         {
-            scopes = context.Client.AllowedScopes
+            scopes = clientScopes
                 .Where(x => options.AllowedScopes.Contains(x.Scope.Value))
                 .Select(x => x.Scope.Value)
                 .ToList();

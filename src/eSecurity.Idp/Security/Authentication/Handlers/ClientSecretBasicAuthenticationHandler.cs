@@ -17,10 +17,10 @@ public sealed class ClientSecretBasicAuthenticationSchemeOptions : Authenticatio
 public class ClientSecretBasicAuthenticationHandler(
     IOptionsMonitor<ClientSecretBasicAuthenticationSchemeOptions> options,
     ILoggerFactory logger,
-    IClientManager clientManager,
+    IClientQueryService clientQueryService,
     UrlEncoder encoder) : AuthenticationHandler<ClientSecretBasicAuthenticationSchemeOptions>(options, logger, encoder)
 {
-    private readonly IClientManager _clientManager = clientManager;
+    private readonly IClientQueryService _clientQueryService = clientQueryService;
 
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
@@ -60,7 +60,7 @@ public class ClientSecretBasicAuthenticationHandler(
 
 
         var clientId = valueParts.First();
-        var client = await _clientManager.FindByIdAsync(clientId);
+        var client = await _clientQueryService.GetByIdAsync(clientId);
         if (client is null)
         {
             Context.Items["error"] = ErrorCode.InvalidClient;

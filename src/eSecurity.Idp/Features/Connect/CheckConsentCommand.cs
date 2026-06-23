@@ -21,14 +21,14 @@ public record CheckConsentCommand : IRequest<Result>
 public class CheckConsentCommandHandler(
     IConsentManager consentManager,
     ISessionManager sessionManager,
-    IClientManager clientManager,
     IUserQueryService userQueryService,
+    IClientQueryService clientQueryService,
     ISessionAccessor sessionAccessor) : IRequestHandler<CheckConsentCommand, Result>
 {
     private readonly IConsentManager _consentManager = consentManager;
     private readonly ISessionManager _sessionManager = sessionManager;
-    private readonly IClientManager _clientManager = clientManager;
     private readonly IUserQueryService _userQueryService = userQueryService;
+    private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
 
     public async Task<Result> Handle(CheckConsentCommand request, CancellationToken cancellationToken)
@@ -63,7 +63,7 @@ public class CheckConsentCommandHandler(
             });
         }
 
-        var client = await _clientManager.FindByIdAsync(request.ClientId, cancellationToken);
+        var client = await _clientQueryService.GetByIdAsync(request.ClientId, cancellationToken);
         if (client is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error

@@ -14,22 +14,22 @@ using eSystem.Core.Server.Security.Authorization.OAuth.Token.DeviceCode;
 namespace eSecurity.Idp.Security.Authorization.Token.DeviceCode;
 
 public sealed class OAuthDeviceCodeFlow(
-    IClientManager clientManager,
     IDeviceCodeManager deviceCodeManager,
     IUserQueryService userQueryService,
     ITokenFactoryProvider tokenFactoryProvider,
+    IClientQueryService clientQueryService,
     IOptions<TokenConfigurations> tokenOptions) : IDeviceCodeFlow
 {
-    private readonly IClientManager _clientManager = clientManager;
     private readonly IDeviceCodeManager _deviceCodeManager = deviceCodeManager;
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
+    private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly TokenConfigurations _tokenConfigurations = tokenOptions.Value;
 
     public async ValueTask<Result> ExecuteAsync(DeviceCodeEntity deviceCode, DeviceCodeFlowContext context,
         CancellationToken cancellationToken = default)
     {
-        var client = await _clientManager.FindByIdAsync(context.ClientId, cancellationToken);
+        var client = await _clientQueryService.GetByIdAsync(context.ClientId, cancellationToken);
         if (client is null || deviceCode.UserId is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -88,8 +88,9 @@ public sealed class OAuthDeviceCodeFlow(
         }
             
         response.AccessToken = accessToken;
-        
-        if (client.AllowOfflineAccess && client.HasScope(ScopeTypes.OfflineAccess))
+
+        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(client, cancellationToken);
+        if (client.AllowOfflineAccess && clientScopes.Any(x => x.Scope.Value == ScopeTypes.OfflineAccess))
         {
             var refreshTokenFactoryContext = new RefreshTokenFactoryContext
             {
@@ -119,7 +120,8 @@ public sealed class OAuthDeviceCodeFlow(
             response.RefreshToken = refreshToken;
         }
 
-        if (client.HasGrantType(GrantType.Ciba))
+        var clientGrantTypes = await _clientQueryService.GetSupportedGrantTypesAsync(client, cancellationToken);
+        if (clientGrantTypes.Any(x => x.Grant.Grant == GrantType.Ciba))
         {
             var loginTokenFactoryContext = new LoginTokenFactoryContext
             {

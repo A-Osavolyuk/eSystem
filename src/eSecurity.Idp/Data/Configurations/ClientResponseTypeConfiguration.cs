@@ -10,7 +10,7 @@ public sealed class ClientResponseTypeConfiguration : IEntityTypeConfiguration<C
         builder.HasKey(x => new { x.ClientId, x.ResponseTypeId });
         
         builder.HasOne(x => x.Client)
-            .WithMany(x => x.ResponseTypes)
+            .WithMany()
             .HasForeignKey(x => x.ClientId)
             .OnDelete(DeleteBehavior.Cascade);
         

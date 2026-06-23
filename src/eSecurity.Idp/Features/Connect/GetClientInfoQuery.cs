@@ -7,13 +7,13 @@ namespace eSecurity.Idp.Features.Connect;
 
 public record GetClientInfoQuery(string ClientId) : IRequest<Result>;
 
-public class GetClientInfoQueryHandler(IClientManager clientManager) : IRequestHandler<GetClientInfoQuery, Result>
+public class GetClientInfoQueryHandler(IClientQueryService clientQueryService) : IRequestHandler<GetClientInfoQuery, Result>
 {
-    private readonly IClientManager _clientManager = clientManager;
+    private readonly IClientQueryService _clientQueryService = clientQueryService;
 
     public async Task<Result> Handle(GetClientInfoQuery request, CancellationToken cancellationToken)
     {
-        var client = await _clientManager.FindByIdAsync(request.ClientId, cancellationToken);
+        var client = await _clientQueryService.GetByIdAsync(request.ClientId, cancellationToken);
         if (client is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error
@@ -23,11 +23,14 @@ public class GetClientInfoQueryHandler(IClientManager clientManager) : IRequestH
             });
         }
 
+        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(
+            client, cancellationToken);
+        
         var response = new ClientInfo
         {
             ClientName = client.Name,
             ClientType = client.ClientType,
-            RequiredScopes = client.AllowedScopes.Select(x => x.Scope.Value).ToList(),
+            RequiredScopes = clientScopes.Select(x => x.Scope.Value).ToList(),
         };
         
         return Results.Success(SuccessCodes.Ok, response);

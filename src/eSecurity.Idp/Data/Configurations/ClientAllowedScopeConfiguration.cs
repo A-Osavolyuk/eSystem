@@ -10,7 +10,7 @@ public sealed class ClientAllowedScopeConfiguration : IEntityTypeConfiguration<C
         builder.HasKey(x => x.Id);
 
         builder.HasOne(x => x.Client)
-            .WithMany(x => x.AllowedScopes)
+            .WithMany()
             .HasForeignKey(x => x.ClientId)
             .OnDelete(DeleteBehavior.Cascade);
         

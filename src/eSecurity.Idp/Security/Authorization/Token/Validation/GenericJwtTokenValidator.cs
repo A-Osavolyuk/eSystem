@@ -9,11 +9,9 @@ using TokenValidationResult = eSystem.Core.Server.Security.Authorization.OAuth.T
 namespace eSecurity.Idp.Security.Authorization.Token.Validation;
 
 public class GenericJwtTokenValidator(
-    IClientManager clientManager,
     ICertificateProvider certificateProvider,
     IOptions<TokenConfigurations> options) : IJwtTokenValidator
 {
-    private readonly IClientManager _clientManager = clientManager;
     private readonly ICertificateProvider _certificateProvider = certificateProvider;
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
     private readonly JwtSecurityTokenHandler _handler = new JwtSecurityTokenHandler();

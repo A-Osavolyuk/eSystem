@@ -8,10 +8,10 @@ using eSystem.Core.Utilities.Query;
 namespace eSecurity.Idp.Security.Authentication.EndSession.Frontchannel;
 
 public sealed class FrontchannelLogoutHandler(
-    IClientManager clientManager,
+    IClientQueryService clientQueryService,
     IOptions<EndSessionOptions> options) : IFrontChannelLogoutHandler
 {
-    private readonly IClientManager _clientManager = clientManager;
+    private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly EndSessionOptions _options = options.Value;
 
     public async ValueTask<Result> HandleAsync(EndSessionRequestEntity request, 
@@ -26,14 +26,21 @@ public sealed class FrontchannelLogoutHandler(
         if (string.IsNullOrEmpty(errorUri))
             errorUri = fallbackUri;
         
-        var clients = await _clientManager.GetClientsAsync(request.Session, cancellationToken);
+        var clients = await _clientQueryService.ListBySessionAsync(request.Session.Id, cancellationToken);
         if (clients.Count == 0)
             return Fallback(errorUri, ErrorCode.InvalidSession, "Session is invalid", request.State);
-        
-        var frontchannelLogoutUris = clients
-            .Where(x => x.HasUri(UriType.FrontChannelLogout))
-            .Select(x => x.GetUri(UriType.FrontChannelLogout)!)
-            .ToList();
+
+        var frontchannelLogoutUris = new List<string>();
+        foreach (var client in clients)
+        {
+            var clientUris = await _clientQueryService.GetUrisAsync(client, cancellationToken);
+            var uris = clientUris
+                .Where(x => x.Type == UriType.FrontChannelLogout)
+                .Select(x => x.Uri)
+                .ToList();
+            
+            frontchannelLogoutUris.AddRange(uris);
+        }
 
         var iframesBuilder = new StringBuilder();
         foreach (var frontchannelLogoutUri in frontchannelLogoutUris)

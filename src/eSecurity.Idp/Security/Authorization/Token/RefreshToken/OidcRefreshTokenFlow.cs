@@ -15,16 +15,16 @@ using eSystem.Core.Server.Security.Authorization.OAuth.Token.RefreshToken;
 namespace eSecurity.Idp.Security.Authorization.Token.RefreshToken;
 
 public sealed class OidcRefreshTokenFlow(
-    IClientManager clientManager,
     IUserQueryService userQueryService,
     ISessionManager sessionManager,
     ITokenFactoryProvider tokenFactoryProvider,
+    IClientQueryService clientQueryService,
     IOptions<TokenConfigurations> options) : IRefreshTokenFlow
 {
-    private readonly IClientManager _clientManager = clientManager;
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
+    private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(OpaqueTokenEntity token, RefreshTokenFlowContext flowContext,
@@ -61,7 +61,7 @@ public sealed class OidcRefreshTokenFlow(
             });
         }
 
-        var client = await _clientManager.FindByIdAsync(flowContext.ClientId, cancellationToken);
+        var client = await _clientQueryService.GetByIdAsync(flowContext.ClientId, cancellationToken);
         if (client is null)
         {
             return Results.ClientError(ClientErrorCode.Unauthorized, new Error
@@ -71,7 +71,8 @@ public sealed class OidcRefreshTokenFlow(
             });
         }
 
-        if (!client.HasGrantType(flowContext.GrantType))
+        var clientGrantTypes = await _clientQueryService.GetSupportedGrantTypesAsync(client, cancellationToken);
+        if (clientGrantTypes.All(x => x.Grant.Grant != flowContext.GrantType))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
@@ -89,7 +90,8 @@ public sealed class OidcRefreshTokenFlow(
             });
         }
 
-        if (!client.HasScope(ScopeTypes.OfflineAccess))
+        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(client, cancellationToken);
+        if (clientScopes.All(x => x.Scope.Value != ScopeTypes.OfflineAccess))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {

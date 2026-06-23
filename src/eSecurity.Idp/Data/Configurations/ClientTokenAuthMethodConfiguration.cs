@@ -10,7 +10,7 @@ public class ClientTokenAuthMethodConfiguration : IEntityTypeConfiguration<Clien
         builder.HasKey(e => new { e.ClientId, e.MethodId });
         
         builder.HasOne(e => e.Client)
-            .WithMany(c => c.TokenAuthMethods)
+            .WithMany()
             .HasForeignKey(e => e.ClientId)
             .OnDelete(DeleteBehavior.Cascade);
         

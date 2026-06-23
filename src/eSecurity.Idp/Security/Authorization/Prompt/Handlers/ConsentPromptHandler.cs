@@ -14,20 +14,20 @@ namespace eSecurity.Idp.Security.Authorization.Prompt.Handlers;
 
 public sealed class ConsentPromptHandler(
     ISessionManager sessionManager,
-    IClientManager clientManager,
     IConsentManager consentManager,
     IUserQueryService userQueryService,
     IOptions<OpenIdConfiguration> options,
     ISessionAccessor sessionAccessor,
     IPromptStateFactory stateFactory,
+    IClientQueryService clientQueryService,
     RedirectManager redirectManager) : IPromptHandler
 {
     private readonly ISessionManager _sessionManager = sessionManager;
-    private readonly IClientManager _clientManager = clientManager;
     private readonly IConsentManager _consentManager = consentManager;
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
     private readonly IPromptStateFactory _stateFactory = stateFactory;
+    private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly RedirectManager _redirectManager = redirectManager;
     private readonly OpenIdConfiguration _configuration = options.Value;
 
@@ -53,7 +53,7 @@ public sealed class ConsentPromptHandler(
             return PromptResult.Failed(Results.Redirect(RedirectionCode.Found, uri));
         }
 
-        var client = await _clientManager.FindByIdAsync(context.ClientId, cancellationToken);
+        var client = await _clientQueryService.GetByIdAsync(context.ClientId, cancellationToken);
         if (client is null)
         {
             var uri = _redirectManager.GetRedirectUri(context.RedirectUri, ErrorCode.BadRequest, 

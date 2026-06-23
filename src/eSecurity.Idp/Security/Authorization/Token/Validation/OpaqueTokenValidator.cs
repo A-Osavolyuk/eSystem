@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
+using eSecurity.Idp.Security.Authentication.Client;
 using eSecurity.Idp.Security.Cryptography.Hashing;
 using eSecurity.Idp.Security.Cryptography.Tokens;
 using eSystem.Core.Security.Identity.Claims;
@@ -11,9 +12,11 @@ namespace eSecurity.Idp.Security.Authorization.Token.Validation;
 public class OpaqueTokenValidator(
     ITokenManager tokenManager,
     IHasherProvider hasherProvider,
+    IClientQueryService clientQueryService,
     IOptions<TokenConfigurations> options) : ITokenValidator
 {
     private readonly ITokenManager _tokenManager = tokenManager;
+    private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
 
@@ -27,13 +30,16 @@ public class OpaqueTokenValidator(
         if (opaqueToken is null || !opaqueToken.IsValid)
             return TokenValidationResult.Fail();
 
-        var aud = JsonSerializer.Serialize(opaqueToken.Client.Audiences.Select(x => x.Audience));
+        var audiences = await _clientQueryService.GetSupportedAudiencesAsync(
+            opaqueToken.Client, cancellationToken);
+        
+        var audClaimValue = JsonSerializer.Serialize(audiences.Select(x => x.Audience));
         var scopes = opaqueToken.Scopes.Select(x => x.ClientScope);
         var claims = new List<Claim>
         {
             new(AppClaimTypes.Jti, opaqueToken.Id.ToString()),
             new(AppClaimTypes.Sid, opaqueToken.SessionId!.Value.ToString()),
-            new(AppClaimTypes.Aud, aud),
+            new(AppClaimTypes.Aud, audClaimValue),
             new(AppClaimTypes.Iss, _tokenConfigurations.Issuer),
             new(AppClaimTypes.Sub, opaqueToken.Subject),
             new(AppClaimTypes.Iat, opaqueToken.IssuedAt.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64),

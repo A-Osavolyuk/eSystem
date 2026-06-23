@@ -12,12 +12,12 @@ namespace eSecurity.Idp.Security.Authentication.EndSession.Backchannel;
 
 public sealed class BackchannelLogoutHandler(
     IOptions<EndSessionOptions> options,
-    IClientManager clientManager,
     ITokenFactoryProvider tokenFactoryProvider,
+    IClientQueryService clientQueryService,
     IHttpClientFactory httpClientFactory) : IBackchannelLogoutHandler
 {
-    private readonly IClientManager _clientManager = clientManager;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
+    private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly EndSessionOptions _options = options.Value;
     private readonly HttpClient _httpClient = httpClientFactory.CreateClient("BackchannelLogoutHandler");
 
@@ -28,10 +28,11 @@ public sealed class BackchannelLogoutHandler(
         if (string.IsNullOrEmpty(fallbackUri))
             throw new InvalidOperationException("End session flow was not configured correctly");
         
-        var clients = await _clientManager.GetClientsAsync(request.Session, cancellationToken);
+        var clients = await _clientQueryService.ListBySessionAsync(request.Session.Id, cancellationToken);
         foreach (var client in clients.Where(x => x.AllowBackChannelLogout))
         {
-            var backchannelLogoutUri = client.Uris.FirstOrDefault(x => x.Type == UriType.BackChannelLogout);
+            var clientUris = await _clientQueryService.GetUrisAsync(client, cancellationToken);
+            var backchannelLogoutUri = clientUris.FirstOrDefault(x => x.Type == UriType.BackChannelLogout);
             if (backchannelLogoutUri is null) 
                 continue;
 

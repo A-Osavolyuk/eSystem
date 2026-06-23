@@ -17,12 +17,12 @@ public sealed record PushedAuthorizationRequestCommand(IFormCollection Form) : I
 public sealed class PushedAuthorizationRequestCommandHandler(
     IFormBindingProvider bindingProvider,
     IParManager parManager,
-    IClientManager clientManager,
+    IClientQueryService clientQueryService,
     IOptions<OpenIdConfiguration> options) : IRequestHandler<PushedAuthorizationRequestCommand, Result>
 {
     private readonly IFormBindingProvider _bindingProvider = bindingProvider;
     private readonly IParManager _parManager = parManager;
-    private readonly IClientManager _clientManager = clientManager;
+    private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly OpenIdConfiguration _configuration = options.Value;
 
     public async Task<Result> Handle(PushedAuthorizationRequestCommand request, CancellationToken cancellationToken = default)
@@ -44,7 +44,7 @@ public sealed class PushedAuthorizationRequestCommandHandler(
             });
         }
 
-        var client = await _clientManager.FindByIdAsync(par.ClientId, cancellationToken);
+        var client = await _clientQueryService.GetByIdAsync(par.ClientId, cancellationToken);
         if (client is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -53,11 +53,13 @@ public sealed class PushedAuthorizationRequestCommandHandler(
                 Description = "Invalid client_id"
             });
         }
-        
+
+        var clientUris = await _clientQueryService.GetUrisAsync(client, cancellationToken);
+;        
         string redirectUri;
         if (string.IsNullOrEmpty(par.RedirectUri))
         {
-            var redirectUris = client.Uris
+            var redirectUris = clientUris
                 .Where(x => x.Type == UriType.Redirect)
                 .ToList();
 
@@ -74,7 +76,7 @@ public sealed class PushedAuthorizationRequestCommandHandler(
         }
         else
         {
-            if (!client.HasUri(par.RedirectUri, UriType.Redirect))
+            if (clientUris.All(x => x.Type != UriType.Redirect && x.Uri != par.RedirectUri))
             {
                 return Results.ClientError(ClientErrorCode.BadRequest, new Error
                 {
@@ -95,7 +97,10 @@ public sealed class PushedAuthorizationRequestCommandHandler(
             });
         }
 
-        if (client.ResponseTypes.All(x => x.ResponseType.Type != par.ResponseType))
+        var clientResponseTypes = await _clientQueryService.GetSupportedResponseTypesAsync(
+            client, cancellationToken);
+        
+        if (clientResponseTypes.All(x => x.ResponseType.Type != par.ResponseType))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
@@ -104,8 +109,11 @@ public sealed class PushedAuthorizationRequestCommandHandler(
             });
         }
 
+        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(
+            client, cancellationToken);
+        
         var scopes = par.Scope.Split(" ").ToList();
-        var allowedScopes = client.AllowedScopes.Select(x => x.Scope.Value);
+        var allowedScopes = clientScopes.Select(x => x.Scope.Value);
         if (!ScopesValidator.Validate(allowedScopes, scopes, out var invalidScopes))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error

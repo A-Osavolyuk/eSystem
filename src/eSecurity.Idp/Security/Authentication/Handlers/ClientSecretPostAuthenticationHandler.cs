@@ -17,10 +17,10 @@ public sealed class ClientSecretPostAuthenticationSchemeOptions : Authentication
 public class ClientSecretPostAuthenticationHandler(
     IOptionsMonitor<ClientSecretPostAuthenticationSchemeOptions> options, 
     ILoggerFactory logger,
-    IClientManager clientManager,
+    IClientQueryService clientQueryService,
     UrlEncoder encoder) : AuthenticationHandler<ClientSecretPostAuthenticationSchemeOptions>(options, logger, encoder)
 {
-    private readonly IClientManager _clientManager = clientManager;
+    private readonly IClientQueryService _clientQueryService = clientQueryService;
 
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
@@ -37,7 +37,7 @@ public class ClientSecretPostAuthenticationHandler(
             return AuthenticateResult.Fail("Unauthorized.");
         }
         
-        var client = await _clientManager.FindByIdAsync(clientId.ToString());
+        var client = await _clientQueryService.GetByIdAsync(clientId.ToString());
         if (client is null)
         {
             Context.Items["error"] = ErrorCode.InvalidClient;

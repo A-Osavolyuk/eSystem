@@ -1,6 +1,5 @@
 ﻿using eSecurity.Idp.Security.Authentication.Client;
 using eSystem.Core.Security.Authentication.OpenIdConnect.Client;
-using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Server.Data.Entities;
 using eSystem.Core.Server.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
 
@@ -31,36 +30,4 @@ public class ClientEntity : Entity
     public SubjectType SubjectType { get; set; }
     public string? SectorIdentifierUri { get; set; }
     public NotificationDeliveryMode NotificationDeliveryMode { get; set; }
-
-    public ICollection<ClientTokenAuthMethodEntity> TokenAuthMethods { get; set; } = null!;
-    public ICollection<PairwiseSubjectEntity> PairwiseSubjects { get; set; } = null!;
-    public ICollection<ClientAllowedScopeEntity> AllowedScopes { get; set; } = null!;
-    public ICollection<ClientResponseTypeEntity> ResponseTypes { get; set; } = null!;
-    public ICollection<ClientGrantTypeEntity> GrantTypes { get; set; } = null!;
-    public ICollection<ClientAudienceEntity> Audiences { get; set; } = null!;
-    public ICollection<ClientUriEntity> Uris { get; set; } = null!;
-
-    public string? GetUri(UriType uriType) 
-        => Uris.FirstOrDefault(x => x.Type == uriType)?.Uri;
-    
-    public bool HasScopes(IEnumerable<string> scopes, out IEnumerable<string> unsupportedScopes)
-    {
-        unsupportedScopes = scopes.Except(AllowedScopes.Select(x => x.Scope.Value));
-        return !unsupportedScopes.Any();
-    }
-
-    public bool HasScope(string scope)
-        => AllowedScopes.Any(x => x.Scope.Value == scope);
-
-    public bool HasGrantType(GrantType grantType)
-        => GrantTypes.Any(x => x.Grant.Grant == grantType);
-
-    public bool HasUri(string uri, UriType type)
-        => Uris.Any(x => x.Uri == uri && x.Type == type);
-    
-    public bool HasUri(UriType type)
-        => Uris.Any(x => x.Type == type);
-    
-    public bool IsValidAudience(string aud) 
-        => Audiences.Any(x => x.Audience == aud);
 }

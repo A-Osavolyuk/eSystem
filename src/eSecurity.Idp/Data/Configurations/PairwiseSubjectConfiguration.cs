@@ -16,7 +16,7 @@ public sealed class PairwiseSubjectConfiguration : IEntityTypeConfiguration<Pair
             .IsUnique();
             
         builder.HasOne(x => x.Client)
-            .WithMany(x => x.PairwiseSubjects)
+            .WithMany()
             .HasForeignKey(x => x.ClientId)
             .OnDelete(DeleteBehavior.Cascade);
             

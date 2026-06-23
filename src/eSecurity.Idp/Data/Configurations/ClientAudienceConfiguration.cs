@@ -11,7 +11,7 @@ public sealed class ClientAudienceConfiguration : IEntityTypeConfiguration<Clien
         builder.Property(x => x.Audience).HasMaxLength(200);
         
         builder.HasOne(x => x.Client)
-            .WithMany(x => x.Audiences)
+            .WithMany()
             .HasForeignKey(x => x.ClientId)
             .OnDelete(DeleteBehavior.Cascade);
     }
