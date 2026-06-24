@@ -10,6 +10,7 @@ using eSecurity.Idp.Common.Storage;
 using eSecurity.Idp.Security;
 using eSecurity.Idp.Data;
 using eSecurity.Idp.Middlewares;
+using eSystem.Core.Primitives;
 using eSystem.Core.Server.Documentation;
 using eSystem.Core.Server.Errors;
 using eSystem.Core.Server.Versioning;
@@ -56,6 +57,26 @@ public static class HostApplicationBuilderExtensions
                 .AddControllers(options =>
                 {
                     options.Conventions.Add(new RoutePrefixConvention("api"));
+                    options.ModelBinderProviders.Insert(0, new EnumModelBinderProvider());
+                })
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    options.InvalidModelStateResponseFactory = context =>
+                    {
+                        var errors = context.ModelState
+                            .Where(x => x.Value?.Errors.Count > 0)
+                            .SelectMany(x => x.Value!.Errors)
+                            .Select(e => e.ErrorMessage)
+                            .ToArray();
+
+                        var response = new Error()
+                        {
+                            Code = ErrorCode.InvalidRequest,
+                            Description = errors.First()
+                        };
+
+                        return new BadRequestObjectResult(response);
+                    };
                 })
                 .AddJsonOptions(options =>
                 {
