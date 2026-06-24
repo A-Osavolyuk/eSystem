@@ -1,5 +1,4 @@
 ﻿using eSecurity.Core.Security.Authorization.Verification;
-using eSecurity.Idp.Common.Validation.Validators.Standard;
 using eSecurity.Idp.Features.Verification.EmailOtp;
 using FluentValidation;
 
@@ -10,7 +9,8 @@ public sealed class SendEmailOtpCommandValidator : AbstractValidator<SendEmailOt
     public SendEmailOtpCommandValidator()
     {
         RuleFor(x => x.Email)
-            .SetValidator(new EmailValidator("email"));
+            .NotEmpty().WithMessage("'email' is required")
+            .EmailAddress().WithMessage("'email' is invalid");
 
         RuleFor(x => x.OperationType)
             .NotNull().WithMessage("'operation_type' is required")

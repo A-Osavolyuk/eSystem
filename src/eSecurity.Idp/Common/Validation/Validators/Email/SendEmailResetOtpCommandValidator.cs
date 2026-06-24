@@ -1,5 +1,4 @@
-﻿using eSecurity.Idp.Common.Validation.Validators.Standard;
-using eSecurity.Idp.Features.Email.Reset;
+﻿using eSecurity.Idp.Features.Email.Reset;
 using FluentValidation;
 
 namespace eSecurity.Idp.Common.Validation.Validators.Email;
@@ -8,10 +7,12 @@ public sealed class SendEmailResetOtpCommandValidator : AbstractValidator<SendEm
 {
     public SendEmailResetOtpCommandValidator()
     {
-        RuleFor(x => x.CurrentEmail)
-            .SetValidator(new EmailValidator("current_email"));
-        
         RuleFor(x => x.NewEmail)
-            .SetValidator(new EmailValidator("new_email"));
+            .NotEmpty().WithMessage("'new_email' is required")
+            .EmailAddress().WithMessage("'new_email' is invalid");
+        
+        RuleFor(x => x.CurrentEmail)
+            .NotEmpty().WithMessage("'current_email' is required")
+            .EmailAddress().WithMessage("'current_email' is invalid");
     }
 }
