@@ -1,3 +1,3 @@
 ﻿namespace eSystem.Core.Server.Exceptions;
 
-public sealed class UnauthorizedException : Exception;
+public sealed class UnauthorizedException(string message) : Exception(message);

@@ -1,9 +1,10 @@
 ﻿using eSystem.Core.Primitives;
+using eSystem.Core.Server.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 
 namespace eSecurity.Idp.Common.Errors;
 
-public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IExceptionHandler
+public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IExceptionHandler
 {
     private readonly ILogger<GlobalExceptionHandler> _logger = logger;
 
@@ -11,6 +12,18 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
         CancellationToken cancellationToken)
     {
         _logger.LogInformation("Handling global exception");
+
+        if (exception is UnauthorizedException)
+        {
+            httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            await httpContext.Response.WriteAsJsonAsync(new Error
+            {
+                Code = ErrorCode.Unauthorized,
+                Description = exception.Message
+            }, cancellationToken);
+            
+            return true;
+        }
 
         httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
         await httpContext.Response.WriteAsJsonAsync(new Error
