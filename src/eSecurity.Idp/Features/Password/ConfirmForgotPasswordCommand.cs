@@ -7,16 +7,17 @@ using eSecurity.Idp.Security.Authorization.Verification;
 using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Server.Exceptions;
 
 namespace eSecurity.Idp.Features.Password;
 
 public sealed record ConfirmForgotPasswordCommand : IRequest<Result>
 {
     [JsonPropertyName("email")]
-    public required string Email { get; set; }
+    public string? Email { get; set; }
     
     [JsonPropertyName("code")]
-    public required string Code { get; set; }
+    public string? Code { get; set; }
 }
 
 public sealed class ConfirmForgotPasswordCommandHandler(
@@ -30,6 +31,9 @@ public sealed class ConfirmForgotPasswordCommandHandler(
 
     public async Task<Result> Handle(ConfirmForgotPasswordCommand request, CancellationToken cancellationToken)
     {
+        if (string.IsNullOrWhiteSpace(request.Email))
+            throw new ValidationException("Email is required");
+        
         var user = await _userQueryService.GetByEmailAsync(request.Email, cancellationToken);
         if (user is null)
         {
@@ -40,6 +44,9 @@ public sealed class ConfirmForgotPasswordCommandHandler(
             });
         }
 
+        if (string.IsNullOrWhiteSpace(request.Code))
+            throw new ValidationException("Code is required");
+        
         var code = await _codeManager.FindByCodeAsync(user, request.Code, cancellationToken);
         if (code is null || code.ExpiredAt < DateTimeOffset.UtcNow)
         {
@@ -68,5 +75,33 @@ public sealed class ConfirmForgotPasswordCommandHandler(
 
         var response = new ConfirmForgotPasswordResponse { VerificationId = requestEntity.Id };
         return Results.Success(SuccessCodes.Ok, response);
+    }
+}
+
+public sealed class ConfirmForgotPasswordCommandValidator : IRequestValidator<ConfirmForgotPasswordCommand>
+{
+    public async ValueTask<Result> Validate(ConfirmForgotPasswordCommand request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (string.IsNullOrWhiteSpace(request.Code))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'code' is required"
+            });
+        }
+        
+        if (string.IsNullOrWhiteSpace(request.Email))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'email' is required"
+            });
+        }
+        
+        return Results.Success(SuccessCodes.Ok);
     }
 }

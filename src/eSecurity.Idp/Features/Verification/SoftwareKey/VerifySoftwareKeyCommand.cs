@@ -1,5 +1,4 @@
 ﻿using System.Text.Json.Serialization;
-using eSecurity.Core.Requests.Verification;
 using eSecurity.Core.Responses.Verification;
 using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Idp.Data.Entities;
@@ -11,13 +10,14 @@ using eSecurity.WebAuthN;
 using eSecurity.WebAuthN.Constants;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Server.Exceptions;
 
 namespace eSecurity.Idp.Features.Verification.SoftwareKey;
 
 public sealed record VerifySoftwareKeyCommand : IRequest<Result>
 {
-    [JsonPropertyName("credential")]
-    public required PublicKeyCredential Credential { get; set; }
+    [JsonPropertyName("credential")] 
+    public PublicKeyCredential? Credential { get; set; } = null!;
     
     [JsonPropertyName("operation_type")]
     public OperationType OperationType { get; set; }
@@ -40,8 +40,10 @@ public sealed class VerifySoftwareKeyCommandHandler(
     {
         var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
         var credential = request.Credential;
+        if (credential is null)
+            throw new ValidationException("Credential is required");
+        
         var credentialId = CredentialUtils.ToBase64String(credential.Id);
-
         var passkey = await _passkeyManager.FindByCredentialIdAsync(credentialId, cancellationToken);
         if (passkey is null)
         {
@@ -80,5 +82,24 @@ public sealed class VerifySoftwareKeyCommandHandler(
 
         var response = new VerificationResponse { VerificationId = requestEntity.Id };
         return Results.Success(SuccessCodes.Ok, response);
+    }
+}
+
+public sealed class VerifySoftwareKeyCommandValidator : IRequestValidator<VerifySoftwareKeyCommand>
+{
+    public async ValueTask<Result> Validate(VerifySoftwareKeyCommand request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (request.OperationType == OperationType.None)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'operation_type' is invalid"
+            });
+        }
+        
+        return Results.Success(SuccessCodes.Ok);
     }
 }

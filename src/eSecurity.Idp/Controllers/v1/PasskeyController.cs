@@ -40,7 +40,7 @@ public class PasskeyController(IMediator mediator) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("create")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> CreateAsync([FromBody] CreatePasskeyCommand command)
+    public async ValueTask<IActionResult> CreateAsync([FromBody] CreateSoftwareKeyCommand command)
     {
         var result = await _mediator.Send(command);
         return HttpContext.HandleResult(result);
@@ -51,7 +51,7 @@ public class PasskeyController(IMediator mediator) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("remove")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> RemoveAsync([FromBody] RemovePasskeyCommand command)
+    public async ValueTask<IActionResult> RemoveAsync([FromBody] RemoveSoftwareKeyCommand command)
     {
         var result = await _mediator.Send(command);
         return HttpContext.HandleResult(result);
@@ -62,7 +62,7 @@ public class PasskeyController(IMediator mediator) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("change-name")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async ValueTask<IActionResult> ChangeNameAsync([FromBody] ChangePasskeyNameCommand command)
+    public async ValueTask<IActionResult> ChangeNameAsync([FromBody] ChangeSoftwareKeyNameCommand command)
     {
         var result = await _mediator.Send(command);
         return HttpContext.HandleResult(result);

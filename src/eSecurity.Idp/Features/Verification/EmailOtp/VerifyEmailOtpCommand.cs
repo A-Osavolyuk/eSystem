@@ -86,3 +86,31 @@ public sealed class VerifyEmailOtpCommandHandler(
         return Results.Success(SuccessCodes.Ok, response);
     }
 }
+
+public sealed class VerifyEmailOtpCommandValidator : IRequestValidator<VerifyEmailOtpCommand>
+{
+    public async ValueTask<Result> Validate(VerifyEmailOtpCommand request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (string.IsNullOrWhiteSpace(request.Code))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'code' is required"
+            });
+        }
+
+        if (request.OperationType == OperationType.None)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'operation_type' is invalid"
+            });
+        }
+        
+        return Results.Success(SuccessCodes.Ok);
+    }
+}

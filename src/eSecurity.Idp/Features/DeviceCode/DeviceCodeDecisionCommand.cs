@@ -166,3 +166,31 @@ public sealed class DeviceCodeDecisionCommandHandler(
         return await _deviceCodeManager.UpdateAsync(deviceCode, cancellationToken);
     }
 }
+
+public sealed class DeviceCodeDecisionCommandValidator : IRequestValidator<DeviceCodeDecisionCommand>
+{
+    public async ValueTask<Result> Validate(DeviceCodeDecisionCommand request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (string.IsNullOrWhiteSpace(request.UserCode))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'user_code' is required"
+            });
+        }
+
+        if (request.Decision == DeviceCodeDecision.None)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'decision' is invalid"
+            });
+        }
+        
+        return Results.Success(SuccessCodes.Ok);
+    }
+}

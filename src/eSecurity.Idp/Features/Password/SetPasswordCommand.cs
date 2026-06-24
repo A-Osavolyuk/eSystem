@@ -3,13 +3,14 @@ using eSecurity.Idp.Security.Authentication.Password;
 using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Server.Exceptions;
 
 namespace eSecurity.Idp.Features.Password;
 
-public sealed record SetPasswordCommand : IRequest<Result>
+public sealed class SetPasswordCommand : IRequest<Result>
 {
     [JsonPropertyName("password")]
-    public required string Password { get; set; }
+    public string? Password { get; set; }
 }
 
 public sealed class SetPasswordCommandHandler(
@@ -30,7 +31,29 @@ public sealed class SetPasswordCommandHandler(
                 Description = "User does not have a password."
             });
         }
+
+        if (string.IsNullOrWhiteSpace(request.Password))
+            throw new ValidationException("Password is required");
         
         return await _passwordManager.ResetAsync(user, request.Password, cancellationToken);
+    }
+}
+
+public sealed class SetPasswordCommandValidator : IRequestValidator<SetPasswordCommand>
+{
+    public async ValueTask<Result> Validate(SetPasswordCommand request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (string.IsNullOrWhiteSpace(request.Password))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'password' is required"
+            });
+        }
+        
+        return Results.Success(SuccessCodes.Ok);
     }
 }

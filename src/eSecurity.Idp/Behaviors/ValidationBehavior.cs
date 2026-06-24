@@ -6,7 +6,7 @@ namespace eSecurity.Idp.Behaviors;
 
 public sealed class ValidationBehavior<TRequest, TResponse>(IServiceProvider serviceProvider) 
     : IPipelineBehavior<TRequest, TResponse> 
-    where TRequest : IRequest<TResponse> 
+    where TRequest : IRequest<TResponse>, IRequest<Result>
     where TResponse : Result
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
@@ -14,20 +14,12 @@ public sealed class ValidationBehavior<TRequest, TResponse>(IServiceProvider ser
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, 
         CancellationToken cancellationToken)
     {
-        var validator = _serviceProvider.GetService<IValidator<TRequest>>();
+        var validator = _serviceProvider.GetService<IRequestValidator<TRequest>>();
         if (validator is not null)
         {
-            var validationResult = await validator.ValidateAsync(request, cancellationToken);
-            if (!validationResult.IsValid && validationResult.Errors.Count > 0)
-            {
-                var result = Results.ClientError(ClientErrorCode.BadRequest, new Error()
-                {
-                    Code = ErrorCode.InvalidRequest,
-                    Description = validationResult.Errors.First().ErrorMessage
-                });
-
-                return (TResponse)result;
-            }
+            var validationResult = await validator.Validate(request, cancellationToken);
+            if (!validationResult.Succeeded)
+                return (TResponse)validationResult;
         }
         
         var response = await next();

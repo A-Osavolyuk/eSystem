@@ -7,13 +7,14 @@ using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Messaging;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Server.Exceptions;
 
 namespace eSecurity.Idp.Features.Password;
 
-public sealed record ForgotPasswordCommand : IRequest<Result>
+public sealed class ForgotPasswordCommand : IRequest<Result>
 {
     [JsonPropertyName("email")]
-    public required string Email { get; set; }
+    public string? Email { get; set; }
 }
 
 public sealed class ForgotPasswordCommandHandler(
@@ -30,6 +31,9 @@ public sealed class ForgotPasswordCommandHandler(
     public async Task<Result> Handle(ForgotPasswordCommand request,
         CancellationToken cancellationToken)
     {
+        if (string.IsNullOrWhiteSpace(request.Email))
+            throw new ValidationException("Email is required");
+        
         var user = await _userQueryService.GetByEmailAsync(request.Email, cancellationToken);
         if (user is null)
         {
@@ -73,6 +77,25 @@ public sealed class ForgotPasswordCommandHandler(
         };
 
         await _emailService.SendAsync(emailContext, cancellationToken);
+        
+        return Results.Success(SuccessCodes.Ok);
+    }
+}
+
+public sealed class ForgotPasswordCommandValidator : IRequestValidator<ForgotPasswordCommand>
+{
+    public async ValueTask<Result> Validate(ForgotPasswordCommand request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (string.IsNullOrWhiteSpace(request.Email))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'email' is required"
+            });
+        }
         
         return Results.Success(SuccessCodes.Ok);
     }

@@ -6,7 +6,7 @@ using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Idp.Features.Passkeys;
 
-public record ChangePasskeyNameCommand : IRequest<Result>
+public sealed class ChangeSoftwareKeyNameCommand : IRequest<Result>
 {
     [JsonPropertyName("passkey_id")]
     public required Guid PasskeyId { get; set; }
@@ -15,14 +15,14 @@ public record ChangePasskeyNameCommand : IRequest<Result>
     public required string DisplayName { get; set; }
 }
 
-public class ChangePasskeyNameCommandHandler(
+public sealed class ChangeSoftwareKeyNameCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
-    IPasskeyManager passkeyManager) : IRequestHandler<ChangePasskeyNameCommand, Result>
+    IPasskeyManager passkeyManager) : IRequestHandler<ChangeSoftwareKeyNameCommand, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
 
-    public async Task<Result> Handle(ChangePasskeyNameCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(ChangeSoftwareKeyNameCommand request, CancellationToken cancellationToken)
     {
         var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
         if (!await _passkeyManager.HasAsync(user, cancellationToken))
@@ -48,5 +48,24 @@ public class ChangePasskeyNameCommandHandler(
 
         var result = await _passkeyManager.UpdateAsync(passkey, cancellationToken);
         return result;
+    }
+}
+
+public sealed class ChangeSoftwareKeyNameCommandValidator : IRequestValidator<ChangeSoftwareKeyNameCommand>
+{
+    public async ValueTask<Result> Validate(ChangeSoftwareKeyNameCommand request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (string.IsNullOrWhiteSpace(request.DisplayName))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'display_name' is required"
+            });
+        }
+        
+        return Results.Success(SuccessCodes.Ok);
     }
 }

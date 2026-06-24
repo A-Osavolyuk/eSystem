@@ -41,7 +41,8 @@ public sealed class PasskeySignInStrategy(
     public async ValueTask<Result> ExecuteAsync(SignInPayload payload,
         CancellationToken cancellationToken = default)
     {
-        if (payload is not PasskeySignInPayload passkeyPayload)
+        if (payload is not PasskeySignInPayload passkeyPayload || 
+            passkeyPayload.Credential is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {

@@ -6,13 +6,13 @@ using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Idp.Features.DeviceCode;
 
-public record CheckDeviceCodeCommand : IRequest<Result>
+public sealed class CheckDeviceCodeCommand : IRequest<Result>
 {
     [JsonPropertyName("user_code")]
     public required string UserCode { get; set; }
 }
 
-public class CheckDeviceCodeCommandHandler(
+public sealed class CheckDeviceCodeCommandHandler(
     IDeviceCodeManager deviceCodeManager) : IRequestHandler<CheckDeviceCodeCommand, Result>
 {
     private readonly IDeviceCodeManager _deviceCodeManager = deviceCodeManager;
@@ -47,5 +47,24 @@ public class CheckDeviceCodeCommandHandler(
         };
         
         return Results.Success(SuccessCodes.Ok, response);
+    }
+}
+
+public sealed class CheckDeviceCodeCommandValidator : IRequestValidator<CheckDeviceCodeCommand>
+{
+    public async ValueTask<Result> Validate(CheckDeviceCodeCommand request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (string.IsNullOrWhiteSpace(request.UserCode))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'user_code' is required"
+            });
+        }
+        
+        return Results.Success(SuccessCodes.Ok);
     }
 }

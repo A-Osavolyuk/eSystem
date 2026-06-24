@@ -12,16 +12,17 @@ using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Messaging;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Server.Exceptions;
 
 namespace eSecurity.Idp.Features.Email.Reset;
 
 public sealed record SendEmailResetOtpCommand : IRequest<Result>
 {
     [JsonPropertyName("current_email")]
-    public required string CurrentEmail { get; set; }
+    public string? CurrentEmail { get; set; }
     
     [JsonPropertyName("new_email")]
-    public required string NewEmail { get; set; }
+    public string? NewEmail { get; set; }
 }
 
 public sealed class SendEmailResetCommandOtpHandler(
@@ -44,6 +45,9 @@ public sealed class SendEmailResetCommandOtpHandler(
     public async Task<Result> Handle(SendEmailResetOtpCommand request, CancellationToken cancellationToken = default)
     {
         var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
+        if (string.IsNullOrWhiteSpace(request.NewEmail))
+            throw new ValidationException("NewEmail is required");
+        
         if (await _emailQueryService.ExistsAsync(request.NewEmail, cancellationToken))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error()
@@ -53,9 +57,10 @@ public sealed class SendEmailResetCommandOtpHandler(
             });
         }
 
-        var currentEmail = await _emailQueryService.GetByEmailAsync(
-            user.Id, request.CurrentEmail, cancellationToken);
-
+        if (string.IsNullOrWhiteSpace(request.CurrentEmail))
+            throw new ValidationException("CurrentEmail is require");
+        
+        var currentEmail = await _emailQueryService.GetByEmailAsync(user.Id, request.CurrentEmail, cancellationToken);
         if (currentEmail is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error()
@@ -115,5 +120,33 @@ public sealed class SendEmailResetCommandOtpHandler(
         };
 
         return Results.Success(SuccessCodes.Ok, response);
+    }
+}
+
+public sealed class SendEmailResetOtpCommandValidator : IRequestValidator<SendEmailResetOtpCommand>
+{
+    public async ValueTask<Result> Validate(SendEmailResetOtpCommand request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (string.IsNullOrWhiteSpace(request.CurrentEmail))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'current_email' is required"
+            });
+        }
+        
+        if (string.IsNullOrWhiteSpace(request.NewEmail))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'new_email' is required"
+            });
+        }
+        
+        return Results.Success(SuccessCodes.Ok);
     }
 }

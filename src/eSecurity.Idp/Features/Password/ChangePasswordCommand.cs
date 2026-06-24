@@ -3,16 +3,17 @@ using eSecurity.Idp.Security.Authentication.Password;
 using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Server.Exceptions;
 
 namespace eSecurity.Idp.Features.Password;
 
-public sealed record ChangePasswordCommand : IRequest<Result>
+public sealed class ChangePasswordCommand : IRequest<Result>
 {
     [JsonPropertyName("current_password")]
-    public required string CurrentPassword { get; set; }
+    public string? CurrentPassword { get; set; }
     
     [JsonPropertyName("new_password")]
-    public required string NewPassword { get; set; }
+    public string? NewPassword { get; set; }
 }
 
 public sealed class ChangePasswordCommandHandler(
@@ -35,6 +36,9 @@ public sealed class ChangePasswordCommandHandler(
             });
         }
 
+        if (string.IsNullOrWhiteSpace(request.CurrentPassword))
+            throw new ValidationException("CurrentPassword is required");
+        
         if (!await _passwordManager.CheckAsync(user, request.CurrentPassword, cancellationToken))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -44,8 +48,37 @@ public sealed class ChangePasswordCommandHandler(
             });
         }
         
-        var result = await _passwordManager.ChangeAsync(user, request.NewPassword, cancellationToken);
+        if (string.IsNullOrWhiteSpace(request.NewPassword))
+            throw new ValidationException("NewPassword is required");
+        
+        return await _passwordManager.ChangeAsync(user, request.NewPassword, cancellationToken);
+    }
+}
 
-        return result;
+public sealed class ChangePasswordCommandValidator : IRequestValidator<ChangePasswordCommand>
+{
+    public async ValueTask<Result> Validate(ChangePasswordCommand request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (string.IsNullOrWhiteSpace(request.CurrentPassword))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'current_password' is required"
+            });
+        }
+        
+        if (string.IsNullOrWhiteSpace(request.NewPassword))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'new_password' is required"
+            });
+        }
+        
+        return Results.Success(SuccessCodes.Ok);
     }
 }

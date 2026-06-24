@@ -1,5 +1,4 @@
 ﻿using System.Text.Json.Serialization;
-using eSecurity.Core.Requests;
 using eSecurity.Core.Security.Authentication.TwoFactor;
 using eSecurity.Idp.Security.Authentication.TwoFactor;
 using eSecurity.Idp.Security.Identity.User;
@@ -8,13 +7,13 @@ using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Idp.Features.TwoFactor;
 
-public record PreferTwoFactorMethodCommand : IRequest<Result>
+public sealed class PreferTwoFactorMethodCommand : IRequest<Result>
 {
     [JsonPropertyName("preferred_method")]
     public TwoFactorMethod PreferredMethod { get; set; }
 }
 
-public class PreferMethodCommandHandler(
+public sealed class PreferMethodCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
     ITwoFactorManager twoFactorManager) : IRequestHandler<PreferTwoFactorMethodCommand, Result>
 {
@@ -26,5 +25,24 @@ public class PreferMethodCommandHandler(
         var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
         var result = await _twoFactorManager.PreferAsync(user, request.PreferredMethod, cancellationToken);
         return result;
+    }
+}
+
+public sealed class PreferTwoMethodCommandValidator : IRequestValidator<PreferTwoFactorMethodCommand>
+{
+    public async ValueTask<Result> Validate(PreferTwoFactorMethodCommand request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (request.PreferredMethod == TwoFactorMethod.None)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'preferred_method' is invalid"
+            });
+        }
+        
+        return Results.Success(SuccessCodes.Ok);
     }
 }

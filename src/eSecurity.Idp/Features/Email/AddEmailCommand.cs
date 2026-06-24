@@ -6,16 +6,17 @@ using eSecurity.Idp.Security.Identity.Options;
 using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Server.Exceptions;
 
 namespace eSecurity.Idp.Features.Email;
 
-public record AddEmailCommand : IRequest<Result>
+public sealed class AddEmailCommand : IRequest<Result>
 {
     [JsonPropertyName("email")]
-    public required string Email { get; set; }
+    public string? Email { get; set; }
 }
 
-public class AddEmailCommandHandler(
+public sealed class AddEmailCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
     IEmailQueryService emailQueryService,
     IEmailCommandService emailCommandService,
@@ -35,6 +36,9 @@ public class AddEmailCommandHandler(
         var canAddResult = _emailPolicy.CanAdd(userEmails, EmailType.Secondary);
         if (!canAddResult.Succeeded) return canAddResult;
 
+        if (string.IsNullOrWhiteSpace(request.Email))
+            throw new ValidationException("Email is required");
+        
         if (await _emailQueryService.ExistsAsync(request.Email, cancellationToken))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -46,5 +50,24 @@ public class AddEmailCommandHandler(
 
         var email = request.Email;
         return await _emailCommandService.AddAsync(user.Id, email, EmailType.Secondary, cancellationToken);
+    }
+}
+
+public sealed class AddEmailCommandValidator : IRequestValidator<AddEmailCommand>
+{
+    public async ValueTask<Result> Validate(AddEmailCommand request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (string.IsNullOrWhiteSpace(request.Email))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'email' is required"
+            });
+        }
+        
+        return Results.Success(SuccessCodes.Ok);
     }
 }

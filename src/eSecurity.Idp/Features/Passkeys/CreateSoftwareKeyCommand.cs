@@ -13,27 +13,28 @@ using eSecurity.WebAuthN.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Server.Exceptions;
 using CredentialOptions = eSecurity.Idp.Security.Credentials.PublicKey.Credentials.CredentialOptions;
 
 namespace eSecurity.Idp.Features.Passkeys;
 
-public record CreatePasskeyCommand : IRequest<Result>
+public record CreateSoftwareKeyCommand : IRequest<Result>
 {
     [JsonPropertyName("display_name")]
-    public required string DisplayName { get; set; }
+    public string? DisplayName { get; set; }
     
     [JsonPropertyName("response")]
-    public required PublicKeyCredentialCreationResponse Response { get; set; }
+    public PublicKeyCredentialCreationResponse? Response { get; set; }
 }
 
-public class CreatePasskeyCommandHandler(
+public class CreateSoftwareKeyCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
     IPasskeyManager passkeyManager,
     ITwoFactorManager twoFactorManager,
     IHttpContextAccessor httpContextAccessor,
     ISessionStorage sessionStorage,
     IDeviceManager deviceManager,
-    IOptions<CredentialOptions> options) : IRequestHandler<CreatePasskeyCommand, Result>
+    IOptions<CredentialOptions> options) : IRequestHandler<CreateSoftwareKeyCommand, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
@@ -43,7 +44,7 @@ public class CreatePasskeyCommandHandler(
     private readonly CredentialOptions _credentialOptions = options.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
-    public async Task<Result> Handle(CreatePasskeyCommand request,
+    public async Task<Result> Handle(CreateSoftwareKeyCommand request,
         CancellationToken cancellationToken)
     {
         var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
@@ -58,9 +59,11 @@ public class CreatePasskeyCommandHandler(
                 Description = "Invalid device."
             });
         }
-
-        var credentialResponse = request.Response;
-        var clientData = ClientData.Parse(credentialResponse.Response.ClientDataJson);
+        
+        if (request.Response is null)
+            throw new ValidationException("Response is required");
+        
+        var clientData = ClientData.Parse(request.Response.Response.ClientDataJson);
         if (clientData is null || clientData.Type != ClientDataTypes.Create)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -81,7 +84,7 @@ public class CreatePasskeyCommandHandler(
             });
         }
 
-        var authData = AuthenticationData.Parse(credentialResponse.Response.AttestationObject);
+        var authData = AuthenticationData.Parse(request.Response.Response.AttestationObject);
         var source = Encoding.UTF8.GetBytes(_credentialOptions.Domain.ToArray());
         var rpHash = SHA256.HashData(source);
         if (!authData.RpIdHash.SequenceEqual(rpHash))
@@ -93,6 +96,9 @@ public class CreatePasskeyCommandHandler(
             });
         }
 
+        if (string.IsNullOrWhiteSpace(request.DisplayName))
+            throw new ValidationException("DisplayName is required");
+        
         var passkey = new PasskeyEntity
         {
             Id = Guid.CreateVersion7(),
@@ -117,6 +123,34 @@ public class CreatePasskeyCommandHandler(
 
             if (!twoFactorResult.Succeeded) 
                 return twoFactorResult;
+        }
+        
+        return Results.Success(SuccessCodes.Ok);
+    }
+}
+
+public sealed class CreateSoftwareKeyCommandValidator : IRequestValidator<CreateSoftwareKeyCommand>
+{
+    public async ValueTask<Result> Validate(CreateSoftwareKeyCommand request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (string.IsNullOrWhiteSpace(request.DisplayName))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'display_name' is required"
+            });
+        }
+
+        if (request.Response is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'response' is required"
+            });
         }
         
         return Results.Success(SuccessCodes.Ok);

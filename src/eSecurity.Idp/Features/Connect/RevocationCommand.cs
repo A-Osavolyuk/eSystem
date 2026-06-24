@@ -3,11 +3,10 @@ using eSecurity.Idp.Security.Cryptography.Hashing;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authorization.OAuth;
-using eSystem.Core.Server.Binding;
 
 namespace eSecurity.Idp.Features.Connect;
 
-public sealed record RevocationCommand : IRequest<Result>
+public sealed class RevocationCommand : IRequest<Result>
 {
     [FromForm(Name = "token")] 
     public string Token { get; set; } = null!;
@@ -16,7 +15,7 @@ public sealed record RevocationCommand : IRequest<Result>
     public TokenTypeHint? TokenTypeHint { get; set; }
 }
 
-public class RevocationCommandHandler(
+public sealed class RevocationCommandHandler(
     ITokenManager tokenManager, 
     IHasherProvider hasherProvider) : IRequestHandler<RevocationCommand, Result>
 {
@@ -25,15 +24,6 @@ public class RevocationCommandHandler(
 
     public async Task<Result> Handle(RevocationCommand request, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrEmpty(request.Token))
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error
-            {
-                Code = ErrorCode.InvalidRequest,
-                Description = "Token is missing."
-            });
-        }
-
         OpaqueTokenType? tokenType = request.TokenTypeHint switch
         {
             TokenTypeHint.AccessToken => OpaqueTokenType.AccessToken,
@@ -51,5 +41,24 @@ public class RevocationCommandHandler(
             return Results.Success(SuccessCodes.Ok);
         
         return await _tokenManager.RevokeAsync(token, cancellationToken);
+    }
+}
+
+public sealed class RevocationCommandValidator : IRequestValidator<RevocationCommand>
+{
+    public ValueTask<Result> Validate(RevocationCommand request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (string.IsNullOrWhiteSpace(request.Token))
+        {
+            return ValueTask.FromResult(Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'token' is required"
+            }));
+        }
+
+        return ValueTask.FromResult(Results.Success(SuccessCodes.Ok));
     }
 }

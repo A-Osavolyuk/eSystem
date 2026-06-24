@@ -3,16 +3,17 @@ using eSecurity.Idp.Security.Authentication.Password;
 using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Server.Exceptions;
 
 namespace eSecurity.Idp.Features.Password;
 
-public record AddPasswordCommand : IRequest<Result>
+public sealed class AddPasswordCommand : IRequest<Result>
 {
     [JsonPropertyName("password")]
-    public required string Password { get; set; }
+    public string? Password { get; set; }
 }
 
-public class AddPasswordCommandHandler(
+public sealed class AddPasswordCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
     IPasswordManager passwordManager) : IRequestHandler<AddPasswordCommand, Result>
 {
@@ -30,7 +31,29 @@ public class AddPasswordCommandHandler(
                 Description = "User already has a password."
             });
         }
+
+        if (string.IsNullOrWhiteSpace(request.Password))
+            throw new ValidationException("Password is required");
         
         return await _passwordManager.AddAsync(user, request.Password, cancellationToken);
+    }
+}
+
+public sealed class AddPasswordCommandValidator : IRequestValidator<AddPasswordCommand>
+{
+    public async ValueTask<Result> Validate(AddPasswordCommand request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (string.IsNullOrWhiteSpace(request.Password))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'password' is required"
+            });
+        }
+        
+        return Results.Success(SuccessCodes.Ok);
     }
 }

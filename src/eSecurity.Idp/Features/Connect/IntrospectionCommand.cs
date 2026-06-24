@@ -13,7 +13,7 @@ using eSystem.Core.Server.Security.Authorization.OAuth.Introspection;
 
 namespace eSecurity.Idp.Features.Connect;
 
-public record IntrospectionCommand : IRequest<Result>
+public sealed class IntrospectionCommand : IRequest<Result>
 {
     [FromForm(Name = "token")]
     public string Token { get; init; } = null!;
@@ -22,7 +22,7 @@ public record IntrospectionCommand : IRequest<Result>
     public TokenTypeHint? TokenTypeHint { get; init; }
 }
 
-public class IntrospectionCommandHandler(
+public sealed class IntrospectionCommandHandler(
     ITokenManager tokenManager,
     IUserQueryService userQueryService,
     IHasherProvider hasherProvider,
@@ -95,5 +95,24 @@ public class IntrospectionCommandHandler(
         }
 
         return Results.Success(SuccessCodes.Ok, response);
+    }
+}
+
+public sealed class IntrospectionCommandValidator : IRequestValidator<IntrospectionCommand>
+{
+    public async ValueTask<Result> Validate(IntrospectionCommand request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        
+        if (string.IsNullOrWhiteSpace(request.Token))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'token' is required"
+            });
+        }
+
+        return Results.Success(SuccessCodes.Ok);
     }
 }

@@ -2,6 +2,7 @@
 using eSecurity.Idp.Security.Identity.SignUp;
 using eSecurity.Idp.Security.Identity.SignUp.Strategies;
 using eSystem.Core.Primitives;
+using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Idp.Features.Account;
 
@@ -34,5 +35,42 @@ public sealed class SignUpCommandHandler(ISignUpResolver resolver) : IRequestHan
         };
         
         return await strategy.ExecuteAsync(payload, cancellationToken);
+    }
+}
+
+public sealed class SignUpCommandValidator : IRequestValidator<SignUpCommand>
+{
+    public async ValueTask<Result> Validate(SignUpCommand request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (string.IsNullOrWhiteSpace(request.Email))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'email' is required"
+            });
+        }
+        
+        if (string.IsNullOrWhiteSpace(request.Password))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'password' is required"
+            });
+        }
+        
+        if (string.IsNullOrWhiteSpace(request.Username))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'username' is required"
+            });
+        }
+        
+        return Results.Success(SuccessCodes.Ok);
     }
 }

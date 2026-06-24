@@ -5,6 +5,6 @@ namespace eSecurity.Core.Security.Authentication.SignIn;
 
 public sealed class PasskeySignInPayload : SignInPayload
 {
-    [JsonPropertyName("credential")]
-    public required PublicKeyCredential Credential { get; set; }
+    [JsonPropertyName("credential")] 
+    public PublicKeyCredential? Credential { get; set; } = null!;
 }

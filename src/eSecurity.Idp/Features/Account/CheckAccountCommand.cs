@@ -13,7 +13,7 @@ public sealed class CheckAccountCommand : IRequest<Result>
     public required string Login { get; set; }
 }
 
-public class CheckAccountCommandHandler(
+public sealed class CheckAccountCommandHandler(
     IUserQueryService userQueryService,
     ILockoutManager lockoutManager) : IRequestHandler<CheckAccountCommand, Result>
 {
@@ -47,5 +47,24 @@ public class CheckAccountCommandHandler(
         };
 
         return Results.Success(SuccessCodes.Ok, response);
+    }
+}
+
+public sealed class CheckAccountCommandValidator : IRequestValidator<CheckAccountCommand>
+{
+    public async ValueTask<Result> Validate(CheckAccountCommand request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (string.IsNullOrWhiteSpace(request.Login))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'login' is required"
+            });
+        }
+        
+        return Results.Success(SuccessCodes.Ok);
     }
 }

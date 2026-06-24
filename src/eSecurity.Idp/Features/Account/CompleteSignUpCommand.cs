@@ -115,3 +115,22 @@ public sealed class CompleteSignUpCommandHandler(
         });
     }
 }
+
+public sealed class CompleteSignUpCommandValidator : IRequestValidator<CompleteSignUpCommand>
+{
+    public async ValueTask<Result> Validate(CompleteSignUpCommand request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (string.IsNullOrWhiteSpace(request.Code))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'code' is required"
+            });
+        }
+        
+        return Results.Success(SuccessCodes.Ok);
+    }
+}

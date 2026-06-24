@@ -4,19 +4,20 @@ using eSecurity.Idp.Security.Authorization.Verification;
 using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Server.Exceptions;
 
 namespace eSecurity.Idp.Features.Password;
 
-public sealed record ResetPasswordCommand : IRequest<Result>
+public sealed class ResetPasswordCommand : IRequest<Result>
 {
     [JsonPropertyName("verification_id")]
-    public required Guid VerificationId { get; set; }
+    public Guid VerificationId { get; set; }
     
     [JsonPropertyName("email")]
-    public required string Email { get; set; }
+    public string? Email { get; set; }
     
     [JsonPropertyName("password")]
-    public required string Password { get; set; }
+    public string? Password { get; set; }
 }
 
 public sealed class ResetPasswordCommandHandler(
@@ -32,6 +33,9 @@ public sealed class ResetPasswordCommandHandler(
 
     public async Task<Result> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
     {
+        if (string.IsNullOrWhiteSpace(request.Email))
+            throw new ValidationException("Email is required");
+        
         var user = await _userQueryService.GetByEmailAsync(request.Email, cancellationToken);
         if (user is null)
         {
@@ -66,6 +70,37 @@ public sealed class ResetPasswordCommandHandler(
         var verificationResult = await _verificationCommandService.ConsumeAsync(verification, cancellationToken);
         if (!verificationResult.Succeeded) return verificationResult;
 
+        if (string.IsNullOrWhiteSpace(request.Password))
+            throw new ValidationException("Password is required");
+        
         return await _passwordManager.ResetAsync(user, request.Password, cancellationToken);
+    }
+}
+
+public sealed class ResetPasswordCommandValidator : IRequestValidator<ResetPasswordCommand>
+{
+    public async ValueTask<Result> Validate(ResetPasswordCommand request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (string.IsNullOrWhiteSpace(request.Email))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'email' is required"
+            });
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Password))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'password' is required"
+            });
+        }
+        
+        return Results.Success(SuccessCodes.Ok);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using eSystem.Core.Primitives;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace eSystem.Core.Server.Mediator;
 
@@ -27,6 +28,21 @@ public sealed class MediatorConfigurationBuilder(IServiceCollection serviceColle
         {
             var interfaces = type.GetInterfaces()
                 .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>));
+
+            foreach (var @interface in interfaces)
+                _serviceCollection.AddTransient(@interface, type);
+        }
+    }
+    
+    public void AddRequestValidatorsFromAssembly<TAssemblyMarker>() where TAssemblyMarker : notnull
+    {
+        var types = typeof(TAssemblyMarker).Assembly.GetTypes()
+            .Where(t => t is { IsAbstract: false, IsInterface: false });
+
+        foreach (var type in types)
+        {
+            var interfaces = type.GetInterfaces()
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequestValidator<>));
 
             foreach (var @interface in interfaces)
                 _serviceCollection.AddTransient(@interface, type);
@@ -94,5 +110,11 @@ public sealed class MediatorConfigurationBuilder(IServiceCollection serviceColle
                 $"Pipeline failure handler of type {typeof(TFailureHandler).Name} is already registered");
         
         _serviceCollection.AddTransient<IPipelineFailureHandler<TRequest, TResponse>, TFailureHandler>();
+    }
+
+    public void AddRequestValidator<TValidator>() 
+        where TValidator : class, IRequestValidator<IRequest<Result>>
+    {
+        _serviceCollection.AddTransient<TValidator>();
     }
 }

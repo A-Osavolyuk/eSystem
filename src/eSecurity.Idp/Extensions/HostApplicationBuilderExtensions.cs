@@ -40,6 +40,7 @@ public static class HostApplicationBuilderExtensions
             builder.Services.AddMediator(cfg =>
             {
                 cfg.AddRequestHandlersFromAssembly<IAssemblyMarker>();
+                cfg.AddRequestValidatorsFromAssembly<IAssemblyMarker>();
                 cfg.AddPipelineBehavior(typeof(ValidationBehavior<,>));
             });
             

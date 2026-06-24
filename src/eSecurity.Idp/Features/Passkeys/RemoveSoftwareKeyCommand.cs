@@ -13,16 +13,16 @@ using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Idp.Features.Passkeys;
 
-public record RemovePasskeyCommand : IRequest<Result>
+public record RemoveSoftwareKeyCommand : IRequest<Result>
 {
     [JsonPropertyName("verification_id")]
-    public required Guid VerificationId { get; set; }
+    public Guid VerificationId { get; set; }
     
     [JsonPropertyName("passkey_id")]
     public Guid PasskeyId { get; set; }
 }
 
-public class RemovePasskeyCommandHandler(
+public class RemoveSoftwareKeyCommandHandler(
     IPasskeyManager passkeyManager,
     IPasswordManager passwordManager,
     ITwoFactorManager twoFactorManager,
@@ -30,7 +30,7 @@ public class RemovePasskeyCommandHandler(
     IEmailQueryService emailQueryService,
     IVerificationQueryService verificationQueryService,
     IVerificationCommandService verificationCommandService,
-    IOptions<SignInOptions> options) : IRequestHandler<RemovePasskeyCommand, Result>
+    IOptions<SignInOptions> options) : IRequestHandler<RemoveSoftwareKeyCommand, Result>
 {
     private readonly IPasskeyManager _passkeyManager = passkeyManager;
     private readonly IPasswordManager _passwordManager = passwordManager;
@@ -41,7 +41,7 @@ public class RemovePasskeyCommandHandler(
     private readonly IVerificationCommandService _verificationCommandService = verificationCommandService;
     private readonly SignInOptions _options = options.Value;
 
-    public async Task<Result> Handle(RemovePasskeyCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(RemoveSoftwareKeyCommand request, CancellationToken cancellationToken)
     {
         var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
         var passkey = await _passkeyManager.FindByIdAsync(request.PasskeyId, cancellationToken);

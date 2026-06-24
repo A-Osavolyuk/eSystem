@@ -8,17 +8,18 @@ using eSecurity.WebAuthN.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Server.Exceptions;
 using Credentials_CredentialOptions = eSecurity.Idp.Security.Credentials.PublicKey.Credentials.CredentialOptions;
 
 namespace eSecurity.Idp.Features.Passkeys;
 
-public record GenerateCreationOptionsCommand : IRequest<Result>
+public sealed class GenerateCreationOptionsCommand : IRequest<Result>
 {
-    [JsonPropertyName("display_name")]
-    public required string DisplayName { get; set; }
+    [JsonPropertyName("display_name")] 
+    public string? DisplayName { get; set; }
 }
 
-public class GenerateCreationOptionsCommandHandler(
+public sealed class GenerateCreationOptionsCommandHandler(
     IHttpContextAccessor httpContextAccessor,
     ISessionStorage sessionStorage,
     IChallengeFactory challengeFactory,
@@ -50,11 +51,13 @@ public class GenerateCreationOptionsCommandHandler(
         }
 
         var challenge = _challengeFactory.Create();
-        var displayName = request.DisplayName;
         var browser = device.Browser!.Split(" ").First();
         var identifier = $"{user.Id}_{device.Device}_{browser}";
         var identifierBytes = Encoding.UTF8.GetBytes(identifier);
         var identifierBase64 = Convert.ToBase64String(identifierBytes);
+        if (string.IsNullOrWhiteSpace(request.DisplayName))
+            throw new ValidationException("DisplayName is required");
+        
         var options = new PublicKeyCredentialCreationOptions
         {
             Challenge = challenge,
@@ -62,7 +65,7 @@ public class GenerateCreationOptionsCommandHandler(
             {
                 Id = identifierBase64,
                 Name = user.Username,
-                DisplayName = displayName,
+                DisplayName = request.DisplayName,
             },
             AuthenticatorSelection = new AuthenticatorSelection
             {
@@ -86,5 +89,24 @@ public class GenerateCreationOptionsCommandHandler(
 
         _sessionStorage.Set(ChallengeSessionKeys.Attestation, challenge);
         return Results.Success(SuccessCodes.Ok, options);
+    }
+}
+
+public sealed class GenerateCreationOptionsCommandValidator : IRequestValidator<GenerateCreationOptionsCommand>
+{
+    public async ValueTask<Result> Validate(GenerateCreationOptionsCommand request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (string.IsNullOrWhiteSpace(request.DisplayName))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'display_name' is required"
+            });
+        }
+        
+        return Results.Success(SuccessCodes.Ok);
     }
 }

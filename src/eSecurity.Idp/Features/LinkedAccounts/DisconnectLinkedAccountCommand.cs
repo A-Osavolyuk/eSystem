@@ -60,3 +60,22 @@ public class DisconnectLinkedAccountCommandHandler(
         return result;
     }
 }
+
+public sealed class DisconnectLinkedAccountCommandValidator : IRequestValidator<DisconnectLinkedAccountCommand>
+{
+    public async ValueTask<Result> Validate(DisconnectLinkedAccountCommand request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (request.Type == LinkedAccountType.None)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'type' is invalid"
+            });
+        }
+        
+        return Results.Success(SuccessCodes.Ok);
+    }
+}

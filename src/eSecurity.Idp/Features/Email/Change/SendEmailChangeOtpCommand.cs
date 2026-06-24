@@ -13,13 +13,14 @@ using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Messaging;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Server.Exceptions;
 
 namespace eSecurity.Idp.Features.Email.Change;
 
 public sealed record SendEmailChangeOtpCommand : IRequest<Result>
 {
     [JsonPropertyName("new_email")]
-    public required string NewEmail { get; set; }
+    public string? NewEmail { get; set; }
 }
 
 public sealed class SendEmailChangeCommandOtpHandler(
@@ -40,8 +41,10 @@ public sealed class SendEmailChangeCommandOtpHandler(
     public async Task<Result> Handle(SendEmailChangeOtpCommand request, CancellationToken cancellationToken = default)
     {
         var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
-        var newEmail = request.NewEmail;
-        var normalizedNewEmail = Normalizer.Normalize(newEmail);
+        if (string.IsNullOrWhiteSpace(request.NewEmail))
+            throw new ValidationException("NewEmail is required");
+        
+        var normalizedNewEmail = Normalizer.Normalize(request.NewEmail);
         var userEmails = await _emailQueryService.ListByUserAsync(user.Id, cancellationToken);
         if (userEmails.Any(x => x.NormalizedEmail == normalizedNewEmail))
         {
@@ -75,7 +78,7 @@ public sealed class SendEmailChangeCommandOtpHandler(
         }
         else
         {
-            if (await _emailQueryService.ExistsAsync(newEmail, cancellationToken))
+            if (await _emailQueryService.ExistsAsync(request.NewEmail, cancellationToken))
             {
                 return Results.ClientError(ClientErrorCode.BadRequest, new Error()
                 {
@@ -122,7 +125,7 @@ public sealed class SendEmailChangeCommandOtpHandler(
         {
             Code = code,
             Subject = "New email verification",
-            To = newEmail
+            To = request.NewEmail
         };
 
         await _emailService.SendAsync(emailContext, cancellationToken);
@@ -136,5 +139,24 @@ public sealed class SendEmailChangeCommandOtpHandler(
         };
 
         return Results.Success(SuccessCodes.Ok, response);
+    }
+}
+
+public sealed class SendEmailChangeOtpCommandValidator : IRequestValidator<SendEmailChangeOtpCommand>
+{
+    public async ValueTask<Result> Validate(SendEmailChangeOtpCommand request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (string.IsNullOrWhiteSpace(request.NewEmail))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'new_email' is required"
+            });
+        }
+        
+        return Results.Success(SuccessCodes.Ok);
     }
 }

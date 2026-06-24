@@ -11,13 +11,14 @@ using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Messaging;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Server.Exceptions;
 
 namespace eSecurity.Idp.Features.Email.Verification;
 
 public sealed record SendEmailVerificationOtpCommand : IRequest<Result>
 {
     [JsonPropertyName("email")] 
-    public required string Email { get; set; }
+    public string? Email { get; set; }
 }
 
 public sealed class SendEmailVerificationCommandOtpHandler(
@@ -63,6 +64,9 @@ public sealed class SendEmailVerificationCommandOtpHandler(
 
         var verificationResult = await _verificationCommandService.CreateAsync(verificationRequest, cancellationToken);
         if (!verificationResult.Succeeded) return verificationResult;
+
+        if (string.IsNullOrWhiteSpace(request.Email))
+            throw new ValidationException("Email is required");
         
         var emailContext = new EmailVerificationContext()
         {
@@ -82,5 +86,24 @@ public sealed class SendEmailVerificationCommandOtpHandler(
         };
 
         return Results.Success(SuccessCodes.Ok, response);
+    }
+}
+
+public sealed class SendEmailVerificationOtpCommandValidator : IRequestValidator<SendEmailVerificationOtpCommand>
+{
+    public async ValueTask<Result> Validate(SendEmailVerificationOtpCommand request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        
+        if (string.IsNullOrWhiteSpace(request.Email))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'current_email' is required"
+            });
+        }
+        
+        return Results.Success(SuccessCodes.Ok);
     }
 }
