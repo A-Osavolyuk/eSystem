@@ -1,14 +1,10 @@
 ﻿using eSecurity.Idp.Features.Connect;
-using eSecurity.Idp.Security.Authentication.EndSession;
-using eSecurity.Idp.Security.Authorization;
 using eSecurity.Idp.Security.Authorization.Constants;
 using eSystem.Core.Enums;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;
-using eSystem.Core.Server.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
 using eSystem.Core.Server.Security.Authentication.OpenIdConnect.User;
-using eSystem.Core.Server.Security.Authorization.OAuth.DeviceAuthorization;
 
 namespace eSecurity.Idp.Controllers.v1;
 
@@ -114,9 +110,9 @@ public class ConnectController(IMediator mediator) : ControllerBase
     [HttpPost("revocation")]
     [Authorize(Policy = AuthorizationPolicies.BasicAuthorization)]
     [Consumes(ContentTypes.Application.XwwwFormUrlEncoded)]
-    public async ValueTask<IActionResult> RevokeAsync([FromForm] IFormCollection request)
+    public async ValueTask<IActionResult> RevokeAsync([FromForm] RevocationCommand command)
     {
-        var result = await _mediator.Send(new RevokeCommand(request));
+        var result = await _mediator.Send(command);
         return HttpContext.HandleResult(result);
     }
 
@@ -126,9 +122,9 @@ public class ConnectController(IMediator mediator) : ControllerBase
     [HttpPost("introspection")]
     [Authorize(Policy = AuthorizationPolicies.BasicAuthorization)]
     [Consumes(ContentTypes.Application.XwwwFormUrlEncoded)]
-    public async ValueTask<IActionResult> IntrospectionAsync([FromForm] IFormCollection request)
+    public async ValueTask<IActionResult> IntrospectionAsync([FromForm] IntrospectionCommand command)
     {
-        var result = await _mediator.Send(new IntrospectionCommand(request));
+        var result = await _mediator.Send(command);
         return HttpContext.HandleResult(result);
     }
 
@@ -147,9 +143,10 @@ public class ConnectController(IMediator mediator) : ControllerBase
     [ProducesResponseType(200)]
     [HttpPost("par")]
     [Consumes(ContentTypes.Application.XwwwFormUrlEncoded)]
-    public async ValueTask<IActionResult> PushedAuthorizationRequestAsync([FromForm] IFormCollection form)
+    public async ValueTask<IActionResult> PushedAuthorizationRequestAsync(
+        [FromForm] PushedAuthorizationRequestCommand command)
     {
-        var result = await _mediator.Send(new PushedAuthorizationRequestCommand(form));
+        var result = await _mediator.Send(command);
         return HttpContext.HandleResult(result);
     }
 

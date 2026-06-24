@@ -13,7 +13,14 @@ using eSystem.Core.Server.Security.Authorization.OAuth.Introspection;
 
 namespace eSecurity.Idp.Features.Connect;
 
-public record IntrospectionCommand(IFormCollection Form) : IRequest<Result>;
+public record IntrospectionCommand : IRequest<Result>
+{
+    [FromForm(Name = "token")]
+    public string Token { get; init; } = null!;
+    
+    [FromForm(Name = "token_type_hint")]
+    public TokenTypeHint? TokenTypeHint { get; init; }
+}
 
 public class IntrospectionCommandHandler(
     ITokenManager tokenManager,
@@ -34,15 +41,7 @@ public class IntrospectionCommandHandler(
 
     public async Task<Result> Handle(IntrospectionCommand request, CancellationToken cancellationToken)
     {
-        var binder = _bindingProvider.GetRequiredBinder<IntrospectionRequest>();
-        var bindingResult = await binder.BindAsync(request.Form, cancellationToken);
-        if (!bindingResult.Succeeded || !bindingResult.TryGetValue(out var introspectionRequest))
-        {
-            var error = bindingResult.GetError();
-            return Results.ClientError(ClientErrorCode.BadRequest, error);
-        }
-
-        OpaqueTokenType? opaqueTokenType = introspectionRequest.TokenTypeHint switch
+        OpaqueTokenType? opaqueTokenType = request.TokenTypeHint switch
         {
             TokenTypeHint.AccessToken => OpaqueTokenType.AccessToken,
             TokenTypeHint.RefreshToken => OpaqueTokenType.RefreshToken,
@@ -50,7 +49,7 @@ public class IntrospectionCommandHandler(
         };
 
         var hasher = _hasherProvider.GetHasher(HashAlgorithm.Sha512);
-        var incomingHash = hasher.Hash(introspectionRequest.Token);
+        var incomingHash = hasher.Hash(request.Token);
 
         var token = opaqueTokenType.HasValue
             ? await _tokenManager.FindByHashAsync(incomingHash, opaqueTokenType.Value, cancellationToken)

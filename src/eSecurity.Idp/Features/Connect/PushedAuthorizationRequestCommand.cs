@@ -12,39 +12,48 @@ using eSystem.Core.Server.Security.Authorization.OAuth.Par;
 
 namespace eSecurity.Idp.Features.Connect;
 
-public sealed record PushedAuthorizationRequestCommand(IFormCollection Form) : IRequest<Result>;
+public sealed record PushedAuthorizationRequestCommand : IRequest<Result>
+{
+    [FromForm(Name = "response_type")]
+    public ResponseType ResponseType { get; init; }
+      
+    [FromForm(Name = "client_id")]
+    public string ClientId { get; init; } = null!;
+    
+    [FromForm(Name = "scope")]
+    public string Scope { get; init; } = null!;
+    
+    [FromForm(Name = "redirect_uri")]
+    public string? RedirectUri { get; init; }
+    
+    [FromForm(Name = "nonce")]
+    public string? Nonce { get; init; }
+    
+    [FromForm(Name = "state")]
+    public string? State { get; init; }
+    
+    [FromForm(Name = "prompt")]
+    public string? Prompt { get; init; }
+    
+    [FromForm(Name = "code_challenge")]
+    public string? CodeChallenge { get; init; }
+    
+    [FromForm(Name = "code_challenge_method")]
+    public ChallengeMethod? CodeChallengeMethod { get; init; }
+}
 
 public sealed class PushedAuthorizationRequestCommandHandler(
-    IFormBindingProvider bindingProvider,
     IParManager parManager,
     IClientQueryService clientQueryService,
     IOptions<OpenIdConfiguration> options) : IRequestHandler<PushedAuthorizationRequestCommand, Result>
 {
-    private readonly IFormBindingProvider _bindingProvider = bindingProvider;
     private readonly IParManager _parManager = parManager;
     private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly OpenIdConfiguration _configuration = options.Value;
 
     public async Task<Result> Handle(PushedAuthorizationRequestCommand request, CancellationToken cancellationToken = default)
     {
-        var binder = _bindingProvider.GetRequiredBinder<PushedAuthorizationRequest>();
-        var bindingResult = await binder.BindAsync(request.Form, cancellationToken);
-        if (!bindingResult.Succeeded)
-        {
-            var error = bindingResult.GetError();
-            return Results.ClientError(ClientErrorCode.BadRequest, error);
-        }
-
-        if (!bindingResult.TryGetValue(out var par))
-        {
-            return Results.ServerError(ServerErrorCode.InternalServerError, new Error
-            {
-                Code = ErrorCode.ServerError,
-                Description = "Server error"
-            });
-        }
-
-        var client = await _clientQueryService.GetByIdAsync(par.ClientId, cancellationToken);
+        var client = await _clientQueryService.GetByIdAsync(request.ClientId, cancellationToken);
         if (client is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -57,7 +66,7 @@ public sealed class PushedAuthorizationRequestCommandHandler(
         var clientUris = await _clientQueryService.GetUrisAsync(client, cancellationToken);
 ;        
         string redirectUri;
-        if (string.IsNullOrEmpty(par.RedirectUri))
+        if (string.IsNullOrEmpty(request.RedirectUri))
         {
             var redirectUris = clientUris
                 .Where(x => x.Type == UriType.Redirect)
@@ -76,7 +85,7 @@ public sealed class PushedAuthorizationRequestCommandHandler(
         }
         else
         {
-            if (clientUris.All(x => x.Type != UriType.Redirect && x.Uri != par.RedirectUri))
+            if (clientUris.All(x => x.Type != UriType.Redirect && x.Uri != request.RedirectUri))
             {
                 return Results.ClientError(ClientErrorCode.BadRequest, new Error
                 {
@@ -85,34 +94,34 @@ public sealed class PushedAuthorizationRequestCommandHandler(
                 });
             }
 
-            redirectUri = par.RedirectUri;
+            redirectUri = request.RedirectUri;
         }
 
-        if (!_configuration.ResponseTypesSupported.Contains(par.ResponseType))
+        if (!_configuration.ResponseTypesSupported.Contains(request.ResponseType))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.UnsupportedResponseType,
-                Description = $"{par.ResponseType.GetString()} is not supported"
+                Description = $"{request.ResponseType.GetString()} is not supported"
             });
         }
 
         var clientResponseTypes = await _clientQueryService.GetSupportedResponseTypesAsync(
             client, cancellationToken);
         
-        if (clientResponseTypes.All(x => x.ResponseType.Type != par.ResponseType))
+        if (clientResponseTypes.All(x => x.ResponseType.Type != request.ResponseType))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.UnsupportedResponseType,
-                Description = $"{par.ResponseType.GetString()} is not supported by client"
+                Description = $"{request.ResponseType.GetString()} is not supported by client"
             });
         }
 
         var clientScopes = await _clientQueryService.GetAllowedScopesAsync(
             client, cancellationToken);
         
-        var scopes = par.Scope.Split(" ").ToList();
+        var scopes = request.Scope.Split(" ").ToList();
         var allowedScopes = clientScopes.Select(x => x.Scope.Value);
         if (!ScopesValidator.Validate(allowedScopes, scopes, out var invalidScopes))
         {
@@ -124,13 +133,13 @@ public sealed class PushedAuthorizationRequestCommandHandler(
         }
 
         var prompts = new List<PromptType>();
-        if (string.IsNullOrEmpty(par.Prompt))
+        if (string.IsNullOrEmpty(request.Prompt))
         {
             prompts.Add(PromptType.None);
         }
         else
         {
-            var promptStrings = par.Prompt.Split(" ").ToList();
+            var promptStrings = request.Prompt.Split(" ").ToList();
             foreach (var promptString in promptStrings)
             {
                 var prompt = EnumHelper.ParseFromString<PromptType>(promptString);
@@ -156,8 +165,8 @@ public sealed class PushedAuthorizationRequestCommandHandler(
             }
         }
         
-        var hasCodeChallenge = !string.IsNullOrEmpty(par.CodeChallenge);
-        var hasCodeChallengeMethod = par.CodeChallengeMethod is not null;
+        var hasCodeChallenge = !string.IsNullOrEmpty(request.CodeChallenge);
+        var hasCodeChallengeMethod = request.CodeChallengeMethod is not null;
         if (client.RequirePkce)
         {
             if (!hasCodeChallenge)
@@ -193,7 +202,7 @@ public sealed class PushedAuthorizationRequestCommandHandler(
         ChallengeMethod? codeChallengeMethod = null;
         if (hasCodeChallenge && hasCodeChallengeMethod)
         {
-            if (!_configuration.CodeChallengeMethodsSupported.Contains(par.CodeChallengeMethod!.Value))
+            if (!_configuration.CodeChallengeMethodsSupported.Contains(request.CodeChallengeMethod!.Value))
             {
                 return Results.ClientError(ClientErrorCode.BadRequest, new Error
                 {
@@ -202,7 +211,7 @@ public sealed class PushedAuthorizationRequestCommandHandler(
                 });
             }
 
-            codeChallengeMethod = par.CodeChallengeMethod.Value;
+            codeChallengeMethod = request.CodeChallengeMethod.Value;
         }
 
         //TODO: Add PAR configurations
@@ -210,12 +219,12 @@ public sealed class PushedAuthorizationRequestCommandHandler(
         {
             Id = Guid.CreateVersion7(),
             RequestUri = ParHelper.GetRequestUri(),
-            ResponseType = par.ResponseType,
+            ResponseType = request.ResponseType,
             ClientId = client.Id,
             RedirectUri = redirectUri,
-            Nonce = par.Nonce,
-            State = par.State,
-            CodeChallenge = par.CodeChallenge,
+            Nonce = request.Nonce,
+            State = request.State,
+            CodeChallenge = request.CodeChallenge,
             CodeChallengeMethod = codeChallengeMethod,
             Status = ParState.Pending,
             ExpiredAt = DateTimeOffset.UtcNow.AddSeconds(120)

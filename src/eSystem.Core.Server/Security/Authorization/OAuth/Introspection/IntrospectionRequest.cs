@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace eSystem.Core.Server.Security.Authorization.OAuth.Introspection;
 
-public class IntrospectionRequest
+public sealed class IntrospectionRequest
 {
     [FromForm(Name = "token")]
-    public required string Token { get; set; }
+    public string Token { get; init; } = null!;
     
     [FromForm(Name = "token_type_hint")]
-    public TokenTypeHint? TokenTypeHint { get; set; }
+    public TokenTypeHint? TokenTypeHint { get; init; }
 }

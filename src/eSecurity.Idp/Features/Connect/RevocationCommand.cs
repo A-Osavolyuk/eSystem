@@ -4,39 +4,37 @@ using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Server.Binding;
-using eSystem.Core.Server.Security.Authorization.OAuth.Revocation;
 
 namespace eSecurity.Idp.Features.Connect;
 
-public record RevokeCommand(IFormCollection Form) : IRequest<Result>;
+public sealed record RevocationCommand : IRequest<Result>
+{
+    [FromForm(Name = "token")] 
+    public string Token { get; set; } = null!;
+    
+    [FromForm(Name = "token_type_hint")]
+    public TokenTypeHint? TokenTypeHint { get; set; }
+}
 
-public class RevokeCommandHandler(
-    ITokenManager tokenManager,
-    IHasherProvider hasherProvider,
-    IFormBindingProvider bindingProvider) : IRequestHandler<RevokeCommand, Result>
+public class RevocationCommandHandler(
+    ITokenManager tokenManager, 
+    IHasherProvider hasherProvider) : IRequestHandler<RevocationCommand, Result>
 {
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IHasherProvider _hasherProvider = hasherProvider;
-    private readonly IFormBindingProvider _bindingProvider = bindingProvider;
 
-    public async Task<Result> Handle(RevokeCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(RevocationCommand request, CancellationToken cancellationToken)
     {
-        var binder = _bindingProvider.GetRequiredBinder<RevocationRequest>();
-        var bindingResult = await binder.BindAsync(request.Form, cancellationToken);
-        if (!bindingResult.Succeeded || !bindingResult.TryGetValue(out var revocationRequest))
+        if (string.IsNullOrEmpty(request.Token))
         {
-            var error = bindingResult.GetError();
-            return Results.ClientError(ClientErrorCode.BadRequest, error);
-        }
-        
-        if (string.IsNullOrEmpty(revocationRequest.Token))
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "Token is missing."
             });
+        }
 
-        OpaqueTokenType? tokenType = revocationRequest.TokenTypeHint switch
+        OpaqueTokenType? tokenType = request.TokenTypeHint switch
         {
             TokenTypeHint.AccessToken => OpaqueTokenType.AccessToken,
             TokenTypeHint.RefreshToken => OpaqueTokenType.RefreshToken,
@@ -44,7 +42,7 @@ public class RevokeCommandHandler(
         };
 
         var hasher = _hasherProvider.GetHasher(HashAlgorithm.Sha512);
-        var incomingHash = hasher.Hash(revocationRequest.Token);
+        var incomingHash = hasher.Hash(request.Token);
         var token = !tokenType.HasValue
             ? await _tokenManager.FindByHashAsync(incomingHash, cancellationToken)
             : await _tokenManager.FindByHashAsync(incomingHash, tokenType.Value, cancellationToken);

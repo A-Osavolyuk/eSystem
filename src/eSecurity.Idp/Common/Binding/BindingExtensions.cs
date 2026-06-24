@@ -25,8 +25,5 @@ public static class BindingExtensions
         services.AddTransient<IFormBinder<DeviceCodeRequest>, DeviceCodeRequestBinder>();
         services.AddTransient<IFormBinder<TokenExchangeRequest>, TokenExchangeRequestBinder>();
         services.AddTransient<IFormBinder<CibaRequest>, CibaRequestBinder>();
-        services.AddTransient<IFormBinder<RevocationRequest>, RevocationRequestBinder>();
-        services.AddTransient<IFormBinder<IntrospectionRequest>, IntrospectionRequestBinder>();
-        services.AddTransient<IFormBinder<PushedAuthorizationRequest>, ParBinder>();
     }
 }
