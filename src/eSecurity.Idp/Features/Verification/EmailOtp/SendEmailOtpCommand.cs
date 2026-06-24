@@ -41,14 +41,7 @@ public sealed class SendEmailOtpCommandHandler(
 
     public async Task<Result> Handle(SendEmailOtpCommand request, CancellationToken cancellationToken = default)
     {
-        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
-        if (!userResult.Succeeded)
-        {
-            var error = userResult.GetError();
-            return Results.ClientError(ClientErrorCode.Unauthorized, error);
-        }
-
-        var user = userResult.GetValue();
+        var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
         var userEmail = await _emailQueryService.GetByEmailAsync(user.Id, request.Email, cancellationToken);
         if (userEmail is null)
         {

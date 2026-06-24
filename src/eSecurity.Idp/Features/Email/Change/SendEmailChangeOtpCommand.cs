@@ -39,14 +39,7 @@ public sealed class SendEmailChangeCommandOtpHandler(
 
     public async Task<Result> Handle(SendEmailChangeOtpCommand request, CancellationToken cancellationToken = default)
     {
-        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
-        if (!userResult.Succeeded)
-        {
-            var error = userResult.GetError();
-            return Results.ClientError(ClientErrorCode.Unauthorized, error);
-        }
-
-        var user = userResult.GetValue();
+        var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
         var newEmail = request.NewEmail;
         var normalizedNewEmail = Normalizer.Normalize(newEmail);
         var userEmails = await _emailQueryService.ListByUserAsync(user.Id, cancellationToken);
@@ -95,7 +88,7 @@ public sealed class SendEmailChangeCommandOtpHandler(
         var codeResult = await _codeManager.CreateAsync(user, SenderType.Email, cancellationToken);
         if (!codeResult.Succeeded)
         {
-            var error = userResult.GetError();
+            var error = codeResult.GetError();
             return Results.ServerError(ServerErrorCode.InternalServerError, error);
         }
 

@@ -25,14 +25,7 @@ public sealed class ChangePasswordCommandHandler(
     async Task<Result> IRequestHandler<ChangePasswordCommand, Result>.Handle(ChangePasswordCommand request,
             CancellationToken cancellationToken)
     {
-        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
-        if (!userResult.Succeeded)
-        {
-            var error = userResult.GetError();
-            return Results.ClientError(ClientErrorCode.Unauthorized, error);
-        }
-
-        var user = userResult.GetValue();
+        var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
         if (!await _passwordManager.HasAsync(user, cancellationToken))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error

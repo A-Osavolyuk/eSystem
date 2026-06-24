@@ -22,22 +22,6 @@ public class VerifyAuthenticatorCommandHandler(
 
     public async Task<Result> Handle(VerifyAuthenticatorCommand request, CancellationToken cancellationToken)
     {
-        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
-        if (!userResult.Succeeded)
-        {
-            var error = userResult.GetError();
-            return Results.ClientError(ClientErrorCode.Unauthorized, error);
-        }
-
-        if (!userResult.TryGetValue(out var user))
-        {
-            return Results.ClientError(ClientErrorCode.Unauthorized, new Error()
-            {
-                Code = ErrorCode.Unauthorized,
-                Description = "Unauthorized"
-            });
-        }
-
         var verified = AuthenticatorUtils.VerifyCode(request.Code, request.Secret);
         return verified
             ? Results.Success(SuccessCodes.Ok)

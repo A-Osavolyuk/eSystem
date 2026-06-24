@@ -17,22 +17,7 @@ public class GetUserProvidersQueryHandler(
 
     public async Task<Result> Handle(GetUserTwoFactorMethodsQuery request, CancellationToken cancellationToken)
     {
-        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
-        if (!userResult.Succeeded)
-        {
-            var error = userResult.GetError();
-            return Results.ClientError(ClientErrorCode.Unauthorized, error);
-        }
-
-        if (!userResult.TryGetValue(out var user))
-        {
-            return Results.ClientError(ClientErrorCode.Unauthorized, new Error()
-            {
-                Code = ErrorCode.Unauthorized,
-                Description = "Unauthorized"
-            });
-        }
-
+        var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
         var methods = await _twoFactorManager.GetAllAsync(user, cancellationToken);
         var response = methods.Select(provider => new UserTwoFactorMethod
         {

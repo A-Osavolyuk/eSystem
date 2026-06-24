@@ -30,14 +30,7 @@ public class AddEmailCommandHandler(
 
     public async Task<Result> Handle(AddEmailCommand request, CancellationToken cancellationToken)
     {
-        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
-        if (!userResult.Succeeded)
-        {
-            var error = userResult.GetError();
-            return Results.ClientError(ClientErrorCode.Unauthorized, error);
-        }
-
-        var user = userResult.GetValue();
+        var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
         var userEmails = await _emailQueryService.ListByUserAsync(user.Id, cancellationToken);
         var canAddResult = _emailPolicy.CanAdd(userEmails, EmailType.Secondary);
         if (!canAddResult.Succeeded) return canAddResult;

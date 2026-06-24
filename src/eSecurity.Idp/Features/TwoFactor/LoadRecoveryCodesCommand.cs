@@ -16,22 +16,7 @@ public class LoadRecoveryCodesCommandHandler(
     
     public async Task<Result> Handle(LoadRecoveryCodesCommand request, CancellationToken cancellationToken)
     {
-        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
-        if (!userResult.Succeeded)
-        {
-            var error = userResult.GetError();
-            return Results.ClientError(ClientErrorCode.Unauthorized, error);
-        }
-
-        if (!userResult.TryGetValue(out var user))
-        {
-            return Results.ClientError(ClientErrorCode.Unauthorized, new Error()
-            {
-                Code = ErrorCode.Unauthorized,
-                Description = "Unauthorized"
-            });
-        }
-
+        var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
         var response = await _recoverManager.UnprotectAsync(user, cancellationToken);
         return Results.Success(SuccessCodes.Ok, response);
     }

@@ -39,14 +39,7 @@ public sealed class ChangeEmailCommandHandler(
 
     public async Task<Result> Handle(ChangeEmailCommand request, CancellationToken cancellationToken = default)
     {
-        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
-        if (!userResult.Succeeded)
-        {
-            var error = userResult.GetError();
-            return Results.ClientError(ClientErrorCode.Unauthorized, error);
-        }
-
-        var user = userResult.GetValue();
+        var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
         var code = await _codeManager.FindByCodeAsync(user, request.Code, cancellationToken);
         if (code is null)
         {

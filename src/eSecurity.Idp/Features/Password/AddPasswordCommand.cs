@@ -21,30 +21,16 @@ public class AddPasswordCommandHandler(
 
     public async Task<Result> Handle(AddPasswordCommand request, CancellationToken cancellationToken)
     {
-        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
-        if (!userResult.Succeeded)
+        var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
+        if (await _passwordManager.HasAsync(user, cancellationToken))
         {
-            var error = userResult.GetError();
-            return Results.ClientError(ClientErrorCode.Unauthorized, error);
-        }
-
-        if (!userResult.TryGetValue(out var user))
-        {
-            return Results.ClientError(ClientErrorCode.Unauthorized, new Error()
-            {
-                Code = ErrorCode.Unauthorized,
-                Description = "Unauthorized"
-            });
-        }
-        
-        if (await _passwordManager.HasAsync(user, cancellationToken)) 
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.InvalidPassword,
                 Description = "User already has a password."
             });
+        }
         
-        var result = await _passwordManager.AddAsync(user, request.Password, cancellationToken);
-        return result;
+        return await _passwordManager.AddAsync(user, request.Password, cancellationToken);
     }
 }

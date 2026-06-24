@@ -39,14 +39,7 @@ public sealed class VerifyAuthenticatorAppCommandHandler(
     public async Task<Result> Handle(VerifyAuthenticatorAppCommand request, 
         CancellationToken cancellationToken = default)
     {
-        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
-        if (!userResult.Succeeded)
-        {
-            var error = userResult.GetError();
-            return Results.ClientError(ClientErrorCode.Unauthorized, error);
-        }
-
-        var user = userResult.GetValue();
+        var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
         var secret = await _secretManager.GetAsync(user, cancellationToken);
         if (secret is null)
         {

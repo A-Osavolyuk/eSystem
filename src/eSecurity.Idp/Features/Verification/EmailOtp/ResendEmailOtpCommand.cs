@@ -37,14 +37,7 @@ public sealed class ResendEmailOtpCommandHandler(
 
     public async Task<Result> Handle(ResendEmailOtpCommand request, CancellationToken cancellationToken = default)
     {
-        var userResult = await _currentUserAccessor.GetCurrentUserAsync(cancellationToken);
-        if (!userResult.Succeeded)
-        {
-            var error = userResult.GetError();
-            return Results.ClientError(ClientErrorCode.Unauthorized, error);
-        }
-
-        var user = userResult.GetValue();
+        var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
         var verificationRequest = await _verificationQueryService.GetByIdAsync(user.Id,
             request.VerificationId, cancellationToken);
 
