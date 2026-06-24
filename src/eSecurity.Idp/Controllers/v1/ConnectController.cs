@@ -136,9 +136,9 @@ public class ConnectController(IMediator mediator) : ControllerBase
     [EndpointDescription("Authorize")]
     [ProducesResponseType(200)]
     [HttpGet("authorize")]
-    public async ValueTask<IActionResult> AuthorizeAsync([FromQuery] AuthorizationRequest request)
+    public async ValueTask<IActionResult> AuthorizeAsync([FromQuery] AuthorizationCommand command)
     {
-        var result = await _mediator.Send(new AuthorizationCommand(request));
+        var result = await _mediator.Send(command);
         return HttpContext.HandleResult(result);
     }
     

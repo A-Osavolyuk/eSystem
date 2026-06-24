@@ -1,8 +1,10 @@
-﻿using eSystem.Core.Primitives;
+﻿using eSecurity.Idp.Features.Connect;
+using eSystem.Core.Primitives;
 
 namespace eSecurity.Idp.Security.Authorization.Authorize;
 
 public interface IAuthorizationFlowHandler
 {
-    public ValueTask<Result> HandleAsync(AuthorizationRequest request, CancellationToken cancellationToken = default);
+    ValueTask<Result> HandleAsync(AuthorizationCommand command, 
+        CancellationToken cancellationToken = default);
 }

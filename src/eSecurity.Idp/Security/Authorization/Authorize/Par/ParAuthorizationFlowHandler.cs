@@ -1,4 +1,5 @@
-﻿using eSecurity.Idp.Security.Authorization.Prompt;
+﻿using eSecurity.Idp.Features.Connect;
+using eSecurity.Idp.Security.Authorization.Prompt;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 
@@ -13,16 +14,16 @@ public sealed class ParAuthorizationFlowHandler(
     private readonly IPromptsProcessor _promptsProcessor = promptsProcessor;
     private readonly RedirectManager _redirectManager = redirectManager;
 
-    public async ValueTask<Result> HandleAsync(AuthorizationRequest request, 
+    public async ValueTask<Result> HandleAsync(AuthorizationCommand command, 
         CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrEmpty(request.RequestUri))
+        if (string.IsNullOrEmpty(command.RequestUri))
         {
             var uri = _redirectManager.GetRedirectUri(ErrorCode.ServerError, "Server error");
             return Results.Redirect(RedirectionCode.Found, uri);
         }
 
-        var par = await _parManager.FindByRequestUriAsync(request.RequestUri, cancellationToken);
+        var par = await _parManager.FindByRequestUriAsync(command.RequestUri, cancellationToken);
         if (par is null)
         {
             var uri = _redirectManager.GetRedirectUri(ErrorCode.InvalidRequestUri, 
