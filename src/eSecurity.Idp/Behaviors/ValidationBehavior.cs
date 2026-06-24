@@ -1,6 +1,4 @@
 ﻿using eSystem.Core.Primitives;
-using eSystem.Core.Primitives.Enums;
-using FluentValidation;
 
 namespace eSecurity.Idp.Behaviors;
 

@@ -1,4 +1,3 @@
-using eSecurity.Core.Requests;
 using eSecurity.Idp.Features.DeviceCode;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;

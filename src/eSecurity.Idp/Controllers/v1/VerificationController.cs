@@ -1,4 +1,3 @@
-using eSecurity.Core.Requests.Verification;
 using eSecurity.Idp.Features.Verification.AuthenticatorApp;
 using eSecurity.Idp.Features.Verification.EmailOtp;
 using eSecurity.Idp.Features.Verification.SoftwareKey;

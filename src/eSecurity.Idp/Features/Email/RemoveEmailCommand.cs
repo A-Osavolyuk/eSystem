@@ -1,5 +1,4 @@
 ﻿using System.Text.Json.Serialization;
-using eSecurity.Core.Requests;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Idp.Security.Authorization.LinkedAccount;
 using eSecurity.Idp.Security.Authorization.Verification;

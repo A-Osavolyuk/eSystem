@@ -4,7 +4,6 @@ using eSecurity.Idp.Security.Authorization.Token;
 using eSecurity.Idp.Security.Cryptography.Hashing;
 using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Primitives;
-using eSystem.Core.Server.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
 
 namespace eSecurity.Idp.Security.Authentication.BackchannelAuthentication;
 

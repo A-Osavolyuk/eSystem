@@ -1,5 +1,4 @@
-﻿using eSecurity.Idp.Security.Authorization;
-using eSecurity.Idp.Security.Authorization.Authorize;
+﻿using eSecurity.Idp.Security.Authorization.Authorize;
 using eSystem.Core.Primitives;
 
 namespace eSecurity.Idp.Features.Connect;

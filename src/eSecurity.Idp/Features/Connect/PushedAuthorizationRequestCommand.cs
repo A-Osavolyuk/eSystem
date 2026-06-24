@@ -6,7 +6,6 @@ using eSystem.Core.Enums;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
-using eSystem.Core.Server.Binding;
 using eSystem.Core.Server.Security.Authentication.OpenIdConnect.Discovery;
 using eSystem.Core.Server.Security.Authorization.OAuth.Par;
 

@@ -1,5 +1,4 @@
 ﻿using System.Text.Json.Serialization;
-using eSecurity.Core.Requests.Verification;
 using eSecurity.Core.Responses.Verification;
 using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Idp.Common.Messaging.Email;

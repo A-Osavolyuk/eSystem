@@ -1,5 +1,4 @@
 ﻿using eSecurity.Idp.Data.Entities;
-using eSystem.Core.Primitives;
 using eSystem.Core.Security.Identity.Claims;
 using eSystem.Core.Server.Exceptions;
 

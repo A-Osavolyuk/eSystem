@@ -2,7 +2,6 @@
 using eSecurity.Idp.Features.Connect;
 using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Primitives;
-using eSystem.Core.Server.Security.Authentication.OpenIdConnect.BackchannelAuthentication;
 
 namespace eSecurity.Idp.Security.Authentication.BackchannelAuthentication;
 

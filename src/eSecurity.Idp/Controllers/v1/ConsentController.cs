@@ -1,5 +1,4 @@
-﻿using eSecurity.Core.Requests;
-using eSecurity.Idp.Features.Connect;
+﻿using eSecurity.Idp.Features.Connect;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 
