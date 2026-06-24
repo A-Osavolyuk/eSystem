@@ -41,7 +41,7 @@ public sealed class LogoutTokenValidator(
         var key = jsonWebKeySet.Keys.FirstOrDefault(x => x.Kid == securityToken.Header.Kid);
         if (key is null) return TokenValidationResult.Fail();
 
-        var publicKey = RsaConverter.FromJsonWebkey(key);
+        var publicKey = RsaConverter.FromJsonWebKey(key);
         var validationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,

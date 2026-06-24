@@ -5,7 +5,7 @@ namespace eSystem.Core.Server.Encryption;
 
 public static class RsaConverter
 {
-    public static RSA FromJsonWebkey(JsonWebKey jwk)
+    public static RSA FromJsonWebKey(JsonWebKey jwk)
     {
         var rsa = RSA.Create();
 
