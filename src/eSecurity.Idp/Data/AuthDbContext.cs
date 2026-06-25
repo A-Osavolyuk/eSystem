@@ -11,6 +11,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbC
     public DbSet<UserRoleEntity> UserRoles { get; set; }
     public DbSet<UserSecretEntity> UserSecret { get; set; }
     public DbSet<UserTwoFactorMethodEntity> UserTwoFactorMethods { get; set; }
+    public DbSet<TwoFactorMethodEntity> TwoFactorMethods { get; set; }
     public DbSet<UserLinkedAccountEntity> UserLinkedAccounts { get; set; }
     public DbSet<UserDeviceEntity> UserDevices { get; set; }
     public DbSet<SoftwareKeyEntity> SoftwareKeys { get; set; }
