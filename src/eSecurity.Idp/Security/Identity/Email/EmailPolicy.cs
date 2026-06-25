@@ -1,5 +1,4 @@
 ﻿using eSecurity.Core.Security.Identity;
-using eSecurity.Idp.Data.Entities;
 using eSecurity.Idp.Security.Identity.Options;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
@@ -10,12 +9,12 @@ public sealed class EmailPolicy(IOptions<AccountOptions> options) : IEmailPolicy
 {
     private readonly AccountOptions _options = options.Value;
 
-    public Result CanChangeExistingEmail(Guid userId, UserEmailEntity currentEmail, UserEmailEntity newEmail)
+    public Result CanChangeExistingEmail(Guid userId, EmailInfo currentEmail, EmailInfo newEmail)
     {
         ArgumentNullException.ThrowIfNull(currentEmail);
         ArgumentNullException.ThrowIfNull(newEmail);
 
-        if (currentEmail.UserId != userId || newEmail.UserId != userId)
+        if (currentEmail.OwnerId != userId || newEmail.OwnerId != userId)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
@@ -65,11 +64,11 @@ public sealed class EmailPolicy(IOptions<AccountOptions> options) : IEmailPolicy
         return Results.Success(SuccessCodes.Ok);
     }
 
-    public Result CanChangeWithNewEmail(Guid userId, UserEmailEntity currentEmail)
+    public Result CanChangeWithNewEmail(Guid userId, EmailInfo currentEmail)
     {
         ArgumentNullException.ThrowIfNull(currentEmail);
 
-        if (currentEmail.UserId != userId)
+        if (currentEmail.OwnerId != userId)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
@@ -101,7 +100,7 @@ public sealed class EmailPolicy(IOptions<AccountOptions> options) : IEmailPolicy
         return Results.Success(SuccessCodes.Ok);
     }
 
-    public Result CanReset(Guid userId, UserEmailEntity currentEmail)
+    public Result CanReset(Guid userId, EmailInfo currentEmail)
     {
         ArgumentNullException.ThrowIfNull(currentEmail);
 
@@ -128,7 +127,7 @@ public sealed class EmailPolicy(IOptions<AccountOptions> options) : IEmailPolicy
         return Results.Success(SuccessCodes.Ok);
     }
 
-    public Result CanAdd(List<UserEmailEntity> userEmails, EmailType type)
+    public Result CanAdd(List<EmailInfo> userEmails, EmailType type)
     {
         ArgumentNullException.ThrowIfNull(userEmails);
 

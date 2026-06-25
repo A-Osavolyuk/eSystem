@@ -1,6 +1,7 @@
 ﻿using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Idp.Data;
 using eSecurity.Idp.Data.Entities;
+using eSecurity.Idp.Security.Authorization.Verification.Extensions;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 
@@ -29,7 +30,8 @@ public sealed class VerificationCommandService(
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        var canConsumeResult = _policy.CanConsume(entity);
+        var requestInfo = entity.ToInfo();
+        var canConsumeResult = _policy.CanConsume(requestInfo);
         if (!canConsumeResult.Succeeded) return canConsumeResult;
         
         entity.Status = VerificationStatus.Consumed;
@@ -44,7 +46,8 @@ public sealed class VerificationCommandService(
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        var canApproveResult = _policy.CanApprove(entity);
+        var requestInfo = entity.ToInfo();
+        var canApproveResult = _policy.CanApprove(requestInfo);
         if (!canApproveResult.Succeeded) return canApproveResult;
         
         entity.Status = VerificationStatus.Approved;
@@ -59,7 +62,8 @@ public sealed class VerificationCommandService(
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        var canCancelResult = _policy.CanCancel(entity);
+        var requestInfo = entity.ToInfo();
+        var canCancelResult = _policy.CanCancel(requestInfo);
         if (!canCancelResult.Succeeded) return canCancelResult;
         
         entity.Status = VerificationStatus.Approved;

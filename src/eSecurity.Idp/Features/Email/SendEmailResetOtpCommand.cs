@@ -30,7 +30,6 @@ public sealed class SendEmailResetCommandOtpHandler(
     IEmailService emailService,
     ICodeCommandService codeCommandService,
     IUserResendAttemptsService resendAttemptsService,
-    IEmailPolicy emailPolicy,
     IVerificationCommandService verificationCommandService) : IRequestHandler<SendEmailResetOtpCommand, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
@@ -38,7 +37,6 @@ public sealed class SendEmailResetCommandOtpHandler(
     private readonly IEmailService _emailService = emailService;
     private readonly ICodeCommandService _codeCommandService = codeCommandService;
     private readonly IUserResendAttemptsService _resendAttemptsService = resendAttemptsService;
-    private readonly IEmailPolicy _emailPolicy = emailPolicy;
     private readonly IVerificationCommandService _verificationCommandService = verificationCommandService;
 
     public async Task<Result> Handle(SendEmailResetOtpCommand request, CancellationToken cancellationToken = default)
@@ -68,10 +66,6 @@ public sealed class SendEmailResetCommandOtpHandler(
                 Description = "'current_email' is invalid"
             });
         }
-
-        var canResetResult = _emailPolicy.CanReset(user.Id, currentEmail);
-        if (!canResetResult.Succeeded) 
-            return canResetResult;
         
         var resetAttemptsResult = await _resendAttemptsService.ResetAttemptsAsync(
             user, TimeSpan.FromMinutes(2), cancellationToken);

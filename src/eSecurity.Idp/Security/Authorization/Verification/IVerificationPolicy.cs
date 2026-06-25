@@ -1,13 +1,12 @@
-﻿using eSecurity.Idp.Data.Entities;
-using eSystem.Core.Primitives;
+﻿using eSystem.Core.Primitives;
 
 namespace eSecurity.Idp.Security.Authorization.Verification;
 
 public interface IVerificationPolicy
 {
-    Result CanConsume(VerificationRequestEntity request);
+    Result CanConsume(VerificationRequestInfo request);
 
-    Result CanApprove(VerificationRequestEntity request);
+    Result CanApprove(VerificationRequestInfo request);
 
-    Result CanCancel(VerificationRequestEntity request);
+    Result CanCancel(VerificationRequestInfo request);
 }

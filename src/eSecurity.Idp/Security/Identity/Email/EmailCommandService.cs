@@ -2,6 +2,7 @@
 using eSecurity.Idp.Common.Validation;
 using eSecurity.Idp.Data;
 using eSecurity.Idp.Data.Entities;
+using eSecurity.Idp.Security.Identity.Email.Extensions;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 
@@ -41,6 +42,11 @@ public sealed class EmailCommandService(
             });
         }
 
+        var emailsInfo = userEmails.Select(x => x.ToInfo()).ToList();
+        var canAddResult = _policy.CanAdd(emailsInfo, type);
+        if (!canAddResult.Succeeded)
+            return canAddResult;
+
         var entity = new UserEmailEntity(userId, email, type);
         await _context.UserEmails.AddAsync(entity, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
@@ -68,7 +74,8 @@ public sealed class EmailCommandService(
 
         if (newEmailEntity is null)
         {
-            var changeResult = _policy.CanChangeWithNewEmail(userId, currentEmailEntity);
+            var currentEmailInfo = currentEmailEntity.ToInfo();
+            var changeResult = _policy.CanChangeWithNewEmail(userId, currentEmailInfo);
             if (!changeResult.Succeeded)
                 return changeResult;
 
@@ -86,7 +93,9 @@ public sealed class EmailCommandService(
                 });
             }
 
-            var canChangeResult = _policy.CanChangeExistingEmail(userId, currentEmailEntity, newEmailEntity);
+            var currentEmailInfo = currentEmailEntity.ToInfo();
+            var newEmailInfo = newEmailEntity.ToInfo();
+            var canChangeResult = _policy.CanChangeExistingEmail(userId, currentEmailInfo, newEmailInfo);
             if (!canChangeResult.Succeeded) 
                 return canChangeResult;
 
@@ -105,7 +114,7 @@ public sealed class EmailCommandService(
 
         var currentEmailEntity = await _query.GetByEmailAsync(userId, currentEmail, cancellationToken);
         var newEmailEntity = await _query.GetByEmailAsync(userId, newEmail, cancellationToken);
-
+        
         if (currentEmailEntity is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error()
@@ -124,7 +133,8 @@ public sealed class EmailCommandService(
             });
         }
 
-        var canResetResult = _policy.CanReset(userId, currentEmailEntity);
+        var currentEmailInfo = currentEmailEntity.ToInfo();
+        var canResetResult = _policy.CanReset(userId, currentEmailInfo);
         if (!canResetResult.Succeeded) return canResetResult;
 
         currentEmailEntity.Email = newEmail;

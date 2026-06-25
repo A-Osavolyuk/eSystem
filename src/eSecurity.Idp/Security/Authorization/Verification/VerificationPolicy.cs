@@ -1,5 +1,4 @@
 ﻿using eSecurity.Core.Security.Authorization.Verification;
-using eSecurity.Idp.Data.Entities;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 
@@ -7,7 +6,7 @@ namespace eSecurity.Idp.Security.Authorization.Verification;
 
 public sealed class VerificationPolicy : IVerificationPolicy
 {
-    public Result CanConsume(VerificationRequestEntity request)
+    public Result CanConsume(VerificationRequestInfo request)
     {
         ArgumentNullException.ThrowIfNull(request);
 
@@ -32,7 +31,7 @@ public sealed class VerificationPolicy : IVerificationPolicy
         return Results.Success(SuccessCodes.Ok);
     }
 
-    public Result CanApprove(VerificationRequestEntity request)
+    public Result CanApprove(VerificationRequestInfo request)
     {
         ArgumentNullException.ThrowIfNull(request);
 
@@ -57,7 +56,7 @@ public sealed class VerificationPolicy : IVerificationPolicy
         return Results.Success(SuccessCodes.Ok);
     }
 
-    public Result CanCancel(VerificationRequestEntity request)
+    public Result CanCancel(VerificationRequestInfo request)
     {
         ArgumentNullException.ThrowIfNull(request);
 

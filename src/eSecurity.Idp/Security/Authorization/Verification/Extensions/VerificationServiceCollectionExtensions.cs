@@ -1,6 +1,6 @@
-﻿namespace eSecurity.Idp.Security.Authorization.Verification;
+﻿namespace eSecurity.Idp.Security.Authorization.Verification.Extensions;
 
-public static class VerificationExtensions
+public static class VerificationServiceCollectionExtensions
 {
     public static void AddVerification(this IServiceCollection services, Action<VerificationConfiguration> configure)
     {

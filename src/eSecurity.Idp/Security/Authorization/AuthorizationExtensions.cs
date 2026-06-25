@@ -10,7 +10,7 @@ using eSecurity.Idp.Security.Authorization.Roles;
 using eSecurity.Idp.Security.Authorization.Token;
 using eSecurity.Idp.Security.Authorization.Token.DeviceCode;
 using eSecurity.Idp.Security.Authorization.Token.Validation;
-using eSecurity.Idp.Security.Authorization.Verification;
+using eSecurity.Idp.Security.Authorization.Verification.Extensions;
 using eSystem.Core.Security.Authorization.OAuth;
 using eSystem.Core.Server.Security.Authentication.Schemes;
 using eSystem.Core.Server.Security.Authorization.OAuth.Token.Validation;

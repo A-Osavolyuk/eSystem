@@ -19,22 +19,17 @@ public sealed class AddEmailCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
     IEmailQueryService emailQueryService,
     IEmailCommandService emailCommandService,
-    IEmailPolicy emailPolicy,
     IOptions<AccountOptions> options) : IRequestHandler<AddEmailCommand, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly IEmailCommandService _emailCommandService = emailCommandService;
-    private readonly IEmailPolicy _emailPolicy = emailPolicy;
     private readonly AccountOptions _options = options.Value;
 
     public async Task<Result> Handle(AddEmailCommand request, CancellationToken cancellationToken)
     {
         var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
-        var userEmails = await _emailQueryService.ListByUserAsync(user.Id, cancellationToken);
-        var canAddResult = _emailPolicy.CanAdd(userEmails, EmailType.Secondary);
-        if (!canAddResult.Succeeded) return canAddResult;
-
+        
         if (string.IsNullOrWhiteSpace(request.Email))
             throw new ValidationException("Email is required");
         
