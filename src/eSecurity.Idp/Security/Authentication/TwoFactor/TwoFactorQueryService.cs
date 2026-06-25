@@ -13,6 +13,7 @@ public sealed class TwoFactorQueryService(AuthDbContext context) : ITwoFactorQue
     {
         return await _context.UserTwoFactorMethods
             .Where(x => x.UserId == userId)
+            .Include(x => x.Method)
             .ToListAsync(cancellationToken);
     }
 
@@ -20,6 +21,7 @@ public sealed class TwoFactorQueryService(AuthDbContext context) : ITwoFactorQue
         CancellationToken cancellationToken = default)
     {
         return await _context.UserTwoFactorMethods
-            .FirstOrDefaultAsync(x => x.UserId == userId && x.Method == method, cancellationToken);
+            .Include(x => x.Method)
+            .FirstOrDefaultAsync(x => x.UserId == userId && x.Method.Type == method, cancellationToken);
     }
 }

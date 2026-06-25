@@ -25,11 +25,23 @@ public sealed class TwoFactorCommandService(
         if (!canAddMethodResult.Succeeded)
             return canAddMethodResult;
 
+        var twoFactorMethod = await _context.TwoFactorMethods
+            .FirstOrDefaultAsync(x => x.Type == method, cancellationToken);
+
+        if (twoFactorMethod is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Invalid 2FA method"
+            });
+        }
+
         var methodEntity = new UserTwoFactorMethodEntity()
         {
             Id = Guid.CreateVersion7(),
+            MethodId = twoFactorMethod.Id,
             UserId = userId,
-            Method = method,
             Preferred = existingMethods.Count == 0
         };
 
@@ -65,7 +77,7 @@ public sealed class TwoFactorCommandService(
         var remainingMethods = existingMethods.Where(x => x.Method != existingMethod.Method).ToList();
         if (remainingMethods.Count > 0)
         {
-            var highestPriorityMethod = remainingMethods.MaxBy(x => TwoFactorHelper.GetMethodPriority(x.Method));
+            var highestPriorityMethod = remainingMethods.MaxBy(x => x.Method.Priority);
             if (highestPriorityMethod is null)
                 throw new InvalidOperationException("Highest priority method is invalid");
             

@@ -21,7 +21,7 @@ public class GetUserProvidersQueryHandler(
         var methods = await _twoFactorQueryService.ListByUserAsync(user.Id, cancellationToken);
         var response = methods.Select(provider => new UserTwoFactorMethod
         {
-            Method = provider.Method,
+            Method = provider.Method.Type,
             Preferred = provider.Preferred,
             UpdatedAt = provider.UpdatedAt,
         }).ToList();

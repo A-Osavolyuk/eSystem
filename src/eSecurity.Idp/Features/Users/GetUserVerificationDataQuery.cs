@@ -61,7 +61,7 @@ public class GetUserVerificationMethodsQueryHandler(
         {
             EmailEnabled = true,
             SoftwareKeyEnabled = softwareKey is not null,
-            AuthenticatorAppEnabled = twoFactorMethods.Any(x => x.Method == TwoFactorMethod.AuthenticatorApp),
+            AuthenticatorAppEnabled = twoFactorMethods.Any(x => x.Method.Type == TwoFactorMethod.AuthenticatorApp),
             PreferredMethod = (twoFactorMethods.Count > 0, softwareKey) switch
             {
                 (true, null) => VerificationMethod.AuthenticatorApp,

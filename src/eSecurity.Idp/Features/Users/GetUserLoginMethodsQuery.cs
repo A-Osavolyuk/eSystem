@@ -61,10 +61,10 @@ public class GetUserLoginMethodsQueryHandler(
             TwoFactorData = new TwoFactorData
             {
                 Enabled = twoFactorMethods.Count > 0,
-                PreferredMethod = twoFactorMethods.FirstOrDefault(x => x.Preferred)?.Method,
-                SoftwareKeyEnabled = twoFactorMethods.Any(x => x.Method == TwoFactorMethod.SoftwareKey),
-                SmsOtpEnabled = twoFactorMethods.Any(x => x.Method == TwoFactorMethod.SmsOtp),
-                AuthenticatorAppEnabled = twoFactorMethods.Any(x => x.Method == TwoFactorMethod.AuthenticatorApp),
+                PreferredMethod = twoFactorMethods.FirstOrDefault(x => x.Preferred)?.Method.Type,
+                SoftwareKeyEnabled = twoFactorMethods.Any(x => x.Method.Type == TwoFactorMethod.SoftwareKey),
+                SmsOtpEnabled = twoFactorMethods.Any(x => x.Method.Type == TwoFactorMethod.SmsOtp),
+                AuthenticatorAppEnabled = twoFactorMethods.Any(x => x.Method.Type == TwoFactorMethod.AuthenticatorApp),
             },
             LinkedAccountsData = new LinkedAccountsData
             {

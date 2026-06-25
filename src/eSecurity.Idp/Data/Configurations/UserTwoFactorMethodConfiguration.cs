@@ -9,11 +9,15 @@ public sealed class UserTwoFactorMethodConfiguration : IEntityTypeConfiguration<
     public void Configure(EntityTypeBuilder<UserTwoFactorMethodEntity> builder)
     {
         builder.HasKey(x => x.Id);
-        builder.Property(x => x.Method).HasEnumConversion();
         
         builder.HasOne(x => x.User)
             .WithMany()
             .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.HasOne(x => x.Method)
+            .WithMany()
+            .HasForeignKey(x => x.MethodId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }
