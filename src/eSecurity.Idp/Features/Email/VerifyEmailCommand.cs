@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Idp.Security.Authorization.Codes;
 using eSecurity.Idp.Security.Authorization.Verification;
 using eSecurity.Idp.Security.Identity.Email;
@@ -7,29 +8,26 @@ using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Server.Exceptions;
 
-namespace eSecurity.Idp.Features.Email.Reset;
+namespace eSecurity.Idp.Features.Email;
 
-public sealed record ResetEmailCommand : IRequest<Result>
+public sealed class VerifyEmailCommand : IRequest<Result>
 {
     [JsonPropertyName("verification_id")]
     public Guid VerificationId { get; set; }
-
-    [JsonPropertyName("code")]
+    
+    [JsonPropertyName("email")] 
+    public string? Email { get; set; }
+    
+    [JsonPropertyName("code")] 
     public string? Code { get; set; }
-
-    [JsonPropertyName("current_email")]
-    public string? CurrentEmail { get; set; }
-
-    [JsonPropertyName("new_email")]
-    public string? NewEmail { get; set; }
 }
 
-public sealed class ResetEmailCommandHandler(
+public sealed class VerifyEmailCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
     IEmailCommandService emailCommandService,
     IVerificationQueryService verificationQueryService,
     IVerificationCommandService verificationCommandService,
-    ICodeManager codeManager) : IRequestHandler<ResetEmailCommand, Result>
+    ICodeManager codeManager) : IRequestHandler<VerifyEmailCommand, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IEmailCommandService _emailCommandService = emailCommandService;
@@ -37,22 +35,26 @@ public sealed class ResetEmailCommandHandler(
     private readonly IVerificationCommandService _verificationCommandService = verificationCommandService;
     private readonly ICodeManager _codeManager = codeManager;
 
-    public async Task<Result> Handle(ResetEmailCommand request, CancellationToken cancellationToken = default)
+    public async Task<Result> Handle(VerifyEmailCommand request,
+        CancellationToken cancellationToken = default)
     {
         var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
         if (string.IsNullOrWhiteSpace(request.Code))
-            throw new ValidationException("Code is required");
+            throw new ValidationException("Code is requied");
         
-        var code = await _codeManager.FindByCodeAsync(user, request.Code, cancellationToken);
-        if (code is null)
+        var codeEntity = await _codeManager.FindByCodeAsync(user, request.Code, cancellationToken);
+        if (codeEntity is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidRequest,
-                Description = "'code' is invalid"
+                Description = "Code is Invalid"
             });
         }
 
+        var consumeResult = await _codeManager.ConsumeAsync(codeEntity, cancellationToken);
+        if (!consumeResult.Succeeded) return consumeResult;
+        
         var verificationRequest = await _verificationQueryService.GetByIdAsync(user.Id,
             request.VerificationId, cancellationToken);
 
@@ -65,26 +67,28 @@ public sealed class ResetEmailCommandHandler(
             });
         }
         
-        var consumeResult = await _codeManager.ConsumeAsync(code, cancellationToken);
-        if (!consumeResult.Succeeded) return consumeResult;
+        if (verificationRequest.Status != VerificationStatus.Pending)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Invalid verification request"
+            });
+        }
 
         var verificationResult = await _verificationCommandService.ConsumeAsync(verificationRequest, cancellationToken);
-        if (!verificationResult.Succeeded) return consumeResult;
+        if (!verificationResult.Succeeded) return verificationResult;
 
-        if (string.IsNullOrWhiteSpace(request.CurrentEmail))
-            throw new ValidationException("CurrentEmail is required");
-
-        if (string.IsNullOrWhiteSpace(request.NewEmail))
-            throw new ValidationException("NewEmail is required");
+        if (string.IsNullOrWhiteSpace(request.Email))
+            throw new ValidationException("Email is required");
         
-        return await _emailCommandService.ResetAsync(user.Id, request.CurrentEmail, 
-            request.NewEmail, cancellationToken);
+        return await _emailCommandService.VerifyAsync(user.Id, request.Email, cancellationToken);
     }
 }
 
-public sealed class ResetEmailCommandValidator : IRequestValidator<ResetEmailCommand>
+public sealed class VerifyEmailCommandValidator : IRequestValidator<VerifyEmailCommand>
 {
-    public async ValueTask<Result> Validate(ResetEmailCommand request, CancellationToken cancellationToken)
+    public async ValueTask<Result> Validate(VerifyEmailCommand request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
 
@@ -97,21 +101,12 @@ public sealed class ResetEmailCommandValidator : IRequestValidator<ResetEmailCom
             });
         }
         
-        if (string.IsNullOrWhiteSpace(request.CurrentEmail))
+        if (string.IsNullOrWhiteSpace(request.Email))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error()
             {
                 Code = ErrorCode.InvalidRequest,
                 Description = "'current_email' is required"
-            });
-        }
-        
-        if (string.IsNullOrWhiteSpace(request.NewEmail))
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
-            {
-                Code = ErrorCode.InvalidRequest,
-                Description = "'new_email' is required"
             });
         }
         

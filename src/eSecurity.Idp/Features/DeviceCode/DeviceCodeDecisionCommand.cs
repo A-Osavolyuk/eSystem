@@ -8,13 +8,14 @@ using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Server.Exceptions;
 
 namespace eSecurity.Idp.Features.DeviceCode;
 
 public sealed record DeviceCodeDecisionCommand : IRequest<Result>
 {
     [JsonPropertyName("user_code")]
-    public required string UserCode { get; set; }
+    public string? UserCode { get; set; }
     
     [JsonPropertyName("decision")]
     public DeviceCodeDecision Decision { get; set; }
@@ -41,6 +42,9 @@ public sealed class DeviceCodeDecisionCommandHandler(
 
     public async Task<Result> Handle(DeviceCodeDecisionCommand request, CancellationToken cancellationToken)
     {
+        if (string.IsNullOrWhiteSpace(request.UserCode))
+            throw new ValidationException("UserCode is required");
+        
         var deviceCode = await _deviceCodeManager.FindByCodeAsync(request.UserCode, cancellationToken);
         if (deviceCode is null)
         {

@@ -10,7 +10,7 @@ namespace eSecurity.Idp.Features.TwoFactor;
 public record DisableTwoFactorCommand : IRequest<Result>
 {
     [JsonPropertyName("verification_id")]
-    public required Guid VerificationId { get; set; }
+    public Guid VerificationId { get; set; }
 }
 
 public class DisableTwoFactorCommandHandler(

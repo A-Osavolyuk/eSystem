@@ -12,7 +12,7 @@ using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Server.Exceptions;
 
-namespace eSecurity.Idp.Features.Email.Verification;
+namespace eSecurity.Idp.Features.Email;
 
 public sealed record SendEmailVerificationOtpCommand : IRequest<Result>
 {

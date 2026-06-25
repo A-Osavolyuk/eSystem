@@ -9,16 +9,17 @@ using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Server.Exceptions;
 
 namespace eSecurity.Idp.Features.Account;
 
 public sealed class CompleteSignUpCommand : IRequest<Result>
 {
     [JsonPropertyName("transaction_id")]
-    public required Guid TransactionId { get; set; }
+    public Guid TransactionId { get; set; }
     
     [JsonPropertyName("code")]
-    public required string Code { get; set; }
+    public string? Code { get; set; }
 }
 
 public sealed class CompleteSignUpCommandHandler(
@@ -64,6 +65,9 @@ public sealed class CompleteSignUpCommandHandler(
             });
         }
 
+        if (string.IsNullOrWhiteSpace(request.Code))
+            throw new ValidationException("UserCode is required");
+        
         var code = await _codeManager.FindByCodeAsync(user, request.Code, cancellationToken);
         if (code is null)
         {

@@ -3,13 +3,14 @@ using eSecurity.Core.Responses;
 using eSecurity.Idp.Security.Authorization.Token.DeviceCode;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Server.Exceptions;
 
 namespace eSecurity.Idp.Features.DeviceCode;
 
 public sealed class CheckDeviceCodeCommand : IRequest<Result>
 {
     [JsonPropertyName("user_code")]
-    public required string UserCode { get; set; }
+    public string? UserCode { get; set; }
 }
 
 public sealed class CheckDeviceCodeCommandHandler(
@@ -19,6 +20,9 @@ public sealed class CheckDeviceCodeCommandHandler(
 
     public async Task<Result> Handle(CheckDeviceCodeCommand request, CancellationToken cancellationToken)
     {
+        if (string.IsNullOrWhiteSpace(request.UserCode))
+            throw new ValidationException("UserCode is required");
+        
         var deviceCode = await _deviceCodeManager.FindByCodeAsync(request.UserCode, cancellationToken);
         if (deviceCode is null)
         {

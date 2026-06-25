@@ -8,7 +8,7 @@ using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Server.Exceptions;
 
-namespace eSecurity.Idp.Features.Email.Change;
+namespace eSecurity.Idp.Features.Email;
 
 public sealed class ChangeEmailCommand : IRequest<Result>
 {

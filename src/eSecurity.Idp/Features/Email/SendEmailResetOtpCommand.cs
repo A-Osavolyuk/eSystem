@@ -13,7 +13,7 @@ using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Server.Exceptions;
 
-namespace eSecurity.Idp.Features.Email.Reset;
+namespace eSecurity.Idp.Features.Email;
 
 public sealed record SendEmailResetOtpCommand : IRequest<Result>
 {

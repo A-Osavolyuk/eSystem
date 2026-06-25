@@ -1,7 +1,4 @@
 using eSecurity.Idp.Features.Email;
-using eSecurity.Idp.Features.Email.Change;
-using eSecurity.Idp.Features.Email.Reset;
-using eSecurity.Idp.Features.Email.Verification;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
 

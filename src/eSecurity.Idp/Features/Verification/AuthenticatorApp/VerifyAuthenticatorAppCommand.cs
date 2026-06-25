@@ -9,6 +9,7 @@ using eSecurity.Idp.Security.Cryptography.Protection.Constants;
 using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Server.Exceptions;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Idp.Features.Verification.AuthenticatorApp;
@@ -16,7 +17,7 @@ namespace eSecurity.Idp.Features.Verification.AuthenticatorApp;
 public sealed record VerifyAuthenticatorAppCommand : IRequest<Result>
 {
     [JsonPropertyName("code")]
-    public required string Code { get; set; }
+    public string? Code { get; set; }
     
     [JsonPropertyName("operation_type")]
     public OperationType OperationType { get; set; }
@@ -51,8 +52,11 @@ public sealed class VerifyAuthenticatorAppCommandHandler(
 
         var protector = _protectionProvider.CreateProtector(ProtectionPurposes.Secret);
         var unprotectedSecret = protector.Unprotect(secret.ProtectedSecret);
-        var verified = AuthenticatorUtils.VerifyCode(request.Code, unprotectedSecret);
-        if (!verified)
+        
+        if (string.IsNullOrWhiteSpace(request.Code))
+            throw new ValidationException("Code is required");
+        
+        if (!AuthenticatorUtils.VerifyCode(request.Code, unprotectedSecret))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {

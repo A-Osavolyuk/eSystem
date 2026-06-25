@@ -40,6 +40,7 @@ public sealed class VerifySoftwareKeyCommandHandler(
     {
         var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
         var credential = request.Credential;
+        
         if (credential is null)
             throw new ValidationException("Credential is required");
         

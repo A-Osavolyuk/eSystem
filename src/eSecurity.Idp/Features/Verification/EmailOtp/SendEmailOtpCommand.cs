@@ -11,13 +11,14 @@ using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Messaging;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Server.Exceptions;
 
 namespace eSecurity.Idp.Features.Verification.EmailOtp;
 
 public sealed record SendEmailOtpCommand : IRequest<Result>
 {
     [JsonPropertyName("email")]
-    public required string Email { get; set; }
+    public string? Email { get; set; }
     
     [JsonPropertyName("operation_type")]
     public required OperationType OperationType { get; set; }
@@ -41,6 +42,10 @@ public sealed class SendEmailOtpCommandHandler(
     public async Task<Result> Handle(SendEmailOtpCommand request, CancellationToken cancellationToken = default)
     {
         var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
+
+        if (string.IsNullOrWhiteSpace(request.Email))
+            throw new ValidationException("Email is required");
+        
         var userEmail = await _emailQueryService.GetByEmailAsync(user.Id, request.Email, cancellationToken);
         if (userEmail is null)
         {

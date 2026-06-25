@@ -6,6 +6,7 @@ using eSecurity.Idp.Security.Authorization.Verification;
 using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Server.Exceptions;
 
 namespace eSecurity.Idp.Features.Verification.EmailOtp;
 
@@ -15,10 +16,10 @@ public sealed record VerifyEmailOtpCommand : IRequest<Result>
     public Guid VerificationId { get; set; }
     
     [JsonPropertyName("code")]
-    public required string Code { get; set; }
+    public string? Code { get; set; }
 
     [JsonPropertyName("operation_type")]
-    public required OperationType OperationType { get; set; }
+    public OperationType OperationType { get; set; }
 }
 
 public sealed class VerifyEmailOtpCommandHandler(
@@ -59,6 +60,9 @@ public sealed class VerifyEmailOtpCommandHandler(
                 Description = "Invalid verification request"
             });
         }
+
+        if (string.IsNullOrWhiteSpace(request.Code))
+            throw new ValidationException("Code is required");
         
         var code = await _codeManager.FindByCodeAsync(user, request.Code, cancellationToken);
         if (code is null)

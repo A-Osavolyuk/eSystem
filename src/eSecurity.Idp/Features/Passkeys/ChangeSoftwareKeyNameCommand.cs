@@ -3,16 +3,17 @@ using eSecurity.Idp.Security.Credentials.PublicKey;
 using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Server.Exceptions;
 
 namespace eSecurity.Idp.Features.Passkeys;
 
 public sealed class ChangeSoftwareKeyNameCommand : IRequest<Result>
 {
     [JsonPropertyName("passkey_id")]
-    public required Guid PasskeyId { get; set; }
+    public Guid PasskeyId { get; set; }
     
     [JsonPropertyName("display_name")]
-    public required string DisplayName { get; set; }
+    public string? DisplayName { get; set; }
 }
 
 public sealed class ChangeSoftwareKeyNameCommandHandler(
@@ -44,6 +45,9 @@ public sealed class ChangeSoftwareKeyNameCommandHandler(
             });
         }
 
+        if (string.IsNullOrWhiteSpace(request.DisplayName))
+            throw new ValidationException("DisplayName is required");
+        
         passkey.DisplayName = request.DisplayName;
 
         var result = await _passkeyManager.UpdateAsync(passkey, cancellationToken);

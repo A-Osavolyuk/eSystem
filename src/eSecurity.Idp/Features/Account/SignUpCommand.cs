@@ -3,19 +3,20 @@ using eSecurity.Idp.Security.Identity.SignUp;
 using eSecurity.Idp.Security.Identity.SignUp.Strategies;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
+using eSystem.Core.Server.Exceptions;
 
 namespace eSecurity.Idp.Features.Account;
 
 public sealed record SignUpCommand : IRequest<Result>
 {
     [JsonPropertyName("email")]
-    public required string Email { get; set; }
+    public string? Email { get; set; }
     
     [JsonPropertyName("username")]
-    public required string Username { get; set; }
+    public string? Username { get; set; }
     
     [JsonPropertyName("password")]
-    public required string Password { get; set; }
+    public string? Password { get; set; }
 }
 
 public sealed class SignUpCommandHandler(ISignUpResolver resolver) : IRequestHandler<SignUpCommand, Result>
@@ -25,8 +26,16 @@ public sealed class SignUpCommandHandler(ISignUpResolver resolver) : IRequestHan
     public async Task<Result> Handle(SignUpCommand request,
         CancellationToken cancellationToken)
     {
+        if (string.IsNullOrWhiteSpace(request.Email))
+            throw new ValidationException("Email is required");
+        
+        if (string.IsNullOrWhiteSpace(request.Username))
+            throw new ValidationException("Username is required");
+        
+        if (string.IsNullOrWhiteSpace(request.Password))
+            throw new ValidationException("Password is required");
+        
         var strategy = _resolver.Resolve(SignUpType.Manual);
-
         var payload = new ManualSignUpPayload
         {
             Username = request.Username,

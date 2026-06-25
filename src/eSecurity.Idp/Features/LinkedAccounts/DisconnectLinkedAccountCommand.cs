@@ -11,7 +11,7 @@ namespace eSecurity.Idp.Features.LinkedAccounts;
 public record DisconnectLinkedAccountCommand : IRequest<Result>
 {
     [JsonPropertyName("verification_id")]
-    public required Guid VerificationId { get; set; }
+    public Guid VerificationId { get; set; }
     
     [JsonPropertyName("type")]
     public LinkedAccountType Type { get; set; }
