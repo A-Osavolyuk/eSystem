@@ -12,8 +12,8 @@ public class UserVerificationData
     public bool EmailEnabled { get; set; }
     
     [JsonPropertyName("authenticator_enabled")]
-    public bool AuthenticatorEnabled { get; set; }
+    public bool AuthenticatorAppEnabled { get; set; }
     
     [JsonPropertyName("passkey_enabled")]
-    public bool PasskeyEnabled { get; set; }
+    public bool SoftwareKeyEnabled { get; set; }
 }

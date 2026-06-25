@@ -7,7 +7,7 @@
             <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="fw-bold pt-1">
                 Secure keys
             </MudTextM3>
-            @if (Model.PasskeyEnabled)
+            @if (Model.SoftwareKeyEnabled)
             {
                 <MudChip
                     T="string"
@@ -48,7 +48,7 @@
     </MudStack>
     <MudSpacer/>
     <MudStack>
-        @if (Model.PasskeyEnabled)
+        @if (Model.SoftwareKeyEnabled)
         {
             <MudButton
                 ButtonType="ButtonType.Button"

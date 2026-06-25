@@ -29,18 +29,20 @@ public record CreateSoftwareKeyCommand : IRequest<Result>
 
 public class CreateSoftwareKeyCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
-    ITwoFactorManager twoFactorManager,
     IHttpContextAccessor httpContextAccessor,
     ISessionStorage sessionStorage,
     IDeviceManager deviceManager,
     ISoftwareKeyCommandService softwareKeyCommandService,
+    ITwoFactorQueryService twoFactorQueryService,
+    ITwoFactorCommandService twoFactorCommandService,
     IOptions<CredentialOptions> options) : IRequestHandler<CreateSoftwareKeyCommand, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
-    private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly ISessionStorage _sessionStorage = sessionStorage;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ISoftwareKeyCommandService _softwareKeyCommandService = softwareKeyCommandService;
+    private readonly ITwoFactorQueryService _twoFactorQueryService = twoFactorQueryService;
+    private readonly ITwoFactorCommandService _twoFactorCommandService = twoFactorCommandService;
     private readonly CredentialOptions _credentialOptions = options.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
@@ -116,16 +118,14 @@ public class CreateSoftwareKeyCommandHandler(
         if (!result.Succeeded) 
             return result;
 
-        if (!await _twoFactorManager.HasMethodAsync(user, TwoFactorMethod.SoftwareKey, cancellationToken))
-        {
-            var twoFactorResult = await _twoFactorManager.SubscribeAsync(user,
-                TwoFactorMethod.SoftwareKey, cancellationToken: cancellationToken);
+        var twoFactorMethod = await _twoFactorQueryService.GetByMethodAsync(user.Id, 
+            TwoFactorMethod.SoftwareKey, cancellationToken);
 
-            if (!twoFactorResult.Succeeded) 
-                return twoFactorResult;
-        }
+        if (twoFactorMethod is not null) 
+            return Results.Success(SuccessCodes.Ok);
         
-        return Results.Success(SuccessCodes.Ok);
+        return await _twoFactorCommandService.AddMethodAsync(user.Id, 
+            TwoFactorMethod.SoftwareKey, cancellationToken);
     }
 }
 

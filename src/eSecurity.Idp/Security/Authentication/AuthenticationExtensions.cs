@@ -10,7 +10,7 @@ using eSecurity.Idp.Security.Authentication.OpenIdConnect;
 using eSecurity.Idp.Security.Authentication.Password;
 using eSecurity.Idp.Security.Authentication.SignIn;
 using eSecurity.Idp.Security.Authentication.Subject;
-using eSecurity.Idp.Security.Authentication.TwoFactor;
+using eSecurity.Idp.Security.Authentication.TwoFactor.Extensions;
 using eSecurity.Idp.Security.Cryptography.Pkce;
 using eSystem.Core.Configuration;
 using eSystem.Core.Security.Authentication.OpenIdConnect;

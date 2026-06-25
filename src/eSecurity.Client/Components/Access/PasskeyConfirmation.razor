@@ -78,7 +78,7 @@
             OnClick="@(async () => await OnMethodChanged.InvokeAsync(VerificationMethod.EmailOtp))">
             Continue with email
         </MudButton>
-        @if (Model.AuthenticatorEnabled)
+        @if (Model.AuthenticatorAppEnabled)
         {
             <MudButton
                 Color="Color.Primary"

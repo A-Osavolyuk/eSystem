@@ -23,7 +23,7 @@
                     Margin="Margin.Dense"
                     AnchorOrigin="Origin.BottomCenter"
                     Immediate="true"
-                    Disabled="@(!Model.AuthenticatorEnabled || !Model.PasskeyEnabled)">
+                    Disabled="@(!Model.AuthenticatorAppEnabled || !Model.SoftwareKeyEnabled)">
                     <MudSelectItemExtended 
                         T="string" 
                         Value="@TwoFactorTypes.AuthenticatorApp"

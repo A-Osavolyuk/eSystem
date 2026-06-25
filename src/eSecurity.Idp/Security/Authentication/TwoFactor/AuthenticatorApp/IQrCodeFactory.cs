@@ -1,6 +1,6 @@
 ﻿using eSecurity.Core.DTOs;
 
-namespace eSecurity.Idp.Security.Authentication.TwoFactor.Authenticator;
+namespace eSecurity.Idp.Security.Authentication.TwoFactor.AuthenticatorApp;
 
 public interface IQrCodeFactory
 {

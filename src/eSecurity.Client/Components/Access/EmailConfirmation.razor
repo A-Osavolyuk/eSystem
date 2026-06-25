@@ -55,7 +55,7 @@
             </MudLoadingButton>
         }
     </MudStack>
-    @if (Model.PasskeyEnabled || Model.AuthenticatorEnabled)
+    @if (Model.SoftwareKeyEnabled || Model.AuthenticatorAppEnabled)
     {
         <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center" Justify="Justify.Center">
             <MudDivider Style="max-width: 45%"/>
@@ -63,7 +63,7 @@
             <MudDivider Style="max-width: 45%"/>
         </MudStack>
         <MudStack Spacing="3">
-            @if (Model.AuthenticatorEnabled)
+            @if (Model.AuthenticatorAppEnabled)
             {
                 <MudButton
                     Color="Color.Primary"
@@ -73,7 +73,7 @@
                     Continue with authenticator app
                 </MudButton>
             }
-            @if (Model.PasskeyEnabled)
+            @if (Model.SoftwareKeyEnabled)
             {
                 <MudButton
                     Color="Color.Primary"

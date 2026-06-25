@@ -1,28 +1,28 @@
-﻿using eSecurity.Idp.Data.Entities;
+﻿using eSecurity.Core.Responses;
+using eSecurity.Core.Security.Authentication.Lockout;
+using eSecurity.Idp.Data.Entities;
 using eSecurity.Idp.Security.Authentication.Lockout;
 using eSecurity.Idp.Security.Authentication.Session;
 using eSecurity.Idp.Security.Authentication.TwoFactor.Secret;
 using eSecurity.Idp.Security.Authorization.Devices;
+using eSecurity.Idp.Security.Cookies;
 using eSecurity.Idp.Security.Cryptography.Protection.Constants;
 using eSecurity.Idp.Security.Identity.Options;
 using eSecurity.Idp.Security.Identity.User;
-using eSecurity.Core.Responses;
-using eSecurity.Core.Security.Authentication.Lockout;
-using eSecurity.Idp.Security.Cookies;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.DataProtection;
 
-namespace eSecurity.Idp.Security.Authentication.TwoFactor.Authenticator;
+namespace eSecurity.Idp.Security.Authentication.TwoFactor.AuthenticatorApp;
 
 public sealed class AuthenticatorTwoFactorContext : TwoFactorContext
 {
     public required string Code { get; set; }
 }
 
-public sealed class AuthenticatorTwoFactorStrategy(
+public sealed class AuthenticatorAppTwoFactorStrategy(
     IAuthenticationSessionManager authenticationSessionManager,
     IUserQueryService userQueryService,
     IHttpContextAccessor httpContextAccessor,

@@ -1,8 +1,8 @@
-﻿using eSecurity.Idp.Security.Authentication.TwoFactor.Authenticator;
-using eSecurity.Idp.Security.Authentication.TwoFactor.Passkey;
+﻿using eSecurity.Idp.Security.Authentication.TwoFactor.Passkey;
 using eSecurity.Idp.Security.Authentication.TwoFactor.RecoveryCode;
 using eSecurity.Core.Security.Authentication.SignIn;
 using eSecurity.Core.Security.Authentication.TwoFactor;
+using eSecurity.Idp.Security.Authentication.TwoFactor.AuthenticatorApp;
 
 namespace eSecurity.Idp.Security.Authentication.TwoFactor;
 

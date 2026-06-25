@@ -10,15 +10,15 @@ public record GetUserTwoFactorMethodsQuery : IRequest<Result>;
 
 public class GetUserProvidersQueryHandler(
     ICurrentUserAccessor currentUserAccessor,
-    ITwoFactorManager twoFactorManager) : IRequestHandler<GetUserTwoFactorMethodsQuery, Result>
+    ITwoFactorQueryService twoFactorQueryService) : IRequestHandler<GetUserTwoFactorMethodsQuery, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
-    private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
+    private readonly ITwoFactorQueryService _twoFactorQueryService = twoFactorQueryService;
 
     public async Task<Result> Handle(GetUserTwoFactorMethodsQuery request, CancellationToken cancellationToken)
     {
         var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
-        var methods = await _twoFactorManager.GetAllAsync(user, cancellationToken);
+        var methods = await _twoFactorQueryService.ListByUserAsync(user.Id, cancellationToken);
         var response = methods.Select(provider => new UserTwoFactorMethod
         {
             Method = provider.Method,

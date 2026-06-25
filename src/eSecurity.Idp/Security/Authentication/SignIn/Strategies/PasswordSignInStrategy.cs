@@ -29,11 +29,11 @@ public sealed class PasswordSignInStrategy(
     IDeviceManager deviceManager,
     ISessionManager sessionManager,
     IHttpContextAccessor accessor,
-    ITwoFactorManager twoFactorManager,
     IAuthenticationSessionManager authenticationSessionManager,
     IOptions<SignInOptions> signInOptions,
     IOptions<SessionOptions> sessionOptions,
     ISoftwareKeyQueryService softwareKeyQueryService,
+    ITwoFactorQueryService twoFactorQueryService,
     ISessionCookieFactory sessionCookieFactory) : ISignInStrategy
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
@@ -43,9 +43,9 @@ public sealed class PasswordSignInStrategy(
     private readonly ILockoutManager _lockoutManager = lockoutManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ISessionManager _sessionManager = sessionManager;
-    private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
+    private readonly ITwoFactorQueryService _twoFactorQueryService = twoFactorQueryService;
     private readonly ISessionCookieFactory _sessionCookieFactory = sessionCookieFactory;
     private readonly SessionOptions _sessionOptions = sessionOptions.Value;
     private readonly HttpContext _httpContext = accessor.HttpContext!;
@@ -66,14 +66,10 @@ public sealed class PasswordSignInStrategy(
         }
 
         if (_signInOptions.AllowUserNameLogin)
-        {
             user = await _userQueryService.GetByUsernameAsync(passwordPayload.Login, cancellationToken);
-        }
 
         if (user is null && _signInOptions.AllowEmailLogin)
-        {
             user = await _userQueryService.GetByEmailAsync(passwordPayload.Login, cancellationToken);
-        }
 
         if (user is null)
         {
@@ -132,7 +128,7 @@ public sealed class PasswordSignInStrategy(
             {
                 Code = ErrorCode.UnverifiedEmail,
                 Description = "Email is not verified.",
-                Details = new() { { "userId", user.Id } }
+                Details = new Dictionary<string, object> { { "userId", user.Id } }
             });
         }
 
@@ -152,7 +148,7 @@ public sealed class PasswordSignInStrategy(
             {
                 Code = ErrorCode.AccountLockedOut,
                 Description = "Account is locked out",
-                Details = new() { { "userId", user.Id } }
+                Details = new Dictionary<string, object> { { "userId", user.Id } }
             });
         }
 
@@ -176,7 +172,7 @@ public sealed class PasswordSignInStrategy(
                 {
                     Code = ErrorCode.FailedLoginAttempt,
                     Description = "The password is not valid.",
-                    Details = new()
+                    Details = new Dictionary<string, object>
                     {
                         { "maxFailedLoginAttempts", _signInOptions.MaxFailedLoginAttempts },
                         { "failedLoginAttempts", user.FailedLoginAttempts },
@@ -196,7 +192,7 @@ public sealed class PasswordSignInStrategy(
             {
                 Code = ErrorCode.TooManyFailedLoginAttempts,
                 Description = "Account is locked out due to too many failed login attempts",
-                Details = new() { { "userId", user.Id } }
+                Details = new Dictionary<string, object> { { "userId", user.Id } }
             });
         }
 
@@ -225,7 +221,8 @@ public sealed class PasswordSignInStrategy(
 
         authSession.Pass(AuthenticationMethodReference.Password);
 
-        if (await _twoFactorManager.IsEnabledAsync(user, cancellationToken))
+        var twoFactorMethods = await _twoFactorQueryService.ListByUserAsync(user.Id, cancellationToken);
+        if (twoFactorMethods.Count > 0)
         {
             var softwareKeys = await _softwareKeyQueryService.ListByUserAsync(user.Id, cancellationToken);
             AuthenticationMethodReference[] mfaMethods = softwareKeys.Count > 0

@@ -12,7 +12,6 @@ using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Utilities.Query;
-using Session_SessionOptions = eSecurity.Idp.Security.Authentication.Session.SessionOptions;
 
 namespace eSecurity.Idp.Security.Authentication.SignIn.Strategies;
 
@@ -22,21 +21,21 @@ public sealed class OAuthSignInStrategy(
     ILockoutManager lockoutManager,
     IHttpContextAccessor httpContextAccessor,
     ILinkedAccountManager linkedAccountManager,
-    ITwoFactorManager twoFactorManager,
     ISessionManager sessionManager,
     IAuthenticationSessionManager authenticationSessionManager,
     ISoftwareKeyQueryService softwareKeyQueryService,
-    IOptions<Session_SessionOptions> options) : ISignInStrategy
+    ITwoFactorQueryService twoFactorQueryService,
+    IOptions<SessionOptions> options) : ISignInStrategy
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
     private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
-    private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
-    private readonly Session_SessionOptions _options = options.Value;
+    private readonly ITwoFactorQueryService _twoFactorQueryService = twoFactorQueryService;
+    private readonly SessionOptions _options = options.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async ValueTask<Result> ExecuteAsync(SignInPayload payload,
@@ -129,7 +128,9 @@ public sealed class OAuthSignInStrategy(
         
         authenticationSession.OAuthFlow = OAuthFlow.SignIn;
         authenticationSession.UserId = user.Id;
-        if (await _twoFactorManager.IsEnabledAsync(user, cancellationToken))
+
+        var twoFactorMethods = await _twoFactorQueryService.ListByUserAsync(user.Id, cancellationToken);
+        if (twoFactorMethods.Count > 0)
         {
             var softwareKeys = await _softwareKeyQueryService.ListByUserAsync(user.Id, cancellationToken);
             authenticationSession.AllowMfa(softwareKeys.Count > 0
@@ -138,12 +139,6 @@ public sealed class OAuthSignInStrategy(
             
             var sessionResult = await _authenticationSessionManager.UpdateAsync(authenticationSession, cancellationToken);
             if (!sessionResult.Succeeded) return sessionResult;
-            
-            return Results.Redirect(RedirectionCode.Found, QueryBuilder.Create()
-                .WithUri(oauthPayload.ReturnUri)
-                .WithQueryParam("sid", authenticationSession.Id.ToString())
-                .WithQueryParam("state", oauthPayload.State)
-                .Build());
         }
         else
         {
@@ -160,12 +155,12 @@ public sealed class OAuthSignInStrategy(
             authenticationSession.SessionId = session.Id;
             var sessionResult = await _authenticationSessionManager.UpdateAsync(authenticationSession, cancellationToken);
             if (!sessionResult.Succeeded) return sessionResult;
-            
-            return Results.Redirect(RedirectionCode.Found, QueryBuilder.Create()
-                .WithUri(oauthPayload.ReturnUri)
-                .WithQueryParam("sid", authenticationSession.Id.ToString())
-                .WithQueryParam("state", oauthPayload.State)
-                .Build());
         }
+
+        return Results.Redirect(RedirectionCode.Found, QueryBuilder.Create()
+            .WithUri(oauthPayload.ReturnUri)
+            .WithQueryParam("sid", authenticationSession.Id.ToString())
+            .WithQueryParam("state", oauthPayload.State)
+            .Build());
     }
 }

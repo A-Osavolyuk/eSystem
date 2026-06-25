@@ -1,4 +1,5 @@
 ﻿using eSecurity.Core.DTOs;
+using eSecurity.Core.Security.Authentication.TwoFactor;
 using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Idp.Security.Authentication.TwoFactor;
@@ -18,15 +19,15 @@ public class GetUserVerificationMethodsQueryHandler(
     ICurrentUserAccessor currentUserAccessor,
     IDeviceManager deviceManager,
     IEmailQueryService emailQueryService,
-    ITwoFactorManager twoFactorManager,
     ISoftwareKeyQueryService softwareKeyQueryService,
+    ITwoFactorQueryService twoFactorQueryService,
     IHttpContextAccessor httpContextAccessor) : IRequestHandler<GetUserVerificationDataQuery, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
-    private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
+    private readonly ITwoFactorQueryService _twoFactorQueryService = twoFactorQueryService;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(GetUserVerificationDataQuery request, CancellationToken cancellationToken)
@@ -54,15 +55,14 @@ public class GetUserVerificationMethodsQueryHandler(
             });
         }
 
-        var passkey = await _softwareKeyQueryService.GetByDeviceAsync(device.Id, cancellationToken);
-        var twoFactorEnabled = await _twoFactorManager.IsEnabledAsync(user, cancellationToken);
-        
+        var softwareKey = await _softwareKeyQueryService.GetByDeviceAsync(device.Id, cancellationToken);
+        var twoFactorMethods = await _twoFactorQueryService.ListByUserAsync(user.Id, cancellationToken);
         var response = new UserVerificationData
         {
             EmailEnabled = true,
-            PasskeyEnabled = passkey is not null,
-            AuthenticatorEnabled = await _twoFactorManager.IsEnabledAsync(user, cancellationToken),
-            PreferredMethod = (twoFactorEnabled, passkey) switch
+            SoftwareKeyEnabled = softwareKey is not null,
+            AuthenticatorAppEnabled = twoFactorMethods.Any(x => x.Method == TwoFactorMethod.AuthenticatorApp),
+            PreferredMethod = (twoFactorMethods.Count > 0, softwareKey) switch
             {
                 (true, null) => VerificationMethod.AuthenticatorApp,
                 (_, not null) => VerificationMethod.SoftwareKey,

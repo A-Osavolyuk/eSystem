@@ -23,7 +23,7 @@ public sealed class PasskeyTwoFactorContext : TwoFactorContext
     public required PublicKeyCredential Credential { get; set; }
 }
 
-public sealed class PasskeyTwoFactorStrategy(
+public sealed class SoftwareKeyTwoFactorStrategy(
     IAuthenticationSessionManager authenticationSessionManager,
     IUserQueryService userQueryService,
     IHttpContextAccessor httpContextAccessor,

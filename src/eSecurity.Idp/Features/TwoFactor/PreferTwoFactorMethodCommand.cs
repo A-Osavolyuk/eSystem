@@ -15,16 +15,29 @@ public sealed class PreferTwoFactorMethodCommand : IRequest<Result>
 
 public sealed class PreferMethodCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
-    ITwoFactorManager twoFactorManager) : IRequestHandler<PreferTwoFactorMethodCommand, Result>
+    ITwoFactorQueryService twoFactorQueryService,
+    ITwoFactorCommandService twoFactorCommandService) : IRequestHandler<PreferTwoFactorMethodCommand, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
-    private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
+    private readonly ITwoFactorQueryService _twoFactorQueryService = twoFactorQueryService;
+    private readonly ITwoFactorCommandService _twoFactorCommandService = twoFactorCommandService;
 
     public async Task<Result> Handle(PreferTwoFactorMethodCommand request, CancellationToken cancellationToken)
     {
         var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
-        var result = await _twoFactorManager.PreferAsync(user, request.PreferredMethod, cancellationToken);
-        return result;
+        var twoFactorMethod = await _twoFactorQueryService.GetByMethodAsync(user.Id, 
+            request.PreferredMethod, cancellationToken);
+
+        if (twoFactorMethod is null)
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Invalid 2FA method"
+            });
+        }
+
+        return await _twoFactorCommandService.SetPreferredMethodAsync(user.Id, twoFactorMethod.Id, cancellationToken);
     }
 }
 

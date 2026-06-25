@@ -16,19 +16,22 @@ public record EnableTwoFactorCommand : IRequest<Result>
 
 public class EnableTwoFactorCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
-    ITwoFactorManager twoFactorManager,
     IVerificationQueryService verificationQueryService,
+    ITwoFactorQueryService twoFactorQueryService,
+    ITwoFactorCommandService twoFactorCommandService,
     IVerificationCommandService verificationCommandService) : IRequestHandler<EnableTwoFactorCommand, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
-    private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly IVerificationQueryService _verificationQueryService = verificationQueryService;
+    private readonly ITwoFactorQueryService _twoFactorQueryService = twoFactorQueryService;
+    private readonly ITwoFactorCommandService _twoFactorCommandService = twoFactorCommandService;
     private readonly IVerificationCommandService _verificationCommandService = verificationCommandService;
 
     public async Task<Result> Handle(EnableTwoFactorCommand request, CancellationToken cancellationToken)
     {
         var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
-        if (await _twoFactorManager.IsEnabledAsync(user, cancellationToken))
+        var twoFactorMethods = await _twoFactorQueryService.ListByUserAsync(user.Id, cancellationToken);
+        if (twoFactorMethods.Count > 0)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
@@ -37,9 +40,7 @@ public class EnableTwoFactorCommandHandler(
             });
         }
         
-        var verification = await _verificationQueryService.GetByIdAsync(user.Id, 
-            request.VerificationId, cancellationToken);
-        
+        var verification = await _verificationQueryService.GetByIdAsync(user.Id, request.VerificationId, cancellationToken);
         if (verification is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -50,16 +51,16 @@ public class EnableTwoFactorCommandHandler(
         }
 
         var verificationResult = await _verificationCommandService.ConsumeAsync(verification, cancellationToken);
-        if (!verificationResult.Succeeded) return verificationResult;
+        if (!verificationResult.Succeeded) 
+            return verificationResult;
 
-        var authenticatorResult = await _twoFactorManager.SubscribeAsync(user,
-            TwoFactorMethod.AuthenticatorApp, true, cancellationToken);
+        var addAuthenticatorAppTwoFactorMethodResult = await _twoFactorCommandService.AddMethodAsync(user.Id, 
+            TwoFactorMethod.AuthenticatorApp, cancellationToken);
 
-        if (!authenticatorResult.Succeeded) return authenticatorResult;
+        if (!addAuthenticatorAppTwoFactorMethodResult.Succeeded) 
+            return addAuthenticatorAppTwoFactorMethodResult;
 
-        var recoveryCodesResult = await _twoFactorManager.SubscribeAsync(user,
-            TwoFactorMethod.RecoveryCode, cancellationToken: cancellationToken);
-
-        return recoveryCodesResult;
+        return await _twoFactorCommandService.AddMethodAsync(user.Id,
+            TwoFactorMethod.RecoveryCode, cancellationToken);
     }
 }

@@ -15,19 +15,22 @@ public record DisableTwoFactorCommand : IRequest<Result>
 
 public class DisableTwoFactorCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
-    ITwoFactorManager twoFactorManager,
     IVerificationQueryService verificationQueryService,
+    ITwoFactorQueryService twoFactorQueryService,
+    ITwoFactorCommandService twoFactorCommandService,
     IVerificationCommandService verificationCommandService) : IRequestHandler<DisableTwoFactorCommand, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
-    private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly IVerificationQueryService _verificationQueryService = verificationQueryService;
+    private readonly ITwoFactorQueryService _twoFactorQueryService = twoFactorQueryService;
+    private readonly ITwoFactorCommandService _twoFactorCommandService = twoFactorCommandService;
     private readonly IVerificationCommandService _verificationCommandService = verificationCommandService;
 
     public async Task<Result> Handle(DisableTwoFactorCommand request, CancellationToken cancellationToken)
     {
         var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
-        if (await _twoFactorManager.IsEnabledAsync(user, cancellationToken))
+        var twoFactorMethods = await _twoFactorQueryService.ListByUserAsync(user.Id, cancellationToken);
+        if (twoFactorMethods.Count == 0)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
@@ -49,9 +52,9 @@ public class DisableTwoFactorCommandHandler(
         }
 
         var verificationResult = await _verificationCommandService.ConsumeAsync(verification, cancellationToken);
-        if (!verificationResult.Succeeded) return verificationResult;
+        if (!verificationResult.Succeeded) 
+            return verificationResult;
         
-        var methodResult = await _twoFactorManager.UnsubscribeAsync(user, cancellationToken);
-        return methodResult;
+        return await _twoFactorCommandService.ResetMethodsAsync(user.Id, cancellationToken);
     }
 }

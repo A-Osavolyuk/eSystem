@@ -26,21 +26,23 @@ public class RemoveSoftwareKeyCommandHandler(
     ISoftwareKeyQueryService softwareKeyQueryService,
     ISoftwareKeyCommandService softwareKeyCommandService,
     IPasswordManager passwordManager,
-    ITwoFactorManager twoFactorManager,
     ICurrentUserAccessor currentUserAccessor,
     IEmailQueryService emailQueryService,
     IVerificationQueryService verificationQueryService,
     IVerificationCommandService verificationCommandService,
+    ITwoFactorQueryService twoFactorQueryService,
+    ITwoFactorCommandService twoFactorCommandService,
     IOptions<SignInOptions> options) : IRequestHandler<RemoveSoftwareKeyCommand, Result>
 {
     private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
     private readonly ISoftwareKeyCommandService _softwareKeyCommandService = softwareKeyCommandService;
     private readonly IPasswordManager _passwordManager = passwordManager;
-    private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly IVerificationQueryService _verificationQueryService = verificationQueryService;
     private readonly IVerificationCommandService _verificationCommandService = verificationCommandService;
+    private readonly ITwoFactorQueryService _twoFactorQueryService = twoFactorQueryService;
+    private readonly ITwoFactorCommandService _twoFactorCommandService = twoFactorCommandService;
     private readonly SignInOptions _options = options.Value;
 
     public async Task<Result> Handle(RemoveSoftwareKeyCommand request, CancellationToken cancellationToken)
@@ -80,32 +82,22 @@ public class RemoveSoftwareKeyCommandHandler(
         }
 
         var verificationResult = await _verificationCommandService.ConsumeAsync(verification, cancellationToken);
-        if (!verificationResult.Succeeded) return verificationResult;
+        if (!verificationResult.Succeeded) 
+            return verificationResult;
 
         var softwareKeys = await _softwareKeyQueryService.ListByUserAsync(user.Id, cancellationToken);
         if (softwareKeys.Count == 1)
         {
-            if (await _twoFactorManager.HasMethodAsync(user, TwoFactorMethod.SoftwareKey, cancellationToken))
+            var twoFactorMethod = await _twoFactorQueryService.GetByMethodAsync(user.Id, 
+                TwoFactorMethod.SoftwareKey, cancellationToken);
+            
+            if (twoFactorMethod is not null && twoFactorMethod.Preferred)
             {
-                var method = await _twoFactorManager.GetAsync(user, TwoFactorMethod.SoftwareKey, cancellationToken);
-                if (method is null)
-                {
-                    return Results.ClientError(ClientErrorCode.NotFound, new Error
-                    {
-                        Code = ErrorCode.NotFound,
-                        Description = "Method not found"
-                    });
-                }
+                var removeResult = await _twoFactorCommandService.RemoveMethodAsync(user.Id, 
+                    twoFactorMethod.Id, cancellationToken);
 
-                if (method.Preferred)
-                {
-                    var preferredResult = await _twoFactorManager.PreferAsync(user,
-                        TwoFactorMethod.AuthenticatorApp, cancellationToken);
-                    if (!preferredResult.Succeeded) return preferredResult;
-                }
-
-                var result = await _twoFactorManager.UnsubscribeAsync(method, cancellationToken);
-                if (!result.Succeeded) return result;
+                if (!removeResult.Succeeded)
+                    return removeResult;
             }
         }
 

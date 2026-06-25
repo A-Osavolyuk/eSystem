@@ -89,7 +89,7 @@
                             Size="Size.Small">
                             Less secure
                         </MudChip>
-                        @if (Methods.Any(x => x.Method == TwoFactorMethod.Sms))
+                        @if (Methods.Any(x => x.Method == TwoFactorMethod.SmsOtp))
                         {
                             <MudChip
                                 Class="mx-0"
@@ -121,7 +121,7 @@
                         </MudTextM3>
                         <MudSpacer/>
                         <MudStack>
-                            @if (Methods.Any(x => x.Method == TwoFactorMethod.Sms))
+                            @if (Methods.Any(x => x.Method == TwoFactorMethod.SmsOtp))
                             {
                                 <MudButton
                                     Variant="Variant.Outlined"

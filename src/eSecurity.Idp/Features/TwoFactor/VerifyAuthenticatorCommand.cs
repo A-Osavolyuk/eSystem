@@ -1,5 +1,5 @@
 ﻿using System.Text.Json.Serialization;
-using eSecurity.Idp.Security.Authentication.TwoFactor.Authenticator;
+using eSecurity.Idp.Security.Authentication.TwoFactor.AuthenticatorApp;
 using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;

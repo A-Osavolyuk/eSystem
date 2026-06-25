@@ -33,13 +33,13 @@ public class TwoFactorData
     public bool Enabled { get; set; }
     
     [JsonPropertyName("authenticator_enabled")]
-    public bool AuthenticatorEnabled { get; set; }
+    public bool AuthenticatorAppEnabled { get; set; }
     
     [JsonPropertyName("passkey_enabled")]
-    public bool PasskeyEnabled { get; set; }
+    public bool SoftwareKeyEnabled { get; set; }
     
     [JsonPropertyName("sms_enabled")]
-    public bool SmsEnabled { get; set; }
+    public bool SmsOtpEnabled { get; set; }
     
     [JsonPropertyName("preferred_method")]
     public TwoFactorMethod? PreferredMethod { get; set; }

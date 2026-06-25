@@ -1,5 +1,5 @@
 ﻿using eSecurity.Core.Security.Identity;
-using eSecurity.Idp.Security.Authentication.TwoFactor.Authenticator;
+using eSecurity.Idp.Security.Authentication.TwoFactor.AuthenticatorApp;
 using eSecurity.Idp.Security.Cryptography;
 using eSecurity.Idp.Security.Identity.Email;
 using eSecurity.Idp.Security.Identity.User;

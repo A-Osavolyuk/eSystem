@@ -1,6 +1,6 @@
 ﻿using eSecurity.Core.Security.Identity;
 using eSecurity.Idp.Data.Entities;
-using eSecurity.Idp.Security.Authentication.TwoFactor.Authenticator;
+using eSecurity.Idp.Security.Authentication.TwoFactor.AuthenticatorApp;
 using eSecurity.Idp.Security.Authentication.TwoFactor.Secret;
 using eSecurity.Idp.Security.Cryptography;
 using eSecurity.Idp.Security.Cryptography.Protection.Constants;

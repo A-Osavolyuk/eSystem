@@ -15,7 +15,7 @@
                 Variant="Variant.Outlined">
                 Less secure
             </MudChip>
-            @if (Model.SmsEnabled)
+            @if (Model.SmsOtpEnabled)
             {
                 <MudChip
                     T="string"
@@ -37,7 +37,7 @@
                     Not configured
                 </MudChip>
             }
-            @if (Model.PreferredMethod == TwoFactorMethod.Sms)
+            @if (Model.PreferredMethod == TwoFactorMethod.SmsOtp)
             {
                 <MudChip
                     T="string"

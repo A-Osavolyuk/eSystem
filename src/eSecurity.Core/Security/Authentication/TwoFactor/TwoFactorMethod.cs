@@ -13,12 +13,18 @@ public enum TwoFactorMethod
     [EnumValue("authenticator_app")]
     AuthenticatorApp,
     
-    [EnumValue("passkey")]
+    [EnumValue("software_key")]
     SoftwareKey,
+    
+    [EnumValue("hardware_key")]
+    HardwareKey,
     
     [EnumValue("recovery_code")]
     RecoveryCode,
     
-    [EnumValue("sms")]
-    Sms
+    [EnumValue("sms_otp")]
+    SmsOtp,
+    
+    [EnumValue("email_otp")]
+    EmailOtp
 }

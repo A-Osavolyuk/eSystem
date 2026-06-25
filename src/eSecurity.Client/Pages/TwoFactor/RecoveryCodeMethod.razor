@@ -54,14 +54,14 @@
                 Authenticator app
             </MudButton>
         }
-        @if (Methods.Any(x => x == TwoFactorMethod.Sms))
+        @if (Methods.Any(x => x == TwoFactorMethod.SmsOtp))
         {
             <MudButton
                 Color="Color.Primary"
                 Variant="Variant.Filled"
                 ButtonType="ButtonType.Button"
                 Size="Size.Large"
-                OnClick="@(async () => await OnChangeMethod.InvokeAsync(TwoFactorMethod.Sms))">
+                OnClick="@(async () => await OnChangeMethod.InvokeAsync(TwoFactorMethod.SmsOtp))">
                 SMS
             </MudButton>
         }
