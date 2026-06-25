@@ -23,14 +23,14 @@ public sealed record SendEmailVerificationOtpCommand : IRequest<Result>
 public sealed class SendEmailVerificationCommandOtpHandler(
     ICurrentUserAccessor currentUserAccessor,
     IUserResendAttemptsService userResendAttemptsService,
-    ICodeManager codeManager,
     IVerificationCommandService verificationCommandService,
+    ICodeCommandService codeCommandService,
     IEmailService emailService) : IRequestHandler<SendEmailVerificationOtpCommand, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IUserResendAttemptsService _userResendAttemptsService = userResendAttemptsService;
-    private readonly ICodeManager _codeManager = codeManager;
     private readonly IVerificationCommandService _verificationCommandService = verificationCommandService;
+    private readonly ICodeCommandService _codeCommandService = codeCommandService;
     private readonly IEmailService _emailService = emailService;
 
     public async Task<Result> Handle(SendEmailVerificationOtpCommand request,
@@ -43,7 +43,7 @@ public sealed class SendEmailVerificationCommandOtpHandler(
         if (!result.Succeeded) 
             return result;
         
-        var codeResult = await _codeManager.CreateAsync(user, SenderType.Email, cancellationToken);
+        var codeResult = await _codeCommandService.CreateAsync(user.Id, SenderType.Email, cancellationToken);
         if (!codeResult.Succeeded)
         {
             var error = codeResult.GetError();

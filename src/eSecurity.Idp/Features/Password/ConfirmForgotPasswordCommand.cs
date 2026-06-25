@@ -22,11 +22,13 @@ public sealed record ConfirmForgotPasswordCommand : IRequest<Result>
 
 public sealed class ConfirmForgotPasswordCommandHandler(
     IUserQueryService userQueryService, 
-    ICodeManager codeManager,
+    ICodeCommandService codeCommandService,
+    ICodeQueryService codeQueryService,
     IVerificationCommandService verificationCommandService) : IRequestHandler<ConfirmForgotPasswordCommand, Result>
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
-    private readonly ICodeManager _codeManager = codeManager;
+    private readonly ICodeCommandService _codeCommandService = codeCommandService;
+    private readonly ICodeQueryService _codeQueryService = codeQueryService;
     private readonly IVerificationCommandService _verificationCommandService = verificationCommandService;
 
     public async Task<Result> Handle(ConfirmForgotPasswordCommand request, CancellationToken cancellationToken)
@@ -47,7 +49,7 @@ public sealed class ConfirmForgotPasswordCommandHandler(
         if (string.IsNullOrWhiteSpace(request.Code))
             throw new ValidationException("Code is required");
         
-        var code = await _codeManager.FindByCodeAsync(user, request.Code, cancellationToken);
+        var code = await _codeQueryService.GetByCodeAsync(user.Id, request.Code, cancellationToken);
         if (code is null || code.ExpiredAt < DateTimeOffset.UtcNow)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error
@@ -57,7 +59,7 @@ public sealed class ConfirmForgotPasswordCommandHandler(
             });
         }
 
-        var codeResult = await _codeManager.ConsumeAsync(code, cancellationToken);
+        var codeResult = await _codeCommandService.ConsumeAsync(code, cancellationToken);
         if (codeResult.Succeeded) return codeResult;
 
         var requestEntity = new VerificationRequestEntity

@@ -47,7 +47,9 @@ public static class AuthorizationExtensions
             options.Timestamp = TimeSpan.FromMinutes(10);
         });
 
-        builder.Services.AddScoped<ICodeManager, CodeManager>();
+        builder.Services.AddScoped<ICodeQueryService, CodeQueryService>();
+        builder.Services.AddScoped<ICodeCommandService, CodeCommandService>();
+        
         builder.Services.AddScoped<IConsentManager, ConsentManager>();
         builder.Services.AddScoped<ILinkedAccountManager, LinkedAccountManager>();
         builder.Services.AddScoped<ITokenValidationProvider, TokenValidationProvider>();

@@ -29,15 +29,15 @@ public sealed class SendEmailOtpCommandHandler(
     IUserResendAttemptsService resendAttemptsService,
     IEmailService emailService,
     IEmailQueryService emailQueryService,
-    IVerificationCommandService verificationCommandService,
-    ICodeManager codeManager) : IRequestHandler<SendEmailOtpCommand, Result>
+    ICodeCommandService codeCommandService,
+    IVerificationCommandService verificationCommandService) : IRequestHandler<SendEmailOtpCommand, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IUserResendAttemptsService _resendAttemptsService = resendAttemptsService;
     private readonly IEmailService _emailService = emailService;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
+    private readonly ICodeCommandService _codeCommandService = codeCommandService;
     private readonly IVerificationCommandService _verificationCommandService = verificationCommandService;
-    private readonly ICodeManager _codeManager = codeManager;
 
     public async Task<Result> Handle(SendEmailOtpCommand request, CancellationToken cancellationToken = default)
     {
@@ -59,7 +59,7 @@ public sealed class SendEmailOtpCommandHandler(
         var updateResult = await _resendAttemptsService.CleanAttemptsAsync(user, cancellationToken);
         if (!updateResult.Succeeded) return updateResult;
 
-        var codeResult = await _codeManager.CreateAsync(user, SenderType.Email, cancellationToken);
+        var codeResult = await _codeCommandService.CreateAsync(user.Id, SenderType.Email, cancellationToken);
         if (!codeResult.Succeeded)
         {
             var error = codeResult.GetError();

@@ -20,12 +20,12 @@ public sealed class ForgotPasswordCommand : IRequest<Result>
 public sealed class ForgotPasswordCommandHandler(
     IUserQueryService userQueryService,
     IPasswordManager passwordManager,
-    ICodeManager codeManager,
+    ICodeCommandService codeCommandService,
     IEmailService emailService) : IRequestHandler<ForgotPasswordCommand, Result>
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IPasswordManager _passwordManager = passwordManager;
-    private readonly ICodeManager _codeManager = codeManager;
+    private readonly ICodeCommandService _codeCommandService = codeCommandService;
     private readonly IEmailService _emailService = emailService;
 
     public async Task<Result> Handle(ForgotPasswordCommand request,
@@ -53,7 +53,7 @@ public sealed class ForgotPasswordCommandHandler(
             });
         }
 
-        var codeResult = await _codeManager.CreateAsync(user, SenderType.Email, cancellationToken);
+        var codeResult = await _codeCommandService.CreateAsync(user.Id, SenderType.Email, cancellationToken);
         if (!codeResult.Succeeded)
         {
             var error = codeResult.GetError();

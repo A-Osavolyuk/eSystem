@@ -24,15 +24,15 @@ public sealed class ResendEmailOtpCommandHandler(
     IUserResendAttemptsService resendAttemptsService,
     IEmailQueryService emailQueryService,
     IEmailService emailService,
-    IVerificationQueryService verificationQueryService,
-    ICodeManager codeManager) : IRequestHandler<ResendEmailOtpCommand, Result>
+    ICodeCommandService codeCommandService,
+    IVerificationQueryService verificationQueryService) : IRequestHandler<ResendEmailOtpCommand, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IUserResendAttemptsService _resendAttemptsService = resendAttemptsService;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly IEmailService _emailService = emailService;
+    private readonly ICodeCommandService _codeCommandService = codeCommandService;
     private readonly IVerificationQueryService _verificationQueryService = verificationQueryService;
-    private readonly ICodeManager _codeManager = codeManager;
 
     public async Task<Result> Handle(ResendEmailOtpCommand request, CancellationToken cancellationToken = default)
     {
@@ -90,7 +90,7 @@ public sealed class ResendEmailOtpCommandHandler(
             });
         }
         
-        var codeResult = await _codeManager.CreateAsync(user, SenderType.Email, cancellationToken);
+        var codeResult = await _codeCommandService.CreateAsync(user.Id, SenderType.Email, cancellationToken);
         if (!codeResult.Succeeded)
         {
             var error = codeResult.GetError();

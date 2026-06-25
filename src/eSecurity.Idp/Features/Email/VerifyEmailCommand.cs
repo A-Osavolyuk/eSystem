@@ -25,24 +25,26 @@ public sealed class VerifyEmailCommand : IRequest<Result>
 public sealed class VerifyEmailCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
     IEmailCommandService emailCommandService,
+    ICodeCommandService codeCommandService,
+    ICodeQueryService codeQueryService,
     IVerificationQueryService verificationQueryService,
-    IVerificationCommandService verificationCommandService,
-    ICodeManager codeManager) : IRequestHandler<VerifyEmailCommand, Result>
+    IVerificationCommandService verificationCommandService) : IRequestHandler<VerifyEmailCommand, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IEmailCommandService _emailCommandService = emailCommandService;
+    private readonly ICodeCommandService _codeCommandService = codeCommandService;
+    private readonly ICodeQueryService _codeQueryService = codeQueryService;
     private readonly IVerificationQueryService _verificationQueryService = verificationQueryService;
     private readonly IVerificationCommandService _verificationCommandService = verificationCommandService;
-    private readonly ICodeManager _codeManager = codeManager;
 
     public async Task<Result> Handle(VerifyEmailCommand request,
         CancellationToken cancellationToken = default)
     {
         var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
         if (string.IsNullOrWhiteSpace(request.Code))
-            throw new ValidationException("Code is requied");
+            throw new ValidationException("Code is required");
         
-        var codeEntity = await _codeManager.FindByCodeAsync(user, request.Code, cancellationToken);
+        var codeEntity = await _codeQueryService.GetByCodeAsync(user.Id, request.Code, cancellationToken);
         if (codeEntity is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error()
@@ -52,7 +54,7 @@ public sealed class VerifyEmailCommandHandler(
             });
         }
 
-        var consumeResult = await _codeManager.ConsumeAsync(codeEntity, cancellationToken);
+        var consumeResult = await _codeCommandService.ConsumeAsync(codeEntity, cancellationToken);
         if (!consumeResult.Succeeded) return consumeResult;
         
         var verificationRequest = await _verificationQueryService.GetByIdAsync(user.Id,

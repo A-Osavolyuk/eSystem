@@ -8,62 +8,54 @@ using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Idp.Security.Authorization.Codes;
 
-public sealed class CodeManager(
-    AuthDbContext context,
-    IHasherProvider hasherProvider) : ICodeManager
+public sealed class CodeCommandService(AuthDbContext context, IHasherProvider hasherProvider) : ICodeCommandService
 {
     private readonly AuthDbContext _context = context;
     private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Pbkdf2);
 
-    public async ValueTask<CodeEntity?> FindByCodeAsync(UserEntity user, 
-        string code, CancellationToken cancellationToken = default)
-    {
-        var codes = await _context.Codes
-            .Where(c => c.UserId == user.Id)
-            .ToListAsync(cancellationToken);
-
-        return codes.FirstOrDefault(c => _hasher.VerifyHash(code, c.CodeHash));
-    }
-
-    public async ValueTask<TypedResult<string>> CreateAsync(UserEntity user, 
-        SenderType sender, CancellationToken cancellationToken = default)
+    public async ValueTask<TypedResult<string>> CreateAsync(Guid userId, SenderType sender,
+        CancellationToken cancellationToken = default)
     {
         var code = CodeFactory.Create();
         var codeHash = _hasher.Hash(code);
 
-        await _context.Codes.AddAsync(new CodeEntity
+        var entity = new CodeEntity()
         {
             Id = Guid.CreateVersion7(),
-            UserId = user.Id,
-            CodeHash = codeHash,
+            UserId = userId,
             Sender = sender,
             State = CodeState.Pending,
-            ExpiredAt = DateTime.UtcNow.AddMinutes(10)
-        }, cancellationToken);
+            CodeHash = codeHash,
+            ExpiredAt = DateTimeOffset.UtcNow.AddMinutes(10)
+        };
 
+        await _context.Codes.AddAsync(entity, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
+
         return TypedResult<string>.Success(code);
     }
 
     public async ValueTask<Result> ConsumeAsync(CodeEntity code, CancellationToken cancellationToken = default)
     {
-        code.ConsumedAt = DateTimeOffset.UtcNow;
-        code.State = CodeState.Consumed;
-        
-        _context.Codes.Remove(code);
-        await _context.SaveChangesAsync(cancellationToken);
+        ArgumentNullException.ThrowIfNull(code);
 
+        code.State = CodeState.Consumed;
+        code.ConsumedAt = DateTimeOffset.UtcNow;
+
+        await _context.SaveChangesAsync(cancellationToken);
+        
         return Results.Success(SuccessCodes.Ok);
     }
 
     public async ValueTask<Result> CancelAsync(CodeEntity code, CancellationToken cancellationToken = default)
     {
-        code.CancelledAt = DateTimeOffset.UtcNow;
-        code.State = CodeState.Cancelled;
-        
-        _context.Codes.Remove(code);
-        await _context.SaveChangesAsync(cancellationToken);
+        ArgumentNullException.ThrowIfNull(code);
 
+        code.State = CodeState.Cancelled;
+        code.CancelledAt = DateTimeOffset.UtcNow;
+
+        await _context.SaveChangesAsync(cancellationToken);
+        
         return Results.Success(SuccessCodes.Ok);
     }
 }

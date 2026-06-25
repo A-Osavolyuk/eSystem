@@ -27,16 +27,16 @@ public sealed class SendEmailChangeCommandOtpHandler(
     ICurrentUserAccessor currentUserAccessor,
     IEmailService emailService,
     IEmailQueryService emailQueryService,
+    ICodeCommandService codeCommandService,
     IUserResendAttemptsService resendAttemptsService,
-    IVerificationCommandService verificationCommandService,
-    ICodeManager codeManager) : IRequestHandler<SendEmailChangeOtpCommand, Result>
+    IVerificationCommandService verificationCommandService) : IRequestHandler<SendEmailChangeOtpCommand, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IEmailService _emailService = emailService;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
+    private readonly ICodeCommandService _codeCommandService = codeCommandService;
     private readonly IUserResendAttemptsService _resendAttemptsService = resendAttemptsService;
     private readonly IVerificationCommandService _verificationCommandService = verificationCommandService;
-    private readonly ICodeManager _codeManager = codeManager;
 
     public async Task<Result> Handle(SendEmailChangeOtpCommand request, CancellationToken cancellationToken = default)
     {
@@ -88,7 +88,7 @@ public sealed class SendEmailChangeCommandOtpHandler(
             }
         }
         
-        var codeResult = await _codeManager.CreateAsync(user, SenderType.Email, cancellationToken);
+        var codeResult = await _codeCommandService.CreateAsync(user.Id, SenderType.Email, cancellationToken);
         if (!codeResult.Succeeded)
         {
             var error = codeResult.GetError();

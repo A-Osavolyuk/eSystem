@@ -34,11 +34,11 @@ public sealed class ManualSignUpStrategy(
     IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor,
     IEmailService emailService,
-    ICodeManager codeManager,
     IEmailQueryService emailQueryService,
     IEmailCommandService emailCommandService,
     IAuthenticationSessionManager sessionManager,
     IUserCommandService userCommandService,
+    ICodeCommandService codeCommandService,
     IOptions<AccountOptions> options) : ISignUpStrategy
 {
     private readonly IUsernameManager _usernameManager = usernameManager;
@@ -46,11 +46,11 @@ public sealed class ManualSignUpStrategy(
     private readonly IRoleManager _roleManager = roleManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly IEmailService _emailService = emailService;
-    private readonly ICodeManager _codeManager = codeManager;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly IEmailCommandService _emailCommandService = emailCommandService;
     private readonly IAuthenticationSessionManager _sessionManager = sessionManager;
     private readonly IUserCommandService _userCommandService = userCommandService;
+    private readonly ICodeCommandService _codeCommandService = codeCommandService;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly AccountOptions _options = options.Value;
 
@@ -129,7 +129,7 @@ public sealed class ManualSignUpStrategy(
         var deviceResult = await _deviceManager.CreateAsync(newDevice, cancellationToken);
         if (!deviceResult.Succeeded) return deviceResult;
 
-        var codeResult = await _codeManager.CreateAsync(user, SenderType.Email, cancellationToken);
+        var codeResult = await _codeCommandService.CreateAsync(user.Id, SenderType.Email, cancellationToken);
         if (!codeResult.Succeeded)
         {
             var error = codeResult.GetError();

@@ -28,7 +28,7 @@ public sealed class SendEmailResetCommandOtpHandler(
     ICurrentUserAccessor currentUserAccessor,
     IEmailQueryService emailQueryService,
     IEmailService emailService,
-    ICodeManager codeManager,
+    ICodeCommandService codeCommandService,
     IUserResendAttemptsService resendAttemptsService,
     IEmailPolicy emailPolicy,
     IVerificationCommandService verificationCommandService) : IRequestHandler<SendEmailResetOtpCommand, Result>
@@ -36,7 +36,7 @@ public sealed class SendEmailResetCommandOtpHandler(
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly IEmailService _emailService = emailService;
-    private readonly ICodeManager _codeManager = codeManager;
+    private readonly ICodeCommandService _codeCommandService = codeCommandService;
     private readonly IUserResendAttemptsService _resendAttemptsService = resendAttemptsService;
     private readonly IEmailPolicy _emailPolicy = emailPolicy;
     private readonly IVerificationCommandService _verificationCommandService = verificationCommandService;
@@ -79,7 +79,7 @@ public sealed class SendEmailResetCommandOtpHandler(
         if (!resetAttemptsResult.Succeeded)
             return resetAttemptsResult;
 
-        var codeResult = await _codeManager.CreateAsync(user, SenderType.Email, cancellationToken);
+        var codeResult = await _codeCommandService.CreateAsync(user.Id, SenderType.Email, cancellationToken);
         if (!codeResult.Succeeded)
         {
             var error = codeResult.GetError();

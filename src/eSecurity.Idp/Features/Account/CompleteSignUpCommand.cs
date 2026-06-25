@@ -25,7 +25,8 @@ public sealed class CompleteSignUpCommand : IRequest<Result>
 public sealed class CompleteSignUpCommandHandler(
     IAuthenticationSessionManager authenticationSessionManager,
     ISessionManager sessionManager,
-    ICodeManager codeManager,
+    ICodeCommandService codeCommandService,
+    ICodeQueryService codeQueryService,
     IEmailQueryService emailQueryService,
     IEmailCommandService emailCommandService,
     IOptions<SessionOptions> options,
@@ -34,7 +35,8 @@ public sealed class CompleteSignUpCommandHandler(
 {
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly ISessionManager _sessionManager = sessionManager;
-    private readonly ICodeManager _codeManager = codeManager;
+    private readonly ICodeCommandService _codeCommandService = codeCommandService;
+    private readonly ICodeQueryService _codeQueryService = codeQueryService;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly IEmailCommandService _emailCommandService = emailCommandService;
     private readonly IUserQueryService _userQueryService = userQueryService;
@@ -68,7 +70,7 @@ public sealed class CompleteSignUpCommandHandler(
         if (string.IsNullOrWhiteSpace(request.Code))
             throw new ValidationException("UserCode is required");
         
-        var code = await _codeManager.FindByCodeAsync(user, request.Code, cancellationToken);
+        var code = await _codeQueryService.GetByCodeAsync(user.Id, request.Code, cancellationToken);
         if (code is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error
@@ -78,7 +80,7 @@ public sealed class CompleteSignUpCommandHandler(
             });
         }
 
-        var codeResult = await _codeManager.ConsumeAsync(code, cancellationToken);
+        var codeResult = await _codeCommandService.ConsumeAsync(code, cancellationToken);
         if (!codeResult.Succeeded) return codeResult;
 
         var primaryEmail = await _emailQueryService.GetByTypeAsync(user.Id, EmailType.Primary, cancellationToken);

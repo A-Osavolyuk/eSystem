@@ -26,16 +26,18 @@ public sealed class ChangeEmailCommand : IRequest<Result>
 }
 
 public sealed class ChangeEmailCommandHandler(
-    ICodeManager codeManager,
     ICurrentUserAccessor currentUserAccessor,
     IVerificationQueryService verificationQueryService,
     IVerificationCommandService verificationCommandService,
+    ICodeQueryService codeQueryService,
+    ICodeCommandService codeCommandService,
     IEmailCommandService emailCommandService) : IRequestHandler<ChangeEmailCommand, Result>
 {
-    private readonly ICodeManager _codeManager = codeManager;
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IVerificationQueryService _verificationQueryService = verificationQueryService;
     private readonly IVerificationCommandService _verificationCommandService = verificationCommandService;
+    private readonly ICodeQueryService _codeQueryService = codeQueryService;
+    private readonly ICodeCommandService _codeCommandService = codeCommandService;
     private readonly IEmailCommandService _emailCommandService = emailCommandService;
 
     public async Task<Result> Handle(ChangeEmailCommand request, CancellationToken cancellationToken = default)
@@ -44,7 +46,7 @@ public sealed class ChangeEmailCommandHandler(
         if (string.IsNullOrWhiteSpace(request.Code))
             throw new ValidationException("Code is required");
         
-        var code = await _codeManager.FindByCodeAsync(user, request.Code, cancellationToken);
+        var code = await _codeQueryService.GetByCodeAsync(user.Id, request.Code, cancellationToken);
         if (code is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error()
@@ -54,7 +56,7 @@ public sealed class ChangeEmailCommandHandler(
             });
         }
 
-        var codeResult = await _codeManager.ConsumeAsync(code, cancellationToken);
+        var codeResult = await _codeCommandService.ConsumeAsync(code, cancellationToken);
         if (!codeResult.Succeeded) return codeResult;
         
         var verificationRequest = await _verificationQueryService.GetByIdAsync(user.Id,

@@ -24,15 +24,17 @@ public sealed record VerifyEmailOtpCommand : IRequest<Result>
 
 public sealed class VerifyEmailOtpCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
-    ICodeManager codeManager,
     IVerificationQueryService verificationQueryService,
     IVerificationCommandService verificationCommandService,
+    ICodeCommandService codeCommandService,
+    ICodeQueryService codeQueryService,
     IOptions<VerificationConfiguration> options) : IRequestHandler<VerifyEmailOtpCommand, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
-    private readonly ICodeManager _codeManager = codeManager;
     private readonly IVerificationQueryService _verificationQueryService = verificationQueryService;
     private readonly IVerificationCommandService _verificationCommandService = verificationCommandService;
+    private readonly ICodeCommandService _codeCommandService = codeCommandService;
+    private readonly ICodeQueryService _codeQueryService = codeQueryService;
     private readonly IOptions<VerificationConfiguration> _options = options;
     private readonly VerificationConfiguration _configuration = options.Value;
 
@@ -64,7 +66,7 @@ public sealed class VerifyEmailOtpCommandHandler(
         if (string.IsNullOrWhiteSpace(request.Code))
             throw new ValidationException("Code is required");
         
-        var code = await _codeManager.FindByCodeAsync(user, request.Code, cancellationToken);
+        var code = await _codeQueryService.GetByCodeAsync(user.Id, request.Code, cancellationToken);
         if (code is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error()
@@ -74,7 +76,7 @@ public sealed class VerifyEmailOtpCommandHandler(
             });
         }
 
-        var codeResult = await _codeManager.ConsumeAsync(code, cancellationToken);
+        var codeResult = await _codeCommandService.ConsumeAsync(code, cancellationToken);
         if (!codeResult.Succeeded) return codeResult;
 
         var verificationResult = await _verificationCommandService.ApproveAsync(verificationRequest, cancellationToken);
