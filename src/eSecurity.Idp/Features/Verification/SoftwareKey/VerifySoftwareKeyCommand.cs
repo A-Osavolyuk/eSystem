@@ -25,14 +25,18 @@ public sealed record VerifySoftwareKeyCommand : IRequest<Result>
 
 public sealed class VerifySoftwareKeyCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
-    ISoftwareKeyManager softwareKeyManager,
     IHttpContextAccessor httpContextAccessor,
     IVerificationCommandService verificationCommandService,
+    ISoftwareKeyQueryService softwareKeyQueryService,
+    ISoftwareKeyCommandService softwareKeyCommandService,
     IOptions<VerificationConfiguration> options) : IRequestHandler<VerifySoftwareKeyCommand, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
-    private readonly ISoftwareKeyManager _softwareKeyManager = softwareKeyManager;
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
     private readonly IVerificationCommandService _verificationCommandService = verificationCommandService;
+    private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
+    private readonly ISoftwareKeyCommandService _softwareKeyCommandService = softwareKeyCommandService;
+    private readonly IOptions<VerificationConfiguration> _options = options;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly VerificationConfiguration _configuration = options.Value;
 
@@ -45,7 +49,7 @@ public sealed class VerifySoftwareKeyCommandHandler(
             throw new ValidationException("Credential is required");
         
         var credentialId = CredentialUtils.ToBase64String(credential.Id);
-        var passkey = await _softwareKeyManager.FindByCredentialIdAsync(credentialId, cancellationToken);
+        var passkey = await _softwareKeyQueryService.GetByCredentialIdAsync(credentialId, cancellationToken);
         if (passkey is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -65,8 +69,11 @@ public sealed class VerifySoftwareKeyCommandHandler(
             });
         }
 
-        var passkeyResult = await _softwareKeyManager.VerifyAsync(passkey, credential, savedChallenge, cancellationToken);
-        if (!passkeyResult.Succeeded) return passkeyResult;
+        var passkeyResult = await _softwareKeyCommandService.VerifyAsync(passkey, 
+            credential, savedChallenge, cancellationToken);
+        
+        if (!passkeyResult.Succeeded) 
+            return passkeyResult;
 
         var requestEntity = new VerificationRequestEntity
         {
@@ -74,7 +81,7 @@ public sealed class VerifySoftwareKeyCommandHandler(
             UserId = user.Id,
             Operation = request.OperationType,
             Status = VerificationStatus.Approved,
-            Method = VerificationMethod.Passkey,
+            Method = VerificationMethod.SoftwareKey,
             ExpiredAt = DateTimeOffset.UtcNow.Add(_configuration.Timestamp),
         };
 

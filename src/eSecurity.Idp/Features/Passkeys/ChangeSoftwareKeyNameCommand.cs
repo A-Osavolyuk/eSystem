@@ -10,7 +10,7 @@ namespace eSecurity.Idp.Features.Passkeys;
 public sealed class ChangeSoftwareKeyNameCommand : IRequest<Result>
 {
     [JsonPropertyName("passkey_id")]
-    public Guid PasskeyId { get; set; }
+    public Guid SoftwareKeyId { get; set; }
     
     [JsonPropertyName("display_name")]
     public string? DisplayName { get; set; }
@@ -18,25 +18,29 @@ public sealed class ChangeSoftwareKeyNameCommand : IRequest<Result>
 
 public sealed class ChangeSoftwareKeyNameCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
-    ISoftwareKeyManager softwareKeyManager) : IRequestHandler<ChangeSoftwareKeyNameCommand, Result>
+    ISoftwareKeyQueryService softwareKeyQueryService,
+    ISoftwareKeyCommandService softwareKeyCommandService) : IRequestHandler<ChangeSoftwareKeyNameCommand, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
-    private readonly ISoftwareKeyManager _softwareKeyManager = softwareKeyManager;
+    private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
+    private readonly ISoftwareKeyCommandService _softwareKeyCommandService = softwareKeyCommandService;
 
     public async Task<Result> Handle(ChangeSoftwareKeyNameCommand request, CancellationToken cancellationToken)
     {
         var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
-        if (!await _softwareKeyManager.HasAsync(user, cancellationToken))
+        var softwareKeys = await _softwareKeyQueryService.ListByUserAsync(user.Id, cancellationToken);
+        
+        if (softwareKeys.Count == 0)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.BadRequest,
-                Description = "User does not have any passkeys"
+                Description = "User does not have any software key"
             });
         }
 
-        var passkey = await _softwareKeyManager.FindByIdAsync(request.PasskeyId, cancellationToken);
-        if (passkey is null)
+        var softwareKey = softwareKeys.FirstOrDefault(x => x.Id == request.SoftwareKeyId);
+        if (softwareKey is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
@@ -47,11 +51,9 @@ public sealed class ChangeSoftwareKeyNameCommandHandler(
 
         if (string.IsNullOrWhiteSpace(request.DisplayName))
             throw new ValidationException("DisplayName is required");
-        
-        passkey.DisplayName = request.DisplayName;
 
-        var result = await _softwareKeyManager.UpdateAsync(passkey, cancellationToken);
-        return result;
+        return await _softwareKeyCommandService.ChangeDisplayNameAsync(
+            softwareKey, request.DisplayName, cancellationToken);
     }
 }
 

@@ -46,7 +46,7 @@
                                 OnChangeMethod="@(method => _preferredMethod = method)"/>
                             break;
                         }
-                        case TwoFactorMethod.Passkey:
+                        case TwoFactorMethod.SoftwareKey:
                         {
                             <PasskeyMethod
                                 Methods="_methods"
@@ -97,9 +97,9 @@
                 {
                     if (session.AllowedMfaMethods.Contains(AuthenticationMethodReference.SoftwareKey))
                     {
-                        _preferredMethod = TwoFactorMethod.Passkey;
+                        _preferredMethod = TwoFactorMethod.SoftwareKey;
                         _methods = [
-                            TwoFactorMethod.Passkey, 
+                            TwoFactorMethod.SoftwareKey, 
                             TwoFactorMethod.AuthenticatorApp, 
                             TwoFactorMethod.RecoveryCode
                         ];

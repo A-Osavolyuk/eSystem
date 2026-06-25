@@ -1245,7 +1245,7 @@ namespace eSecurity.Idp.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Passkeys",
+                name: "SoftwareKeys",
                 schema: "public",
                 columns: table => new
                 {
@@ -1685,7 +1685,7 @@ namespace eSecurity.Idp.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Passkeys_DeviceId",
                 schema: "public",
-                table: "Passkeys",
+                table: "SoftwareKeys",
                 column: "DeviceId",
                 unique: true);
 
@@ -1885,7 +1885,7 @@ namespace eSecurity.Idp.Migrations
                 schema: "public");
 
             migrationBuilder.DropTable(
-                name: "Passkeys",
+                name: "SoftwareKeys",
                 schema: "public");
 
             migrationBuilder.DropTable(

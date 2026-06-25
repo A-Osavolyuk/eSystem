@@ -14,7 +14,7 @@ public enum TwoFactorMethod
     AuthenticatorApp,
     
     [EnumValue("passkey")]
-    Passkey,
+    SoftwareKey,
     
     [EnumValue("recovery_code")]
     RecoveryCode,

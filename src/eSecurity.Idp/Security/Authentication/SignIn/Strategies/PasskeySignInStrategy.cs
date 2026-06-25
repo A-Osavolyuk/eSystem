@@ -19,21 +19,24 @@ namespace eSecurity.Idp.Security.Authentication.SignIn.Strategies;
 
 public sealed class PasskeySignInStrategy(
     IUserQueryService userQueryService,
-    ISoftwareKeyManager softwareKeyManager,
     ISessionManager sessionManager,
     IDeviceManager deviceManager,
     ILockoutManager lockoutManager,
     IHttpContextAccessor accessor,
     IAuthenticationSessionManager authenticationSessionManager,
     IOptions<Session_SessionOptions> options,
+    ISoftwareKeyQueryService softwareKeyQueryService,
+    ISoftwareKeyCommandService softwareKeyCommandService,
     ISessionCookieFactory sessionCookieFactory) : ISignInStrategy
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
-    private readonly ISoftwareKeyManager _softwareKeyManager = softwareKeyManager;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
+    private readonly IHttpContextAccessor _accessor = accessor;
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
+    private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
+    private readonly ISoftwareKeyCommandService _softwareKeyCommandService = softwareKeyCommandService;
     private readonly ISessionCookieFactory _sessionCookieFactory = sessionCookieFactory;
     private readonly Session_SessionOptions _options = options.Value;
     private readonly HttpContext _httpContext = accessor.HttpContext!;
@@ -53,7 +56,7 @@ public sealed class PasskeySignInStrategy(
 
         var credential = passkeyPayload.Credential;
         var credentialId = CredentialUtils.ToBase64String(credential.Id);
-        var passkey = await _softwareKeyManager.FindByCredentialIdAsync(credentialId, cancellationToken);
+        var passkey = await _softwareKeyQueryService.GetByCredentialIdAsync(credentialId, cancellationToken);
         if (passkey is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -83,8 +86,11 @@ public sealed class PasskeySignInStrategy(
             });
         }
 
-        var result = await _softwareKeyManager.VerifyAsync(passkey, credential, savedChallenge, cancellationToken);
-        if (!result.Succeeded) return result;
+        var result = await _softwareKeyCommandService.VerifyAsync(passkey, 
+            credential, savedChallenge, cancellationToken);
+        
+        if (!result.Succeeded) 
+            return result;
 
         var lockoutState = await _lockoutManager.GetAsync(user, cancellationToken);
         if (lockoutState is null)

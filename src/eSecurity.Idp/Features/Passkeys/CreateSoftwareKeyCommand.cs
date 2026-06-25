@@ -29,18 +29,18 @@ public record CreateSoftwareKeyCommand : IRequest<Result>
 
 public class CreateSoftwareKeyCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
-    ISoftwareKeyManager softwareKeyManager,
     ITwoFactorManager twoFactorManager,
     IHttpContextAccessor httpContextAccessor,
     ISessionStorage sessionStorage,
     IDeviceManager deviceManager,
+    ISoftwareKeyCommandService softwareKeyCommandService,
     IOptions<CredentialOptions> options) : IRequestHandler<CreateSoftwareKeyCommand, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
-    private readonly ISoftwareKeyManager _softwareKeyManager = softwareKeyManager;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly ISessionStorage _sessionStorage = sessionStorage;
     private readonly IDeviceManager _deviceManager = deviceManager;
+    private readonly ISoftwareKeyCommandService _softwareKeyCommandService = softwareKeyCommandService;
     private readonly CredentialOptions _credentialOptions = options.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
@@ -99,7 +99,7 @@ public class CreateSoftwareKeyCommandHandler(
         if (string.IsNullOrWhiteSpace(request.DisplayName))
             throw new ValidationException("DisplayName is required");
         
-        var passkey = new SoftwareKeyEntity
+        var softwareKey = new SoftwareKeyEntity
         {
             Id = Guid.CreateVersion7(),
             AuthenticatorId = new Guid(authData.AaGuid),
@@ -112,14 +112,14 @@ public class CreateSoftwareKeyCommandHandler(
             Type = request.Response.Type
         };
 
-        var result = await _softwareKeyManager.CreateAsync(passkey, cancellationToken);
+        var result = await _softwareKeyCommandService.CreateAsync(softwareKey, cancellationToken);
         if (!result.Succeeded) 
             return result;
 
-        if (!await _twoFactorManager.HasMethodAsync(user, TwoFactorMethod.Passkey, cancellationToken))
+        if (!await _twoFactorManager.HasMethodAsync(user, TwoFactorMethod.SoftwareKey, cancellationToken))
         {
             var twoFactorResult = await _twoFactorManager.SubscribeAsync(user,
-                TwoFactorMethod.Passkey, cancellationToken: cancellationToken);
+                TwoFactorMethod.SoftwareKey, cancellationToken: cancellationToken);
 
             if (!twoFactorResult.Succeeded) 
                 return twoFactorResult;

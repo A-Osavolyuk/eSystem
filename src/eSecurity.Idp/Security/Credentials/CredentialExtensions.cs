@@ -12,7 +12,8 @@ public static class CredentialExtensions
         {
             builder.Services.Configure(configure);
             builder.Services.AddScoped<IChallengeFactory, ChallengeFactory>();
-            builder.Services.AddScoped<ISoftwareKeyManager, SoftwareKeyManager>();
+            builder.Services.AddScoped<ISoftwareKeyQueryService, SoftwareKeyQueryService>();
+            builder.Services.AddScoped<ISoftwareKeyCommandService, SoftwareKeyCommandService>();
         }
     }
 }

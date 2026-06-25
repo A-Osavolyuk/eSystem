@@ -14,7 +14,7 @@ public enum VerificationMethod
     SmsOtp,
     
     [EnumValue("passkey")]
-    Passkey,
+    SoftwareKey,
     
     [EnumValue("authenticator_app")]
     AuthenticatorApp,

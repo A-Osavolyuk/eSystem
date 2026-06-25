@@ -23,7 +23,8 @@ public record RemoveSoftwareKeyCommand : IRequest<Result>
 }
 
 public class RemoveSoftwareKeyCommandHandler(
-    ISoftwareKeyManager softwareKeyManager,
+    ISoftwareKeyQueryService softwareKeyQueryService,
+    ISoftwareKeyCommandService softwareKeyCommandService,
     IPasswordManager passwordManager,
     ITwoFactorManager twoFactorManager,
     ICurrentUserAccessor currentUserAccessor,
@@ -32,7 +33,8 @@ public class RemoveSoftwareKeyCommandHandler(
     IVerificationCommandService verificationCommandService,
     IOptions<SignInOptions> options) : IRequestHandler<RemoveSoftwareKeyCommand, Result>
 {
-    private readonly ISoftwareKeyManager _softwareKeyManager = softwareKeyManager;
+    private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
+    private readonly ISoftwareKeyCommandService _softwareKeyCommandService = softwareKeyCommandService;
     private readonly IPasswordManager _passwordManager = passwordManager;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
@@ -44,7 +46,7 @@ public class RemoveSoftwareKeyCommandHandler(
     public async Task<Result> Handle(RemoveSoftwareKeyCommand request, CancellationToken cancellationToken)
     {
         var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
-        var passkey = await _softwareKeyManager.FindByIdAsync(request.PasskeyId, cancellationToken);
+        var passkey = await _softwareKeyQueryService.GetByIdAsync(request.PasskeyId, cancellationToken);
         if (passkey is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error
@@ -80,12 +82,12 @@ public class RemoveSoftwareKeyCommandHandler(
         var verificationResult = await _verificationCommandService.ConsumeAsync(verification, cancellationToken);
         if (!verificationResult.Succeeded) return verificationResult;
 
-        var passkeys = await _softwareKeyManager.GetAllAsync(user, cancellationToken);
-        if (passkeys.Count == 1)
+        var softwareKeys = await _softwareKeyQueryService.ListByUserAsync(user.Id, cancellationToken);
+        if (softwareKeys.Count == 1)
         {
-            if (await _twoFactorManager.HasMethodAsync(user, TwoFactorMethod.Passkey, cancellationToken))
+            if (await _twoFactorManager.HasMethodAsync(user, TwoFactorMethod.SoftwareKey, cancellationToken))
             {
-                var method = await _twoFactorManager.GetAsync(user, TwoFactorMethod.Passkey, cancellationToken);
+                var method = await _twoFactorManager.GetAsync(user, TwoFactorMethod.SoftwareKey, cancellationToken);
                 if (method is null)
                 {
                     return Results.ClientError(ClientErrorCode.NotFound, new Error
@@ -107,6 +109,6 @@ public class RemoveSoftwareKeyCommandHandler(
             }
         }
 
-        return await _softwareKeyManager.DeleteAsync(passkey, cancellationToken);
+        return await _softwareKeyCommandService.DeleteAsync(passkey, cancellationToken);
     }
 }

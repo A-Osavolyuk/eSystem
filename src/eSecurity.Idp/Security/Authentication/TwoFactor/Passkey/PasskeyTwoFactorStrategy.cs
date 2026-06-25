@@ -2,20 +2,19 @@
 using eSecurity.Idp.Security.Authentication.Lockout;
 using eSecurity.Idp.Security.Authentication.Session;
 using eSecurity.Idp.Security.Authorization.Devices;
-using eSecurity.Idp.Security.Credentials.PublicKey;
 using eSecurity.Idp.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Idp.Security.Identity.Options;
 using eSecurity.Idp.Security.Identity.User;
 using eSecurity.Core.Responses;
 using eSecurity.Core.Security.Authentication.Lockout;
 using eSecurity.Idp.Security.Cookies;
+using eSecurity.Idp.Security.Credentials.PublicKey;
 using eSecurity.WebAuthN;
 using eSecurity.WebAuthN.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
-using Session_SessionOptions = eSecurity.Idp.Security.Authentication.Session.SessionOptions;
 
 namespace eSecurity.Idp.Security.Authentication.TwoFactor.Passkey;
 
@@ -31,10 +30,11 @@ public sealed class PasskeyTwoFactorStrategy(
     IDeviceManager deviceManager,
     ILockoutManager lockoutManager,
     ISessionManager sessionManager,
-    ISoftwareKeyManager softwareKeyManager,
-    IOptions<Session_SessionOptions> sessionOptions,
+    IOptions<SessionOptions> sessionOptions,
     IOptions<SignInOptions> signInOptions,
     IUserFailedLoginService failedLoginService,
+    ISoftwareKeyQueryService softwareKeyQueryService,
+    ISoftwareKeyCommandService softwareKeyCommandService,
     ISessionCookieFactory sessionCookieFactory) : ITwoFactorStrategy<PasskeyTwoFactorContext>
 {
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
@@ -42,10 +42,11 @@ public sealed class PasskeyTwoFactorStrategy(
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
     private readonly ISessionManager _sessionManager = sessionManager;
-    private readonly ISoftwareKeyManager _softwareKeyManager = softwareKeyManager;
     private readonly IUserFailedLoginService _failedLoginService = failedLoginService;
+    private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
+    private readonly ISoftwareKeyCommandService _softwareKeyCommandService = softwareKeyCommandService;
     private readonly ISessionCookieFactory _sessionCookieFactory = sessionCookieFactory;
-    private readonly Session_SessionOptions _sessionOptions = sessionOptions.Value;
+    private readonly SessionOptions _sessionOptions = sessionOptions.Value;
     private readonly SignInOptions _signInOptions = signInOptions.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
@@ -90,7 +91,7 @@ public sealed class PasskeyTwoFactorStrategy(
         var credential = context.Credential;
         var credentialId = CredentialUtils.ToBase64String(credential.Id);
 
-        var passkey = await _softwareKeyManager.FindByCredentialIdAsync(credentialId, cancellationToken);
+        var passkey = await _softwareKeyQueryService.GetByCredentialIdAsync(credentialId, cancellationToken);
         if (passkey is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -110,7 +111,9 @@ public sealed class PasskeyTwoFactorStrategy(
             });
         }
 
-        var verificationResult = await _softwareKeyManager.VerifyAsync(passkey, credential, savedChallenge, cancellationToken);
+        var verificationResult = await _softwareKeyCommandService.VerifyAsync(passkey, 
+            credential, savedChallenge, cancellationToken);
+        
         if (!verificationResult.Succeeded)
         {
             user.FailedLoginAttempts += 1;
@@ -119,7 +122,7 @@ public sealed class PasskeyTwoFactorStrategy(
                 return Results.ClientError(ClientErrorCode.BadRequest, new Error
                 {
                     Code = ErrorCode.FailedLoginAttempt,
-                    Description = "Invalid passkey.",
+                    Description = "Invalid software key",
                     Details = new Dictionary<string, object>
                     {
                         { "maxFailedLoginAttempts", _signInOptions.MaxFailedLoginAttempts },

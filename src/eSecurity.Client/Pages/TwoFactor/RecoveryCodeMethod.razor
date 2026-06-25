@@ -32,14 +32,14 @@
         <MudDivider Style="max-width: 45%"/>
     </MudStack>
     <MudStack Spacing="2">
-        @if (Methods.Any(x => x == TwoFactorMethod.Passkey))
+        @if (Methods.Any(x => x == TwoFactorMethod.SoftwareKey))
         {
             <MudButton
                 Color="Color.Primary"
                 Variant="Variant.Filled"
                 ButtonType="ButtonType.Button"
                 Size="Size.Large"
-                OnClick="@(async () => await OnChangeMethod.InvokeAsync(TwoFactorMethod.Passkey))">
+                OnClick="@(async () => await OnChangeMethod.InvokeAsync(TwoFactorMethod.SoftwareKey))">
                 Passkey
             </MudButton>
         }

@@ -24,8 +24,8 @@ public sealed class OAuthSignInStrategy(
     ILinkedAccountManager linkedAccountManager,
     ITwoFactorManager twoFactorManager,
     ISessionManager sessionManager,
-    ISoftwareKeyManager softwareKeyManager,
     IAuthenticationSessionManager authenticationSessionManager,
+    ISoftwareKeyQueryService softwareKeyQueryService,
     IOptions<Session_SessionOptions> options) : ISignInStrategy
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
@@ -34,8 +34,8 @@ public sealed class OAuthSignInStrategy(
     private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly ISessionManager _sessionManager = sessionManager;
-    private readonly ISoftwareKeyManager _softwareKeyManager = softwareKeyManager;
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
+    private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
     private readonly Session_SessionOptions _options = options.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
@@ -131,8 +131,8 @@ public sealed class OAuthSignInStrategy(
         authenticationSession.UserId = user.Id;
         if (await _twoFactorManager.IsEnabledAsync(user, cancellationToken))
         {
-            var hasPasskey = await _softwareKeyManager.HasAsync(user, cancellationToken);
-            authenticationSession.AllowMfa(hasPasskey
+            var softwareKeys = await _softwareKeyQueryService.ListByUserAsync(user.Id, cancellationToken);
+            authenticationSession.AllowMfa(softwareKeys.Count > 0
                 ? [AuthenticationMethodReference.SoftwareKey, AuthenticationMethodReference.OneTimePassword]
                 : [AuthenticationMethodReference.OneTimePassword]);
             

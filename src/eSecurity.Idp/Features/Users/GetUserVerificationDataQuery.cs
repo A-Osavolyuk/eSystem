@@ -17,16 +17,16 @@ public record GetUserVerificationDataQuery : IRequest<Result>;
 public class GetUserVerificationMethodsQueryHandler(
     ICurrentUserAccessor currentUserAccessor,
     IDeviceManager deviceManager,
-    ISoftwareKeyManager softwareKeyManager,
     IEmailQueryService emailQueryService,
     ITwoFactorManager twoFactorManager,
+    ISoftwareKeyQueryService softwareKeyQueryService,
     IHttpContextAccessor httpContextAccessor) : IRequestHandler<GetUserVerificationDataQuery, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IDeviceManager _deviceManager = deviceManager;
-    private readonly ISoftwareKeyManager _softwareKeyManager = softwareKeyManager;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
+    private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(GetUserVerificationDataQuery request, CancellationToken cancellationToken)
@@ -54,7 +54,7 @@ public class GetUserVerificationMethodsQueryHandler(
             });
         }
 
-        var passkey = await _softwareKeyManager.FindByDeviceAsync(device, cancellationToken);
+        var passkey = await _softwareKeyQueryService.GetByDeviceAsync(device.Id, cancellationToken);
         var twoFactorEnabled = await _twoFactorManager.IsEnabledAsync(user, cancellationToken);
         
         var response = new UserVerificationData
@@ -65,7 +65,7 @@ public class GetUserVerificationMethodsQueryHandler(
             PreferredMethod = (twoFactorEnabled, passkey) switch
             {
                 (true, null) => VerificationMethod.AuthenticatorApp,
-                (_, not null) => VerificationMethod.Passkey,
+                (_, not null) => VerificationMethod.SoftwareKey,
                 _ => VerificationMethod.EmailOtp
             },
         };

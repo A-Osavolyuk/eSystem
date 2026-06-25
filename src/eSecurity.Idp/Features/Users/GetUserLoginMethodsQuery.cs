@@ -16,19 +16,19 @@ public record GetUserLoginMethodsQuery() : IRequest<Result>;
 
 public class GetUserLoginMethodsQueryHandler(
     ICurrentUserAccessor currentUserAccessor,
-    ISoftwareKeyManager softwareKeyManager,
     IPasswordManager passwordManager,
     ITwoFactorManager twoFactorManager,
     IDeviceManager deviceManager,
     ILinkedAccountManager linkedAccountManager,
+    ISoftwareKeyQueryService softwareKeyQueryService,
     IHttpContextAccessor accessor) : IRequestHandler<GetUserLoginMethodsQuery, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
-    private readonly ISoftwareKeyManager _softwareKeyManager = softwareKeyManager;
     private readonly IPasswordManager _passwordManager = passwordManager;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
+    private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
     private readonly HttpContext _httpContext = accessor.HttpContext!;
 
     public async Task<Result> Handle(GetUserLoginMethodsQuery request, CancellationToken cancellationToken)
@@ -48,7 +48,7 @@ public class GetUserLoginMethodsQueryHandler(
 
         var password = await _passwordManager.GetAsync(user, cancellationToken);
         var linkedAccounts = await _linkedAccountManager.GetAllAsync(user, cancellationToken);
-        var passkeys = await _softwareKeyManager.GetAllAsync(user, cancellationToken);
+        var softwatekeys = await _softwareKeyQueryService.ListByUserAsync(user.Id, cancellationToken);
 
         var response = new UserLoginMethodsDto
         {
@@ -62,7 +62,7 @@ public class GetUserLoginMethodsQueryHandler(
                 PreferredMethod = (await _twoFactorManager.GetPreferredAsync(user, cancellationToken))?.Method,
                 Enabled = await _twoFactorManager.IsEnabledAsync(user, cancellationToken),
                 PasskeyEnabled =
-                    await _twoFactorManager.HasMethodAsync(user, TwoFactorMethod.Passkey, cancellationToken),
+                    await _twoFactorManager.HasMethodAsync(user, TwoFactorMethod.SoftwareKey, cancellationToken),
                 SmsEnabled = await _twoFactorManager.HasMethodAsync(user, TwoFactorMethod.Sms, cancellationToken),
                 AuthenticatorEnabled = await _twoFactorManager.HasMethodAsync(
                     user, TwoFactorMethod.AuthenticatorApp, cancellationToken),
@@ -79,8 +79,8 @@ public class GetUserLoginMethodsQueryHandler(
             },
             PasskeysData = new PasskeysData
             {
-                HasPasskeys = await _softwareKeyManager.HasAsync(user, cancellationToken),
-                Passkeys = passkeys.Select(passkey => new UserPasskeyDto
+                HasPasskeys = softwatekeys.Count > 0,
+                Passkeys = softwatekeys.Select(passkey => new UserPasskeyDto
                     {
                         Id = passkey.Id,
                         CurrentKey = passkey.DeviceId == device.Id,

@@ -1405,7 +1405,7 @@ namespace eSecurity.Idp.Migrations
                     b.HasIndex("DeviceId")
                         .IsUnique();
 
-                    b.ToTable("Passkeys", "public");
+                    b.ToTable("SoftwareKeys", "public");
                 });
 
             modelBuilder.Entity("eSecurity.Idp.Data.Entities.TokenAuthMethodEntity", b =>

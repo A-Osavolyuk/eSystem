@@ -16,7 +16,7 @@
                         <MudTextM3 Typo="TypoM3.Title" Size="Size.Medium" Class="pt-1">
                             Passkeys
                         </MudTextM3>
-                        @if (Methods.Any(x => x.Method == TwoFactorMethod.Passkey))
+                        @if (Methods.Any(x => x.Method == TwoFactorMethod.SoftwareKey))
                         {
                             <MudChip
                                 Class="mx-0"
@@ -47,7 +47,7 @@
                         </MudTextM3>
                         <MudSpacer/>
                         <MudStack>
-                            @if (Methods.Any(x => x.Method == TwoFactorMethod.Passkey))
+                            @if (Methods.Any(x => x.Method == TwoFactorMethod.SoftwareKey))
                             {
                                 <MudButton
                                     Variant="Variant.Outlined"

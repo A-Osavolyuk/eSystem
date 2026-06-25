@@ -66,7 +66,7 @@
         Type = Model.PreferredMethod switch
         {
             TwoFactorMethod.AuthenticatorApp => TwoFactorTypes.AuthenticatorApp,
-            TwoFactorMethod.Passkey => TwoFactorTypes.Passkeys,
+            TwoFactorMethod.SoftwareKey => TwoFactorTypes.Passkeys,
             _ => throw new NotSupportedException("Unsupported 2FA type")
         };
     }
@@ -76,7 +76,7 @@
         var method = value switch
         {
             TwoFactorTypes.AuthenticatorApp => TwoFactorMethod.AuthenticatorApp,
-            TwoFactorTypes.Passkeys => TwoFactorMethod.Passkey,
+            TwoFactorTypes.Passkeys => TwoFactorMethod.SoftwareKey,
             _ => throw new NotSupportedException("Unsupported 2FA type")
         };
 

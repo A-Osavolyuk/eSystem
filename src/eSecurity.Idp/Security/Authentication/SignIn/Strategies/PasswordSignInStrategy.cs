@@ -17,7 +17,6 @@ using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
-using Session_SessionOptions = eSecurity.Idp.Security.Authentication.Session.SessionOptions;
 
 namespace eSecurity.Idp.Security.Authentication.SignIn.Strategies;
 
@@ -32,9 +31,9 @@ public sealed class PasswordSignInStrategy(
     IHttpContextAccessor accessor,
     ITwoFactorManager twoFactorManager,
     IAuthenticationSessionManager authenticationSessionManager,
-    ISoftwareKeyManager softwareKeyManager,
     IOptions<SignInOptions> signInOptions,
-    IOptions<Session_SessionOptions> sessionOptions,
+    IOptions<SessionOptions> sessionOptions,
+    ISoftwareKeyQueryService softwareKeyQueryService,
     ISessionCookieFactory sessionCookieFactory) : ISignInStrategy
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
@@ -46,9 +45,9 @@ public sealed class PasswordSignInStrategy(
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
-    private readonly ISoftwareKeyManager _softwareKeyManager = softwareKeyManager;
+    private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
     private readonly ISessionCookieFactory _sessionCookieFactory = sessionCookieFactory;
-    private readonly Session_SessionOptions _sessionOptions = sessionOptions.Value;
+    private readonly SessionOptions _sessionOptions = sessionOptions.Value;
     private readonly HttpContext _httpContext = accessor.HttpContext!;
     private readonly SignInOptions _signInOptions = signInOptions.Value;
 
@@ -228,12 +227,12 @@ public sealed class PasswordSignInStrategy(
 
         if (await _twoFactorManager.IsEnabledAsync(user, cancellationToken))
         {
-            var hasSoftwareKey = await _softwareKeyManager.HasAsync(user, cancellationToken);
-            AuthenticationMethodReference[] mfaMethods = hasSoftwareKey
+            var softwareKeys = await _softwareKeyQueryService.ListByUserAsync(user.Id, cancellationToken);
+            AuthenticationMethodReference[] mfaMethods = softwareKeys.Count > 0
                 ? [AuthenticationMethodReference.OneTimePassword, AuthenticationMethodReference.SoftwareKey]
                 : [AuthenticationMethodReference.OneTimePassword];
             
-            var requiredMfaMethod = hasSoftwareKey
+            var requiredMfaMethod = softwareKeys.Count > 0
                 ? AuthenticationMethodReference.SoftwareKey
                 : AuthenticationMethodReference.OneTimePassword;
                 
