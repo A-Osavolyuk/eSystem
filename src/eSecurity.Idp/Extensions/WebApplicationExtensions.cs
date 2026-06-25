@@ -3,6 +3,7 @@ using eSecurity.Idp.Middlewares;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Primitives;
 using eSystem.Core.Server.Data;
+using eSystem.Core.Server.Extensions;
 using Scalar.AspNetCore;
 
 namespace eSecurity.Idp.Extensions;
@@ -40,6 +41,7 @@ public static class WebApplicationExtensions
                     await response.WriteAsJsonAsync(error);
                 }
             });
+            
             app.UseStaticFiles();
             app.UseRouting();
             app.UseSession();
@@ -48,6 +50,7 @@ public static class WebApplicationExtensions
             app.UseAuthorization();
             app.MapControllers();
             app.MapOpenApi();
+            app.MapPingEndpoint();
             app.MapScalarApiReference();
             app.MapDefaultEndpoints();
 
