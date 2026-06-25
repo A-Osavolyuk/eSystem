@@ -16,7 +16,7 @@ public record GetUserLoginMethodsQuery() : IRequest<Result>;
 
 public class GetUserLoginMethodsQueryHandler(
     ICurrentUserAccessor currentUserAccessor,
-    IPasskeyManager passkeyManager,
+    ISoftwareKeyManager softwareKeyManager,
     IPasswordManager passwordManager,
     ITwoFactorManager twoFactorManager,
     IDeviceManager deviceManager,
@@ -24,7 +24,7 @@ public class GetUserLoginMethodsQueryHandler(
     IHttpContextAccessor accessor) : IRequestHandler<GetUserLoginMethodsQuery, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
-    private readonly IPasskeyManager _passkeyManager = passkeyManager;
+    private readonly ISoftwareKeyManager _softwareKeyManager = softwareKeyManager;
     private readonly IPasswordManager _passwordManager = passwordManager;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
@@ -48,7 +48,7 @@ public class GetUserLoginMethodsQueryHandler(
 
         var password = await _passwordManager.GetAsync(user, cancellationToken);
         var linkedAccounts = await _linkedAccountManager.GetAllAsync(user, cancellationToken);
-        var passkeys = await _passkeyManager.GetAllAsync(user, cancellationToken);
+        var passkeys = await _softwareKeyManager.GetAllAsync(user, cancellationToken);
 
         var response = new UserLoginMethodsDto
         {
@@ -79,7 +79,7 @@ public class GetUserLoginMethodsQueryHandler(
             },
             PasskeysData = new PasskeysData
             {
-                HasPasskeys = await _passkeyManager.HasAsync(user, cancellationToken),
+                HasPasskeys = await _softwareKeyManager.HasAsync(user, cancellationToken),
                 Passkeys = passkeys.Select(passkey => new UserPasskeyDto
                     {
                         Id = passkey.Id,

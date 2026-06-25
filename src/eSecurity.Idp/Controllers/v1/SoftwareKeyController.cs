@@ -7,8 +7,8 @@ namespace eSecurity.Idp.Controllers.v1;
 [ApiController]
 [ApiVersion("1.0")]
 [Produces(ContentTypes.Application.Json)]
-[Route("v{version:apiVersion}/[controller]")]
-public class PasskeyController(IMediator mediator) : ControllerBase
+[Route("v{version:apiVersion}/software-key")]
+public class SoftwareKeyController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
     
@@ -34,8 +34,8 @@ public class PasskeyController(IMediator mediator) : ControllerBase
         return HttpContext.HandleResult(result);
     }
     
-    [EndpointSummary("Create passkey")]
-    [EndpointDescription("Create passkey")]
+    [EndpointSummary("Create software key")]
+    [EndpointDescription("Create software key")]
     [ProducesResponseType(200)]
     [HttpPost("create")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -45,8 +45,8 @@ public class PasskeyController(IMediator mediator) : ControllerBase
         return HttpContext.HandleResult(result);
     }
     
-    [EndpointSummary("Remove passkey")]
-    [EndpointDescription("Remove passkey")]
+    [EndpointSummary("Remove software key")]
+    [EndpointDescription("Remove software key")]
     [ProducesResponseType(200)]
     [HttpPost("remove")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -56,8 +56,8 @@ public class PasskeyController(IMediator mediator) : ControllerBase
         return HttpContext.HandleResult(result);
     }
     
-    [EndpointSummary("Change passkey display name")]
-    [EndpointDescription("Change passkey display name")]
+    [EndpointSummary("Change software key display name")]
+    [EndpointDescription("Change software key display name")]
     [ProducesResponseType(200)]
     [HttpPost("change-name")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]

@@ -7,7 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Authentication\OpenIdConnect\BackchannelAuthentication\" />
       <Folder Include="Identity\" />
     </ItemGroup>
 

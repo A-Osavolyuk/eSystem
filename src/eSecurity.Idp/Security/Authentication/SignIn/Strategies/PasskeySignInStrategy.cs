@@ -19,7 +19,7 @@ namespace eSecurity.Idp.Security.Authentication.SignIn.Strategies;
 
 public sealed class PasskeySignInStrategy(
     IUserQueryService userQueryService,
-    IPasskeyManager passkeyManager,
+    ISoftwareKeyManager softwareKeyManager,
     ISessionManager sessionManager,
     IDeviceManager deviceManager,
     ILockoutManager lockoutManager,
@@ -29,7 +29,7 @@ public sealed class PasskeySignInStrategy(
     ISessionCookieFactory sessionCookieFactory) : ISignInStrategy
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
-    private readonly IPasskeyManager _passkeyManager = passkeyManager;
+    private readonly ISoftwareKeyManager _softwareKeyManager = softwareKeyManager;
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
@@ -53,7 +53,7 @@ public sealed class PasskeySignInStrategy(
 
         var credential = passkeyPayload.Credential;
         var credentialId = CredentialUtils.ToBase64String(credential.Id);
-        var passkey = await _passkeyManager.FindByCredentialIdAsync(credentialId, cancellationToken);
+        var passkey = await _softwareKeyManager.FindByCredentialIdAsync(credentialId, cancellationToken);
         if (passkey is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -83,7 +83,7 @@ public sealed class PasskeySignInStrategy(
             });
         }
 
-        var result = await _passkeyManager.VerifyAsync(passkey, credential, savedChallenge, cancellationToken);
+        var result = await _softwareKeyManager.VerifyAsync(passkey, credential, savedChallenge, cancellationToken);
         if (!result.Succeeded) return result;
 
         var lockoutState = await _lockoutManager.GetAsync(user, cancellationToken);

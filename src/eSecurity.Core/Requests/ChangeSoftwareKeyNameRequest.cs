@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace eSecurity.Core.Requests;
 
-public sealed class ChangePasskeyNameRequest
+public sealed class ChangeSoftwareKeyNameRequest
 {
     [JsonPropertyName("passkey_id")]
     public required Guid PasskeyId { get; set; }

@@ -40,7 +40,7 @@ builder.Services.AddHttpClient<IApiClient, ApiClient>(client =>
 
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<IVerificationService, VerificationService>();
-builder.Services.AddScoped<IPasskeyService, PasskeyService>();
+builder.Services.AddScoped<ISoftwareService, SoftwareService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ISecurityService, SecurityService>();
 builder.Services.AddScoped<IConsentService, ConsentService>();

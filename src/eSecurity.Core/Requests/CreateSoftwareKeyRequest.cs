@@ -3,7 +3,7 @@ using eSecurity.WebAuthN;
 
 namespace eSecurity.Core.Requests;
 
-public sealed class CreatePasskeyRequest
+public sealed class CreateSoftwareKeyRequest
 {
     [JsonPropertyName("display_name")]
     public required string DisplayName { get; set; }

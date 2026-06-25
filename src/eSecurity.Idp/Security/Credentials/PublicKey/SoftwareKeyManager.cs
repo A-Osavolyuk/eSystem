@@ -8,11 +8,11 @@ using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Idp.Security.Credentials.PublicKey;
 
-public class PasskeyManager(AuthDbContext context) : IPasskeyManager
+public class SoftwareKeyManager(AuthDbContext context) : ISoftwareKeyManager
 {
     private readonly AuthDbContext _context = context;
 
-    public async ValueTask<List<PasskeyEntity>> GetAllAsync(UserEntity user,
+    public async ValueTask<List<SoftwareKeyEntity>> GetAllAsync(UserEntity user,
         CancellationToken cancellationToken)
     {
         return await _context.Passkeys
@@ -21,7 +21,7 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
             .ToListAsync(cancellationToken);
     }
 
-    public async ValueTask<PasskeyEntity?> FindByDeviceAsync(UserDeviceEntity device, CancellationToken cancellationToken)
+    public async ValueTask<SoftwareKeyEntity?> FindByDeviceAsync(UserDeviceEntity device, CancellationToken cancellationToken)
     {
         return await _context.Passkeys
             .Where(x => x.DeviceId == device.Id)
@@ -29,7 +29,7 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async ValueTask<PasskeyEntity?> FindByCredentialIdAsync(string credentialId,
+    public async ValueTask<SoftwareKeyEntity?> FindByCredentialIdAsync(string credentialId,
         CancellationToken cancellationToken)
     {
         return await _context.Passkeys
@@ -38,7 +38,7 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async ValueTask<PasskeyEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken)
+    public async ValueTask<SoftwareKeyEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         return await _context.Passkeys
             .Where(x => x.Id == id)
@@ -46,7 +46,7 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async ValueTask<Result> VerifyAsync(PasskeyEntity passkey, PublicKeyCredential credential,
+    public async ValueTask<Result> VerifyAsync(SoftwareKeyEntity softwareKey, PublicKeyCredential credential,
         string storedChallenge, CancellationToken cancellationToken)
     {
         var authenticatorAssertionResponse = credential.Response;
@@ -80,7 +80,7 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
             });
         }
 
-        var valid = CredentialUtils.VerifySignature(authenticatorAssertionResponse, passkey.PublicKey);
+        var valid = CredentialUtils.VerifySignature(authenticatorAssertionResponse, softwareKey.PublicKey);
         if (!valid)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -92,10 +92,10 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
 
         var signCount = CredentialUtils.ParseSignCount(authenticatorAssertionResponse.AuthenticatorData);
 
-        passkey.SignCount = signCount;
-        passkey.LastSeenDate = DateTimeOffset.UtcNow;
+        softwareKey.SignCount = signCount;
+        softwareKey.LastSeenDate = DateTimeOffset.UtcNow;
 
-        _context.Passkeys.Update(passkey);
+        _context.Passkeys.Update(softwareKey);
         await _context.SaveChangesAsync(cancellationToken);
 
         return Results.Success(SuccessCodes.Ok);
@@ -109,7 +109,7 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
             .AnyAsync(cancellationToken);
     }
 
-    public async ValueTask<Result> CreateAsync(PasskeyEntity entity, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> CreateAsync(SoftwareKeyEntity entity, CancellationToken cancellationToken = default)
     {
         await _context.Passkeys.AddAsync(entity, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
@@ -117,7 +117,7 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
         return Results.Success(SuccessCodes.Ok);
     }
 
-    public async ValueTask<Result> UpdateAsync(PasskeyEntity entity, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> UpdateAsync(SoftwareKeyEntity entity, CancellationToken cancellationToken = default)
     {
         _context.Passkeys.Update(entity);
         await _context.SaveChangesAsync(cancellationToken);
@@ -125,7 +125,7 @@ public class PasskeyManager(AuthDbContext context) : IPasskeyManager
         return Results.Success(SuccessCodes.Ok);
     }
 
-    public async ValueTask<Result> DeleteAsync(PasskeyEntity entity, CancellationToken cancellationToken = default)
+    public async ValueTask<Result> DeleteAsync(SoftwareKeyEntity entity, CancellationToken cancellationToken = default)
     {
         _context.Passkeys.Remove(entity);
         await _context.SaveChangesAsync(cancellationToken);

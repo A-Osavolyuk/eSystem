@@ -3,7 +3,7 @@ using eSecurity.Core.Requests;
 
 namespace eSecurity.Client.Security.Credentials.PublicKey;
 
-public class PasskeyService(IApiClient apiClient) : IPasskeyService
+public class SoftwareService(IApiClient apiClient) : ISoftwareService
 {
     private readonly IApiClient _apiClient = apiClient;
 
@@ -14,7 +14,7 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
             {
                 Method = HttpMethods.Post,
                 Data = request,
-                Url = "/api/v1/Passkey/options/request"
+                Url = "/api/v1/software-key/options/request"
             });
 
     public async ValueTask<ApiResponse> GenerateCreationOptionsAsync(
@@ -24,33 +24,33 @@ public class PasskeyService(IApiClient apiClient) : IPasskeyService
             {
                 Method = HttpMethods.Post,
                 Data = request,
-                Url = "/api/v1/Passkey/options/creation"
+                Url = "/api/v1/software-key/options/creation"
             });
 
-    public async ValueTask<ApiResponse> CreateAsync(CreatePasskeyRequest request)
+    public async ValueTask<ApiResponse> CreateAsync(CreateSoftwareKeyRequest request)
         => await _apiClient.SendAsync(
             new ApiRequest
             {
                 Method = HttpMethods.Post,
                 Data = request,
-                Url = "/api/v1/Passkey/create"
+                Url = "/api/v1/software-key/create"
             });
 
-    public async ValueTask<ApiResponse> ChangeNameAsync(ChangePasskeyNameRequest request)
+    public async ValueTask<ApiResponse> ChangeNameAsync(ChangeSoftwareKeyNameRequest request)
         => await _apiClient.SendAsync(
             new ApiRequest
             {
                 Method = HttpMethods.Post,
                 Data = request,
-                Url = "/api/v1/Passkey/change-name"
+                Url = "/api/v1/software-key/change-name"
             });
 
-    public async ValueTask<ApiResponse> RemoveAsync(RemovePasskeyRequest request)
+    public async ValueTask<ApiResponse> RemoveAsync(RemoveSoftwareKeyRequest request)
         => await _apiClient.SendAsync(
             new ApiRequest
             {
                 Method = HttpMethods.Post,
                 Data = request,
-                Url = "/api/v1/Passkey/remove"
+                Url = "/api/v1/software-key/remove"
             });
 }

@@ -971,62 +971,6 @@ namespace eSecurity.Idp.Migrations
                     b.ToTable("PairwiseSubjects", "public");
                 });
 
-            modelBuilder.Entity("eSecurity.Idp.Data.Entities.PasskeyEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("AuthenticatorId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset?>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CredentialId")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
-
-                    b.Property<Guid>("DeviceId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("DisplayName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("Domain")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<DateTimeOffset?>("LastSeenDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<byte[]>("PublicKey")
-                        .IsRequired()
-                        .HasColumnType("bytea");
-
-                    b.Property<long>("SignCount")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("character varying(32)");
-
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DeviceId")
-                        .IsUnique();
-
-                    b.ToTable("Passkeys", "public");
-                });
-
             modelBuilder.Entity("eSecurity.Idp.Data.Entities.PasswordEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1406,6 +1350,62 @@ namespace eSecurity.Idp.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Certificates", "public");
+                });
+
+            modelBuilder.Entity("eSecurity.Idp.Data.Entities.SoftwareKeyEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AuthenticatorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CredentialId")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<Guid>("DeviceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Domain")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTimeOffset?>("LastSeenDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<byte[]>("PublicKey")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.Property<long>("SignCount")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeviceId")
+                        .IsUnique();
+
+                    b.ToTable("Passkeys", "public");
                 });
 
             modelBuilder.Entity("eSecurity.Idp.Data.Entities.TokenAuthMethodEntity", b =>
@@ -1942,7 +1942,7 @@ namespace eSecurity.Idp.Migrations
             modelBuilder.Entity("eSecurity.Idp.Data.Entities.ClientAllowedScopeEntity", b =>
                 {
                     b.HasOne("eSecurity.Idp.Data.Entities.ClientEntity", "Client")
-                        .WithMany("AllowedScopes")
+                        .WithMany()
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1961,7 +1961,7 @@ namespace eSecurity.Idp.Migrations
             modelBuilder.Entity("eSecurity.Idp.Data.Entities.ClientAudienceEntity", b =>
                 {
                     b.HasOne("eSecurity.Idp.Data.Entities.ClientEntity", "Client")
-                        .WithMany("Audiences")
+                        .WithMany()
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1972,7 +1972,7 @@ namespace eSecurity.Idp.Migrations
             modelBuilder.Entity("eSecurity.Idp.Data.Entities.ClientGrantTypeEntity", b =>
                 {
                     b.HasOne("eSecurity.Idp.Data.Entities.ClientEntity", "Client")
-                        .WithMany("GrantTypes")
+                        .WithMany()
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1991,7 +1991,7 @@ namespace eSecurity.Idp.Migrations
             modelBuilder.Entity("eSecurity.Idp.Data.Entities.ClientResponseTypeEntity", b =>
                 {
                     b.HasOne("eSecurity.Idp.Data.Entities.ClientEntity", "Client")
-                        .WithMany("ResponseTypes")
+                        .WithMany()
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -2029,7 +2029,7 @@ namespace eSecurity.Idp.Migrations
             modelBuilder.Entity("eSecurity.Idp.Data.Entities.ClientTokenAuthMethodEntity", b =>
                 {
                     b.HasOne("eSecurity.Idp.Data.Entities.ClientEntity", "Client")
-                        .WithMany("TokenAuthMethods")
+                        .WithMany()
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -2048,7 +2048,7 @@ namespace eSecurity.Idp.Migrations
             modelBuilder.Entity("eSecurity.Idp.Data.Entities.ClientUriEntity", b =>
                 {
                     b.HasOne("eSecurity.Idp.Data.Entities.ClientEntity", "Client")
-                        .WithMany("Uris")
+                        .WithMany()
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -2256,7 +2256,7 @@ namespace eSecurity.Idp.Migrations
             modelBuilder.Entity("eSecurity.Idp.Data.Entities.PairwiseSubjectEntity", b =>
                 {
                     b.HasOne("eSecurity.Idp.Data.Entities.ClientEntity", "Client")
-                        .WithMany("PairwiseSubjects")
+                        .WithMany()
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -2270,17 +2270,6 @@ namespace eSecurity.Idp.Migrations
                     b.Navigation("Client");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("eSecurity.Idp.Data.Entities.PasskeyEntity", b =>
-                {
-                    b.HasOne("eSecurity.Idp.Data.Entities.UserDeviceEntity", "Device")
-                        .WithOne()
-                        .HasForeignKey("eSecurity.Idp.Data.Entities.PasskeyEntity", "DeviceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Device");
                 });
 
             modelBuilder.Entity("eSecurity.Idp.Data.Entities.PasswordEntity", b =>
@@ -2414,6 +2403,17 @@ namespace eSecurity.Idp.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("eSecurity.Idp.Data.Entities.SoftwareKeyEntity", b =>
+                {
+                    b.HasOne("eSecurity.Idp.Data.Entities.UserDeviceEntity", "Device")
+                        .WithOne()
+                        .HasForeignKey("eSecurity.Idp.Data.Entities.SoftwareKeyEntity", "DeviceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Device");
                 });
 
             modelBuilder.Entity("eSecurity.Idp.Data.Entities.UserClientEntity", b =>
@@ -2556,23 +2556,6 @@ namespace eSecurity.Idp.Migrations
             modelBuilder.Entity("eSecurity.Idp.Data.Entities.AuthenticationSessionEntity", b =>
                 {
                     b.Navigation("AuthenticationMethods");
-                });
-
-            modelBuilder.Entity("eSecurity.Idp.Data.Entities.ClientEntity", b =>
-                {
-                    b.Navigation("AllowedScopes");
-
-                    b.Navigation("Audiences");
-
-                    b.Navigation("GrantTypes");
-
-                    b.Navigation("PairwiseSubjects");
-
-                    b.Navigation("ResponseTypes");
-
-                    b.Navigation("TokenAuthMethods");
-
-                    b.Navigation("Uris");
                 });
 
             modelBuilder.Entity("eSecurity.Idp.Data.Entities.ConsentEntity", b =>

@@ -22,7 +22,7 @@ public sealed class RemoveEmailCommand : IRequest<Result>
 
 public sealed class RemoveEmailCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
-    IPasskeyManager passkeyManager,
+    ISoftwareKeyManager softwareKeyManager,
     ILinkedAccountManager linkedAccountManager,
     IEmailQueryService emailQueryService,
     IEmailCommandService emailCommandService,
@@ -30,7 +30,7 @@ public sealed class RemoveEmailCommandHandler(
     IVerificationCommandService verificationCommandService) : IRequestHandler<RemoveEmailCommand, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
-    private readonly IPasskeyManager _passkeyManager = passkeyManager;
+    private readonly ISoftwareKeyManager _softwareKeyManager = softwareKeyManager;
     private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly IEmailCommandService _emailCommandService = emailCommandService;
@@ -55,7 +55,7 @@ public sealed class RemoveEmailCommandHandler(
 
         if (email.Type == EmailType.Primary)
         {
-            var passkeys = await _passkeyManager.GetAllAsync(user, cancellationToken);
+            var passkeys = await _softwareKeyManager.GetAllAsync(user, cancellationToken);
             if (passkeys.Count == 0)
             {
                 return Results.ClientError(ClientErrorCode.BadRequest, new Error

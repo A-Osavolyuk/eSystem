@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace eSecurity.Idp.Data.Configurations;
 
-public sealed class PasskeyConfiguration : IEntityTypeConfiguration<PasskeyEntity>
+public sealed class SoftwateKeyConfiguration : IEntityTypeConfiguration<SoftwareKeyEntity>
 {
-    public void Configure(EntityTypeBuilder<PasskeyEntity> builder)
+    public void Configure(EntityTypeBuilder<SoftwareKeyEntity> builder)
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.CredentialId).HasMaxLength(1000);
@@ -15,7 +15,7 @@ public sealed class PasskeyConfiguration : IEntityTypeConfiguration<PasskeyEntit
 
         builder.HasOne(x => x.Device)
             .WithOne()
-            .HasForeignKey<PasskeyEntity>(x => x.DeviceId)
+            .HasForeignKey<SoftwareKeyEntity>(x => x.DeviceId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -18,15 +18,15 @@ public sealed class ChangeSoftwareKeyNameCommand : IRequest<Result>
 
 public sealed class ChangeSoftwareKeyNameCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
-    IPasskeyManager passkeyManager) : IRequestHandler<ChangeSoftwareKeyNameCommand, Result>
+    ISoftwareKeyManager softwareKeyManager) : IRequestHandler<ChangeSoftwareKeyNameCommand, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
-    private readonly IPasskeyManager _passkeyManager = passkeyManager;
+    private readonly ISoftwareKeyManager _softwareKeyManager = softwareKeyManager;
 
     public async Task<Result> Handle(ChangeSoftwareKeyNameCommand request, CancellationToken cancellationToken)
     {
         var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
-        if (!await _passkeyManager.HasAsync(user, cancellationToken))
+        if (!await _softwareKeyManager.HasAsync(user, cancellationToken))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
@@ -35,7 +35,7 @@ public sealed class ChangeSoftwareKeyNameCommandHandler(
             });
         }
 
-        var passkey = await _passkeyManager.FindByIdAsync(request.PasskeyId, cancellationToken);
+        var passkey = await _softwareKeyManager.FindByIdAsync(request.PasskeyId, cancellationToken);
         if (passkey is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error
@@ -50,7 +50,7 @@ public sealed class ChangeSoftwareKeyNameCommandHandler(
         
         passkey.DisplayName = request.DisplayName;
 
-        var result = await _passkeyManager.UpdateAsync(passkey, cancellationToken);
+        var result = await _softwareKeyManager.UpdateAsync(passkey, cancellationToken);
         return result;
     }
 }

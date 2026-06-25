@@ -17,14 +17,14 @@ public record GetUserVerificationDataQuery : IRequest<Result>;
 public class GetUserVerificationMethodsQueryHandler(
     ICurrentUserAccessor currentUserAccessor,
     IDeviceManager deviceManager,
-    IPasskeyManager passkeyManager,
+    ISoftwareKeyManager softwareKeyManager,
     IEmailQueryService emailQueryService,
     ITwoFactorManager twoFactorManager,
     IHttpContextAccessor httpContextAccessor) : IRequestHandler<GetUserVerificationDataQuery, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IDeviceManager _deviceManager = deviceManager;
-    private readonly IPasskeyManager _passkeyManager = passkeyManager;
+    private readonly ISoftwareKeyManager _softwareKeyManager = softwareKeyManager;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
@@ -54,7 +54,7 @@ public class GetUserVerificationMethodsQueryHandler(
             });
         }
 
-        var passkey = await _passkeyManager.FindByDeviceAsync(device, cancellationToken);
+        var passkey = await _softwareKeyManager.FindByDeviceAsync(device, cancellationToken);
         var twoFactorEnabled = await _twoFactorManager.IsEnabledAsync(user, cancellationToken);
         
         var response = new UserVerificationData

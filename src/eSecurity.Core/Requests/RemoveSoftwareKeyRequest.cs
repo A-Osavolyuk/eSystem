@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace eSecurity.Core.Requests;
 
-public sealed class RemovePasskeyRequest
+public sealed class RemoveSoftwareKeyRequest
 {
     [JsonPropertyName("verification_id")]
     public required Guid VerificationId { get; set; }

@@ -2,7 +2,7 @@
 
 namespace eSecurity.Idp.Data.Entities;
 
-public class PasskeyEntity : Entity
+public class SoftwareKeyEntity : Entity
 {
     public Guid Id { get; set; }
     public Guid AuthenticatorId { get; set; }

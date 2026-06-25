@@ -4,7 +4,7 @@
 @inject NavigationManager NavigationManager
 @inject ConfirmationManager ConfirmationManager
 @inject ISnackbar Snackbar
-@inject IPasskeyService PasskeyService
+@inject ISoftwareService SoftwareService
 
 <MudStack Spacing="0" Class="px-5 pb-2">
     <MudStack Row="true" Spacing="3">
@@ -123,13 +123,13 @@
 
     private async Task OnChange(UserPasskeyDto passkey)
     {
-        var request = new ChangePasskeyNameRequest
+        var request = new ChangeSoftwareKeyNameRequest
         {
             PasskeyId = passkey.Id,
             DisplayName = passkey.DisplayName
         };
 
-        var result = await PasskeyService.ChangeNameAsync(request);
+        var result = await SoftwareService.ChangeNameAsync(request);
 
         if (result.Succeeded) await OnRefresh.InvokeAsync();
         else Snackbar.Add(result.GetError().Description, Severity.Error);
@@ -141,13 +141,13 @@
         if (!confirmationResult!.Canceled)
         {
             var verificationId = confirmationResult.Data as Guid? ?? Guid.Empty;
-            var request = new RemovePasskeyRequest
+            var request = new RemoveSoftwareKeyRequest
             {
                 VerificationId = verificationId,
                 PasskeyId = passkey.Id
             };
             
-            var result = await PasskeyService.RemoveAsync(request);
+            var result = await SoftwareService.RemoveAsync(request);
             if (result.Succeeded) await OnRefresh.InvokeAsync();
             else Snackbar.Add(result.GetError().Description, Severity.Error);
         }

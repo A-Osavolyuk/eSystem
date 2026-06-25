@@ -25,14 +25,14 @@ public class GenerateRequestOptionsCommandHandler(
     ISessionStorage sessionStorage,
     IChallengeFactory challengeFactory,
     IDeviceManager deviceManager,
-    IPasskeyManager passkeyManager,
+    ISoftwareKeyManager softwareKeyManager,
     IOptions<CredentialOptions> options) : IRequestHandler<GenerateRequestOptionsCommand, Result>
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly ISessionStorage _sessionStorage = sessionStorage;
     private readonly IChallengeFactory _challengeFactory = challengeFactory;
     private readonly IDeviceManager _deviceManager = deviceManager;
-    private readonly IPasskeyManager _passkeyManager = passkeyManager;
+    private readonly ISoftwareKeyManager _softwareKeyManager = softwareKeyManager;
     private readonly CredentialOptions _credentialOptions = options.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
@@ -71,7 +71,7 @@ public class GenerateRequestOptionsCommandHandler(
                 });
             }
 
-            var passkey = await _passkeyManager.FindByDeviceAsync(device, cancellationToken);
+            var passkey = await _softwareKeyManager.FindByDeviceAsync(device, cancellationToken);
             if (passkey is null)
             {
                 return Results.ClientError(ClientErrorCode.BadRequest, new Error

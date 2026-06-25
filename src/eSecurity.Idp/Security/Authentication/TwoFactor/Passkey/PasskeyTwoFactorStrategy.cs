@@ -31,7 +31,7 @@ public sealed class PasskeyTwoFactorStrategy(
     IDeviceManager deviceManager,
     ILockoutManager lockoutManager,
     ISessionManager sessionManager,
-    IPasskeyManager passkeyManager,
+    ISoftwareKeyManager softwareKeyManager,
     IOptions<Session_SessionOptions> sessionOptions,
     IOptions<SignInOptions> signInOptions,
     IUserFailedLoginService failedLoginService,
@@ -42,7 +42,7 @@ public sealed class PasskeyTwoFactorStrategy(
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
     private readonly ISessionManager _sessionManager = sessionManager;
-    private readonly IPasskeyManager _passkeyManager = passkeyManager;
+    private readonly ISoftwareKeyManager _softwareKeyManager = softwareKeyManager;
     private readonly IUserFailedLoginService _failedLoginService = failedLoginService;
     private readonly ISessionCookieFactory _sessionCookieFactory = sessionCookieFactory;
     private readonly Session_SessionOptions _sessionOptions = sessionOptions.Value;
@@ -90,7 +90,7 @@ public sealed class PasskeyTwoFactorStrategy(
         var credential = context.Credential;
         var credentialId = CredentialUtils.ToBase64String(credential.Id);
 
-        var passkey = await _passkeyManager.FindByCredentialIdAsync(credentialId, cancellationToken);
+        var passkey = await _softwareKeyManager.FindByCredentialIdAsync(credentialId, cancellationToken);
         if (passkey is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -110,7 +110,7 @@ public sealed class PasskeyTwoFactorStrategy(
             });
         }
 
-        var verificationResult = await _passkeyManager.VerifyAsync(passkey, credential, savedChallenge, cancellationToken);
+        var verificationResult = await _softwareKeyManager.VerifyAsync(passkey, credential, savedChallenge, cancellationToken);
         if (!verificationResult.Succeeded)
         {
             user.FailedLoginAttempts += 1;

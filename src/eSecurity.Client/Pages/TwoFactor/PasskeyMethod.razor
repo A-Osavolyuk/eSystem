@@ -5,7 +5,7 @@
 
 @inject WebAuthNManager WebAuthNManager
 @inject ISnackbar Snackbar
-@inject IPasskeyService PasskeyService
+@inject ISoftwareService SoftwareService
 
 <MudStack Spacing="3">
     <MudStack Spacing="4" Class="w-100">
@@ -75,7 +75,7 @@
     private async Task OnSignInAsync()
     {
         var request = new GenerateRequestOptionsRequest();
-        var result = await PasskeyService.GenerateRequestOptionsAsync(request);
+        var result = await SoftwareService.GenerateRequestOptionsAsync(request);
 
         if (result.Succeeded && result.TryGetValue<PublicKeyCredentialRequestOptions>(out var options))
         {

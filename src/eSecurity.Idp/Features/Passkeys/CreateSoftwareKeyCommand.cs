@@ -29,7 +29,7 @@ public record CreateSoftwareKeyCommand : IRequest<Result>
 
 public class CreateSoftwareKeyCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
-    IPasskeyManager passkeyManager,
+    ISoftwareKeyManager softwareKeyManager,
     ITwoFactorManager twoFactorManager,
     IHttpContextAccessor httpContextAccessor,
     ISessionStorage sessionStorage,
@@ -37,7 +37,7 @@ public class CreateSoftwareKeyCommandHandler(
     IOptions<CredentialOptions> options) : IRequestHandler<CreateSoftwareKeyCommand, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
-    private readonly IPasskeyManager _passkeyManager = passkeyManager;
+    private readonly ISoftwareKeyManager _softwareKeyManager = softwareKeyManager;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly ISessionStorage _sessionStorage = sessionStorage;
     private readonly IDeviceManager _deviceManager = deviceManager;
@@ -99,7 +99,7 @@ public class CreateSoftwareKeyCommandHandler(
         if (string.IsNullOrWhiteSpace(request.DisplayName))
             throw new ValidationException("DisplayName is required");
         
-        var passkey = new PasskeyEntity
+        var passkey = new SoftwareKeyEntity
         {
             Id = Guid.CreateVersion7(),
             AuthenticatorId = new Guid(authData.AaGuid),
@@ -112,7 +112,7 @@ public class CreateSoftwareKeyCommandHandler(
             Type = request.Response.Type
         };
 
-        var result = await _passkeyManager.CreateAsync(passkey, cancellationToken);
+        var result = await _softwareKeyManager.CreateAsync(passkey, cancellationToken);
         if (!result.Succeeded) 
             return result;
 

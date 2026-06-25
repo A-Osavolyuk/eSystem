@@ -11,7 +11,7 @@
 @inject UserState UserState
 @inject ISnackbar Snackbar
 @inject IVerificationService VerificationService
-@inject IPasskeyService PasskeyService
+@inject ISoftwareService SoftwareService
 
 <MudStack Spacing="3">
     <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
@@ -113,7 +113,7 @@
         _showError = false;
         
         var request = new GenerateRequestOptionsRequest { UserHint = UserState.Email };
-        var result = await PasskeyService.GenerateRequestOptionsAsync(request);
+        var result = await SoftwareService.GenerateRequestOptionsAsync(request);
 
         if (result.Succeeded && result.TryGetValue<PublicKeyCredentialRequestOptions>(out var value))
         {

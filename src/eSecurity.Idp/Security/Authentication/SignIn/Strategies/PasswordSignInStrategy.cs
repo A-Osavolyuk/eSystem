@@ -32,7 +32,7 @@ public sealed class PasswordSignInStrategy(
     IHttpContextAccessor accessor,
     ITwoFactorManager twoFactorManager,
     IAuthenticationSessionManager authenticationSessionManager,
-    IPasskeyManager passkeyManager,
+    ISoftwareKeyManager softwareKeyManager,
     IOptions<SignInOptions> signInOptions,
     IOptions<Session_SessionOptions> sessionOptions,
     ISessionCookieFactory sessionCookieFactory) : ISignInStrategy
@@ -46,7 +46,7 @@ public sealed class PasswordSignInStrategy(
     private readonly ISessionManager _sessionManager = sessionManager;
     private readonly ITwoFactorManager _twoFactorManager = twoFactorManager;
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
-    private readonly IPasskeyManager _passkeyManager = passkeyManager;
+    private readonly ISoftwareKeyManager _softwareKeyManager = softwareKeyManager;
     private readonly ISessionCookieFactory _sessionCookieFactory = sessionCookieFactory;
     private readonly Session_SessionOptions _sessionOptions = sessionOptions.Value;
     private readonly HttpContext _httpContext = accessor.HttpContext!;
@@ -228,7 +228,7 @@ public sealed class PasswordSignInStrategy(
 
         if (await _twoFactorManager.IsEnabledAsync(user, cancellationToken))
         {
-            var hasSoftwareKey = await _passkeyManager.HasAsync(user, cancellationToken);
+            var hasSoftwareKey = await _softwareKeyManager.HasAsync(user, cancellationToken);
             AuthenticationMethodReference[] mfaMethods = hasSoftwareKey
                 ? [AuthenticationMethodReference.OneTimePassword, AuthenticationMethodReference.SoftwareKey]
                 : [AuthenticationMethodReference.OneTimePassword];

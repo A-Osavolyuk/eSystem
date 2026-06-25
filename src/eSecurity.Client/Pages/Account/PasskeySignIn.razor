@@ -8,7 +8,7 @@
 @inject NavigationManager NavigationManager
 @inject WebAuthNManager WebAuthNManager
 @inject SignInManager SignInManager
-@inject IPasskeyService PasskeyService
+@inject ISoftwareService SoftwareService
 @inject ISecurityService SecurityService
 @inject ISnackbar Snackbar
 
@@ -73,7 +73,7 @@ else
         _showError = false;
 
         var request = new GenerateRequestOptionsRequest();
-        var result = await PasskeyService.GenerateRequestOptionsAsync(request);
+        var result = await SoftwareService.GenerateRequestOptionsAsync(request);
         if (result.Succeeded && result.TryGetValue<PublicKeyCredentialRequestOptions>(out var value))
         {
             await VerifyAsync(value!);

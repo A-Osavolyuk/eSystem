@@ -12,7 +12,7 @@ public static class CredentialExtensions
         {
             builder.Services.Configure(configure);
             builder.Services.AddScoped<IChallengeFactory, ChallengeFactory>();
-            builder.Services.AddScoped<IPasskeyManager, PasskeyManager>();
+            builder.Services.AddScoped<ISoftwareKeyManager, SoftwareKeyManager>();
         }
     }
 }

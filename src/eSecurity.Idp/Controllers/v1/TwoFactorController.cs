@@ -7,7 +7,7 @@ namespace eSecurity.Idp.Controllers.v1;
 [ApiController]
 [ApiVersion("1.0")]
 [Produces(ContentTypes.Application.Json)]
-[Route("v{version:apiVersion}/[controller]")]
+[Route("v{version:apiVersion}/two-factor")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class TwoFactorController(IMediator mediator) : ControllerBase
 {
