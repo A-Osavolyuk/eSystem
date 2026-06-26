@@ -18,40 +18,24 @@ public sealed class ChangePasswordCommand : IRequest<Result>
 
 public sealed class ChangePasswordCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
-    IPasswordManager passwordManager) : IRequestHandler<ChangePasswordCommand, Result>
+    IPasswordCommandService passwordCommandService) : IRequestHandler<ChangePasswordCommand, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
-    private readonly IPasswordManager _passwordManager = passwordManager;
+    private readonly IPasswordCommandService _passwordCommandService = passwordCommandService;
 
     async Task<Result> IRequestHandler<ChangePasswordCommand, Result>.Handle(ChangePasswordCommand request,
             CancellationToken cancellationToken)
     {
         var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
-        if (!await _passwordManager.HasAsync(user, cancellationToken))
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error
-            {
-                Code = ErrorCode.InvalidPassword,
-                Description = "User does not have a password."
-            });
-        }
-
+        
         if (string.IsNullOrWhiteSpace(request.CurrentPassword))
             throw new ValidationException("CurrentPassword is required");
-        
-        if (!await _passwordManager.CheckAsync(user, request.CurrentPassword, cancellationToken))
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error
-            {
-                Code = ErrorCode.InvalidPassword,
-                Description = "Invalid password."
-            });
-        }
         
         if (string.IsNullOrWhiteSpace(request.NewPassword))
             throw new ValidationException("NewPassword is required");
         
-        return await _passwordManager.ChangeAsync(user, request.NewPassword, cancellationToken);
+        return await _passwordCommandService.ChangeAsync(user.Id, request.CurrentPassword, 
+            request.NewPassword, cancellationToken);
     }
 }
 

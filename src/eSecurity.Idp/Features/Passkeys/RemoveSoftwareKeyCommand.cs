@@ -25,24 +25,24 @@ public record RemoveSoftwareKeyCommand : IRequest<Result>
 public class RemoveSoftwareKeyCommandHandler(
     ISoftwareKeyQueryService softwareKeyQueryService,
     ISoftwareKeyCommandService softwareKeyCommandService,
-    IPasswordManager passwordManager,
     ICurrentUserAccessor currentUserAccessor,
     IEmailQueryService emailQueryService,
     IVerificationQueryService verificationQueryService,
     IVerificationCommandService verificationCommandService,
     ITwoFactorQueryService twoFactorQueryService,
     ITwoFactorCommandService twoFactorCommandService,
+    IPasswordQueryService passwordQueryService,
     IOptions<SignInOptions> options) : IRequestHandler<RemoveSoftwareKeyCommand, Result>
 {
     private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
     private readonly ISoftwareKeyCommandService _softwareKeyCommandService = softwareKeyCommandService;
-    private readonly IPasswordManager _passwordManager = passwordManager;
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly IVerificationQueryService _verificationQueryService = verificationQueryService;
     private readonly IVerificationCommandService _verificationCommandService = verificationCommandService;
     private readonly ITwoFactorQueryService _twoFactorQueryService = twoFactorQueryService;
     private readonly ITwoFactorCommandService _twoFactorCommandService = twoFactorCommandService;
+    private readonly IPasswordQueryService _passwordQueryService = passwordQueryService;
     private readonly SignInOptions _options = options.Value;
 
     public async Task<Result> Handle(RemoveSoftwareKeyCommand request, CancellationToken cancellationToken)
@@ -60,7 +60,7 @@ public class RemoveSoftwareKeyCommandHandler(
 
         var primaryEmail = await _emailQueryService.GetByTypeAsync(user.Id, EmailType.Primary, cancellationToken);
         if ((primaryEmail is null && _options.RequireConfirmedEmail) || 
-            !await _passwordManager.HasAsync(user, cancellationToken))
+            !await _passwordQueryService.ExistsAsync(user.Id, cancellationToken))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {

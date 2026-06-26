@@ -16,19 +16,19 @@ public record GetUserLoginMethodsQuery() : IRequest<Result>;
 
 public class GetUserLoginMethodsQueryHandler(
     ICurrentUserAccessor currentUserAccessor,
-    IPasswordManager passwordManager,
     IDeviceManager deviceManager,
     ITwoFactorQueryService twoFactorQueryService,
     ILinkedAccountManager linkedAccountManager,
     ISoftwareKeyQueryService softwareKeyQueryService,
+    IPasswordQueryService passwordQueryService,
     IHttpContextAccessor accessor) : IRequestHandler<GetUserLoginMethodsQuery, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
-    private readonly IPasswordManager _passwordManager = passwordManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ITwoFactorQueryService _twoFactorQueryService = twoFactorQueryService;
     private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
     private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
+    private readonly IPasswordQueryService _passwordQueryService = passwordQueryService;
     private readonly HttpContext _httpContext = accessor.HttpContext!;
 
     public async Task<Result> Handle(GetUserLoginMethodsQuery request, CancellationToken cancellationToken)
@@ -46,7 +46,7 @@ public class GetUserLoginMethodsQueryHandler(
             });
         }
 
-        var password = await _passwordManager.GetAsync(user, cancellationToken);
+        var password = await _passwordQueryService.GetByUserAsync(user.Id, cancellationToken);
         var linkedAccounts = await _linkedAccountManager.GetAllAsync(user, cancellationToken);
         var softwareKeys = await _softwareKeyQueryService.ListByUserAsync(user.Id, cancellationToken);
         var twoFactorMethods = await _twoFactorQueryService.ListByUserAsync(user.Id, cancellationToken);

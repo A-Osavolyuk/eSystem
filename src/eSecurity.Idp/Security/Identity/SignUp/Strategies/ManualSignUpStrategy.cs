@@ -30,7 +30,6 @@ public sealed class ManualSignUpPayload : SignUpPayload
 
 public sealed class ManualSignUpStrategy(
     IUsernameManager usernameManager,
-    IPasswordManager passwordManager,
     IRoleManager roleManager,
     IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor,
@@ -40,10 +39,10 @@ public sealed class ManualSignUpStrategy(
     IAuthenticationSessionManager sessionManager,
     IUserCommandService userCommandService,
     ICodeCommandService codeCommandService,
+    IPasswordCommandService passwordCommandService,
     IOptions<AccountOptions> options) : ISignUpStrategy
 {
     private readonly IUsernameManager _usernameManager = usernameManager;
-    private readonly IPasswordManager _passwordManager = passwordManager;
     private readonly IRoleManager _roleManager = roleManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly IEmailService _emailService = emailService;
@@ -52,6 +51,7 @@ public sealed class ManualSignUpStrategy(
     private readonly IAuthenticationSessionManager _sessionManager = sessionManager;
     private readonly IUserCommandService _userCommandService = userCommandService;
     private readonly ICodeCommandService _codeCommandService = codeCommandService;
+    private readonly IPasswordCommandService _passwordCommandService = passwordCommandService;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly AccountOptions _options = options.Value;
 
@@ -89,7 +89,7 @@ public sealed class ManualSignUpStrategy(
         var createResult = await _userCommandService.CreateAsync(user, cancellationToken);
         if (!createResult.Succeeded) return createResult;
 
-        var passwordResult = await _passwordManager.AddAsync(user, manualPayload.Password, cancellationToken);
+        var passwordResult = await _passwordCommandService.AddAsync(user.Id, manualPayload.Password, cancellationToken);
         if (!passwordResult.Succeeded) return passwordResult;
 
         var setResult = await _emailCommandService.AddAsync(user.Id, 

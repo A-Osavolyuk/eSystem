@@ -22,13 +22,13 @@ public sealed class ResetPasswordCommand : IRequest<Result>
 
 public sealed class ResetPasswordCommandHandler(
     IUserQueryService userQueryService,
-    IPasswordManager passwordManager,
     IVerificationQueryService verificationQueryService,
+    IPasswordCommandService passwordCommandService,
     IVerificationCommandService verificationCommandService) : IRequestHandler<ResetPasswordCommand, Result>
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
-    private readonly IPasswordManager _passwordManager = passwordManager;
     private readonly IVerificationQueryService _verificationQueryService = verificationQueryService;
+    private readonly IPasswordCommandService _passwordCommandService = passwordCommandService;
     private readonly IVerificationCommandService _verificationCommandService = verificationCommandService;
 
     public async Task<Result> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
@@ -43,15 +43,6 @@ public sealed class ResetPasswordCommandHandler(
             {
                 Code = ErrorCode.NotFound,
                 Description = "User not found."
-            });
-        }
-
-        if (!await _passwordManager.HasAsync(user, cancellationToken))
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error
-            {
-                Code = ErrorCode.InvalidPassword,
-                Description = "User does not have a password."
             });
         }
 
@@ -73,7 +64,7 @@ public sealed class ResetPasswordCommandHandler(
         if (string.IsNullOrWhiteSpace(request.Password))
             throw new ValidationException("Password is required");
         
-        return await _passwordManager.ResetAsync(user, request.Password, cancellationToken);
+        return await _passwordCommandService.ResetAsync(user.Id, request.Password, cancellationToken);
     }
 }
 

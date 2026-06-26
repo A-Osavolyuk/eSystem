@@ -15,27 +15,19 @@ public sealed class AddPasswordCommand : IRequest<Result>
 
 public sealed class AddPasswordCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
-    IPasswordManager passwordManager) : IRequestHandler<AddPasswordCommand, Result>
+    IPasswordCommandService passwordCommandService) : IRequestHandler<AddPasswordCommand, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
-    private readonly IPasswordManager _passwordManager = passwordManager;
+    private readonly IPasswordCommandService _passwordCommandService = passwordCommandService;
 
     public async Task<Result> Handle(AddPasswordCommand request, CancellationToken cancellationToken)
     {
         var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
-        if (await _passwordManager.HasAsync(user, cancellationToken))
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error
-            {
-                Code = ErrorCode.InvalidPassword,
-                Description = "User already has a password."
-            });
-        }
-
+        
         if (string.IsNullOrWhiteSpace(request.Password))
             throw new ValidationException("Password is required");
         
-        return await _passwordManager.AddAsync(user, request.Password, cancellationToken);
+        return await _passwordCommandService.AddAsync(user.Id, request.Password, cancellationToken);
     }
 }
 

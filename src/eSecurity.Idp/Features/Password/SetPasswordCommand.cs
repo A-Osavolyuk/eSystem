@@ -15,27 +15,19 @@ public sealed class SetPasswordCommand : IRequest<Result>
 
 public sealed class SetPasswordCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
-    IPasswordManager passwordManager) : IRequestHandler<SetPasswordCommand, Result>
+    IPasswordCommandService passwordCommandService) : IRequestHandler<SetPasswordCommand, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
-    private readonly IPasswordManager _passwordManager = passwordManager;
+    private readonly IPasswordCommandService _passwordCommandService = passwordCommandService;
 
     public async Task<Result> Handle(SetPasswordCommand request, CancellationToken cancellationToken)
     {
         var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
-        if (!await _passwordManager.HasAsync(user, cancellationToken))
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error
-            {
-                Code = ErrorCode.InvalidPassword,
-                Description = "User does not have a password."
-            });
-        }
 
         if (string.IsNullOrWhiteSpace(request.Password))
             throw new ValidationException("Password is required");
         
-        return await _passwordManager.ResetAsync(user, request.Password, cancellationToken);
+        return await _passwordCommandService.AddAsync(user.Id, request.Password, cancellationToken);
     }
 }
 

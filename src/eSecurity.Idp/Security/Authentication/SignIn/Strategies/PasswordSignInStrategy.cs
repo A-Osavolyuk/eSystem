@@ -25,7 +25,6 @@ public sealed class PasswordSignInStrategy(
     IUserQueryService userQueryService,
     IUserFailedLoginService failedLoginService,
     IEmailQueryService emailQueryService,
-    IPasswordManager passwordManager,
     ILockoutManager lockoutManager,
     IDeviceManager deviceManager,
     IHttpContextAccessor accessor,
@@ -35,18 +34,21 @@ public sealed class PasswordSignInStrategy(
     ISoftwareKeyQueryService softwareKeyQueryService,
     ITwoFactorQueryService twoFactorQueryService,
     ISessionCommandService sessionCommandService,
+    IPasswordQueryService passwordQueryService,
+    IPasswordCommandService passwordCommandService,
     ISessionCookieFactory sessionCookieFactory) : ISignInStrategy
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IUserFailedLoginService _failedLoginService = failedLoginService;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
-    private readonly IPasswordManager _passwordManager = passwordManager;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
     private readonly ITwoFactorQueryService _twoFactorQueryService = twoFactorQueryService;
     private readonly ISessionCommandService _sessionCommandService = sessionCommandService;
+    private readonly IPasswordQueryService _passwordQueryService = passwordQueryService;
+    private readonly IPasswordCommandService _passwordCommandService = passwordCommandService;
     private readonly ISessionCookieFactory _sessionCookieFactory = sessionCookieFactory;
     private readonly SessionOptions _sessionOptions = sessionOptions.Value;
     private readonly HttpContext _httpContext = accessor.HttpContext!;
@@ -81,7 +83,7 @@ public sealed class PasswordSignInStrategy(
             });
         }
 
-        if (!await _passwordManager.HasAsync(user, cancellationToken))
+        if (!await _passwordQueryService.ExistsAsync(user.Id, cancellationToken))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
@@ -153,7 +155,7 @@ public sealed class PasswordSignInStrategy(
             });
         }
 
-        if (!await _passwordManager.HasAsync(user, cancellationToken))
+        if (!await _passwordQueryService.ExistsAsync(user.Id, cancellationToken))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
@@ -162,7 +164,8 @@ public sealed class PasswordSignInStrategy(
             });
         }
 
-        if (!await _passwordManager.CheckAsync(user, passwordPayload.Password, cancellationToken))
+        var passwordResult = await _passwordCommandService.VerifyAsync(user.Id, passwordPayload.Password, cancellationToken);
+        if (!passwordResult.Succeeded)
         {
             var updateResult = await _failedLoginService.IncrementAttemptAsync(user, cancellationToken);
             if (!updateResult.Succeeded) return updateResult;
