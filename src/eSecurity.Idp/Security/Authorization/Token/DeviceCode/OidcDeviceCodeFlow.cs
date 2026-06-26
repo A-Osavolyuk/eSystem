@@ -18,19 +18,19 @@ namespace eSecurity.Idp.Security.Authorization.Token.DeviceCode;
 public sealed class OidcDeviceCodeFlow(
     IDeviceCodeManager deviceCodeManager,
     IUserQueryService userQueryService,
-    ISessionManager sessionManager,
     ITokenFactoryProvider tokenFactoryProvider,
     IClientQueryService clientQueryService,
     IClientCommandService clientCommandService,
     IOptions<TokenConfigurations> tokenOptions,
+    ISessionQueryService sessionQueryService,
     ISessionAccessor sessionAccessor) : IDeviceCodeFlow
 {
     private readonly IDeviceCodeManager _deviceCodeManager = deviceCodeManager;
     private readonly IUserQueryService _userQueryService = userQueryService;
-    private readonly ISessionManager _sessionManager = sessionManager;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly IClientCommandService _clientCommandService = clientCommandService;
+    private readonly ISessionQueryService _sessionQueryService = sessionQueryService;
     private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
     private readonly TokenConfigurations _tokenConfigurations = tokenOptions.Value;
 
@@ -80,7 +80,7 @@ public sealed class OidcDeviceCodeFlow(
             });
         }
         
-        var session = await _sessionManager.FindByIdAsync(sessionCookie.SessionId, cancellationToken);
+        var session = await _sessionQueryService.GetByIdAsync(sessionCookie.SessionId, cancellationToken);
         if (session is null || session.ExpireDate < DateTimeOffset.UtcNow)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error

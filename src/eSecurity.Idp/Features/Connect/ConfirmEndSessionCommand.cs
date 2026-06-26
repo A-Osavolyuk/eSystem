@@ -23,15 +23,15 @@ public sealed class ConfirmEndSessionCommandHandler(
     IEndSessionManager endSessionManager,
     IOptions<EndSessionOptions> options,
     IOptions<OpenIdConfiguration> configuration,
+    ISessionCommandService sessionCommandService,
     IBackchannelLogoutHandler backchannelLogoutHandler,
     IFrontChannelLogoutHandler frontChannelLogoutHandler,
-    ISessionManager sessionManager,
     IHttpContextAccessor httpContextAccessor) : IRequestHandler<ConfirmEndSessionCommand, Result>
 {
     private readonly IEndSessionManager _endSessionManager = endSessionManager;
+    private readonly ISessionCommandService _sessionCommandService = sessionCommandService;
     private readonly IBackchannelLogoutHandler _backchannelLogoutHandler = backchannelLogoutHandler;
     private readonly IFrontChannelLogoutHandler _frontChannelLogoutHandler = frontChannelLogoutHandler;
-    private readonly ISessionManager _sessionManager = sessionManager;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly EndSessionOptions _options = options.Value;
     private readonly OpenIdConfiguration _configuration = configuration.Value;
@@ -126,7 +126,7 @@ public sealed class ConfirmEndSessionCommandHandler(
             return frontchannelResult;
         }
 
-        var sessionResult = await _sessionManager.RemoveAsync(endSessionRequest.Session, cancellationToken);
+        var sessionResult = await _sessionCommandService.RemoveAsync(endSessionRequest.Session, cancellationToken);
         if (!sessionResult.Succeeded)
         {
             var error = sessionResult.GetError();

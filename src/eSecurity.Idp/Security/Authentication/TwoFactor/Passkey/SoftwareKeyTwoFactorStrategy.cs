@@ -29,22 +29,22 @@ public sealed class SoftwareKeyTwoFactorStrategy(
     IHttpContextAccessor httpContextAccessor,
     IDeviceManager deviceManager,
     ILockoutManager lockoutManager,
-    ISessionManager sessionManager,
     IOptions<SessionOptions> sessionOptions,
     IOptions<SignInOptions> signInOptions,
     IUserFailedLoginService failedLoginService,
     ISoftwareKeyQueryService softwareKeyQueryService,
     ISoftwareKeyCommandService softwareKeyCommandService,
+    ISessionCommandService sessionCommandService,
     ISessionCookieFactory sessionCookieFactory) : ITwoFactorStrategy<PasskeyTwoFactorContext>
 {
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
-    private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IUserFailedLoginService _failedLoginService = failedLoginService;
     private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
     private readonly ISoftwareKeyCommandService _softwareKeyCommandService = softwareKeyCommandService;
+    private readonly ISessionCommandService _sessionCommandService = sessionCommandService;
     private readonly ISessionCookieFactory _sessionCookieFactory = sessionCookieFactory;
     private readonly SessionOptions _sessionOptions = sessionOptions.Value;
     private readonly SignInOptions _signInOptions = signInOptions.Value;
@@ -168,7 +168,7 @@ public sealed class SoftwareKeyTwoFactorStrategy(
         };
 
         session.AddMethods(authenticationMethods);
-        await _sessionManager.CreateAsync(session, cancellationToken);
+        await _sessionCommandService.CreateAsync(session, cancellationToken);
 
         authenticationSession.SessionId = session.Id;
         authenticationSession.Pass(authenticationMethods);

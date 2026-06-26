@@ -21,20 +21,20 @@ public sealed class OAuthSignInStrategy(
     ILockoutManager lockoutManager,
     IHttpContextAccessor httpContextAccessor,
     ILinkedAccountManager linkedAccountManager,
-    ISessionManager sessionManager,
     IAuthenticationSessionManager authenticationSessionManager,
     ISoftwareKeyQueryService softwareKeyQueryService,
     ITwoFactorQueryService twoFactorQueryService,
+    ISessionCommandService sessionCommandService,
     IOptions<SessionOptions> options) : ISignInStrategy
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
     private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
-    private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
     private readonly ITwoFactorQueryService _twoFactorQueryService = twoFactorQueryService;
+    private readonly ISessionCommandService _sessionCommandService = sessionCommandService;
     private readonly SessionOptions _options = options.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
@@ -150,7 +150,7 @@ public sealed class OAuthSignInStrategy(
             };
             
             session.AddMethods(authenticationSession.AuthenticationMethods.Select(x => x.MethodReference));
-            await _sessionManager.CreateAsync(session, cancellationToken);
+            await _sessionCommandService.CreateAsync(session, cancellationToken);
             
             authenticationSession.SessionId = session.Id;
             var sessionResult = await _authenticationSessionManager.UpdateAsync(authenticationSession, cancellationToken);

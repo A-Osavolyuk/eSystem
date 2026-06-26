@@ -38,17 +38,17 @@ public sealed record EndSessionCommand : IRequest<Result>
 public sealed class EndSessionCommandHandler(
     IEndSessionManager endSessionManager,
     IOptions<EndSessionOptions> options,
-    ISessionManager sessionManager,
     ISessionAccessor sessionAccessor,
     IUserQueryService userQueryService,
     IClientQueryService clientQueryService,
+    ISessionQueryService sessionQueryService,
     ITokenValidationProvider tokenValidationProvider) : IRequestHandler<EndSessionCommand, Result>
 {
     private readonly IEndSessionManager _endSessionManager = endSessionManager;
-    private readonly ISessionManager _sessionManager = sessionManager;
     private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IClientQueryService _clientQueryService = clientQueryService;
+    private readonly ISessionQueryService _sessionQueryService = sessionQueryService;
     private readonly EndSessionOptions _options = options.Value;
     private readonly ITokenValidator _tokenValidator = tokenValidationProvider.CreateValidator(TokenKind.Jwt);
 
@@ -79,7 +79,7 @@ public sealed class EndSessionCommandHandler(
                 "No active session was found", request.State);
         }
 
-        var session = await _sessionManager.FindByIdAsync(sessionCookie.SessionId, cancellationToken);
+        var session = await _sessionQueryService.GetByIdAsync(sessionCookie.SessionId, cancellationToken);
         if (session is null)
         {
             return Fallback(redirectUri, ErrorCode.InvalidRequest,
@@ -164,7 +164,7 @@ public sealed class EndSessionCommandHandler(
             }
         }
 
-        if (!await _sessionManager.OwnClientAsync(session, client, cancellationToken))
+        if (!await _sessionQueryService.HasClientAsync(session.Id, client.Id, cancellationToken))
         {
             return Fallback(redirectUri, ErrorCode.InvalidRequest,
                 "client_id is invalid", request.State);

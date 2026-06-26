@@ -26,17 +26,15 @@ public sealed class IntrospectionCommandHandler(
     ITokenManager tokenManager,
     IUserQueryService userQueryService,
     IHasherProvider hasherProvider,
-    ISessionManager sessionManager,
     IOptions<TokenConfigurations> options,
     IClientQueryService clientQueryService,
-    IFormBindingProvider bindingProvider) : IRequestHandler<IntrospectionCommand, Result>
+    ISessionQueryService sessionQueryService) : IRequestHandler<IntrospectionCommand, Result>
 {
     private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IHasherProvider _hasherProvider = hasherProvider;
-    private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IClientQueryService _clientQueryService = clientQueryService;
-    private readonly IFormBindingProvider _bindingProvider = bindingProvider;
+    private readonly ISessionQueryService _sessionQueryService = sessionQueryService;
     private readonly TokenConfigurations _configurations = options.Value;
 
     public async Task<Result> Handle(IntrospectionCommand request, CancellationToken cancellationToken)
@@ -84,7 +82,7 @@ public sealed class IntrospectionCommandHandler(
         
         if (token.SessionId.HasValue)
         {
-            var session = await _sessionManager.FindByIdAsync(token.SessionId.Value, cancellationToken);
+            var session = await _sessionQueryService.GetByIdAsync(token.SessionId.Value, cancellationToken);
             if (session is null) return Results.Success(SuccessCodes.Ok, IntrospectionResponse.Fail());
             
             var user = await _userQueryService.GetByIdAsync(session.UserId, cancellationToken);

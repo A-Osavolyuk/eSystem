@@ -19,7 +19,6 @@ namespace eSecurity.Idp.Security.Authentication.SignIn.Strategies;
 
 public sealed class PasskeySignInStrategy(
     IUserQueryService userQueryService,
-    ISessionManager sessionManager,
     IDeviceManager deviceManager,
     ILockoutManager lockoutManager,
     IHttpContextAccessor accessor,
@@ -27,16 +26,16 @@ public sealed class PasskeySignInStrategy(
     IOptions<Session_SessionOptions> options,
     ISoftwareKeyQueryService softwareKeyQueryService,
     ISoftwareKeyCommandService softwareKeyCommandService,
+    ISessionCommandService sessionCommandService,
     ISessionCookieFactory sessionCookieFactory) : ISignInStrategy
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
-    private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
-    private readonly IHttpContextAccessor _accessor = accessor;
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
     private readonly ISoftwareKeyCommandService _softwareKeyCommandService = softwareKeyCommandService;
+    private readonly ISessionCommandService _sessionCommandService = sessionCommandService;
     private readonly ISessionCookieFactory _sessionCookieFactory = sessionCookieFactory;
     private readonly Session_SessionOptions _options = options.Value;
     private readonly HttpContext _httpContext = accessor.HttpContext!;
@@ -132,7 +131,7 @@ public sealed class PasskeySignInStrategy(
         };
         
         session.AddMethods(AuthenticationMethodReference.SoftwareKey);
-        await _sessionManager.CreateAsync(session, cancellationToken);
+        await _sessionCommandService.CreateAsync(session, cancellationToken);
         
         var authenticationSession = new AuthenticationSessionEntity
         {

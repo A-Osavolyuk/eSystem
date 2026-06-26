@@ -26,20 +26,20 @@ public sealed class RecoveryCodeTwoFactorStrategy(
     IHttpContextAccessor httpContextAccessor,
     IDeviceManager deviceManager,
     ILockoutManager lockoutManager,
-    ISessionManager sessionManager,
     IRecoverManager recoverManager,
     IOptions<Session_SessionOptions> sessionOptions,
     IOptions<SignInOptions> signInOptions,
     IUserFailedLoginService failedLoginService,
+    ISessionCommandService sessionCommandService,
     ISessionCookieFactory sessionCookieFactory) : ITwoFactorStrategy<RecoveryCodeTwoFactorContext>
 {
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
-    private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IRecoverManager _recoverManager = recoverManager;
     private readonly IUserFailedLoginService _failedLoginService = failedLoginService;
+    private readonly ISessionCommandService _sessionCommandService = sessionCommandService;
     private readonly ISessionCookieFactory _sessionCookieFactory = sessionCookieFactory;
     private readonly Session_SessionOptions _sessionOptions = sessionOptions.Value;
     private readonly SignInOptions _signInOptions = signInOptions.Value;
@@ -136,7 +136,7 @@ public sealed class RecoveryCodeTwoFactorStrategy(
         };
 
         session.AddMethods(authenticationMethods);
-        await _sessionManager.CreateAsync(session, cancellationToken);
+        await _sessionCommandService.CreateAsync(session, cancellationToken);
 
         authenticationSession.SessionId = session.Id;
         authenticationSession.Pass(authenticationMethods);

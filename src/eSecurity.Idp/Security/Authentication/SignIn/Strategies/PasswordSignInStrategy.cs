@@ -27,13 +27,13 @@ public sealed class PasswordSignInStrategy(
     IPasswordManager passwordManager,
     ILockoutManager lockoutManager,
     IDeviceManager deviceManager,
-    ISessionManager sessionManager,
     IHttpContextAccessor accessor,
     IAuthenticationSessionManager authenticationSessionManager,
     IOptions<SignInOptions> signInOptions,
     IOptions<SessionOptions> sessionOptions,
     ISoftwareKeyQueryService softwareKeyQueryService,
     ITwoFactorQueryService twoFactorQueryService,
+    ISessionCommandService sessionCommandService,
     ISessionCookieFactory sessionCookieFactory) : ISignInStrategy
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
@@ -42,10 +42,10 @@ public sealed class PasswordSignInStrategy(
     private readonly IPasswordManager _passwordManager = passwordManager;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
-    private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
     private readonly ITwoFactorQueryService _twoFactorQueryService = twoFactorQueryService;
+    private readonly ISessionCommandService _sessionCommandService = sessionCommandService;
     private readonly ISessionCookieFactory _sessionCookieFactory = sessionCookieFactory;
     private readonly SessionOptions _sessionOptions = sessionOptions.Value;
     private readonly HttpContext _httpContext = accessor.HttpContext!;
@@ -258,7 +258,7 @@ public sealed class PasswordSignInStrategy(
             };
 
             session.AddMethods(AuthenticationMethodReference.Password);
-            await _sessionManager.CreateAsync(session, cancellationToken);
+            await _sessionCommandService.CreateAsync(session, cancellationToken);
 
             authSession.SessionId = session.Id;
 

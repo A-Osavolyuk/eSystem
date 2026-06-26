@@ -22,15 +22,15 @@ public record GrantConsentCommand : IRequest<Result>
 public class GrantConsentCommandHandler(
     IUserQueryService userQueryService,
     IConsentManager consentManager,
-    ISessionManager sessionManager,
     IClientQueryService clientQueryService,
     IOptions<OpenIdConfiguration> options,
+    ISessionQueryService sessionQueryService,
     ISessionAccessor sessionAccessor) : IRequestHandler<GrantConsentCommand, Result>
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IConsentManager _consentManager = consentManager;
-    private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IClientQueryService _clientQueryService = clientQueryService;
+    private readonly ISessionQueryService _sessionQueryService = sessionQueryService;
     private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
     private readonly OpenIdConfiguration _options = options.Value;
 
@@ -46,7 +46,7 @@ public class GrantConsentCommandHandler(
             });
         }
         
-        var session = await _sessionManager.FindByIdAsync(sessionCookie.SessionId, cancellationToken);
+        var session = await _sessionQueryService.GetByIdAsync(sessionCookie.SessionId, cancellationToken);
         if (session is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error

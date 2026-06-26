@@ -31,22 +31,22 @@ public sealed class OAuthSignUpStrategy(
     ILinkedAccountManager providerManager,
     IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor,
-    ISessionManager sessionManager,
     IAuthenticationSessionManager authenticationSessionManager,
     IOptions<Session_SessionOptions> sessionOptions,
     IEmailQueryService emailQueryService,
     IEmailCommandService emailCommandService,
     IUserCommandService userCommandService,
+    ISessionCommandService sessionCommandService,
     IEmailService emailService) : ISignUpStrategy
 {
     private readonly IRoleManager _roleManager = roleManager;
     private readonly ILinkedAccountManager _providerManager = providerManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
-    private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly IEmailCommandService _emailCommandService = emailCommandService;
     private readonly IUserCommandService _userCommandService = userCommandService;
+    private readonly ISessionCommandService _sessionCommandService = sessionCommandService;
     private readonly IEmailService _emailService = emailService;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly Session_SessionOptions _sessionOptions = sessionOptions.Value;
@@ -163,7 +163,7 @@ public sealed class OAuthSignUpStrategy(
         };
         
         session.AddMethods(authenticationSession.AuthenticationMethods.Select(x => x.MethodReference));
-        await _sessionManager.CreateAsync(session, cancellationToken);
+        await _sessionCommandService.CreateAsync(session, cancellationToken);
         
         authenticationSession.OAuthFlow = OAuthFlow.SignUp;
         authenticationSession.UserId = user.Id;

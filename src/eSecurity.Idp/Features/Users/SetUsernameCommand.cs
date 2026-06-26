@@ -10,17 +10,17 @@ namespace eSecurity.Idp.Features.Users;
 public sealed record SetUsernameCommand(SetUsernameRequest Request) : IRequest<Result>;
 
 public sealed class SetUsernameCommandHandler(
-    ISessionManager sessionManager,
+    ISessionQueryService sessionQueryService,
     IUserQueryService userQueryService,
     IUsernameManager usernameManager) : IRequestHandler<SetUsernameCommand, Result>
 {
-    private readonly ISessionManager _sessionManager = sessionManager;
+    private readonly ISessionQueryService _sessionQueryService = sessionQueryService;
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IUsernameManager _usernameManager = usernameManager;
 
     public async Task<Result> Handle(SetUsernameCommand request, CancellationToken cancellationToken)
     {
-        var session = await _sessionManager.FindByIdAsync(request.Request.SessionId, cancellationToken);
+        var session = await _sessionQueryService.GetByIdAsync(request.Request.SessionId, cancellationToken);
         if (session is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error

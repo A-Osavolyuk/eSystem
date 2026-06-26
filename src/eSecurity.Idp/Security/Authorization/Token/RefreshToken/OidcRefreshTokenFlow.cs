@@ -16,15 +16,18 @@ namespace eSecurity.Idp.Security.Authorization.Token.RefreshToken;
 
 public sealed class OidcRefreshTokenFlow(
     IUserQueryService userQueryService,
-    ISessionManager sessionManager,
     ITokenFactoryProvider tokenFactoryProvider,
     IClientQueryService clientQueryService,
+    ISessionCommandService sessionCommandService,
+    ISessionQueryService sessionQueryService,
     IOptions<TokenConfigurations> options) : IRefreshTokenFlow
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
-    private readonly ISessionManager _sessionManager = sessionManager;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly IClientQueryService _clientQueryService = clientQueryService;
+    private readonly ISessionCommandService _sessionCommandService = sessionCommandService;
+    private readonly ISessionQueryService _sessionQueryService = sessionQueryService;
+    private readonly IOptions<TokenConfigurations> _options = options;
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(OpaqueTokenEntity token, RefreshTokenFlowContext flowContext,
@@ -39,7 +42,7 @@ public sealed class OidcRefreshTokenFlow(
             });
         }
 
-        var session = await _sessionManager.FindByIdAsync(token.SessionId.Value, cancellationToken);
+        var session = await _sessionQueryService.GetByIdAsync(token.SessionId.Value, cancellationToken);
         if (session is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error
@@ -51,7 +54,7 @@ public sealed class OidcRefreshTokenFlow(
 
         if (token.Revoked)
         {
-            var sessionResult = await _sessionManager.RemoveAsync(session, cancellationToken);
+            var sessionResult = await _sessionCommandService.RemoveAsync(session, cancellationToken);
             if (!sessionResult.Succeeded) return sessionResult;
 
             return Results.ClientError(ClientErrorCode.NotFound, new Error

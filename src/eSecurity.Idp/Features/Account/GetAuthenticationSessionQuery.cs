@@ -9,11 +9,11 @@ public sealed record GetAuthenticationSessionQuery(Guid Sid) : IRequest<Result>;
 
 public sealed class GetAuthenticationSessionQueryHandler(
     IAuthenticationSessionManager authenticationSessionManager,
-    ISessionManager sessionManager,
+    ISessionQueryService sessionQueryService,
     ISessionCookieFactory sessionCookieFactory) : IRequestHandler<GetAuthenticationSessionQuery, Result>
 {
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
-    private readonly ISessionManager _sessionManager = sessionManager;
+    private readonly ISessionQueryService _sessionQueryService = sessionQueryService;
     private readonly ISessionCookieFactory _sessionCookieFactory = sessionCookieFactory;
 
     public async Task<Result> Handle(GetAuthenticationSessionQuery request, 
@@ -57,7 +57,7 @@ public sealed class GetAuthenticationSessionQueryHandler(
 
         if (authenticationSession.SessionId.HasValue)
         {
-            var session = await _sessionManager.FindByIdAsync(authenticationSession.SessionId.Value, cancellationToken);
+            var session = await _sessionQueryService.GetByIdAsync(authenticationSession.SessionId.Value, cancellationToken);
             if (session is null)
             {
                 return Results.ClientError(ClientErrorCode.BadRequest, new Error

@@ -28,23 +28,23 @@ public sealed class AuthenticatorAppTwoFactorStrategy(
     IHttpContextAccessor httpContextAccessor,
     IDeviceManager deviceManager,
     ILockoutManager lockoutManager,
-    ISessionManager sessionManager,
     ISecretManager secretManager,
     IDataProtectionProvider protectionProvider,
     ISessionCookieFactory sessionCookieFactory,
     IOptions<SessionOptions> sessionOptions,
     IUserFailedLoginService failedLoginService,
+    ISessionCommandService sessionCommandService,
     IOptions<SignInOptions> signInOptions) : ITwoFactorStrategy<AuthenticatorTwoFactorContext>
 {
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
-    private readonly ISessionManager _sessionManager = sessionManager;
     private readonly ISecretManager _secretManager = secretManager;
     private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
     private readonly ISessionCookieFactory _sessionCookieFactory = sessionCookieFactory;
     private readonly IUserFailedLoginService _failedLoginService = failedLoginService;
+    private readonly ISessionCommandService _sessionCommandService = sessionCommandService;
     private readonly SignInOptions _signInOptions = signInOptions.Value;
     private readonly SessionOptions _sessionOptions = sessionOptions.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
@@ -152,7 +152,7 @@ public sealed class AuthenticatorAppTwoFactorStrategy(
         };
 
         session.AddMethods(authenticationSession.AuthenticationMethods.Select(x => x.MethodReference));
-        await _sessionManager.CreateAsync(session, cancellationToken);
+        await _sessionCommandService.CreateAsync(session, cancellationToken);
 
         authenticationSession.SessionId = session.Id;
         authenticationSession.Pass(authenticationMethods);

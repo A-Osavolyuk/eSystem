@@ -24,22 +24,22 @@ public sealed class CompleteSignUpCommand : IRequest<Result>
 
 public sealed class CompleteSignUpCommandHandler(
     IAuthenticationSessionManager authenticationSessionManager,
-    ISessionManager sessionManager,
     ICodeCommandService codeCommandService,
     ICodeQueryService codeQueryService,
     IEmailQueryService emailQueryService,
     IEmailCommandService emailCommandService,
     IOptions<SessionOptions> options,
     IUserQueryService userQueryService,
+    ISessionCommandService sessionCommandService,
     ISessionCookieFactory sessionCookieFactory) : IRequestHandler<CompleteSignUpCommand, Result>
 {
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
-    private readonly ISessionManager _sessionManager = sessionManager;
     private readonly ICodeCommandService _codeCommandService = codeCommandService;
     private readonly ICodeQueryService _codeQueryService = codeQueryService;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly IEmailCommandService _emailCommandService = emailCommandService;
     private readonly IUserQueryService _userQueryService = userQueryService;
+    private readonly ISessionCommandService _sessionCommandService = sessionCommandService;
     private readonly ISessionCookieFactory _sessionCookieFactory = sessionCookieFactory;
     private readonly SessionOptions _options = options.Value;
 
@@ -104,7 +104,7 @@ public sealed class CompleteSignUpCommandHandler(
         };
 
         session.AddMethods(AuthenticationMethodReference.EmailBasedAuthentication);
-        await _sessionManager.CreateAsync(session, cancellationToken);
+        await _sessionCommandService.CreateAsync(session, cancellationToken);
 
         authenticationSession.SessionId = session.Id;
         authenticationSession.Pass(AuthenticationMethodReference.EmailBasedAuthentication);

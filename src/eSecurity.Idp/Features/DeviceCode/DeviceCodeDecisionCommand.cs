@@ -26,18 +26,18 @@ public sealed record DeviceCodeDecisionCommand : IRequest<Result>
 
 public sealed class DeviceCodeDecisionCommandHandler(
     IDeviceCodeManager deviceCodeManager,
-    ISessionManager sessionManager,
     ICurrentUserAccessor currentUserAccessor,
     IConsentManager consentManager,
     IClientQueryService clientQueryService,
+    ISessionQueryService sessionQueryService,
     ISessionAccessor sessionAccessor) 
     : IRequestHandler<DeviceCodeDecisionCommand, Result>
 {
     private readonly IDeviceCodeManager _deviceCodeManager = deviceCodeManager;
-    private readonly ISessionManager _sessionManager = sessionManager;
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IConsentManager _consentManager = consentManager;
     private readonly IClientQueryService _clientQueryService = clientQueryService;
+    private readonly ISessionQueryService _sessionQueryService = sessionQueryService;
     private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
 
     public async Task<Result> Handle(DeviceCodeDecisionCommand request, CancellationToken cancellationToken)
@@ -80,7 +80,7 @@ public sealed class DeviceCodeDecisionCommandHandler(
         var sessionCookie = _sessionAccessor.GetCookie();
         if (sessionCookie is not null)
         {
-            var session = await _sessionManager.FindByIdAsync(sessionCookie.SessionId, cancellationToken);
+            var session = await _sessionQueryService.GetByIdAsync(sessionCookie.SessionId, cancellationToken);
             if (session is null)
             {
                 return Results.ClientError(ClientErrorCode.NotFound, new Error

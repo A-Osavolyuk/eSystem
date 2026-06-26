@@ -13,21 +13,21 @@ using eSystem.Core.Utilities.Query;
 namespace eSecurity.Idp.Security.Authorization.Prompt.Handlers;
 
 public sealed class ConsentPromptHandler(
-    ISessionManager sessionManager,
     IConsentManager consentManager,
     IUserQueryService userQueryService,
     IOptions<OpenIdConfiguration> options,
     ISessionAccessor sessionAccessor,
     IPromptStateFactory stateFactory,
     IClientQueryService clientQueryService,
+    ISessionQueryService sessionQueryService,
     RedirectManager redirectManager) : IPromptHandler
 {
-    private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IConsentManager _consentManager = consentManager;
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
     private readonly IPromptStateFactory _stateFactory = stateFactory;
     private readonly IClientQueryService _clientQueryService = clientQueryService;
+    private readonly ISessionQueryService _sessionQueryService = sessionQueryService;
     private readonly RedirectManager _redirectManager = redirectManager;
     private readonly OpenIdConfiguration _configuration = options.Value;
 
@@ -44,7 +44,7 @@ public sealed class ConsentPromptHandler(
             return PromptResult.Failed(Results.Redirect(RedirectionCode.Found, uri));
         }
 
-        var session = await _sessionManager.FindByIdAsync(sessionCookie.SessionId, cancellationToken);
+        var session = await _sessionQueryService.GetByIdAsync(sessionCookie.SessionId, cancellationToken);
         if (session is null)
         {
             var uri = _redirectManager.GetRedirectUri(context.RedirectUri, ErrorCode.LoginRequired, 

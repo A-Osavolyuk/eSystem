@@ -15,20 +15,20 @@ using eSystem.Core.Utilities.Query;
 namespace eSecurity.Idp.Security.Authorization.Prompt.Handlers;
 
 public sealed class NonePromptHandler(
-    ISessionManager sessionManager,
     IUserQueryService userQueryService,
     IConsentManager consentManager,
     IAuthorizationCodeManager authorizationCodeManager,
     ISessionAccessor sessionAccessor,
     IClientQueryService clientQueryService,
+    ISessionQueryService sessionQueryService,
     RedirectManager redirectManager) : IPromptHandler
 {
-    private readonly ISessionManager _sessionManager = sessionManager;
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IConsentManager _consentManager = consentManager;
     private readonly IAuthorizationCodeManager _authorizationCodeManager = authorizationCodeManager;
     private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
     private readonly IClientQueryService _clientQueryService = clientQueryService;
+    private readonly ISessionQueryService _sessionQueryService = sessionQueryService;
     private readonly RedirectManager _redirectManager = redirectManager;
 
     public bool CanHandle(PromptType promptType) => promptType == PromptType.None;
@@ -44,7 +44,7 @@ public sealed class NonePromptHandler(
             return PromptResult.Failed(Results.Redirect(RedirectionCode.Found, uri));
         }
         
-        var session = await _sessionManager.FindByIdAsync(sessionCookie.SessionId, cancellationToken);
+        var session = await _sessionQueryService.GetByIdAsync(sessionCookie.SessionId, cancellationToken);
         if (session is null)
         {
             var uri = _redirectManager.GetRedirectUri(context.RedirectUri, ErrorCode.LoginRequired, 
