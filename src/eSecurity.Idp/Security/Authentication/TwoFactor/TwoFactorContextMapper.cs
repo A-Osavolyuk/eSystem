@@ -1,8 +1,8 @@
-﻿using eSecurity.Idp.Security.Authentication.TwoFactor.Passkey;
-using eSecurity.Idp.Security.Authentication.TwoFactor.RecoveryCode;
+﻿using eSecurity.Idp.Security.Authentication.TwoFactor.RecoveryCode;
 using eSecurity.Core.Security.Authentication.SignIn;
 using eSecurity.Core.Security.Authentication.TwoFactor;
 using eSecurity.Idp.Security.Authentication.TwoFactor.AuthenticatorApp;
+using eSecurity.Idp.Security.Authentication.TwoFactor.SoftwareKey;
 
 namespace eSecurity.Idp.Security.Authentication.TwoFactor;
 
@@ -17,7 +17,7 @@ public sealed class TwoFactorContextMapper : ITwoFactorContextMapper
                 Code = authenticatorPayload.Code, 
                 TransactionId = payload.TransactionId
             },
-            PasskeyTwoFactorPayload passkeyPayload => new PasskeyTwoFactorContext
+            SoftwareKeyTwoFactorPayload passkeyPayload => new SoftwareKeyTwoFactorContext
             {
                 Credential = passkeyPayload.Credential, 
                 TransactionId = payload.TransactionId

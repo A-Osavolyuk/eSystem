@@ -5,5 +5,9 @@ public sealed class TwoFactorStrategyResolver(IServiceProvider serviceProvider) 
     private readonly IServiceProvider _serviceProvider = serviceProvider;
 
     public ITwoFactorStrategy<TContext> Resolve<TContext>(TContext context) where TContext : TwoFactorContext
-        => _serviceProvider.GetRequiredService<ITwoFactorStrategy<TContext>>();
+    {
+        var contextType = context.GetType();
+        var strategyType = typeof(ITwoFactorStrategy<>).MakeGenericType(contextType);
+        return (ITwoFactorStrategy<TContext>)_serviceProvider.GetRequiredService(strategyType);
+    }
 }

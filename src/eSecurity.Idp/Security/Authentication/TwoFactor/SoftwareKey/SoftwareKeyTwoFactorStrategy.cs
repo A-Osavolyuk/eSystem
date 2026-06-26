@@ -1,15 +1,15 @@
-﻿using eSecurity.Idp.Data.Entities;
+﻿using eSecurity.Core.Responses;
+using eSecurity.Core.Security.Authentication.Lockout;
+using eSecurity.Idp.Data.Entities;
+using eSecurity.Idp.Security.Authentication.AuthenticationSession;
 using eSecurity.Idp.Security.Authentication.Lockout;
 using eSecurity.Idp.Security.Authentication.Session;
 using eSecurity.Idp.Security.Authorization.Devices;
+using eSecurity.Idp.Security.Cookies;
+using eSecurity.Idp.Security.Credentials.PublicKey;
 using eSecurity.Idp.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Idp.Security.Identity.Options;
 using eSecurity.Idp.Security.Identity.User;
-using eSecurity.Core.Responses;
-using eSecurity.Core.Security.Authentication.Lockout;
-using eSecurity.Idp.Security.Authentication.AuthenticationSession;
-using eSecurity.Idp.Security.Cookies;
-using eSecurity.Idp.Security.Credentials.PublicKey;
 using eSecurity.WebAuthN;
 using eSecurity.WebAuthN.Constants;
 using eSystem.Core.Http.Extensions;
@@ -17,9 +17,9 @@ using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 
-namespace eSecurity.Idp.Security.Authentication.TwoFactor.Passkey;
+namespace eSecurity.Idp.Security.Authentication.TwoFactor.SoftwareKey;
 
-public sealed class PasskeyTwoFactorContext : TwoFactorContext
+public sealed class SoftwareKeyTwoFactorContext : TwoFactorContext
 {
     public required PublicKeyCredential Credential { get; set; }
 }
@@ -36,7 +36,7 @@ public sealed class SoftwareKeyTwoFactorStrategy(
     ISoftwareKeyQueryService softwareKeyQueryService,
     ISoftwareKeyCommandService softwareKeyCommandService,
     ISessionCommandService sessionCommandService,
-    ISessionCookieFactory sessionCookieFactory) : ITwoFactorStrategy<PasskeyTwoFactorContext>
+    ISessionCookieFactory sessionCookieFactory) : ITwoFactorStrategy<SoftwareKeyTwoFactorContext>
 {
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly IUserQueryService _userQueryService = userQueryService;
@@ -51,7 +51,7 @@ public sealed class SoftwareKeyTwoFactorStrategy(
     private readonly SignInOptions _signInOptions = signInOptions.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
-    public async ValueTask<Result> ExecuteAsync(PasskeyTwoFactorContext context,
+    public async ValueTask<Result> ExecuteAsync(SoftwareKeyTwoFactorContext context,
         CancellationToken cancellationToken = default)
     {
         var authenticationSession = await _authenticationSessionManager.FindByIdAsync(

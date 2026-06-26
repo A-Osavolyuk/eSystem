@@ -91,7 +91,7 @@
 
     private async Task SignInAsync(PublicKeyCredential credential)
     {
-        await OnSignIn.InvokeAsync(new PasskeyTwoFactorPayload
+        await OnSignIn.InvokeAsync(new SoftwareKeyTwoFactorPayload
         {
             Credential = credential
         });
