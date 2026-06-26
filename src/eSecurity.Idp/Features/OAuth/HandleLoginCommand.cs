@@ -18,12 +18,12 @@ public sealed record HandleLoginCommand(string? RemoteError, string ReturnUri) :
 
 public sealed class HandleOAuthLoginCommandHandler(
     IUserQueryService userQueryService,
-    ISignUpResolver signUpResolver,
+    ISignUpStrategyResolver signUpStrategyResolver,
     ISignInStrategyResolver signInStrategyResolver,
     IHttpContextAccessor contextAccessor) : IRequestHandler<HandleLoginCommand, Result>
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
-    private readonly ISignUpResolver _signUpResolver = signUpResolver;
+    private readonly ISignUpStrategyResolver _signUpStrategyResolver = signUpStrategyResolver;
     private readonly ISignInStrategyResolver _signInStrategyResolver = signInStrategyResolver;
     private readonly HttpContext _httpContext = contextAccessor.HttpContext!;
 
@@ -69,7 +69,6 @@ public sealed class HandleOAuthLoginCommandHandler(
         var user = await _userQueryService.GetByEmailAsync(email, cancellationToken);
         if (user is null)
         {
-            var signUpStrategy = _signUpResolver.Resolve(SignUpType.OAuth);
             var signUpPayload = new OAuthSignUpPayload
             {
                 Provider = linkedAccountType,
@@ -79,6 +78,7 @@ public sealed class HandleOAuthLoginCommandHandler(
                 Sid = Guid.Parse(sid)
             };
             
+            var signUpStrategy = _signUpStrategyResolver.Resolve(signUpPayload);
             var signUpResult = await signUpStrategy.ExecuteAsync(signUpPayload, cancellationToken);
             if (signUpResult.Succeeded) return signUpResult;
             

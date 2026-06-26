@@ -4,7 +4,14 @@ namespace eSecurity.Idp.Security.Identity.SignUp;
 
 public interface ISignUpStrategy
 {
-    public ValueTask<Result> ExecuteAsync(SignUpPayload payload, CancellationToken cancellationToken = default);
+    public Type PayloadType { get; }
+    
+    ValueTask<Result> ExecuteAsync(SignUpPayload payload, CancellationToken cancellationToken = default);
 }
 
-public abstract class SignUpPayload() {}
+public interface ISignUpStrategy<in TPayload> : ISignUpStrategy 
+    where TPayload : SignUpPayload
+{
+    ValueTask<Result> ExecuteAsync(TPayload payload, CancellationToken cancellationToken = default);
+}
+

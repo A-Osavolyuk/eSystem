@@ -38,7 +38,7 @@ public sealed class OAuthSignUpStrategy(
     IEmailCommandService emailCommandService,
     IUserCommandService userCommandService,
     ISessionCommandService sessionCommandService,
-    IEmailService emailService) : ISignUpStrategy
+    IEmailService emailService) : SignUpStrategy<OAuthSignUpPayload>
 {
     private readonly IRoleManager _roleManager = roleManager;
     private readonly ILinkedAccountManager _providerManager = providerManager;
@@ -52,19 +52,12 @@ public sealed class OAuthSignUpStrategy(
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly Session_SessionOptions _sessionOptions = sessionOptions.Value;
 
-    public async ValueTask<Result> ExecuteAsync(SignUpPayload payload,
+    public override Type PayloadType => typeof(OAuthSignUpPayload);
+
+    public override async ValueTask<Result> ExecuteAsync(OAuthSignUpPayload payload, 
         CancellationToken cancellationToken = default)
     {
-        if (payload is not OAuthSignUpPayload oauthPayload)
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error
-            {
-                Code = ErrorCode.InvalidPayloadType,
-                Description = "Invalid payload"
-            });
-        }
-
-        var authenticationSession = await _authenticationSessionManager.FindByIdAsync(oauthPayload.Sid, cancellationToken);
+        var authenticationSession = await _authenticationSessionManager.FindByIdAsync(payload.Sid, cancellationToken);
         if (authenticationSession is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -74,7 +67,7 @@ public sealed class OAuthSignUpStrategy(
             });
         }
 
-        var taken = await _emailQueryService.ExistsAsync(oauthPayload.Email, cancellationToken);
+        var taken = await _emailQueryService.ExistsAsync(payload.Email, cancellationToken);
         if (taken)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -84,11 +77,11 @@ public sealed class OAuthSignUpStrategy(
             });
         }
 
-        var user = new UserEntity(oauthPayload.Email);
+        var user = new UserEntity(payload.Email);
         var createResult = await _userCommandService.CreateAsync(user, cancellationToken: cancellationToken);
         if (!createResult.Succeeded) return createResult;
 
-        var setResult = await _emailCommandService.AddAsync(user.Id, oauthPayload.Email, 
+        var setResult = await _emailCommandService.AddAsync(user.Id, payload.Email, 
             EmailType.Primary, cancellationToken);
         
         if (!setResult.Succeeded) 
@@ -139,9 +132,9 @@ public sealed class OAuthSignUpStrategy(
 
         var emailContext = new OAuthSignedUpEmailContext()
         {
-            Subject = $"Sign Up with {oauthPayload.Provider.ToString()}",
+            Subject = $"Sign Up with {payload.Provider.ToString()}",
             To = email.Email,
-            Provider = oauthPayload.Provider.ToString()
+            Provider = payload.Provider.ToString()
         };
 
         await _emailService.SendAsync(emailContext, cancellationToken);
@@ -150,7 +143,7 @@ public sealed class OAuthSignUpStrategy(
         {
             Id = Guid.CreateVersion7(),
             UserId = user.Id,
-            Type = oauthPayload.Provider,
+            Type = payload.Provider,
         };
 
         var linkedAccountResult = await _providerManager.CreateAsync(userLinkedAccount, cancellationToken);
@@ -174,9 +167,9 @@ public sealed class OAuthSignUpStrategy(
         if (!sessionResult.Succeeded) return sessionResult;
         
         return Results.Redirect(RedirectionCode.Found, QueryBuilder.Create()
-            .WithUri(oauthPayload.ReturnUri)
+            .WithUri(payload.ReturnUri)
             .WithQueryParam("sid", authenticationSession.Id.ToString())
-            .WithQueryParam("state", oauthPayload.State)
+            .WithQueryParam("state", payload.State)
             .Build());
     }
 }

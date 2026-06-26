@@ -40,7 +40,7 @@ public sealed class ManualSignUpStrategy(
     IUserCommandService userCommandService,
     ICodeCommandService codeCommandService,
     IPasswordCommandService passwordCommandService,
-    IOptions<AccountOptions> options) : ISignUpStrategy
+    IOptions<AccountOptions> options) : SignUpStrategy<ManualSignUpPayload>
 {
     private readonly IUsernameManager _usernameManager = usernameManager;
     private readonly IRoleManager _roleManager = roleManager;
@@ -55,19 +55,12 @@ public sealed class ManualSignUpStrategy(
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly AccountOptions _options = options.Value;
 
-    public async ValueTask<Result> ExecuteAsync(SignUpPayload payload,
+    public override Type PayloadType => typeof(SignUpPayload);
+
+    public override async ValueTask<Result> ExecuteAsync(ManualSignUpPayload payload, 
         CancellationToken cancellationToken = default)
     {
-        if (payload is not ManualSignUpPayload manualPayload)
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error
-            {
-                Code = ErrorCode.BadRequest,
-                Description = "Incorrect payload type"
-            });
-        }
-        
-        if (await _usernameManager.IsTakenAsync(manualPayload.Username, cancellationToken))
+        if (await _usernameManager.IsTakenAsync(payload.Username, cancellationToken))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
@@ -76,7 +69,7 @@ public sealed class ManualSignUpStrategy(
             });
         }
 
-        if (await _emailQueryService.ExistsAsync(manualPayload.Email, cancellationToken))
+        if (await _emailQueryService.ExistsAsync(payload.Email, cancellationToken))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
@@ -85,15 +78,15 @@ public sealed class ManualSignUpStrategy(
             });
         }
 
-        var user = new UserEntity(manualPayload.Username);
+        var user = new UserEntity(payload.Username);
         var createResult = await _userCommandService.CreateAsync(user, cancellationToken);
         if (!createResult.Succeeded) return createResult;
 
-        var passwordResult = await _passwordCommandService.AddAsync(user.Id, manualPayload.Password, cancellationToken);
+        var passwordResult = await _passwordCommandService.AddAsync(user.Id, payload.Password, cancellationToken);
         if (!passwordResult.Succeeded) return passwordResult;
 
         var setResult = await _emailCommandService.AddAsync(user.Id, 
-            manualPayload.Email, EmailType.Primary, cancellationToken);
+            payload.Email, EmailType.Primary, cancellationToken);
 
         if (!setResult.Succeeded) return setResult;
 
@@ -149,7 +142,7 @@ public sealed class ManualSignUpStrategy(
         var emailContext = new CodeVerificationEmailContext
         {
             Subject = "Sign Up",
-            To = manualPayload.Email,
+            To = payload.Email,
             Code = code
         };
 

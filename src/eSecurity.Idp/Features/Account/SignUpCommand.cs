@@ -19,9 +19,9 @@ public sealed record SignUpCommand : IRequest<Result>
     public string? Password { get; set; }
 }
 
-public sealed class SignUpCommandHandler(ISignUpResolver resolver) : IRequestHandler<SignUpCommand, Result>
+public sealed class SignUpCommandHandler(ISignUpStrategyResolver strategyResolver) : IRequestHandler<SignUpCommand, Result>
 {
-    private readonly ISignUpResolver _resolver = resolver;
+    private readonly ISignUpStrategyResolver _strategyResolver = strategyResolver;
 
     public async Task<Result> Handle(SignUpCommand request,
         CancellationToken cancellationToken)
@@ -35,7 +35,6 @@ public sealed class SignUpCommandHandler(ISignUpResolver resolver) : IRequestHan
         if (string.IsNullOrWhiteSpace(request.Password))
             throw new ValidationException("Password is required");
         
-        var strategy = _resolver.Resolve(SignUpType.Manual);
         var payload = new ManualSignUpPayload
         {
             Username = request.Username,
@@ -43,6 +42,7 @@ public sealed class SignUpCommandHandler(ISignUpResolver resolver) : IRequestHan
             Password = request.Password
         };
         
+        var strategy = _strategyResolver.Resolve(payload);
         return await strategy.ExecuteAsync(payload, cancellationToken);
     }
 }

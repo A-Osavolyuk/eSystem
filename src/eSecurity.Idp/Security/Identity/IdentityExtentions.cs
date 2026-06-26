@@ -3,7 +3,7 @@ using eSecurity.Idp.Security.Identity.Options;
 using eSecurity.Idp.Security.Identity.Privacy;
 using eSecurity.Idp.Security.Identity.User;
 using eSecurity.Idp.Security.Identity.User.Username;
-using eSecurity.Idp.Security.Identity.SignUp;
+using eSecurity.Idp.Security.Identity.SignUp.Extensions;
 using eSecurity.Idp.Security.Identity.Subject;
 
 namespace eSecurity.Idp.Security.Identity;
