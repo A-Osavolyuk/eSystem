@@ -13,28 +13,25 @@ public sealed class SignInCommand : IRequest<Result>
     public SignInPayload? Payload { get; set; } = null!;
 }
 
-public class SignInCommandHandler(ISignInResolver signInResolver) : IRequestHandler<SignInCommand, Result>
+public class SignInCommandHandler(ISignInStrategyResolver signInStrategyResolver) : IRequestHandler<SignInCommand, Result>
 {
-    private readonly ISignInResolver _signInResolver = signInResolver;
+    private readonly ISignInStrategyResolver _signInStrategyResolver = signInStrategyResolver;
 
     public async Task<Result> Handle(SignInCommand request, CancellationToken cancellationToken)
     {
-        var type = request.Payload switch
-        {
-            PasswordSignInPayload => SignInType.Password,
-            PasskeySignInPayload => SignInType.Passkey,
-            OAuthSignInPayload => SignInType.OAuth,
-            TwoFactorSignInPayload => SignInType.TwoFactor,
-            _ => throw new NotSupportedException("Unknown payload")
-        };
+        if (request.Payload is null)
+            throw new ValidationException("Payload is required");
         
-        if (type == SignInType.OAuth) return Results.ClientError(ClientErrorCode.BadRequest, new Error
+        if (request.Payload is OAuthSignInPayload)
         {
-            Code = ErrorCode.BadRequest,
-            Description = "Unsupported for manual call"
-        });
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error
+            {
+                Code = ErrorCode.BadRequest,
+                Description = "Unsupported for manual call"
+            });
+        }
         
-        var strategy = _signInResolver.Resolve(type);
+        var strategy = _signInStrategyResolver.Resolve(request.Payload);
         return await strategy.ExecuteAsync(request.Payload, cancellationToken);
     }
 }

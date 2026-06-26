@@ -4,7 +4,7 @@ namespace eSecurity.Core.Security.Authentication.SignIn;
 
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
 [JsonDerivedType(typeof(PasswordSignInPayload), typeDiscriminator: "password")]
-[JsonDerivedType(typeof(PasskeySignInPayload), typeDiscriminator: "passkey")]
+[JsonDerivedType(typeof(SoftwareKeySignInPayload), typeDiscriminator: "software_key")]
 [JsonDerivedType(typeof(OAuthSignInPayload), typeDiscriminator: "oauth")]
-[JsonDerivedType(typeof(TwoFactorSignInPayload), typeDiscriminator: "twoFactor")]
+[JsonDerivedType(typeof(TwoFactorSignInPayload), typeDiscriminator: "two_factor")]
 public abstract class SignInPayload { }

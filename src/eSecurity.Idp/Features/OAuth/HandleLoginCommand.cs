@@ -19,12 +19,12 @@ public sealed record HandleLoginCommand(string? RemoteError, string ReturnUri) :
 public sealed class HandleOAuthLoginCommandHandler(
     IUserQueryService userQueryService,
     ISignUpResolver signUpResolver,
-    ISignInResolver signInResolver,
+    ISignInStrategyResolver signInStrategyResolver,
     IHttpContextAccessor contextAccessor) : IRequestHandler<HandleLoginCommand, Result>
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly ISignUpResolver _signUpResolver = signUpResolver;
-    private readonly ISignInResolver _signInResolver = signInResolver;
+    private readonly ISignInStrategyResolver _signInStrategyResolver = signInStrategyResolver;
     private readonly HttpContext _httpContext = contextAccessor.HttpContext!;
 
     public async Task<Result> Handle(HandleLoginCommand request,
@@ -100,7 +100,7 @@ public sealed class HandleOAuthLoginCommandHandler(
             Sid = Guid.Parse(sid)
         };
         
-        var strategy = _signInResolver.Resolve(SignInType.OAuth);
+        var strategy = _signInStrategyResolver.Resolve(signInPayload);
         var signInResult = await strategy.ExecuteAsync(signInPayload, cancellationToken);
         if (signInResult.Succeeded) return signInResult;
         

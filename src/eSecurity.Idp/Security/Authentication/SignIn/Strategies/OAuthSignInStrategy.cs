@@ -26,7 +26,7 @@ public sealed class OAuthSignInStrategy(
     ISoftwareKeyQueryService softwareKeyQueryService,
     ITwoFactorQueryService twoFactorQueryService,
     ISessionCommandService sessionCommandService,
-    IOptions<SessionOptions> options) : ISignInStrategy
+    IOptions<SessionOptions> options) : SignInStrategy<OAuthSignInPayload>
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IDeviceManager _deviceManager = deviceManager;
@@ -39,19 +39,12 @@ public sealed class OAuthSignInStrategy(
     private readonly SessionOptions _options = options.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
-    public async ValueTask<Result> ExecuteAsync(SignInPayload payload,
+    public override Type PayloadType => typeof(OAuthSignInPayload);
+
+    public override async ValueTask<Result> ExecuteAsync(OAuthSignInPayload payload,
         CancellationToken cancellationToken = default)
     {
-        if (payload is not OAuthSignInPayload oauthPayload)
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error
-            {
-                Code = ErrorCode.InvalidPayloadType,
-                Description = "Invalid payload"
-            });
-        }
-
-        var authenticationSession = await _authenticationSessionManager.FindByIdAsync(oauthPayload.Sid, cancellationToken);
+        var authenticationSession = await _authenticationSessionManager.FindByIdAsync(payload.Sid, cancellationToken);
         if (authenticationSession is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -61,7 +54,7 @@ public sealed class OAuthSignInStrategy(
             });
         }
 
-        var user = await _userQueryService.GetByEmailAsync(oauthPayload.Email, cancellationToken);
+        var user = await _userQueryService.GetByEmailAsync(payload.Email, cancellationToken);
         if (user is null)
         {
             return Results.ClientError(ClientErrorCode.NotAcceptable, new Error
@@ -112,21 +105,21 @@ public sealed class OAuthSignInStrategy(
                 Description = "State not found"
             });
         }
-        
-        var linkedAccount = await _linkedAccountManager.GetAsync(user, oauthPayload.Provider, cancellationToken);
+
+        var linkedAccount = await _linkedAccountManager.GetAsync(user, payload.Provider, cancellationToken);
         if (linkedAccount is null)
         {
             linkedAccount = new UserLinkedAccountEntity
             {
                 Id = Guid.CreateVersion7(),
                 UserId = user.Id,
-                Type = oauthPayload.Provider
+                Type = payload.Provider
             };
-            
+
             var connectResult = await _linkedAccountManager.CreateAsync(linkedAccount, cancellationToken);
             if (!connectResult.Succeeded) return connectResult;
         }
-        
+
         authenticationSession.OAuthFlow = OAuthFlow.SignIn;
         authenticationSession.UserId = user.Id;
 
@@ -137,8 +130,9 @@ public sealed class OAuthSignInStrategy(
             authenticationSession.AllowMfa(softwareKeys.Count > 0
                 ? [AuthenticationMethodReference.SoftwareKey, AuthenticationMethodReference.OneTimePassword]
                 : [AuthenticationMethodReference.OneTimePassword]);
-            
-            var sessionResult = await _authenticationSessionManager.UpdateAsync(authenticationSession, cancellationToken);
+
+            var sessionResult =
+                await _authenticationSessionManager.UpdateAsync(authenticationSession, cancellationToken);
             if (!sessionResult.Succeeded) return sessionResult;
         }
         else
@@ -149,19 +143,20 @@ public sealed class OAuthSignInStrategy(
                 UserId = user.Id,
                 ExpireDate = DateTimeOffset.UtcNow.Add(_options.Timestamp),
             };
-            
+
             session.AddMethods(authenticationSession.AuthenticationMethods.Select(x => x.MethodReference));
             await _sessionCommandService.CreateAsync(session, cancellationToken);
-            
+
             authenticationSession.SessionId = session.Id;
-            var sessionResult = await _authenticationSessionManager.UpdateAsync(authenticationSession, cancellationToken);
+            var sessionResult =
+                await _authenticationSessionManager.UpdateAsync(authenticationSession, cancellationToken);
             if (!sessionResult.Succeeded) return sessionResult;
         }
 
         return Results.Redirect(RedirectionCode.Found, QueryBuilder.Create()
-            .WithUri(oauthPayload.ReturnUri)
+            .WithUri(payload.ReturnUri)
             .WithQueryParam("sid", authenticationSession.Id.ToString())
-            .WithQueryParam("state", oauthPayload.State)
+            .WithQueryParam("state", payload.State)
             .Build());
     }
 }

@@ -36,7 +36,7 @@ public sealed class PasswordSignInStrategy(
     ISessionCommandService sessionCommandService,
     IPasswordQueryService passwordQueryService,
     IPasswordCommandService passwordCommandService,
-    ISessionCookieFactory sessionCookieFactory) : ISignInStrategy
+    ISessionCookieFactory sessionCookieFactory) : SignInStrategy<PasswordSignInPayload>
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IUserFailedLoginService _failedLoginService = failedLoginService;
@@ -54,32 +54,25 @@ public sealed class PasswordSignInStrategy(
     private readonly HttpContext _httpContext = accessor.HttpContext!;
     private readonly SignInOptions _signInOptions = signInOptions.Value;
 
-    public async ValueTask<Result> ExecuteAsync(SignInPayload payload,
+    public override Type PayloadType => typeof(PasswordSignInPayload);
+
+    public override async ValueTask<Result> ExecuteAsync(PasswordSignInPayload payload,
         CancellationToken cancellationToken = default)
     {
         UserEntity? user = null;
 
-        if (payload is not PasswordSignInPayload passwordPayload)
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error
-            {
-                Code = ErrorCode.InvalidPayloadType,
-                Description = "Invalid payload type"
-            });
-        }
-
         if (_signInOptions.AllowUserNameLogin)
-            user = await _userQueryService.GetByUsernameAsync(passwordPayload.Login, cancellationToken);
+            user = await _userQueryService.GetByUsernameAsync(payload.Login, cancellationToken);
 
         if (user is null && _signInOptions.AllowEmailLogin)
-            user = await _userQueryService.GetByEmailAsync(passwordPayload.Login, cancellationToken);
+            user = await _userQueryService.GetByEmailAsync(payload.Login, cancellationToken);
 
         if (user is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error
             {
                 Code = ErrorCode.NotFound,
-                Description = $"Cannot find user with login {passwordPayload.Login}."
+                Description = $"Cannot find user with login {payload.Login}."
             });
         }
 
@@ -164,7 +157,8 @@ public sealed class PasswordSignInStrategy(
             });
         }
 
-        var passwordResult = await _passwordCommandService.VerifyAsync(user.Id, passwordPayload.Password, cancellationToken);
+        var passwordResult =
+            await _passwordCommandService.VerifyAsync(user.Id, payload.Password, cancellationToken);
         if (!passwordResult.Succeeded)
         {
             var updateResult = await _failedLoginService.IncrementAttemptAsync(user, cancellationToken);
@@ -232,11 +226,11 @@ public sealed class PasswordSignInStrategy(
             AuthenticationMethodReference[] mfaMethods = softwareKeys.Count > 0
                 ? [AuthenticationMethodReference.OneTimePassword, AuthenticationMethodReference.SoftwareKey]
                 : [AuthenticationMethodReference.OneTimePassword];
-            
+
             var requiredMfaMethod = softwareKeys.Count > 0
                 ? AuthenticationMethodReference.SoftwareKey
                 : AuthenticationMethodReference.OneTimePassword;
-                
+
             authSession.RequireMfa = true;
             authSession.Require(requiredMfaMethod);
             authSession.AllowMfa(mfaMethods);
@@ -246,10 +240,10 @@ public sealed class PasswordSignInStrategy(
 
             var response = new SignInResponse
             {
-                TransactionId = authSession.Id, 
+                TransactionId = authSession.Id,
                 Require2Fa = true
             };
-            
+
             return Results.Success(SuccessCodes.Ok, response);
         }
         else
@@ -277,7 +271,7 @@ public sealed class PasswordSignInStrategy(
                 SameSite = SameSiteMode.Lax,
                 Expires = DateTimeOffset.UtcNow.AddDays(30),
             });
-            
+
             return Results.Success(SuccessCodes.Ok, new SignInResponse
             {
                 TransactionId = authSession.Id,

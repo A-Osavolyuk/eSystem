@@ -14,11 +14,12 @@ using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
+using eSystem.Core.Server.Exceptions;
 using Session_SessionOptions = eSecurity.Idp.Security.Authentication.Session.SessionOptions;
 
 namespace eSecurity.Idp.Security.Authentication.SignIn.Strategies;
 
-public sealed class PasskeySignInStrategy(
+public sealed class SoftwareKeySignInStrategy(
     IUserQueryService userQueryService,
     IDeviceManager deviceManager,
     ILockoutManager lockoutManager,
@@ -28,7 +29,7 @@ public sealed class PasskeySignInStrategy(
     ISoftwareKeyQueryService softwareKeyQueryService,
     ISoftwareKeyCommandService softwareKeyCommandService,
     ISessionCommandService sessionCommandService,
-    ISessionCookieFactory sessionCookieFactory) : ISignInStrategy
+    ISessionCookieFactory sessionCookieFactory) : SignInStrategy<SoftwareKeySignInPayload>
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IDeviceManager _deviceManager = deviceManager;
@@ -41,20 +42,15 @@ public sealed class PasskeySignInStrategy(
     private readonly Session_SessionOptions _options = options.Value;
     private readonly HttpContext _httpContext = accessor.HttpContext!;
 
-    public async ValueTask<Result> ExecuteAsync(SignInPayload payload,
+    public override Type PayloadType => typeof(SoftwareKeySignInPayload);
+
+    public override async ValueTask<Result> ExecuteAsync(SoftwareKeySignInPayload payload, 
         CancellationToken cancellationToken = default)
     {
-        if (payload is not PasskeySignInPayload passkeyPayload || 
-            passkeyPayload.Credential is null)
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error
-            {
-                Code = ErrorCode.InvalidPayloadType, 
-                Description = "Invalid payload type"
-            });
-        }
+        if (payload.Credential is null)
+            throw new ValidationException("Credential is required");
 
-        var credential = passkeyPayload.Credential;
+        var credential = payload.Credential;
         var credentialId = CredentialUtils.ToBase64String(credential.Id);
         var passkey = await _softwareKeyQueryService.GetByCredentialIdAsync(credentialId, cancellationToken);
         if (passkey is null)

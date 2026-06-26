@@ -5,25 +5,19 @@ using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Idp.Security.Authentication.SignIn.Strategies;
 
-public class TwoFactorSignInStrategy(
+public sealed class TwoFactorSignInStrategy(
     ITwoFactorContextMapper mapper,
-    ITwoFactorStrategyResolver resolver) : ISignInStrategy
+    ITwoFactorStrategyResolver resolver) : SignInStrategy<TwoFactorSignInPayload>
 {
     private readonly ITwoFactorContextMapper _mapper = mapper;
     private readonly ITwoFactorStrategyResolver _resolver = resolver;
 
-    public async ValueTask<Result> ExecuteAsync(SignInPayload payload, CancellationToken cancellationToken = default)
-    {
-        if (payload is not TwoFactorSignInPayload twoFactorPayload)
-        {
-            return Results.ClientError(ClientErrorCode.BadRequest, new Error
-            {
-                Code = ErrorCode.InvalidPayloadType,
-                Description = "Invalid payload type"
-            });
-        }
+    public override Type PayloadType => typeof(TwoFactorSignInPayload);
 
-        var context = _mapper.Map(twoFactorPayload);
+    public override async ValueTask<Result> ExecuteAsync(TwoFactorSignInPayload payload, 
+        CancellationToken cancellationToken = default)
+    {
+        var context = _mapper.Map(payload);
         var strategy = _resolver.Resolve(context);
         return await strategy.ExecuteAsync(context, cancellationToken);
     }

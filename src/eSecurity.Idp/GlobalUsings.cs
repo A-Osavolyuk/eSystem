@@ -10,3 +10,4 @@ global using Microsoft.IdentityModel.Tokens;
 global using OAuthFlow = eSecurity.Core.Security.Authorization.OAuth.OAuthFlow;
 global using Results = eSystem.Core.Primitives.Results;
 global using SessionOptions = eSecurity.Idp.Security.Authentication.Session.SessionOptions;
+global using ValidationException = eSystem.Core.Server.Exceptions.ValidationException;

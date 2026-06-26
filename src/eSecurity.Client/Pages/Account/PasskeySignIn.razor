@@ -98,7 +98,7 @@ else
             var credential = authenticateResult.Get<PublicKeyCredential>();
             var request = new SignInRequest
             {
-                Payload = new PasskeySignInPayload
+                Payload = new SoftwareKeySignInPayload
                 {
                     Credential = credential
                 }

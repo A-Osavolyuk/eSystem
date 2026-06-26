@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace eSecurity.Idp.Common.Validation.Validators.Account;
 
-public sealed class PasskeySignInPayloadValidator : AbstractValidator<PasskeySignInPayload>
+public sealed class PasskeySignInPayloadValidator : AbstractValidator<SoftwareKeySignInPayload>
 {
     public PasskeySignInPayloadValidator()
     {
