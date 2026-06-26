@@ -1,9 +1,10 @@
 ﻿using eSecurity.Idp.Data;
 using eSecurity.Idp.Data.Entities;
+using eSecurity.Idp.Security.Authentication.Session;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 
-namespace eSecurity.Idp.Security.Authentication.Session;
+namespace eSecurity.Idp.Security.Authentication.AuthenticationSession;
 
 public sealed class AuthenticationSessionManager(AuthDbContext context) : IAuthenticationSessionManager
 {

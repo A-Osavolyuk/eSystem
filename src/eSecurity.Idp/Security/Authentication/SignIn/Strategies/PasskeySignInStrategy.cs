@@ -7,6 +7,7 @@ using eSecurity.Idp.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Idp.Security.Identity.User;
 using eSecurity.Core.Responses;
 using eSecurity.Core.Security.Authentication.SignIn;
+using eSecurity.Idp.Security.Authentication.AuthenticationSession;
 using eSecurity.Idp.Security.Cookies;
 using eSecurity.WebAuthN.Constants;
 using eSystem.Core.Http.Extensions;

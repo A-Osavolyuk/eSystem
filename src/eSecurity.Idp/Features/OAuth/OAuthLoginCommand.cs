@@ -1,5 +1,6 @@
 ﻿using eSecurity.Idp.Common.Responses;
 using eSecurity.Idp.Data.Entities;
+using eSecurity.Idp.Security.Authentication.AuthenticationSession;
 using eSecurity.Idp.Security.Authentication.Session;
 using eSecurity.Idp.Security.Identity.Options;
 using eSystem.Core.Primitives;

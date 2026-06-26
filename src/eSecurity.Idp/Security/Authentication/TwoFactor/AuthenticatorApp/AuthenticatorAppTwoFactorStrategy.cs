@@ -1,6 +1,7 @@
 ﻿using eSecurity.Core.Responses;
 using eSecurity.Core.Security.Authentication.Lockout;
 using eSecurity.Idp.Data.Entities;
+using eSecurity.Idp.Security.Authentication.AuthenticationSession;
 using eSecurity.Idp.Security.Authentication.Lockout;
 using eSecurity.Idp.Security.Authentication.Session;
 using eSecurity.Idp.Security.Authentication.TwoFactor.Secret;

@@ -1,7 +1,7 @@
 ﻿using eSecurity.Idp.Data.Entities;
 using eSystem.Core.Primitives;
 
-namespace eSecurity.Idp.Security.Authentication.Session;
+namespace eSecurity.Idp.Security.Authentication.AuthenticationSession;
 
 public interface IAuthenticationSessionManager
 {

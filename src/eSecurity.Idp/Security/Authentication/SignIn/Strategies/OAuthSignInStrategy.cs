@@ -6,6 +6,7 @@ using eSecurity.Idp.Security.Authorization.Devices;
 using eSecurity.Idp.Security.Credentials.PublicKey;
 using eSecurity.Idp.Security.Identity.User;
 using eSecurity.Core.Security.Authentication.SignIn;
+using eSecurity.Idp.Security.Authentication.AuthenticationSession;
 using eSecurity.Idp.Security.Authorization.LinkedAccount;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;

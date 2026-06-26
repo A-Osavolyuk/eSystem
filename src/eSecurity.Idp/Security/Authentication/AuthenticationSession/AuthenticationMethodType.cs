@@ -2,7 +2,7 @@
 using eSystem.Core.Enums;
 using eSystem.Core.Enums.Serialization;
 
-namespace eSecurity.Idp.Security.Authentication.Session;
+namespace eSecurity.Idp.Security.Authentication.AuthenticationSession;
 
 [JsonConverter(typeof(JsonEnumValueConverter<AuthenticationMethodType>))]
 public enum AuthenticationMethodType

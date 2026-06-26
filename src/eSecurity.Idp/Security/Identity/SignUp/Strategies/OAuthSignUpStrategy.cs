@@ -8,6 +8,7 @@ using eSecurity.Core.Security.Authorization.OAuth;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Idp.Common.Messaging.Email;
 using eSecurity.Idp.Common.Messaging.Email.Builders;
+using eSecurity.Idp.Security.Authentication.AuthenticationSession;
 using eSecurity.Idp.Security.Authorization.LinkedAccount;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;

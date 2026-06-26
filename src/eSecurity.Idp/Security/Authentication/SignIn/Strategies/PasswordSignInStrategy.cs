@@ -13,6 +13,7 @@ using eSecurity.Core.Responses;
 using eSecurity.Core.Security.Authentication.Lockout;
 using eSecurity.Core.Security.Authentication.SignIn;
 using eSecurity.Core.Security.Identity;
+using eSecurity.Idp.Security.Authentication.AuthenticationSession;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;

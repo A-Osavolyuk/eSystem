@@ -6,6 +6,7 @@ using eSecurity.Idp.Security.Identity.Options;
 using eSecurity.Idp.Security.Identity.User;
 using eSecurity.Core.Responses;
 using eSecurity.Core.Security.Authentication.Lockout;
+using eSecurity.Idp.Security.Authentication.AuthenticationSession;
 using eSecurity.Idp.Security.Cookies;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;

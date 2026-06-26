@@ -1,4 +1,5 @@
 ﻿using eSecurity.Core.DTOs;
+using eSecurity.Idp.Security.Authentication.AuthenticationSession;
 using eSecurity.Idp.Security.Authentication.Session;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;

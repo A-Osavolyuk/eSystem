@@ -1,4 +1,5 @@
-﻿using eSecurity.Idp.Security.Authentication.BackchannelAuthentication;
+﻿using eSecurity.Idp.Security.Authentication.AuthenticationSession;
+using eSecurity.Idp.Security.Authentication.BackchannelAuthentication;
 using eSecurity.Idp.Security.Authentication.Ciba;
 using eSecurity.Idp.Security.Authentication.Client;
 using eSecurity.Idp.Security.Authentication.EndSession;

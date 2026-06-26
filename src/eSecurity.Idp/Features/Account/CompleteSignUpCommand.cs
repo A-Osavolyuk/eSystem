@@ -2,6 +2,7 @@
 using eSecurity.Core.Responses;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Idp.Data.Entities;
+using eSecurity.Idp.Security.Authentication.AuthenticationSession;
 using eSecurity.Idp.Security.Authentication.Session;
 using eSecurity.Idp.Security.Authorization.Codes;
 using eSecurity.Idp.Security.Identity.Email;
