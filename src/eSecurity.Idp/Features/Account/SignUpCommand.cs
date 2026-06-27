@@ -3,7 +3,6 @@ using eSecurity.Idp.Security.Identity.SignUp;
 using eSecurity.Idp.Security.Identity.SignUp.Strategies;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Server.Exceptions;
 
 namespace eSecurity.Idp.Features.Account;
 

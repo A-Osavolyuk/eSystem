@@ -10,12 +10,10 @@ using eSecurity.Core.Security.Authentication.SignIn;
 using eSecurity.Idp.Security.Authentication.AuthenticationSession;
 using eSecurity.Idp.Security.Cookies;
 using eSecurity.Idp.Security.Credentials.PublicKey.Challenge;
-using eSecurity.WebAuthN.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
-using eSystem.Core.Server.Exceptions;
 using Session_SessionOptions = eSecurity.Idp.Security.Authentication.Session.SessionOptions;
 
 namespace eSecurity.Idp.Security.Authentication.SignIn.Strategies;

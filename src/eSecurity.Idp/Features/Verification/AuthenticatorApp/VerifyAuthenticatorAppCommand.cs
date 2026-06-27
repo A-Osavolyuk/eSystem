@@ -9,7 +9,6 @@ using eSecurity.Idp.Security.Cryptography.Protection.Constants;
 using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Server.Exceptions;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace eSecurity.Idp.Features.Verification.AuthenticatorApp;

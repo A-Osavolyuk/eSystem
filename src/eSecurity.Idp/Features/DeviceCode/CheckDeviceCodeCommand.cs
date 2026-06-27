@@ -3,7 +3,6 @@ using eSecurity.Core.Responses;
 using eSecurity.Idp.Security.Authorization.Token.DeviceCode;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Server.Exceptions;
 
 namespace eSecurity.Idp.Features.DeviceCode;
 

@@ -8,7 +8,6 @@ using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 using eSystem.Core.Security.Authorization.OAuth;
-using eSystem.Core.Server.Binding;
 using eSystem.Core.Server.Security.Authorization.OAuth.Introspection;
 
 namespace eSecurity.Idp.Features.Connect;

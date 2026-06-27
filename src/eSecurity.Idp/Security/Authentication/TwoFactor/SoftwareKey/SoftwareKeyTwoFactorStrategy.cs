@@ -12,7 +12,6 @@ using eSecurity.Idp.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Idp.Security.Identity.Options;
 using eSecurity.Idp.Security.Identity.User;
 using eSecurity.WebAuthN;
-using eSecurity.WebAuthN.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;

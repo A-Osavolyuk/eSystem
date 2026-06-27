@@ -1,5 +1,4 @@
 ﻿using eSecurity.Idp.Data.Entities;
-using eSystem.Core.Server.Data.Conversion;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace eSecurity.Idp.Data.Configurations;

@@ -1,7 +1,6 @@
 ﻿using eSecurity.Idp.Security.Authentication.TwoFactor;
 using eSecurity.Core.Security.Authentication.SignIn;
 using eSystem.Core.Primitives;
-using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Idp.Security.Authentication.SignIn.Strategies;
 

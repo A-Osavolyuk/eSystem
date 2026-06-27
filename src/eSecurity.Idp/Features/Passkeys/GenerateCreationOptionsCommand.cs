@@ -8,8 +8,6 @@ using eSecurity.WebAuthN.Constants;
 using eSystem.Core.Http.Extensions;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
-using eSystem.Core.Server.Exceptions;
-using Credentials_CredentialOptions = eSecurity.Idp.Security.Credentials.PublicKey.Credentials.CredentialOptions;
 
 namespace eSecurity.Idp.Features.Passkeys;
 
@@ -24,12 +22,12 @@ public sealed class GenerateCreationOptionsCommandHandler(
     ISessionStorage sessionStorage,
     ICurrentUserAccessor currentUserAccessor,
     IDeviceQueryService deviceQueryService,
-    IOptions<Credentials_CredentialOptions> options) : IRequestHandler<GenerateCreationOptionsCommand, Result>
+    IOptions<CredentialOptions> options) : IRequestHandler<GenerateCreationOptionsCommand, Result>
 {
     private readonly ISessionStorage _sessionStorage = sessionStorage;
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IDeviceQueryService _deviceQueryService = deviceQueryService;
-    private readonly Credentials_CredentialOptions _credentialOptions = options.Value;
+    private readonly CredentialOptions _credentialOptions = options.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(GenerateCreationOptionsCommand request,

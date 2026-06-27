@@ -1,5 +1,4 @@
-﻿using eSecurity.Core.Security.Authentication.TwoFactor;
-using eSystem.Core.Server.Data.Entities;
+﻿using eSystem.Core.Server.Data.Entities;
 
 namespace eSecurity.Idp.Data.Entities;
 

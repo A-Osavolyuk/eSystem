@@ -1,5 +1,4 @@
 ﻿using eSecurity.Idp.Security.Authentication.AuthenticationSession;
-using eSecurity.Idp.Security.Authentication.Session;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
 using eSystem.Core.Server.Data.Entities;
 

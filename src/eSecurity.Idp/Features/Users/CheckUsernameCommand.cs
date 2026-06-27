@@ -1,5 +1,4 @@
 ﻿using System.Text.Json.Serialization;
-using eSecurity.Core.Requests;
 using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
