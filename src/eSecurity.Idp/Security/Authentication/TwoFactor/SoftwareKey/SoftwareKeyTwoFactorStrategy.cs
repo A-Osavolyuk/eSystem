@@ -28,7 +28,8 @@ public sealed class SoftwareKeyTwoFactorStrategy(
     IAuthenticationSessionManager authenticationSessionManager,
     IUserQueryService userQueryService,
     IHttpContextAccessor httpContextAccessor,
-    IDeviceManager deviceManager,
+    IDeviceQueryService deviceQueryService,
+    IDeviceCommandService deviceCommandService,
     ILockoutManager lockoutManager,
     IOptions<SessionOptions> sessionOptions,
     IOptions<SignInOptions> signInOptions,
@@ -40,7 +41,8 @@ public sealed class SoftwareKeyTwoFactorStrategy(
 {
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly IUserQueryService _userQueryService = userQueryService;
-    private readonly IDeviceManager _deviceManager = deviceManager;
+    private readonly IDeviceQueryService _deviceQueryService = deviceQueryService;
+    private readonly IDeviceCommandService _deviceCommandService = deviceCommandService;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
     private readonly IUserFailedLoginService _failedLoginService = failedLoginService;
     private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
@@ -79,7 +81,7 @@ public sealed class SoftwareKeyTwoFactorStrategy(
 
         var userAgent = _httpContext.GetUserAgent()!;
         var ipAddress = _httpContext.GetIpV4()!;
-        var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
+        var device = await _deviceQueryService.GetByMetadataAsync(user.Id, userAgent, ipAddress, cancellationToken);
         if (device is null || device.IsBlocked)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -132,7 +134,7 @@ public sealed class SoftwareKeyTwoFactorStrategy(
                 });
             }
 
-            var deviceBlockResult = await _deviceManager.BlockAsync(device, cancellationToken);
+            var deviceBlockResult = await _deviceCommandService.BlockAsync(device.Id, cancellationToken);
             if (!deviceBlockResult.Succeeded) return deviceBlockResult;
 
             var lockoutResult = await _lockoutManager.BlockPermanentlyAsync(user,

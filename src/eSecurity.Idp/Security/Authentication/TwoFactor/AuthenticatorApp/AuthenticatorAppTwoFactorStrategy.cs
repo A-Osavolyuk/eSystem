@@ -27,7 +27,6 @@ public sealed class AuthenticatorAppTwoFactorStrategy(
     IAuthenticationSessionManager authenticationSessionManager,
     IUserQueryService userQueryService,
     IHttpContextAccessor httpContextAccessor,
-    IDeviceManager deviceManager,
     ILockoutManager lockoutManager,
     ISecretManager secretManager,
     IDataProtectionProvider protectionProvider,
@@ -35,17 +34,21 @@ public sealed class AuthenticatorAppTwoFactorStrategy(
     IOptions<SessionOptions> sessionOptions,
     IUserFailedLoginService failedLoginService,
     ISessionCommandService sessionCommandService,
+    IDeviceQueryService deviceQueryService,
+    IDeviceCommandService deviceCommandService,
     IOptions<SignInOptions> signInOptions) : ITwoFactorStrategy<AuthenticatorTwoFactorContext>
 {
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly IUserQueryService _userQueryService = userQueryService;
-    private readonly IDeviceManager _deviceManager = deviceManager;
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
     private readonly ISecretManager _secretManager = secretManager;
     private readonly IDataProtectionProvider _protectionProvider = protectionProvider;
     private readonly ISessionCookieFactory _sessionCookieFactory = sessionCookieFactory;
     private readonly IUserFailedLoginService _failedLoginService = failedLoginService;
     private readonly ISessionCommandService _sessionCommandService = sessionCommandService;
+    private readonly IDeviceQueryService _deviceQueryService = deviceQueryService;
+    private readonly IDeviceCommandService _deviceCommandService = deviceCommandService;
     private readonly SignInOptions _signInOptions = signInOptions.Value;
     private readonly SessionOptions _sessionOptions = sessionOptions.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
@@ -78,7 +81,7 @@ public sealed class AuthenticatorAppTwoFactorStrategy(
 
         var userAgent = _httpContext.GetUserAgent()!;
         var ipAddress = _httpContext.GetIpV4()!;
-        var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
+        var device = await _deviceQueryService.GetByMetadataAsync(user.Id, userAgent, ipAddress, cancellationToken);
         if (device is null || device.IsBlocked)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -118,7 +121,7 @@ public sealed class AuthenticatorAppTwoFactorStrategy(
                 });
             }
 
-            var deviceBlockResult = await _deviceManager.BlockAsync(device, cancellationToken);
+            var deviceBlockResult = await _deviceCommandService.BlockAsync(device.Id, cancellationToken);
             if (!deviceBlockResult.Succeeded) return deviceBlockResult;
 
             var lockoutResult = await _lockoutManager.BlockPermanentlyAsync(user,

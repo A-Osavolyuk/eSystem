@@ -3,7 +3,7 @@ using eSecurity.Idp.Security.Authorization.Authorize.Par;
 using eSecurity.Idp.Security.Authorization.Codes;
 using eSecurity.Idp.Security.Authorization.Consents;
 using eSecurity.Idp.Security.Authorization.Constants;
-using eSecurity.Idp.Security.Authorization.Devices;
+using eSecurity.Idp.Security.Authorization.Devices.Extensions;
 using eSecurity.Idp.Security.Authorization.LinkedAccount;
 using eSecurity.Idp.Security.Authorization.Prompt;
 using eSecurity.Idp.Security.Authorization.Roles;

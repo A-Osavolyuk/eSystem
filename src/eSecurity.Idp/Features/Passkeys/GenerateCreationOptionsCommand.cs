@@ -23,14 +23,14 @@ public sealed class GenerateCreationOptionsCommandHandler(
     IHttpContextAccessor httpContextAccessor,
     ISessionStorage sessionStorage,
     IChallengeFactory challengeFactory,
-    IDeviceManager deviceManager,
     ICurrentUserAccessor currentUserAccessor,
+    IDeviceQueryService deviceQueryService,
     IOptions<Credentials_CredentialOptions> options) : IRequestHandler<GenerateCreationOptionsCommand, Result>
 {
     private readonly ISessionStorage _sessionStorage = sessionStorage;
     private readonly IChallengeFactory _challengeFactory = challengeFactory;
-    private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
+    private readonly IDeviceQueryService _deviceQueryService = deviceQueryService;
     private readonly Credentials_CredentialOptions _credentialOptions = options.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
@@ -40,7 +40,8 @@ public sealed class GenerateCreationOptionsCommandHandler(
         var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
         var userAgent = _httpContext.GetUserAgent();
         var ipAddress = _httpContext.GetIpV4();
-        var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
+        var device = await _deviceQueryService.GetByMetadataAsync(user.Id, userAgent, ipAddress, cancellationToken);
+        
         if (device is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error

@@ -30,7 +30,6 @@ public sealed class OAuthSignUpPayload : SignUpPayload
 public sealed class OAuthSignUpStrategy(
     IRoleManager roleManager,
     ILinkedAccountManager providerManager,
-    IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor,
     IAuthenticationSessionManager authenticationSessionManager,
     IOptions<Session_SessionOptions> sessionOptions,
@@ -38,16 +37,17 @@ public sealed class OAuthSignUpStrategy(
     IEmailCommandService emailCommandService,
     IUserCommandService userCommandService,
     ISessionCommandService sessionCommandService,
+    IDeviceCommandService deviceCommandService,
     IEmailService emailService) : SignUpStrategy<OAuthSignUpPayload>
 {
     private readonly IRoleManager _roleManager = roleManager;
     private readonly ILinkedAccountManager _providerManager = providerManager;
-    private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly IEmailCommandService _emailCommandService = emailCommandService;
     private readonly IUserCommandService _userCommandService = userCommandService;
     private readonly ISessionCommandService _sessionCommandService = sessionCommandService;
+    private readonly IDeviceCommandService _deviceCommandService = deviceCommandService;
     private readonly IEmailService _emailService = emailService;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly Session_SessionOptions _sessionOptions = sessionOptions.Value;
@@ -117,7 +117,7 @@ public sealed class OAuthSignUpStrategy(
             FirstSeenAt = DateTimeOffset.UtcNow
         };
 
-        var deviceResult = await _deviceManager.CreateAsync(newDevice, cancellationToken);
+        var deviceResult = await _deviceCommandService.CreateAsync(newDevice, cancellationToken);
         if (!deviceResult.Succeeded) return deviceResult;
 
         var email = await _emailQueryService.GetByTypeAsync(user.Id, EmailType.Primary, cancellationToken);

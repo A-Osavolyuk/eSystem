@@ -16,19 +16,19 @@ public record GetUserLoginMethodsQuery() : IRequest<Result>;
 
 public class GetUserLoginMethodsQueryHandler(
     ICurrentUserAccessor currentUserAccessor,
-    IDeviceManager deviceManager,
     ITwoFactorQueryService twoFactorQueryService,
     ILinkedAccountManager linkedAccountManager,
     ISoftwareKeyQueryService softwareKeyQueryService,
     IPasswordQueryService passwordQueryService,
+    IDeviceQueryService deviceQueryService,
     IHttpContextAccessor accessor) : IRequestHandler<GetUserLoginMethodsQuery, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
-    private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ITwoFactorQueryService _twoFactorQueryService = twoFactorQueryService;
     private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
     private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
     private readonly IPasswordQueryService _passwordQueryService = passwordQueryService;
+    private readonly IDeviceQueryService _deviceQueryService = deviceQueryService;
     private readonly HttpContext _httpContext = accessor.HttpContext!;
 
     public async Task<Result> Handle(GetUserLoginMethodsQuery request, CancellationToken cancellationToken)
@@ -36,7 +36,8 @@ public class GetUserLoginMethodsQueryHandler(
         var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
         var userAgent = _httpContext.GetUserAgent();
         var ipAddress = _httpContext.GetIpV4();
-        var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
+        var device = await _deviceQueryService.GetByMetadataAsync(user.Id, userAgent, ipAddress, cancellationToken);
+        
         if (device is null || device.IsBlocked)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error

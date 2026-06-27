@@ -24,15 +24,15 @@ public class GenerateRequestOptionsCommandHandler(
     IHttpContextAccessor httpContextAccessor,
     ISessionStorage sessionStorage,
     IChallengeFactory challengeFactory,
-    IDeviceManager deviceManager,
     ISoftwareKeyQueryService softwareKeyQueryService,
+    IDeviceQueryService deviceQueryService,
     IOptions<CredentialOptions> options) : IRequestHandler<GenerateRequestOptionsCommand, Result>
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly ISessionStorage _sessionStorage = sessionStorage;
     private readonly IChallengeFactory _challengeFactory = challengeFactory;
-    private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
+    private readonly IDeviceQueryService _deviceQueryService = deviceQueryService;
     private readonly CredentialOptions _credentialOptions = options.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
@@ -61,7 +61,8 @@ public class GenerateRequestOptionsCommandHandler(
 
             var userAgent = _httpContext.GetUserAgent();
             var ipAddress = _httpContext.GetIpV4();
-            var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
+            var device = await _deviceQueryService.GetByMetadataAsync(user.Id, userAgent, ipAddress, cancellationToken);
+            
             if (device is null)
             {
                 return Results.ClientError(ClientErrorCode.BadRequest, new Error

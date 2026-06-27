@@ -26,7 +26,8 @@ public sealed class PasswordSignInStrategy(
     IUserFailedLoginService failedLoginService,
     IEmailQueryService emailQueryService,
     ILockoutManager lockoutManager,
-    IDeviceManager deviceManager,
+    IDeviceQueryService deviceQueryService,
+    IDeviceCommandService deviceCommandService,
     IHttpContextAccessor accessor,
     IAuthenticationSessionManager authenticationSessionManager,
     IOptions<SignInOptions> signInOptions,
@@ -42,7 +43,9 @@ public sealed class PasswordSignInStrategy(
     private readonly IUserFailedLoginService _failedLoginService = failedLoginService;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
-    private readonly IDeviceManager _deviceManager = deviceManager;
+    private readonly IDeviceQueryService _deviceQueryService = deviceQueryService;
+    private readonly IDeviceCommandService _deviceCommandService = deviceCommandService;
+    private readonly IHttpContextAccessor _accessor = accessor;
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
     private readonly ITwoFactorQueryService _twoFactorQueryService = twoFactorQueryService;
@@ -87,7 +90,7 @@ public sealed class PasswordSignInStrategy(
 
         var userAgent = _httpContext.GetUserAgent()!;
         var ipAddress = _httpContext.GetIpV4()!;
-        var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
+        var device = await _deviceQueryService.GetByMetadataAsync(user.Id, userAgent, ipAddress, cancellationToken);
         if (device is null)
         {
             var clientInfo = _httpContext.GetClientInfo()!;
@@ -104,7 +107,7 @@ public sealed class PasswordSignInStrategy(
                 FirstSeenAt = DateTimeOffset.UtcNow,
             };
 
-            var result = await _deviceManager.CreateAsync(device, cancellationToken);
+            var result = await _deviceCommandService.CreateAsync(device, cancellationToken);
             if (!result.Succeeded) return result;
         }
 
@@ -178,7 +181,7 @@ public sealed class PasswordSignInStrategy(
                 });
             }
 
-            var deviceBlockResult = await _deviceManager.BlockAsync(device, cancellationToken);
+            var deviceBlockResult = await _deviceCommandService.BlockAsync(device.Id, cancellationToken);
             if (!deviceBlockResult.Succeeded) return deviceBlockResult;
 
             var lockoutResult = await _lockoutManager.BlockPermanentlyAsync(user,

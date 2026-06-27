@@ -28,7 +28,6 @@ public sealed class ManualSignUpPayload : SignUpPayload
 
 public sealed class ManualSignUpStrategy(
     IRoleManager roleManager,
-    IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor,
     IEmailService emailService,
     IEmailQueryService emailQueryService,
@@ -38,10 +37,10 @@ public sealed class ManualSignUpStrategy(
     IUserQueryService userQueryService,
     ICodeCommandService codeCommandService,
     IPasswordCommandService passwordCommandService,
+    IDeviceCommandService deviceCommandService,
     IOptions<AccountOptions> options) : SignUpStrategy<ManualSignUpPayload>
 {
     private readonly IRoleManager _roleManager = roleManager;
-    private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly IEmailService _emailService = emailService;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly IEmailCommandService _emailCommandService = emailCommandService;
@@ -50,6 +49,7 @@ public sealed class ManualSignUpStrategy(
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly ICodeCommandService _codeCommandService = codeCommandService;
     private readonly IPasswordCommandService _passwordCommandService = passwordCommandService;
+    private readonly IDeviceCommandService _deviceCommandService = deviceCommandService;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly AccountOptions _options = options.Value;
 
@@ -118,7 +118,7 @@ public sealed class ManualSignUpStrategy(
             FirstSeenAt = DateTimeOffset.UtcNow
         };
 
-        var deviceResult = await _deviceManager.CreateAsync(newDevice, cancellationToken);
+        var deviceResult = await _deviceCommandService.CreateAsync(newDevice, cancellationToken);
         if (!deviceResult.Succeeded) return deviceResult;
 
         var codeResult = await _codeCommandService.CreateAsync(user.Id, SenderType.Email, cancellationToken);

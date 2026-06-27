@@ -31,18 +31,18 @@ public class CreateSoftwareKeyCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
     IHttpContextAccessor httpContextAccessor,
     ISessionStorage sessionStorage,
-    IDeviceManager deviceManager,
     ISoftwareKeyCommandService softwareKeyCommandService,
     ITwoFactorQueryService twoFactorQueryService,
     ITwoFactorCommandService twoFactorCommandService,
+    IDeviceQueryService deviceQueryService,
     IOptions<CredentialOptions> options) : IRequestHandler<CreateSoftwareKeyCommand, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly ISessionStorage _sessionStorage = sessionStorage;
-    private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ISoftwareKeyCommandService _softwareKeyCommandService = softwareKeyCommandService;
     private readonly ITwoFactorQueryService _twoFactorQueryService = twoFactorQueryService;
     private readonly ITwoFactorCommandService _twoFactorCommandService = twoFactorCommandService;
+    private readonly IDeviceQueryService _deviceQueryService = deviceQueryService;
     private readonly CredentialOptions _credentialOptions = options.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
@@ -52,7 +52,8 @@ public class CreateSoftwareKeyCommandHandler(
         var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
         var userAgent = _httpContext.GetUserAgent();
         var ipAddress = _httpContext.GetIpV4();
-        var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
+        var device = await _deviceQueryService.GetByMetadataAsync(user.Id, userAgent, ipAddress, cancellationToken);
+        
         if (device is null || device.IsBlocked)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error

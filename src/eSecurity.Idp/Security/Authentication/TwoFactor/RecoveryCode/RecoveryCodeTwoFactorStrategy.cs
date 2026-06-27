@@ -25,22 +25,25 @@ public sealed class RecoveryCodeTwoFactorStrategy(
     IAuthenticationSessionManager authenticationSessionManager,
     IUserQueryService userQueryService,
     IHttpContextAccessor httpContextAccessor,
-    IDeviceManager deviceManager,
     ILockoutManager lockoutManager,
     IRecoverManager recoverManager,
     IOptions<Session_SessionOptions> sessionOptions,
     IOptions<SignInOptions> signInOptions,
     IUserFailedLoginService failedLoginService,
     ISessionCommandService sessionCommandService,
+    IDeviceQueryService deviceQueryService,
+    IDeviceCommandService deviceCommandService,
     ISessionCookieFactory sessionCookieFactory) : ITwoFactorStrategy<RecoveryCodeTwoFactorContext>
 {
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly IUserQueryService _userQueryService = userQueryService;
-    private readonly IDeviceManager _deviceManager = deviceManager;
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
     private readonly IRecoverManager _recoverManager = recoverManager;
     private readonly IUserFailedLoginService _failedLoginService = failedLoginService;
     private readonly ISessionCommandService _sessionCommandService = sessionCommandService;
+    private readonly IDeviceQueryService _deviceQueryService = deviceQueryService;
+    private readonly IDeviceCommandService _deviceCommandService = deviceCommandService;
     private readonly ISessionCookieFactory _sessionCookieFactory = sessionCookieFactory;
     private readonly Session_SessionOptions _sessionOptions = sessionOptions.Value;
     private readonly SignInOptions _signInOptions = signInOptions.Value;
@@ -74,7 +77,7 @@ public sealed class RecoveryCodeTwoFactorStrategy(
 
         var userAgent = _httpContext.GetUserAgent()!;
         var ipAddress = _httpContext.GetIpV4()!;
-        var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
+        var device = await _deviceQueryService.GetByMetadataAsync(user.Id, userAgent, ipAddress, cancellationToken);
         if (device is null || device.IsBlocked)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -102,7 +105,7 @@ public sealed class RecoveryCodeTwoFactorStrategy(
                 });
             }
 
-            var deviceBlockResult = await _deviceManager.BlockAsync(device, cancellationToken);
+            var deviceBlockResult = await _deviceCommandService.BlockAsync(device.Id, cancellationToken);
             if (!deviceBlockResult.Succeeded) return deviceBlockResult;
 
             var lockoutResult = await _lockoutManager.BlockPermanentlyAsync(user,

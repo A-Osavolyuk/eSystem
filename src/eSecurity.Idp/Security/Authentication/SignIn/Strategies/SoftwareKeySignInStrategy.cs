@@ -21,7 +21,6 @@ namespace eSecurity.Idp.Security.Authentication.SignIn.Strategies;
 
 public sealed class SoftwareKeySignInStrategy(
     IUserQueryService userQueryService,
-    IDeviceManager deviceManager,
     ILockoutManager lockoutManager,
     IHttpContextAccessor accessor,
     IAuthenticationSessionManager authenticationSessionManager,
@@ -29,15 +28,16 @@ public sealed class SoftwareKeySignInStrategy(
     ISoftwareKeyQueryService softwareKeyQueryService,
     ISoftwareKeyCommandService softwareKeyCommandService,
     ISessionCommandService sessionCommandService,
+    IDeviceQueryService deviceQueryService,
     ISessionCookieFactory sessionCookieFactory) : SignInStrategy<SoftwareKeySignInPayload>
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
-    private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
     private readonly ISoftwareKeyCommandService _softwareKeyCommandService = softwareKeyCommandService;
     private readonly ISessionCommandService _sessionCommandService = sessionCommandService;
+    private readonly IDeviceQueryService _deviceQueryService = deviceQueryService;
     private readonly ISessionCookieFactory _sessionCookieFactory = sessionCookieFactory;
     private readonly Session_SessionOptions _options = options.Value;
     private readonly HttpContext _httpContext = accessor.HttpContext!;
@@ -110,7 +110,8 @@ public sealed class SoftwareKeySignInStrategy(
 
         var userAgent = _httpContext.GetUserAgent();
         var ipAddress = _httpContext.GetIpV4();
-        var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
+        var device = await _deviceQueryService.GetByMetadataAsync(user.Id, userAgent, ipAddress, cancellationToken);
+        
         if (device is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error

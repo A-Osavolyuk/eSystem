@@ -17,17 +17,17 @@ public record GetUserVerificationDataQuery : IRequest<Result>;
 
 public class GetUserVerificationMethodsQueryHandler(
     ICurrentUserAccessor currentUserAccessor,
-    IDeviceManager deviceManager,
     IEmailQueryService emailQueryService,
     ISoftwareKeyQueryService softwareKeyQueryService,
     ITwoFactorQueryService twoFactorQueryService,
+    IDeviceQueryService deviceQueryService,
     IHttpContextAccessor httpContextAccessor) : IRequestHandler<GetUserVerificationDataQuery, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
-    private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
     private readonly ITwoFactorQueryService _twoFactorQueryService = twoFactorQueryService;
+    private readonly IDeviceQueryService _deviceQueryService = deviceQueryService;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     public async Task<Result> Handle(GetUserVerificationDataQuery request, CancellationToken cancellationToken)
@@ -35,7 +35,8 @@ public class GetUserVerificationMethodsQueryHandler(
         var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
         var userAgent = _httpContext.GetUserAgent();
         var ipAddress = _httpContext.GetIpV4();
-        var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
+        var device = await _deviceQueryService.GetByMetadataAsync(user.Id, userAgent, ipAddress, cancellationToken);
+        
         if (device is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error

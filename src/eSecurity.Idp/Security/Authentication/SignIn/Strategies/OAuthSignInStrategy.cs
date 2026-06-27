@@ -18,7 +18,6 @@ namespace eSecurity.Idp.Security.Authentication.SignIn.Strategies;
 
 public sealed class OAuthSignInStrategy(
     IUserQueryService userQueryService,
-    IDeviceManager deviceManager,
     ILockoutManager lockoutManager,
     IHttpContextAccessor httpContextAccessor,
     ILinkedAccountManager linkedAccountManager,
@@ -26,16 +25,19 @@ public sealed class OAuthSignInStrategy(
     ISoftwareKeyQueryService softwareKeyQueryService,
     ITwoFactorQueryService twoFactorQueryService,
     ISessionCommandService sessionCommandService,
+    IDeviceQueryService deviceQueryService,
+    IDeviceCommandService deviceCommandService,
     IOptions<SessionOptions> options) : SignInStrategy<OAuthSignInPayload>
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
-    private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
     private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
     private readonly ITwoFactorQueryService _twoFactorQueryService = twoFactorQueryService;
     private readonly ISessionCommandService _sessionCommandService = sessionCommandService;
+    private readonly IDeviceQueryService _deviceQueryService = deviceQueryService;
+    private readonly IDeviceCommandService _deviceCommandService = deviceCommandService;
     private readonly SessionOptions _options = options.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
@@ -66,7 +68,7 @@ public sealed class OAuthSignInStrategy(
 
         var userAgent = _httpContext.GetUserAgent();
         var ipAddress = _httpContext.GetIpV4();
-        var device = await _deviceManager.FindAsync(user, userAgent, ipAddress, cancellationToken);
+        var device = await _deviceQueryService.GetByMetadataAsync(user.Id, userAgent, ipAddress, cancellationToken);
         if (device is null)
         {
             var clientInfo = _httpContext.GetClientInfo();
@@ -83,7 +85,7 @@ public sealed class OAuthSignInStrategy(
                 FirstSeenAt = DateTimeOffset.UtcNow
             };
 
-            var result = await _deviceManager.CreateAsync(device, cancellationToken);
+            var result = await _deviceCommandService.CreateAsync(device, cancellationToken);
             if (!result.Succeeded) return result;
         }
 

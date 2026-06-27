@@ -10,15 +10,15 @@ public record GetUserDevicesQuery : IRequest<Result>;
 
 public class GetUserDevicesQueryHandler(
     ICurrentUserAccessor currentUserAccessor,
-    IDeviceManager deviceManager) : IRequestHandler<GetUserDevicesQuery, Result>
+    IDeviceQueryService deviceQueryService) : IRequestHandler<GetUserDevicesQuery, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
-    private readonly IDeviceManager _deviceManager = deviceManager;
+    private readonly IDeviceQueryService _deviceQueryService = deviceQueryService;
 
     public async Task<Result> Handle(GetUserDevicesQuery request, CancellationToken cancellationToken)
     {
         var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
-        var devices = await _deviceManager.GetAllAsync(user, cancellationToken);
+        var devices = await _deviceQueryService.ListByUserAsync(user.Id, cancellationToken);
         var response = devices.Select(device => new UserDeviceDto
         {
             Id = device.Id,
