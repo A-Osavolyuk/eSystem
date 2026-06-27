@@ -16,7 +16,7 @@ public class UserEntity() : Entity
     public Guid Id { get; init; }
     public string Username { get; set; } = string.Empty;
     public string NormalizedUsername { get; set; } = string.Empty;
-    public DateTimeOffset? UsernameChangeDate { get; set; }
+    public DateTimeOffset? UsernameChangedAt { get; set; }
     public bool AccountConfirmed { get; init; }
     public int FailedLoginAttempts { get; set; }
 

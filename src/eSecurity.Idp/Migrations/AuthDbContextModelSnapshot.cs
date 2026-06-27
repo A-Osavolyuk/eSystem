@@ -1594,7 +1594,7 @@ namespace eSecurity.Idp.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
 
-                    b.Property<DateTimeOffset?>("UsernameChangeDate")
+                    b.Property<DateTimeOffset?>("UsernameChangedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ZoneInfo")

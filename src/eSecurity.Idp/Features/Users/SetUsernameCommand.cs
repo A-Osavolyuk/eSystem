@@ -1,7 +1,6 @@
 ﻿using eSecurity.Core.Requests;
 using eSecurity.Idp.Security.Authentication.Session;
 using eSecurity.Idp.Security.Identity.User;
-using eSecurity.Idp.Security.Identity.User.Username;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 
@@ -12,11 +11,11 @@ public sealed record SetUsernameCommand(SetUsernameRequest Request) : IRequest<R
 public sealed class SetUsernameCommandHandler(
     ISessionQueryService sessionQueryService,
     IUserQueryService userQueryService,
-    IUsernameManager usernameManager) : IRequestHandler<SetUsernameCommand, Result>
+    IUserCommandService userCommandService) : IRequestHandler<SetUsernameCommand, Result>
 {
     private readonly ISessionQueryService _sessionQueryService = sessionQueryService;
     private readonly IUserQueryService _userQueryService = userQueryService;
-    private readonly IUsernameManager _usernameManager = usernameManager;
+    private readonly IUserCommandService _userCommandService = userCommandService;
 
     public async Task<Result> Handle(SetUsernameCommand request, CancellationToken cancellationToken)
     {
@@ -40,7 +39,7 @@ public sealed class SetUsernameCommandHandler(
             });
         }
 
-        if (await _usernameManager.IsTakenAsync(request.Request.Username, cancellationToken))
+        if (await _userQueryService.ExistsAsync(request.Request.Username, cancellationToken))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
@@ -49,6 +48,6 @@ public sealed class SetUsernameCommandHandler(
             });
         }
 
-        return await _usernameManager.SetAsync(user, request.Request.Username, cancellationToken);
+        return await _userCommandService.ChangeUsernameAsync(user.Id, request.Request.Username, cancellationToken);
     }
 }

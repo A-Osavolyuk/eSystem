@@ -70,4 +70,12 @@ public sealed class UserQueryService(AuthDbContext context) : IUserQueryService
                            )
             ).FirstOrDefaultAsync(cancellationToken);
     }
+
+    public async ValueTask<bool> ExistsAsync(string username, CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(username);
+
+        var normalizedUsername = Normalizer.Normalize(username);
+        return await _context.Users.AnyAsync(x => x.NormalizedUsername == normalizedUsername, cancellationToken);
+    }
 }

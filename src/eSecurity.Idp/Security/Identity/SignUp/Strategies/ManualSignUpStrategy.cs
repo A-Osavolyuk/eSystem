@@ -1,13 +1,11 @@
 using eSecurity.Idp.Data.Entities;
 using eSecurity.Idp.Security.Authentication.Password;
-using eSecurity.Idp.Security.Authentication.Session;
 using eSecurity.Idp.Security.Authorization.Codes;
 using eSecurity.Idp.Security.Authorization.Devices;
 using eSecurity.Idp.Security.Authorization.Roles;
 using eSecurity.Idp.Security.Identity.Email;
 using eSecurity.Idp.Security.Identity.Options;
 using eSecurity.Idp.Security.Identity.User;
-using eSecurity.Idp.Security.Identity.User.Username;
 using eSecurity.Core.Responses;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Idp.Common.Messaging.Email;
@@ -29,7 +27,6 @@ public sealed class ManualSignUpPayload : SignUpPayload
 }
 
 public sealed class ManualSignUpStrategy(
-    IUsernameManager usernameManager,
     IRoleManager roleManager,
     IDeviceManager deviceManager,
     IHttpContextAccessor httpContextAccessor,
@@ -38,11 +35,11 @@ public sealed class ManualSignUpStrategy(
     IEmailCommandService emailCommandService,
     IAuthenticationSessionManager sessionManager,
     IUserCommandService userCommandService,
+    IUserQueryService userQueryService,
     ICodeCommandService codeCommandService,
     IPasswordCommandService passwordCommandService,
     IOptions<AccountOptions> options) : SignUpStrategy<ManualSignUpPayload>
 {
-    private readonly IUsernameManager _usernameManager = usernameManager;
     private readonly IRoleManager _roleManager = roleManager;
     private readonly IDeviceManager _deviceManager = deviceManager;
     private readonly IEmailService _emailService = emailService;
@@ -50,6 +47,7 @@ public sealed class ManualSignUpStrategy(
     private readonly IEmailCommandService _emailCommandService = emailCommandService;
     private readonly IAuthenticationSessionManager _sessionManager = sessionManager;
     private readonly IUserCommandService _userCommandService = userCommandService;
+    private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly ICodeCommandService _codeCommandService = codeCommandService;
     private readonly IPasswordCommandService _passwordCommandService = passwordCommandService;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
@@ -60,7 +58,7 @@ public sealed class ManualSignUpStrategy(
     public override async ValueTask<Result> ExecuteAsync(ManualSignUpPayload payload, 
         CancellationToken cancellationToken = default)
     {
-        if (await _usernameManager.IsTakenAsync(payload.Username, cancellationToken))
+        if (await _userQueryService.ExistsAsync(payload.Username, cancellationToken))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {

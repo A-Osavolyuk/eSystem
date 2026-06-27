@@ -2,7 +2,6 @@
 using eSecurity.Idp.Security.Identity.Options;
 using eSecurity.Idp.Security.Identity.Privacy;
 using eSecurity.Idp.Security.Identity.User;
-using eSecurity.Idp.Security.Identity.User.Username;
 using eSecurity.Idp.Security.Identity.SignUp.Extensions;
 using eSecurity.Idp.Security.Identity.Subject;
 
@@ -15,7 +14,6 @@ public static class IdentityExtensions
         public void AddIdentity()
         {
             builder.Services.AddSignUpStrategies();
-            builder.Services.AddScoped<IUsernameManager, UsernameManager>();
             builder.Services.AddScoped<IPersonalDataManager, PersonalDataManager>();
             builder.Services.AddScoped<IPairwiseSubjectFactory, PairwiseSubjectFactory>();
 
