@@ -7,6 +7,7 @@ using eSecurity.Idp.Security.Authentication.Session;
 using eSecurity.Idp.Security.Authorization.Devices;
 using eSecurity.Idp.Security.Cookies;
 using eSecurity.Idp.Security.Credentials.PublicKey;
+using eSecurity.Idp.Security.Credentials.PublicKey.Challenge;
 using eSecurity.Idp.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Idp.Security.Identity.Options;
 using eSecurity.Idp.Security.Identity.User;

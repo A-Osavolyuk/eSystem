@@ -1,4 +1,4 @@
-﻿namespace eSecurity.WebAuthN.Constants;
+﻿namespace eSecurity.Idp.Security.Credentials.PublicKey.Challenge;
 
 public static class ChallengeSessionKeys
 {

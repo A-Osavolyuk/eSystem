@@ -24,7 +24,7 @@ public class PublicKeyCredentialCreationOptions
     public int Timeout { get; set; } = 60000;
 
     [JsonPropertyName("attestation")] 
-    public string Attestation { get; set; } = Attestations.None;
+    public Attestation Attestation { get; set; } = Attestation.None;
 }
 
 public class ReplyingParty
@@ -51,20 +51,20 @@ public class PublicKeyCredentialUser
 public class PublicKeyCredentialParameter
 {
     [JsonPropertyName("type")]
-    public required string Type { get; set; }
+    public KeyType Type { get; set; }
     
     [JsonPropertyName("alg")]
-    public int Algorithm { get; set; }
+    public Algorithm Algorithm { get; set; }
 }
 
 public class AuthenticatorSelection
 {
     [JsonPropertyName("authenticatorAttachment")]
-    public string AuthenticatorAttachment { get; set; } = AuthenticatorAttachments.Platform;
+    public AuthenticatorAttachment AuthenticatorAttachment { get; set; } = AuthenticatorAttachment.Platform;
 
     [JsonPropertyName("residentKey")] 
-    public string ResidentKey { get; set; } = ResidentKeys.Preferred;
+    public ResidentKey ResidentKey { get; set; } = ResidentKey.Preferred;
 
     [JsonPropertyName("userVerification")]
-    public string UserVerification { get; set; } = UserVerifications.Preferred;
+    public UserVerification UserVerification { get; set; } = UserVerification.Preferred;
 }

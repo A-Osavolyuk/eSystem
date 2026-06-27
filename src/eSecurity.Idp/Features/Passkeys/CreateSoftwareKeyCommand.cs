@@ -6,6 +6,7 @@ using eSecurity.Idp.Data.Entities;
 using eSecurity.Idp.Security.Authentication.TwoFactor;
 using eSecurity.Idp.Security.Authorization.Devices;
 using eSecurity.Idp.Security.Credentials.PublicKey;
+using eSecurity.Idp.Security.Credentials.PublicKey.Challenge;
 using eSecurity.Idp.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Idp.Security.Identity.User;
 using eSecurity.WebAuthN;
@@ -67,7 +68,7 @@ public class CreateSoftwareKeyCommandHandler(
             throw new ValidationException("Response is required");
         
         var clientData = ClientData.Parse(request.Response.Response.ClientDataJson);
-        if (clientData is null || clientData.Type != ClientDataTypes.Create)
+        if (clientData is null || clientData.Type != ClientDataType.Create)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {

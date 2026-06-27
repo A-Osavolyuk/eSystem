@@ -2,9 +2,9 @@
 
 namespace eSecurity.Idp.Security.Credentials.PublicKey.Challenge;
 
-public class ChallengeFactory : IChallengeFactory
+public static class ChallengeFactory
 {
-    public string Create(uint length = 32)
+    public static string Create(uint length = 32)
     {
         var challengeBytes = KeyGeneration.GenerateRandomKey((int)length);
         return Convert.ToBase64String(challengeBytes);

@@ -1,7 +1,14 @@
-﻿namespace eSecurity.WebAuthN.Constants;
+﻿using System.Text.Json.Serialization;
+using eSystem.Core.Enums;
 
-public static class KeyType
+namespace eSecurity.WebAuthN.Constants;
+
+[JsonConverter(typeof(KeyType))]
+public enum KeyType
 {
-    public const string PublicKey = "public-key";
-    public const string DevicePublicKey = "device-public-key";
+    [EnumValue("public-key")]
+    PublicKey,
+    
+    [EnumValue("device-public-key")]
+    DevicePublicKey
 }

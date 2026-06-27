@@ -4,8 +4,8 @@ using eSystem.Core.Enums.Serialization;
 
 namespace eSecurity.WebAuthN.Constants;
 
-[JsonConverter(typeof(JsonEnumValueConverter<UserVerification>))]
-public enum UserVerification
+[JsonConverter(typeof(JsonEnumValueConverter<ResidentKey>))]
+public enum ResidentKey
 {
     [EnumValue("required")]
     Required,

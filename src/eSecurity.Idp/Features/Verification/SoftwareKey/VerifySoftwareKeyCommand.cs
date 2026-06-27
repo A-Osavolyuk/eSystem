@@ -4,6 +4,7 @@ using eSecurity.Core.Security.Authorization.Verification;
 using eSecurity.Idp.Data.Entities;
 using eSecurity.Idp.Security.Authorization.Verification;
 using eSecurity.Idp.Security.Credentials.PublicKey;
+using eSecurity.Idp.Security.Credentials.PublicKey.Challenge;
 using eSecurity.Idp.Security.Credentials.PublicKey.Credentials;
 using eSecurity.Idp.Security.Identity.User;
 using eSecurity.WebAuthN;

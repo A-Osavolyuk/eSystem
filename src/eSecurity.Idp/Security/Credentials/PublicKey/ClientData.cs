@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using eSecurity.WebAuthN.Constants;
 using Microsoft.AspNetCore.WebUtilities;
 
 namespace eSecurity.Idp.Security.Credentials.PublicKey;
@@ -7,7 +8,7 @@ namespace eSecurity.Idp.Security.Credentials.PublicKey;
 public class ClientData
 {
     [JsonPropertyName("type")] 
-    public string Type { get; set; } = string.Empty;
+    public ClientDataType Type { get; set; }
     
     [JsonPropertyName("challenge")]
     public string Challenge { get; set; } = string.Empty;

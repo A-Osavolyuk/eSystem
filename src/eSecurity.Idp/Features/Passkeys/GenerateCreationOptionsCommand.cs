@@ -22,13 +22,11 @@ public sealed class GenerateCreationOptionsCommand : IRequest<Result>
 public sealed class GenerateCreationOptionsCommandHandler(
     IHttpContextAccessor httpContextAccessor,
     ISessionStorage sessionStorage,
-    IChallengeFactory challengeFactory,
     ICurrentUserAccessor currentUserAccessor,
     IDeviceQueryService deviceQueryService,
     IOptions<Credentials_CredentialOptions> options) : IRequestHandler<GenerateCreationOptionsCommand, Result>
 {
     private readonly ISessionStorage _sessionStorage = sessionStorage;
-    private readonly IChallengeFactory _challengeFactory = challengeFactory;
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
     private readonly IDeviceQueryService _deviceQueryService = deviceQueryService;
     private readonly Credentials_CredentialOptions _credentialOptions = options.Value;
@@ -51,7 +49,7 @@ public sealed class GenerateCreationOptionsCommandHandler(
             });
         }
 
-        var challenge = _challengeFactory.Create();
+        var challenge = ChallengeFactory.Create();
         var browser = device.Browser!.Split(" ").First();
         var identifier = $"{user.Id}_{device.Device}_{browser}";
         var identifierBytes = Encoding.UTF8.GetBytes(identifier);
@@ -70,21 +68,21 @@ public sealed class GenerateCreationOptionsCommandHandler(
             },
             AuthenticatorSelection = new AuthenticatorSelection
             {
-                AuthenticatorAttachment = AuthenticatorAttachments.Platform,
-                UserVerification = UserVerifications.Required,
-                ResidentKey = ResidentKeys.Preferred
+                AuthenticatorAttachment = AuthenticatorAttachment.Platform,
+                UserVerification = UserVerification.Required,
+                ResidentKey = ResidentKey.Preferred
             },
             PublicKeyCredentialParameters =
             [
-                new PublicKeyCredentialParameter { Algorithm = Algorithms.Es256, Type = KeyType.PublicKey },
-                new PublicKeyCredentialParameter { Algorithm = Algorithms.Rs256, Type = KeyType.PublicKey },
+                new PublicKeyCredentialParameter { Algorithm = Algorithm.Es256, Type = KeyType.PublicKey },
+                new PublicKeyCredentialParameter { Algorithm = Algorithm.Rs256, Type = KeyType.PublicKey },
             ],
             ReplyingParty = new ReplyingParty
             {
                 Domain = _credentialOptions.Domain,
                 Name = _credentialOptions.Server,
             },
-            Attestation = Attestations.Direct,
+            Attestation = Attestation.Direct,
             Timeout = _credentialOptions.Timeout,
         };
 

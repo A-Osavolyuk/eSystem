@@ -23,14 +23,12 @@ public class GenerateRequestOptionsCommandHandler(
     IUserQueryService userQueryService,
     IHttpContextAccessor httpContextAccessor,
     ISessionStorage sessionStorage,
-    IChallengeFactory challengeFactory,
     ISoftwareKeyQueryService softwareKeyQueryService,
     IDeviceQueryService deviceQueryService,
     IOptions<CredentialOptions> options) : IRequestHandler<GenerateRequestOptionsCommand, Result>
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly ISessionStorage _sessionStorage = sessionStorage;
-    private readonly IChallengeFactory _challengeFactory = challengeFactory;
     private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
     private readonly IDeviceQueryService _deviceQueryService = deviceQueryService;
     private readonly CredentialOptions _credentialOptions = options.Value;
@@ -38,13 +36,13 @@ public class GenerateRequestOptionsCommandHandler(
 
     public async Task<Result> Handle(GenerateRequestOptionsCommand request, CancellationToken cancellationToken)
     {
-        var challenge = _challengeFactory.Create();
+        var challenge = ChallengeFactory.Create();
         var options = new PublicKeyCredentialRequestOptions
         {
             Challenge = challenge,
             Timeout = _credentialOptions.Timeout,
             Domain = _credentialOptions.Domain,
-            UserVerification = UserVerifications.Required,
+            UserVerification = UserVerification.Required,
         };
         
         if (!string.IsNullOrEmpty(request.UserHint))
@@ -88,7 +86,7 @@ public class GenerateRequestOptionsCommandHandler(
                 {
                     Type = KeyType.PublicKey,
                     Id = softwareKey.CredentialId,
-                    Transports = [CredentialTransports.Internal]
+                    Transports = [CredentialTransport.Internal]
                 }
             ];
         }

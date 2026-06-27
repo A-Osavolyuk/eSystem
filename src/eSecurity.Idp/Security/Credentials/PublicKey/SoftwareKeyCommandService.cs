@@ -51,7 +51,7 @@ public sealed class SoftwareKeyCommandService(AuthDbContext context) : ISoftware
             });
         }
 
-        if (clientData.Type != ClientDataTypes.Get)
+        if (clientData.Type != ClientDataType.Get)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
