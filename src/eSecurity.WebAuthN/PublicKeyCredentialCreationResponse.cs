@@ -23,7 +23,7 @@ public sealed class CredentialResponse
     public required string AttestationObject { get; set; } = null!;
     
     [JsonPropertyName("clientDataJSON")]
-    public required string ClientDataJson { get; set; } = null!;
+    public required byte[] ClientDataJson { get; set; } = null!;
     
     [JsonPropertyName("authenticatorData")]
     public required string AuthenticatorData { get; set; } = null!;

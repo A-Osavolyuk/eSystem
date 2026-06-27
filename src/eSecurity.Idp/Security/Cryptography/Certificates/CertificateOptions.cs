@@ -1,4 +1,4 @@
-namespace eSecurity.Idp.Security.Cryptography.Signing.Certificates;
+namespace eSecurity.Idp.Security.Cryptography.Certificates;
 
 public class CertificateOptions
 {

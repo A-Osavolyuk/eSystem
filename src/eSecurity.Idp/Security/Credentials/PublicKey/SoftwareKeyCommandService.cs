@@ -1,4 +1,5 @@
-﻿using eSecurity.Idp.Data;
+﻿using System.Security.Cryptography;
+using eSecurity.Idp.Data;
 using eSecurity.Idp.Data.Entities;
 using eSecurity.Idp.Security.Credentials.PublicKey.Credentials;
 using eSecurity.WebAuthN;
@@ -33,11 +34,11 @@ public sealed class SoftwareKeyCommandService(AuthDbContext context) : ISoftware
     }
 
     public async ValueTask<Result> VerifyAsync(SoftwareKeyEntity entity, PublicKeyCredential credential,
-        string storedChallenge, CancellationToken cancellationToken = default)
+        string savedChallenge, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);
         ArgumentNullException.ThrowIfNull(credential);
-        ArgumentException.ThrowIfNullOrWhiteSpace(storedChallenge);
+        ArgumentException.ThrowIfNullOrWhiteSpace(savedChallenge);
         
         var authenticatorAssertionResponse = credential.Response;
         var clientData = ClientData.Parse(authenticatorAssertionResponse.ClientDataJson);
@@ -59,13 +60,13 @@ public sealed class SoftwareKeyCommandService(AuthDbContext context) : ISoftware
                 Description = "Invalid type"
             });
         }
-
-        var base64Challenge = CredentialUtils.ToBase64String(clientData.Challenge);
-        if (storedChallenge != base64Challenge)
+        
+        var savedChallengeBytes = Convert.FromBase64String(savedChallenge);
+        if (!CryptographicOperations.FixedTimeEquals(savedChallengeBytes, clientData.Challenge))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
-                Code = ErrorCode.BadRequest,
+                Code = ErrorCode.InvalidChallenge,
                 Description = "Challenge mismatch"
             });
         }

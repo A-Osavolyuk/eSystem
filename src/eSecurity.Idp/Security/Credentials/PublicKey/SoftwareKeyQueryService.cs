@@ -23,9 +23,11 @@ public sealed class SoftwareKeyQueryService(AuthDbContext context) : ISoftwareKe
         return await _context.SoftwareKeys.FirstOrDefaultAsync(key => key.Id == keyId, cancellationToken);
     }
 
-    public async ValueTask<SoftwareKeyEntity?> GetByCredentialIdAsync(string credentialId,
+    public async ValueTask<SoftwareKeyEntity?> GetByCredentialIdAsync(byte[] credentialId,
         CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(credentialId);
+        
         return await _context.SoftwareKeys
             .FirstOrDefaultAsync(key => key.CredentialId == credentialId, cancellationToken);
     }

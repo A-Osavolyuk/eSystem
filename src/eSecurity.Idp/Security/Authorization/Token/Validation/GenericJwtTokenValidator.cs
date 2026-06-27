@@ -1,7 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
-using eSecurity.Idp.Security.Cryptography.Signing.Certificates;
+using eSecurity.Idp.Security.Cryptography.Certificates;
 using eSecurity.Idp.Security.Cryptography.Tokens;
 using TokenValidationResult = eSystem.Core.Server.Security.Authorization.OAuth.Token.Validation.TokenValidationResult;
 

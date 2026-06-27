@@ -1,9 +1,10 @@
 ﻿using System.Text.Json.Serialization;
 using eSystem.Core.Enums;
+using eSystem.Core.Enums.Serialization;
 
 namespace eSecurity.WebAuthN.Constants;
 
-[JsonConverter(typeof(CredentialTransport))]
+[JsonConverter(typeof(JsonEnumValueConverter<CredentialTransport>))]
 public enum CredentialTransport
 {
     [EnumValue("internal")]

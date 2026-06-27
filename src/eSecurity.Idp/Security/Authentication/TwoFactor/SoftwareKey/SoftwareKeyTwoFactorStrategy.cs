@@ -92,10 +92,8 @@ public sealed class SoftwareKeyTwoFactorStrategy(
         }
         
         var credential = context.Credential;
-        var credentialId = CredentialUtils.ToBase64String(credential.Id);
-
-        var passkey = await _softwareKeyQueryService.GetByCredentialIdAsync(credentialId, cancellationToken);
-        if (passkey is null)
+        var softwateKey = await _softwareKeyQueryService.GetByCredentialIdAsync(credential.Id, cancellationToken);
+        if (softwateKey is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
@@ -114,7 +112,7 @@ public sealed class SoftwareKeyTwoFactorStrategy(
             });
         }
 
-        var verificationResult = await _softwareKeyCommandService.VerifyAsync(passkey, 
+        var verificationResult = await _softwareKeyCommandService.VerifyAsync(softwateKey, 
             credential, savedChallenge, cancellationToken);
         
         if (!verificationResult.Succeeded)

@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
+using eSecurity.Idp.Security.Cryptography.Certificates;
 using eSecurity.Idp.Security.Cryptography.Signing;
-using eSecurity.Idp.Security.Cryptography.Signing.Certificates;
 using eSystem.Core.Security.Authorization.OAuth;
 
 namespace eSecurity.Idp.Security.Cryptography.Tokens;

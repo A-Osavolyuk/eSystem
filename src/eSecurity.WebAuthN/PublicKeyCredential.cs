@@ -5,7 +5,7 @@ namespace eSecurity.WebAuthN;
 public class PublicKeyCredential
 {
     [JsonPropertyName("id")]
-    public required string Id { get; set; }
+    public required byte[] Id { get; set; }
     
     [JsonPropertyName("rawId")]
     public required string RawId { get; set; }
@@ -20,7 +20,7 @@ public class PublicKeyCredential
 public class AuthenticatorAssertionResponse
 {
     [JsonPropertyName("clientDataJSON")]
-    public required string ClientDataJson { get; set; }
+    public required byte[] ClientDataJson { get; set; }
     
     [JsonPropertyName("authenticatorData")]
     public required string AuthenticatorData { get; set; }

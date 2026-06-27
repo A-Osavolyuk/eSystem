@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 using eSecurity.Idp.Security.Authentication.Client;
-using eSecurity.Idp.Security.Cryptography.Signing.Certificates;
+using eSecurity.Idp.Security.Cryptography.Certificates;
 using eSecurity.Idp.Security.Cryptography.Tokens;
 using eSystem.Core.Security.Identity.Claims;
 using TokenValidationResult = eSystem.Core.Server.Security.Authorization.OAuth.Token.Validation.TokenValidationResult;

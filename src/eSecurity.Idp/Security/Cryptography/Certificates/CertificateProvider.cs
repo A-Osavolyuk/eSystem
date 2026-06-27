@@ -1,7 +1,7 @@
 using eSecurity.Idp.Data;
 using eSecurity.Idp.Data.Entities;
 
-namespace eSecurity.Idp.Security.Cryptography.Signing.Certificates;
+namespace eSecurity.Idp.Security.Cryptography.Certificates;
 
 public class CertificateProvider(
     AuthDbContext context,

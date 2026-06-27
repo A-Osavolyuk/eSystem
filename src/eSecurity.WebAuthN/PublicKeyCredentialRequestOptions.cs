@@ -24,7 +24,7 @@ public class PublicKeyCredentialRequestOptions
 public class PublicKeyCredentialDescriptor
 {
     [JsonPropertyName("id")]
-    public required string Id { get; set; }
+    public required byte[] Id { get; set; }
     
     [JsonPropertyName("type")]
     public KeyType Type { get; set; }

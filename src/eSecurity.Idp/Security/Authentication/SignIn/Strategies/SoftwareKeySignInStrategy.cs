@@ -50,8 +50,7 @@ public sealed class SoftwareKeySignInStrategy(
             throw new ValidationException("Credential is required");
 
         var credential = payload.Credential;
-        var credentialId = CredentialUtils.ToBase64String(credential.Id);
-        var passkey = await _softwareKeyQueryService.GetByCredentialIdAsync(credentialId, cancellationToken);
+        var passkey = await _softwareKeyQueryService.GetByCredentialIdAsync(credential.Id, cancellationToken);
         if (passkey is null)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error

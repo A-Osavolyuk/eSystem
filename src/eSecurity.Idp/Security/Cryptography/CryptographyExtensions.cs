@@ -1,7 +1,7 @@
-﻿using eSecurity.Idp.Security.Cryptography.Hashing;
+﻿using eSecurity.Idp.Security.Cryptography.Certificates;
+using eSecurity.Idp.Security.Cryptography.Hashing;
 using eSecurity.Idp.Security.Cryptography.Hashing.Hashers;
 using eSecurity.Idp.Security.Cryptography.Signing;
-using eSecurity.Idp.Security.Cryptography.Signing.Certificates;
 using eSecurity.Idp.Security.Cryptography.Tokens;
 using eSecurity.Idp.Security.Cryptography.Tokens.Access;
 using eSecurity.Idp.Security.Cryptography.Tokens.Id;

@@ -10,7 +10,7 @@ public interface ISoftwareKeyQueryService
     ValueTask<SoftwareKeyEntity?> GetByIdAsync(Guid keyId, 
         CancellationToken cancellationToken = default);
     
-    ValueTask<SoftwareKeyEntity?> GetByCredentialIdAsync(string credentialId, 
+    ValueTask<SoftwareKeyEntity?> GetByCredentialIdAsync(byte[] credentialId, 
         CancellationToken cancellationToken = default);
 
     ValueTask<SoftwareKeyEntity?> GetByDeviceAsync(Guid deviceId, 

@@ -5,13 +5,13 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace eSecurity.Idp.Security.Credentials.PublicKey;
 
-public class ClientData
+public sealed class ClientData
 {
     [JsonPropertyName("type")] 
     public ClientDataType Type { get; set; }
     
     [JsonPropertyName("challenge")]
-    public string Challenge { get; set; } = string.Empty;
+    public byte[] Challenge { get; set; } = null!;
     
     [JsonPropertyName("origin")]
     public string Origin { get; set; } = string.Empty;
@@ -19,11 +19,10 @@ public class ClientData
     [JsonPropertyName("crossOrigin")]
     public bool CrossOrigin { get; set; }
 
-    public static ClientData? Parse(string clientDataJson)
+    public static ClientData? Parse(byte[] clientDataBytes)
     {
-        var bytes = WebEncoders.Base64UrlDecode(clientDataJson);
-        var json = Encoding.UTF8.GetString(bytes);
-        var clientData = JsonSerializer.Deserialize<ClientData>(json);
+        var clientDataBytesJson = Encoding.UTF8.GetString(clientDataBytes);
+        var clientData = JsonSerializer.Deserialize<ClientData>(clientDataBytesJson);
         
         return clientData;
     }

@@ -1,5 +1,5 @@
 using System.Security.Cryptography.X509Certificates;
-using eSecurity.Idp.Security.Cryptography.Signing.Certificates;
+using eSecurity.Idp.Security.Cryptography.Certificates;
 using eSystem.Core.Primitives;
 using eSystem.Core.Primitives.Enums;
 

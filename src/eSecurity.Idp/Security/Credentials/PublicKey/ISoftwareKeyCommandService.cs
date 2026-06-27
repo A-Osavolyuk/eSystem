@@ -11,7 +11,7 @@ public interface ISoftwareKeyCommandService
     ValueTask<Result> DeleteAsync(SoftwareKeyEntity entity, CancellationToken cancellationToken = default);
 
     ValueTask<Result> VerifyAsync(SoftwareKeyEntity entity, PublicKeyCredential credential,
-        string storedChallenge, CancellationToken cancellationToken = default);
+        string savedChallenge, CancellationToken cancellationToken = default);
 
     ValueTask<Result> ChangeDisplayNameAsync(SoftwareKeyEntity entity, string displayName,
         CancellationToken cancellationToken = default);

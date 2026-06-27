@@ -3,7 +3,7 @@ using System.Security.Cryptography.X509Certificates;
 using eSecurity.Idp.Security.Cryptography.Protection.Constants;
 using Microsoft.AspNetCore.DataProtection;
 
-namespace eSecurity.Idp.Security.Cryptography.Signing.Certificates;
+namespace eSecurity.Idp.Security.Cryptography.Certificates;
 
 public class CertificateHandler(
     IDataProtectionProvider protection,

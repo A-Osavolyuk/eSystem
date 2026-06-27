@@ -28,8 +28,7 @@ public static class CredentialUtils
     {
         var authenticatorDataBytes = WebEncoders.Base64UrlDecode(response.AuthenticatorData);
         var signature = WebEncoders.Base64UrlDecode(response.Signature);
-        var clientDataJson = WebEncoders.Base64UrlDecode(response.ClientDataJson);
-        var clientDataHash = SHA256.HashData(clientDataJson);
+        var clientDataHash = SHA256.HashData(response.ClientDataJson);
         var signedData = authenticatorDataBytes.Concat(clientDataHash).ToArray();
         var signedDataHash = SHA256.HashData(signedData);
 

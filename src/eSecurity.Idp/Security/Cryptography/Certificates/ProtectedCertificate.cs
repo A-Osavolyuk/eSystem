@@ -1,6 +1,6 @@
 using System.Security.Cryptography.X509Certificates;
 
-namespace eSecurity.Idp.Security.Cryptography.Signing.Certificates;
+namespace eSecurity.Idp.Security.Cryptography.Certificates;
 
 public class ProtectedCertificate
 {
