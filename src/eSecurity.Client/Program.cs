@@ -47,7 +47,6 @@ builder.Services.AddScoped<IConsentService, ConsentService>();
 builder.Services.AddScoped<IDeviceService, DeviceService>();
 builder.Services.AddScoped<ILinkedAccountService, LinkedAccountService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
-builder.Services.AddScoped<IUsernameService, UsernameService>();
 builder.Services.AddScoped<ITwoFactorService, TwoFactorService>();
 builder.Services.AddScoped<IConnectService, ConnectService>();
 

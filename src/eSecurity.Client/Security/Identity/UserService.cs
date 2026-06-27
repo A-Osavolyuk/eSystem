@@ -1,4 +1,5 @@
 using eSecurity.Client.Common.Http;
+using eSecurity.Core.Requests;
 
 namespace eSecurity.Client.Security.Identity;
 
@@ -53,5 +54,14 @@ public class UserService(IApiClient apiClient) : IUserService
             {
                 Method = HttpMethods.Get,
                 Url = $"/api/v1/User/login-methods"
+            });
+
+    public async ValueTask<ApiResponse> SetUsernameAsync(SetUsernameRequest request)
+        => await _apiClient.SendAsync(
+            new ApiRequest
+            {
+                Method = HttpMethods.Post,
+                Url = $"/api/v1/User/username/set",
+                Data = request
             });
 }

@@ -1,4 +1,4 @@
-﻿using eSecurity.Core.Requests;
+﻿using System.Text.Json.Serialization;
 using eSecurity.Idp.Security.Authentication.Session;
 using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Primitives;
@@ -6,7 +6,14 @@ using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Idp.Features.Users;
 
-public sealed record SetUsernameCommand(SetUsernameRequest Request) : IRequest<Result>;
+public sealed class SetUsernameCommand : IRequest<Result>
+{
+    [JsonPropertyName("session_id")]
+    public Guid SessionId { get; set; }
+    
+    [JsonPropertyName("username")]
+    public string? Username { get; set; }
+}
 
 public sealed class SetUsernameCommandHandler(
     ISessionQueryService sessionQueryService,
@@ -19,7 +26,7 @@ public sealed class SetUsernameCommandHandler(
 
     public async Task<Result> Handle(SetUsernameCommand request, CancellationToken cancellationToken)
     {
-        var session = await _sessionQueryService.GetByIdAsync(request.Request.SessionId, cancellationToken);
+        var session = await _sessionQueryService.GetByIdAsync(request.SessionId, cancellationToken);
         if (session is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error
@@ -39,7 +46,10 @@ public sealed class SetUsernameCommandHandler(
             });
         }
 
-        if (await _userQueryService.ExistsAsync(request.Request.Username, cancellationToken))
+        if (string.IsNullOrWhiteSpace(request.Username))
+            throw new ValidationException("Username is required");
+        
+        if (await _userQueryService.ExistsAsync(request.Username, cancellationToken))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
@@ -48,6 +58,25 @@ public sealed class SetUsernameCommandHandler(
             });
         }
 
-        return await _userCommandService.ChangeUsernameAsync(user.Id, request.Request.Username, cancellationToken);
+        return await _userCommandService.ChangeUsernameAsync(user.Id, request.Username, cancellationToken);
+    }
+}
+
+public sealed class SetUsernameCommandValidator : IRequestValidator<SetUsernameCommand>
+{
+    public async ValueTask<Result> Validate(SetUsernameCommand request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (string.IsNullOrWhiteSpace(request.Username))
+        {
+            return Results.ClientError(ClientErrorCode.BadRequest, new Error()
+            {
+                Code = ErrorCode.InvalidRequest,
+                Description = "'username' is required"
+            });
+        }
+
+        return Results.Success(SuccessCodes.Ok);
     }
 }

@@ -1,3 +1,4 @@
+using eSecurity.Core.Requests;
 using eSecurity.Idp.Features.Users;
 using eSystem.Core.Http.Constants;
 using eSystem.Core.Http.Extensions;
@@ -70,6 +71,28 @@ public class UserController(IMediator mediator) : ControllerBase
     public async ValueTask<IActionResult> GetUserEmailsAsync()
     {
         var result = await _mediator.Send(new GetUserEmailsQuery());
+        return HttpContext.HandleResult(result);
+    }
+    
+    [EndpointSummary("Set username")]
+    [EndpointDescription("Set username")]
+    [ProducesResponseType(200)]
+    [HttpPost("username/set")]
+    [AllowAnonymous]
+    public async ValueTask<IActionResult> SetAsync([FromBody] SetUsernameCommand command)
+    {
+        var result = await _mediator.Send(command);
+        return HttpContext.HandleResult(result);
+    }
+    
+    [EndpointSummary("Check username")]
+    [EndpointDescription("Check username")]
+    [ProducesResponseType(200)]
+    [HttpPost("username/check")]
+    [AllowAnonymous]
+    public async ValueTask<IActionResult> CheckAsync([FromBody] CheckUsernameCommand command)
+    {
+        var result = await _mediator.Send(command);
         return HttpContext.HandleResult(result);
     }
 }

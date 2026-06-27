@@ -7,7 +7,7 @@
 
 @layout AuthenticationLayout
 
-@inject IUsernameService UsernameService
+@inject IUserService UserService
 @inject SetUsernameValidator Validator
 
 <PageTitle>OAuth sign up</PageTitle>
@@ -103,7 +103,7 @@
                 Username = _model.Username
             };
 
-            var result = await UsernameService.SetUsernameAsync(request);
+            var result = await UserService.SetUsernameAsync(request);
             if (result.Succeeded)
             {
                 if (!string.IsNullOrEmpty(_authorizationState) &&
