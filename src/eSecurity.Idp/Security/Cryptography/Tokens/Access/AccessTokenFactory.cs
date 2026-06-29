@@ -24,12 +24,8 @@ public sealed class AccessTokenFactory(
         TokenFactoryOptions? options = null,
         CancellationToken cancellationToken = default)
     {
-        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(
-            context.Client, cancellationToken);
-
-        var clientAudiences = await _clientQueryService.GetSupportedAudiencesAsync(
-            context.Client, cancellationToken);
-        
+        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(context.Client.Id, cancellationToken);
+        var clientAudiences = await _clientQueryService.GetSupportedAudiencesAsync(context.Client.Id, cancellationToken);
         List<string> scopes;
         if (options is null || options.AllowedScopes.Count == 0)
         {

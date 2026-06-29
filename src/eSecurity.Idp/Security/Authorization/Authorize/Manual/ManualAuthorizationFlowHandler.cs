@@ -41,7 +41,7 @@ public sealed class ManualAuthorizationFlowHandler(
             return Results.Redirect(RedirectionCode.Found, uri);
         }
 
-        var clientUris = await _clientQueryService.GetUrisAsync(client, cancellationToken);
+        var clientUris = await _clientQueryService.GetUrisAsync(client.Id, cancellationToken);
         
         string redirectUri;
         if (string.IsNullOrEmpty(command.RedirectUri))
@@ -98,9 +98,7 @@ public sealed class ManualAuthorizationFlowHandler(
             return Results.Redirect(RedirectionCode.Found, uri);
         }
 
-        var clientResponseTypes = await _clientQueryService.GetSupportedResponseTypesAsync(
-            client, cancellationToken);
-        
+        var clientResponseTypes = await _clientQueryService.GetSupportedResponseTypesAsync(client.Id, cancellationToken);
         if (clientResponseTypes.All(x => x.ResponseType.Type != responseType.Value))
         {
             var uri = _redirectManager.GetRedirectUri(redirectUri, ErrorCode.UnsupportedResponseType, 
@@ -117,9 +115,7 @@ public sealed class ManualAuthorizationFlowHandler(
             return Results.Redirect(RedirectionCode.Found, uri);
         }
 
-        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(
-            client, cancellationToken);
-        
+        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(client.Id, cancellationToken);
         var scopes = command.Scope.Split(" ").ToList();
         var allowedScopes = clientScopes.Select(x => x.Scope.Value);
         if (!ScopesValidator.Validate(allowedScopes, scopes, out var invalidScopes))

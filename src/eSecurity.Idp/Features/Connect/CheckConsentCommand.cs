@@ -19,16 +19,16 @@ public record CheckConsentCommand : IRequest<Result>
 }
 
 public class CheckConsentCommandHandler(
-    IConsentManager consentManager,
     ISessionQueryService sessionQueryService,
     IUserQueryService userQueryService,
     IClientQueryService clientQueryService,
+    IConsentQueryService consentQueryService,
     ISessionAccessor sessionAccessor) : IRequestHandler<CheckConsentCommand, Result>
 {
-    private readonly IConsentManager _consentManager = consentManager;
     private readonly ISessionQueryService _sessionQueryService = sessionQueryService;
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IClientQueryService _clientQueryService = clientQueryService;
+    private readonly IConsentQueryService _consentQueryService = consentQueryService;
     private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
 
     public async Task<Result> Handle(CheckConsentCommand request, CancellationToken cancellationToken)
@@ -73,7 +73,7 @@ public class CheckConsentCommandHandler(
             });
         }
 
-        var consent = await _consentManager.FindAsync(user, client, cancellationToken);
+        var consent = await _consentQueryService.GetByClientAsync(user.Id, client.Id, cancellationToken);
         if (consent is null)
         {
             return Results.Success(SuccessCodes.Ok, new CheckConsentResponse

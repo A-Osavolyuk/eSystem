@@ -10,20 +10,20 @@ public interface IClientQueryService
 
     ValueTask<ClientEntity?> GetByIdAsync(string id, CancellationToken cancellationToken = default);
 
-    ValueTask<List<ClientResponseTypeEntity>> GetSupportedResponseTypesAsync(ClientEntity client,
+    ValueTask<List<ClientResponseTypeEntity>> GetSupportedResponseTypesAsync(Guid clientId,
         CancellationToken cancellationToken = default);
 
-    ValueTask<List<ClientTokenAuthMethodEntity>> GetSupportedTokenAuthMethodsAsync(ClientEntity client,
+    ValueTask<List<ClientTokenAuthMethodEntity>> GetSupportedTokenAuthMethodsAsync(Guid clientId,
         CancellationToken cancellationToken = default);
 
-    ValueTask<List<ClientAllowedScopeEntity>> GetAllowedScopesAsync(ClientEntity client,
+    ValueTask<List<ClientAllowedScopeEntity>> GetAllowedScopesAsync(Guid clientId,
         CancellationToken cancellationToken = default);
 
-    ValueTask<List<ClientGrantTypeEntity>> GetSupportedGrantTypesAsync(ClientEntity client,
+    ValueTask<List<ClientGrantTypeEntity>> GetSupportedGrantTypesAsync(Guid clientId,
         CancellationToken cancellationToken = default);
 
-    ValueTask<List<ClientAudienceEntity>> GetSupportedAudiencesAsync(ClientEntity client,
+    ValueTask<List<ClientAudienceEntity>> GetSupportedAudiencesAsync(Guid clientId,
         CancellationToken cancellationToken = default);
 
-    ValueTask<List<ClientUriEntity>> GetUrisAsync(ClientEntity client, CancellationToken cancellationToken = default);
+    ValueTask<List<ClientUriEntity>> GetUrisAsync(Guid clientId, CancellationToken cancellationToken = default);
 }

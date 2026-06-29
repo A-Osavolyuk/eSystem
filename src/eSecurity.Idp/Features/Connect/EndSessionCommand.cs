@@ -100,7 +100,7 @@ public sealed class EndSessionCommandHandler(
 
             if (!string.IsNullOrEmpty(request.PostLogoutRedirectUri))
             {
-                var clientUris = await _clientQueryService.GetUrisAsync(client, cancellationToken);
+                var clientUris = await _clientQueryService.GetUrisAsync(client.Id, cancellationToken);
                 if (clientUris.All(x => x.Type != UriType.PostLogoutRedirect && x.Uri != request.PostLogoutRedirectUri))
                 {
                     return Fallback(redirectUri, ErrorCode.InvalidRequest,
@@ -153,7 +153,7 @@ public sealed class EndSessionCommandHandler(
 
             if (!string.IsNullOrEmpty(request.PostLogoutRedirectUri))
             {
-                var clientUris = await _clientQueryService.GetUrisAsync(client, cancellationToken);
+                var clientUris = await _clientQueryService.GetUrisAsync(client.Id, cancellationToken);
                 if (clientUris.All(x => x.Type != UriType.PostLogoutRedirect && x.Uri != request.PostLogoutRedirectUri))
                 {
                     return Fallback(redirectUri, ErrorCode.InvalidRequest,

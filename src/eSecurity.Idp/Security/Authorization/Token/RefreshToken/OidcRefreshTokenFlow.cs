@@ -74,7 +74,7 @@ public sealed class OidcRefreshTokenFlow(
             });
         }
 
-        var clientGrantTypes = await _clientQueryService.GetSupportedGrantTypesAsync(client, cancellationToken);
+        var clientGrantTypes = await _clientQueryService.GetSupportedGrantTypesAsync(client.Id, cancellationToken);
         if (clientGrantTypes.All(x => x.Grant.Grant != flowContext.GrantType))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -93,7 +93,7 @@ public sealed class OidcRefreshTokenFlow(
             });
         }
 
-        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(client, cancellationToken);
+        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(client.Id, cancellationToken);
         if (clientScopes.All(x => x.Scope.Value != ScopeTypes.OfflineAccess))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error

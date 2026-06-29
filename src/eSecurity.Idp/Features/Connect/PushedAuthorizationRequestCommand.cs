@@ -62,8 +62,7 @@ public sealed class PushedAuthorizationRequestCommandHandler(
             });
         }
 
-        var clientUris = await _clientQueryService.GetUrisAsync(client, cancellationToken);
-;        
+        var clientUris = await _clientQueryService.GetUrisAsync(client.Id, cancellationToken);
         string redirectUri;
         if (string.IsNullOrEmpty(request.RedirectUri))
         {
@@ -105,9 +104,7 @@ public sealed class PushedAuthorizationRequestCommandHandler(
             });
         }
 
-        var clientResponseTypes = await _clientQueryService.GetSupportedResponseTypesAsync(
-            client, cancellationToken);
-        
+        var clientResponseTypes = await _clientQueryService.GetSupportedResponseTypesAsync(client.Id, cancellationToken);
         if (clientResponseTypes.All(x => x.ResponseType.Type != request.ResponseType))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -117,9 +114,7 @@ public sealed class PushedAuthorizationRequestCommandHandler(
             });
         }
 
-        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(
-            client, cancellationToken);
-        
+        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(client.Id, cancellationToken);
         var scopes = request.Scope.Split(" ").ToList();
         var allowedScopes = clientScopes.Select(x => x.Scope.Value);
         if (!ScopesValidator.Validate(allowedScopes, scopes, out var invalidScopes))

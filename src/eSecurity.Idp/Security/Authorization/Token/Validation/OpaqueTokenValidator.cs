@@ -30,9 +30,7 @@ public class OpaqueTokenValidator(
         if (opaqueToken is null || !opaqueToken.IsValid)
             return TokenValidationResult.Fail();
 
-        var audiences = await _clientQueryService.GetSupportedAudiencesAsync(
-            opaqueToken.Client, cancellationToken);
-        
+        var audiences = await _clientQueryService.GetSupportedAudiencesAsync(opaqueToken.Client.Id, cancellationToken);
         var audClaimValue = JsonSerializer.Serialize(audiences.Select(x => x.Audience));
         var scopes = opaqueToken.Scopes.Select(x => x.ClientScope);
         var claims = new List<Claim>

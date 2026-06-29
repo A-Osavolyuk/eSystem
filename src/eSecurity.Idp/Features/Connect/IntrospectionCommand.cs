@@ -62,9 +62,7 @@ public sealed class IntrospectionCommandHandler(
             _ => throw new NotSupportedException("Unsupported token type")
         };
 
-        var clientAudiences = await _clientQueryService.GetSupportedAudiencesAsync(
-            token.Client, cancellationToken);
-        
+        var clientAudiences = await _clientQueryService.GetSupportedAudiencesAsync(token.Client.Id, cancellationToken);
         var response = new IntrospectionResponse
         {
             Active = true,

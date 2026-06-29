@@ -13,37 +13,36 @@ namespace eSecurity.Idp.Features.DeviceCode;
 
 public sealed record DeviceCodeDecisionCommand : IRequest<Result>
 {
-    [JsonPropertyName("user_code")]
-    public string? UserCode { get; set; }
-    
-    [JsonPropertyName("decision")]
-    public DeviceCodeDecision Decision { get; set; }
+    [JsonPropertyName("user_code")] public string? UserCode { get; set; }
 
-    [JsonPropertyName("deny_reason")]
-    public string? DenyReason { get; set; }
+    [JsonPropertyName("decision")] public DeviceCodeDecision Decision { get; set; }
+
+    [JsonPropertyName("deny_reason")] public string? DenyReason { get; set; }
 }
 
 public sealed class DeviceCodeDecisionCommandHandler(
     IDeviceCodeManager deviceCodeManager,
     ICurrentUserAccessor currentUserAccessor,
-    IConsentManager consentManager,
     IClientQueryService clientQueryService,
     ISessionQueryService sessionQueryService,
-    ISessionAccessor sessionAccessor) 
+    IConsentQueryService consentQueryService,
+    IConsentCommandService consentCommandService,
+    ISessionAccessor sessionAccessor)
     : IRequestHandler<DeviceCodeDecisionCommand, Result>
 {
     private readonly IDeviceCodeManager _deviceCodeManager = deviceCodeManager;
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
-    private readonly IConsentManager _consentManager = consentManager;
     private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly ISessionQueryService _sessionQueryService = sessionQueryService;
+    private readonly IConsentQueryService _consentQueryService = consentQueryService;
+    private readonly IConsentCommandService _consentCommandService = consentCommandService;
     private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
 
     public async Task<Result> Handle(DeviceCodeDecisionCommand request, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(request.UserCode))
             throw new ValidationException("UserCode is required");
-        
+
         var deviceCode = await _deviceCodeManager.FindByCodeAsync(request.UserCode, cancellationToken);
         if (deviceCode is null)
         {
@@ -53,20 +52,20 @@ public sealed class DeviceCodeDecisionCommandHandler(
                 Description = "Device code was not found"
             });
         }
-        
+
         if (deviceCode.ExpiresAt < DateTimeOffset.UtcNow)
         {
             deviceCode.State = DeviceCodeState.Expired;
             var result = await _deviceCodeManager.UpdateAsync(deviceCode, cancellationToken);
             if (!result.Succeeded) return result;
-            
+
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
                 Code = ErrorCode.ExpiredToken,
                 Description = "Device code is already expired"
             });
         }
-        
+
         if (deviceCode.State != DeviceCodeState.Pending)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -104,7 +103,7 @@ public sealed class DeviceCodeDecisionCommandHandler(
             var result = await _deviceCodeManager.UpdateAsync(deviceCode, cancellationToken);
             return result.Succeeded ? result : Results.Success(SuccessCodes.Ok);
         }
-        
+
         var client = await _clientQueryService.GetByIdAsync(deviceCode.ClientId, cancellationToken);
         if (client is null)
         {
@@ -115,11 +114,9 @@ public sealed class DeviceCodeDecisionCommandHandler(
             });
         }
 
-        var allowedScopes = await _clientQueryService.GetAllowedScopesAsync(
-            client, cancellationToken);
-        
+        var allowedScopes = await _clientQueryService.GetAllowedScopesAsync(client.Id, cancellationToken);
         var scopes = deviceCode.Scopes.Select(x => x.Scope).ToList();
-        var consent = await _consentManager.FindAsync(user, client, cancellationToken);
+        var consent = await _consentQueryService.GetByClientAsync(user.Id, client.Id, cancellationToken);
         if (consent is null)
         {
             var clientScopes = allowedScopes
@@ -132,40 +129,26 @@ public sealed class DeviceCodeDecisionCommandHandler(
                 UserId = user.Id,
                 ClientId = client.Id,
             };
-            
+
             consent.GrantedScopes = clientScopes.Select(x => new GrantedScopeEntity
             {
                 Id = Guid.CreateVersion7(),
                 ConsentId = consent.Id,
                 ClientScopeId = x.Id,
             }).ToList();
-            
-            var consentResult = await _consentManager.CreateAsync(consent, cancellationToken);
+
+            var consentResult = await _consentCommandService.CreateAsync(consent, cancellationToken);
             if (!consentResult.Succeeded) return consentResult;
         }
         else
         {
             if (!consent.HasScopes(scopes, out var remainingScopes))
-            {
-                var clientScopes = allowedScopes
-                    .Where(x => remainingScopes.Contains(x.Scope.Value))
-                    .ToList();
-                
-                consent.GrantedScopes = clientScopes.Select(x => new GrantedScopeEntity
-                {
-                    Id = Guid.CreateVersion7(),
-                    ConsentId = consent.Id,
-                    ClientScopeId = x.Id,
-                }).ToList();
-                
-                var consentResult = await _consentManager.UpdateAsync(consent, cancellationToken);
-                if (!consentResult.Succeeded) return consentResult;
-            }
+                return await _consentCommandService.GrantScopesAsync(consent.Id, remainingScopes, cancellationToken);
         }
-        
+
         deviceCode.State = DeviceCodeState.Approved;
         deviceCode.ApprovedAt = DateTimeOffset.UtcNow;
-        
+
         return await _deviceCodeManager.UpdateAsync(deviceCode, cancellationToken);
     }
 }
@@ -193,7 +176,7 @@ public sealed class DeviceCodeDecisionCommandValidator : IRequestValidator<Devic
                 Description = "'decision' is invalid"
             });
         }
-        
+
         return Results.Success(SuccessCodes.Ok);
     }
 }

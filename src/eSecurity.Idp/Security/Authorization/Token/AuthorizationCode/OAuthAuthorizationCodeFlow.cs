@@ -33,13 +33,15 @@ public class OAuthAuthorizationCodeFlow(
     {
         var client = await _clientQueryService.GetByIdAsync(context.ClientId, cancellationToken);
         if (client is null)
+        {
             return Results.ClientError(ClientErrorCode.Unauthorized, new Error
             {
                 Code = ErrorCode.InvalidClient,
                 Description = "Client was not found."
             });
+        }
 
-        var clientUris = await _clientQueryService.GetUrisAsync(client, cancellationToken);
+        var clientUris = await _clientQueryService.GetUrisAsync(client.Id, cancellationToken);
         if (client.Id != code.ClientId || 
             clientUris.All(x => x.Type != UriType.Redirect && x.Uri != context.RedirectUri))
         {
@@ -50,9 +52,7 @@ public class OAuthAuthorizationCodeFlow(
             });
         }
 
-        var clientGrantTypes = await _clientQueryService.GetSupportedGrantTypesAsync(
-            client, cancellationToken);
-        
+        var clientGrantTypes = await _clientQueryService.GetSupportedGrantTypesAsync(client.Id, cancellationToken);
         if (clientGrantTypes.All(x => x.Grant.Grant != context.GrantType))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error

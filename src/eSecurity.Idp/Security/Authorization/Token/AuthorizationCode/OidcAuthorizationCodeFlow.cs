@@ -45,7 +45,7 @@ public class OidcAuthorizationCodeFlow(
             });
         }
 
-        var clientUris = await _clientQueryService.GetUrisAsync(client, cancellationToken);
+        var clientUris = await _clientQueryService.GetUrisAsync(client.Id, cancellationToken);
         if (client.Id != code.ClientId || 
             clientUris.All(x => x.Type != UriType.Redirect && x.Uri != context.RedirectUri))
         {
@@ -56,9 +56,7 @@ public class OidcAuthorizationCodeFlow(
             });
         }
 
-        var clientGrantTypes = await _clientQueryService.GetSupportedGrantTypesAsync(
-            client, cancellationToken);
-        
+        var clientGrantTypes = await _clientQueryService.GetSupportedGrantTypesAsync(client.Id, cancellationToken);
         if (clientGrantTypes.All(x => x.Grant.Grant != context.GrantType))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -157,7 +155,7 @@ public class OidcAuthorizationCodeFlow(
         var clientResult = await _clientCommandService.RelateAsync(client.Id, session.Id, cancellationToken);
         if (!clientResult.Succeeded) return clientResult;
 
-        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(client, cancellationToken);
+        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(client.Id, cancellationToken);
         if (client.AllowOfflineAccess && clientScopes.Any(x => x.Scope.Value == ScopeTypes.OfflineAccess))
         {
             var refreshTokenFactoryContext = new RefreshTokenFactoryContext

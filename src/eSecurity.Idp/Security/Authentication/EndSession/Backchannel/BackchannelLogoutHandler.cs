@@ -31,7 +31,7 @@ public sealed class BackchannelLogoutHandler(
         var clients = await _clientQueryService.ListBySessionAsync(request.Session.Id, cancellationToken);
         foreach (var client in clients.Where(x => x.AllowBackChannelLogout))
         {
-            var clientUris = await _clientQueryService.GetUrisAsync(client, cancellationToken);
+            var clientUris = await _clientQueryService.GetUrisAsync(client.Id, cancellationToken);
             var backchannelLogoutUri = clientUris.FirstOrDefault(x => x.Type == UriType.BackChannelLogout);
             if (backchannelLogoutUri is null) 
                 continue;

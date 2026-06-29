@@ -121,7 +121,7 @@ public sealed class OidcDeviceCodeFlow(
         var clientResult = await _clientCommandService.RelateAsync(client.Id, session.Id, cancellationToken);
         if (!clientResult.Succeeded) return clientResult;
 
-        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(client, cancellationToken);
+        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(client.Id, cancellationToken);
         if (client.AllowOfflineAccess && clientScopes.Any(x => x.Scope.Value == ScopeTypes.OfflineAccess))
         {
             var refreshTokenFactoryContext = new RefreshTokenFactoryContext
@@ -153,7 +153,7 @@ public sealed class OidcDeviceCodeFlow(
             response.RefreshToken = refreshToken;
         }
 
-        var clientGrantTypes = await _clientQueryService.GetSupportedGrantTypesAsync(client, cancellationToken);
+        var clientGrantTypes = await _clientQueryService.GetSupportedGrantTypesAsync(client.Id, cancellationToken);
         if (clientGrantTypes.Any(x => x.Grant.Grant == GrantType.Ciba))
         {
             var loginTokenFactoryContext = new LoginTokenFactoryContext

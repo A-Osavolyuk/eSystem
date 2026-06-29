@@ -12,25 +12,25 @@ namespace eSecurity.Idp.Features.Connect;
 
 public record GrantConsentCommand : IRequest<Result>
 {
-    [JsonPropertyName("client_id")]
-    public required Guid ClientId { get; set; }
-    
-    [JsonPropertyName("scopes")]
-    public required List<string> Scopes { get; set; }
+    [JsonPropertyName("client_id")] public required Guid ClientId { get; set; }
+
+    [JsonPropertyName("scopes")] public required List<string> Scopes { get; set; }
 }
 
 public class GrantConsentCommandHandler(
     IUserQueryService userQueryService,
-    IConsentManager consentManager,
     IClientQueryService clientQueryService,
     IOptions<OpenIdConfiguration> options,
     ISessionQueryService sessionQueryService,
+    IConsentQueryService consentQueryService,
+    IConsentCommandService consentCommandService,
     ISessionAccessor sessionAccessor) : IRequestHandler<GrantConsentCommand, Result>
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
-    private readonly IConsentManager _consentManager = consentManager;
     private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly ISessionQueryService _sessionQueryService = sessionQueryService;
+    private readonly IConsentQueryService _consentQueryService = consentQueryService;
+    private readonly IConsentCommandService _consentCommandService = consentCommandService;
     private readonly ISessionAccessor _sessionAccessor = sessionAccessor;
     private readonly OpenIdConfiguration _options = options.Value;
 
@@ -45,7 +45,7 @@ public class GrantConsentCommandHandler(
                 Description = "Login required"
             });
         }
-        
+
         var session = await _sessionQueryService.GetByIdAsync(sessionCookie.SessionId, cancellationToken);
         if (session is null)
         {
@@ -55,7 +55,7 @@ public class GrantConsentCommandHandler(
                 Description = "Session was not found"
             });
         }
-        
+
         var user = await _userQueryService.GetByIdAsync(session.UserId, cancellationToken);
         if (user is null)
         {
@@ -76,10 +76,8 @@ public class GrantConsentCommandHandler(
             });
         }
 
-        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(
-            client, cancellationToken);
-        
-        var consent = await _consentManager.FindAsync(user, client, cancellationToken);
+        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(client.Id, cancellationToken);
+        var consent = await _consentQueryService.GetByClientAsync(user.Id, client.Id, cancellationToken);
         if (consent is null)
         {
             consent = new ConsentEntity
@@ -88,56 +86,15 @@ public class GrantConsentCommandHandler(
                 ClientId = client.Id,
             };
 
-            var createResult = await _consentManager.CreateAsync(consent, cancellationToken);
+            var createResult = await _consentCommandService.CreateAsync(consent, cancellationToken);
             if (!createResult.Succeeded) return createResult;
-            
-            foreach (var scope in request.Scopes)
-            {
-                if (!_options.ScopesSupported.Contains(scope))
-                {
-                    return Results.ClientError(ClientErrorCode.BadRequest, new Error
-                    {
-                        Code = ErrorCode.InvalidScope,
-                        Description = $"'{scope}' scope is not supported."
-                    });
-                }
-                
-                var clientScope = clientScopes.FirstOrDefault(x => x.Scope.Value == scope);
-                if (clientScope is null)
-                {
-                    return Results.ClientError(ClientErrorCode.BadRequest, new Error
-                    {
-                        Code = ErrorCode.InvalidScope,
-                        Description = $"'{scope}' scope is not supported by client."
-                    });
-                }
-                
-                var grantResult = await _consentManager.GrantAsync(consent, clientScope, cancellationToken);
-                if (!grantResult.Succeeded) return grantResult;
-            }
 
-            return Results.Success(SuccessCodes.Ok);
+            return await _consentCommandService.GrantScopesAsync(consent.Id, request.Scopes, cancellationToken);
         }
 
         if (!consent.HasScopes(request.Scopes, out var remainingScopes))
-        {
-            foreach (var scope in remainingScopes)
-            {
-                if (!_options.ScopesSupported.Contains(scope))
-                {
-                    return Results.ClientError(ClientErrorCode.BadRequest, new Error
-                    {
-                        Code = ErrorCode.InvalidScope,
-                        Description = $"'{scope}' scope is not supported."
-                    });
-                }
+            return await _consentCommandService.GrantScopesAsync(consent.Id, remainingScopes, cancellationToken);
 
-                var clientScope = clientScopes.First(x => x.Scope.Value == scope);
-                var grantResult = await _consentManager.GrantAsync(consent, clientScope, cancellationToken);
-                if (!grantResult.Succeeded) return grantResult;
-            }
-        }
-        
         return Results.Success(SuccessCodes.Ok);
     }
 }

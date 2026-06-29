@@ -37,7 +37,7 @@ public sealed class OAuthRefreshTokenFlow(
             });
         }
 
-        var clientGrantTypes = await _clientQueryService.GetSupportedGrantTypesAsync(client, cancellationToken);
+        var clientGrantTypes = await _clientQueryService.GetSupportedGrantTypesAsync(client.Id, cancellationToken);
         if (clientGrantTypes.All(x => x.Grant.Grant != flowContext.GrantType))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error

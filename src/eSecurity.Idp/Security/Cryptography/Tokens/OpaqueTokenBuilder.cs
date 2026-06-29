@@ -52,9 +52,7 @@ public class OpaqueTokenBuilder(
 
         if (buildContext.TokenType is not OpaqueTokenType.LoginToken && buildContext.Audiences.Count > 0)
         {
-            var clientAudiences = await _clientQueryService.GetSupportedAudiencesAsync(
-                client, cancellationToken);
-            
+            var clientAudiences = await _clientQueryService.GetSupportedAudiencesAsync(client.Id, cancellationToken);
             opaqueToken.Audiences = clientAudiences
                 .Where(aud => buildContext.Audiences.Contains(aud.Audience))
                 .Select(aud => new OpaqueTokenAudienceEntity
@@ -68,9 +66,7 @@ public class OpaqueTokenBuilder(
 
         if (buildContext.TokenType is not OpaqueTokenType.LoginToken && buildContext.Scopes.Count > 0)
         {
-            var clientScopes = await _clientQueryService.GetAllowedScopesAsync(
-                client, cancellationToken);
-            
+            var clientScopes = await _clientQueryService.GetAllowedScopesAsync(client.Id, cancellationToken);
             opaqueToken.Scopes = clientScopes
                 .Where(scope => buildContext.Scopes.Contains(scope.Scope.Value))
                 .Select(scope => new OpaqueTokenScopeEntity

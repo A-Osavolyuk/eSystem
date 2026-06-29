@@ -86,7 +86,7 @@ public sealed class JwtTokenDelegationHandler(
 
         if (!string.IsNullOrEmpty(context.Audience))
         {
-            var clientAudiences = await _clientQueryService.GetSupportedAudiencesAsync(client, cancellationToken);
+            var clientAudiences = await _clientQueryService.GetSupportedAudiencesAsync(client.Id, cancellationToken);
             if (clientAudiences.All(x => x.Audience != context.Audience))
             {
                 return Results.ClientError(ClientErrorCode.BadRequest, new Error

@@ -82,9 +82,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
             });
         }
 
-        var clientGrantTypes = await _clientQueryService.GetSupportedGrantTypesAsync(
-            client, cancellationToken);
-        
+        var clientGrantTypes = await _clientQueryService.GetSupportedGrantTypesAsync(client.Id, cancellationToken);
         if (clientGrantTypes.All(x => x.Grant.Grant != GrantType.Ciba))
         {
             return Results.ClientError(ClientErrorCode.Unauthorized, new Error
@@ -103,7 +101,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
             });
         }
 
-        var clientUris = await _clientQueryService.GetUrisAsync(client, cancellationToken);
+        var clientUris = await _clientQueryService.GetUrisAsync(client.Id, cancellationToken);
         if (client.NotificationDeliveryMode is NotificationDeliveryMode.Ping or NotificationDeliveryMode.Push &&
             clientUris.All(x => x.Type != UriType.NotificationEndpoint))
         {
@@ -133,9 +131,7 @@ public sealed class BackchannelAuthenticationCommandHandler(
             });
         }
 
-        var allowedScopes = await _clientQueryService.GetAllowedScopesAsync(
-            client, cancellationToken);
-
+        var allowedScopes = await _clientQueryService.GetAllowedScopesAsync(client.Id, cancellationToken);
         var unsupportedScopes = scopes
             .Except(allowedScopes.Select(x => x.Scope.Value))
             .ToList();

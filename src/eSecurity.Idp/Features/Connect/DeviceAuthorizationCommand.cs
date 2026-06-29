@@ -67,9 +67,7 @@ public sealed class DeviceAuthorizationCommandHandler(
             });
         }
 
-        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(
-            client, cancellationToken);
-        
+        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(client.Id, cancellationToken);
         var allowedScopes = clientScopes.Select(x => x.Scope.Value).ToList();
         var unallowedScopes = scopes.Except(allowedScopes).ToList();
         if (unallowedScopes.Count > 0)

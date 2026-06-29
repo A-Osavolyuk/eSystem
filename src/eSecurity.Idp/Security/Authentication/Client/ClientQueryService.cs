@@ -30,55 +30,55 @@ public sealed class ClientQueryService(AuthDbContext context) : IClientQueryServ
         return await GetByIdInternalAsync(Guid.Parse(id), cancellationToken);
     }
 
-    public async ValueTask<List<ClientResponseTypeEntity>> GetSupportedResponseTypesAsync(ClientEntity client,
+    public async ValueTask<List<ClientResponseTypeEntity>> GetSupportedResponseTypesAsync(Guid clientId,
         CancellationToken cancellationToken = default)
     {
         return await _context.ClientResponseTypes
-            .Where(x => x.ClientId == client.Id)
+            .Where(x => x.ClientId == clientId)
             .Include(x => x.ResponseType)
             .ToListAsync(cancellationToken);
     }
 
-    public async ValueTask<List<ClientTokenAuthMethodEntity>> GetSupportedTokenAuthMethodsAsync(ClientEntity client,
+    public async ValueTask<List<ClientTokenAuthMethodEntity>> GetSupportedTokenAuthMethodsAsync(Guid clientId,
         CancellationToken cancellationToken = default)
     {
         return await _context.ClientTokenAuthMethods
-            .Where(x => x.ClientId == client.Id)
+            .Where(x => x.ClientId == clientId)
             .Include(x => x.Method)
             .ToListAsync(cancellationToken);
     }
 
-    public async ValueTask<List<ClientAllowedScopeEntity>> GetAllowedScopesAsync(ClientEntity client,
+    public async ValueTask<List<ClientAllowedScopeEntity>> GetAllowedScopesAsync(Guid clientId,
         CancellationToken cancellationToken = default)
     {
         return await _context.ClientAllowedScopes
-            .Where(x => x.ClientId == client.Id)
+            .Where(x => x.ClientId == clientId)
             .Include(x => x.Scope)
             .ToListAsync(cancellationToken);
     }
 
-    public async ValueTask<List<ClientGrantTypeEntity>> GetSupportedGrantTypesAsync(ClientEntity client,
+    public async ValueTask<List<ClientGrantTypeEntity>> GetSupportedGrantTypesAsync(Guid clientId,
         CancellationToken cancellationToken = default)
     {
         return await _context.ClientGrantTypes
-            .Where(x => x.ClientId == client.Id)
+            .Where(x => x.ClientId == clientId)
             .Include(x => x.Grant)
             .ToListAsync(cancellationToken);
     }
 
-    public async ValueTask<List<ClientAudienceEntity>> GetSupportedAudiencesAsync(ClientEntity client,
+    public async ValueTask<List<ClientAudienceEntity>> GetSupportedAudiencesAsync(Guid clientId,
         CancellationToken cancellationToken = default)
     {
         return await _context.ClientAudiences
-            .Where(x => x.ClientId == client.Id)
+            .Where(x => x.ClientId == clientId)
             .ToListAsync(cancellationToken);
     }
 
-    public async ValueTask<List<ClientUriEntity>> GetUrisAsync(ClientEntity client, 
+    public async ValueTask<List<ClientUriEntity>> GetUrisAsync(Guid clientId, 
         CancellationToken cancellationToken = default)
     {
         return await _context.ClientUris
-            .Where(x => x.ClientId == client.Id)
+            .Where(x => x.ClientId == clientId)
             .ToListAsync(cancellationToken);
     }
 

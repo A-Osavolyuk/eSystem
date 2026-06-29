@@ -23,9 +23,7 @@ public class GetClientInfoQueryHandler(IClientQueryService clientQueryService) :
             });
         }
 
-        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(
-            client, cancellationToken);
-        
+        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(client.Id, cancellationToken);
         var response = new ClientInfo
         {
             ClientName = client.Name,

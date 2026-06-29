@@ -33,7 +33,7 @@ public sealed class FrontchannelLogoutHandler(
         var frontchannelLogoutUris = new List<string>();
         foreach (var client in clients)
         {
-            var clientUris = await _clientQueryService.GetUrisAsync(client, cancellationToken);
+            var clientUris = await _clientQueryService.GetUrisAsync(client.Id, cancellationToken);
             var uris = clientUris
                 .Where(x => x.Type == UriType.FrontChannelLogout)
                 .Select(x => x.Uri)

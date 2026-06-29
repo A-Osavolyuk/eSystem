@@ -55,8 +55,8 @@ public sealed class OpaqueTokenTransformationHandler(
             });
         }
 
-        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(client, cancellationToken);
-        var clientAudiences = await _clientQueryService.GetSupportedAudiencesAsync(client, cancellationToken);
+        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(client.Id, cancellationToken);
+        var clientAudiences = await _clientQueryService.GetSupportedAudiencesAsync(client.Id, cancellationToken);
         
         var tokenContext = new OpaqueTokenBuildContext
         {

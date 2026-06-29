@@ -52,7 +52,7 @@ public sealed class ClientCredentialsStrategy(
             });
         }
 
-        var clientGrantTypes = await _clientQueryService.GetSupportedGrantTypesAsync(client, cancellationToken);
+        var clientGrantTypes = await _clientQueryService.GetSupportedGrantTypesAsync(client.Id, cancellationToken);
         if (clientGrantTypes.All(x => x.Grant.Grant != request.GrantType))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -62,7 +62,7 @@ public sealed class ClientCredentialsStrategy(
             });
         }
 
-        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(client, cancellationToken);
+        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(client.Id, cancellationToken);
         var grantedScopes = clientScopes.Select(x => x.Scope.Value);
         var requestScopes = request.Scope!.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         var allowedScopes = grantedScopes.Intersect(requestScopes).ToList();
