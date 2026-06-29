@@ -3,7 +3,7 @@ using eSystem.Core.Primitives;
 
 namespace eSecurity.Idp.Security.Authorization.Token;
 
-public interface ITokenCommandService
+public interface IOpaqueTokenCommandService
 {
     ValueTask<Result> CreateAsync(OpaqueTokenEntity entity, CancellationToken cancellationToken = default);
 

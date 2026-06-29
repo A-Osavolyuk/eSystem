@@ -5,10 +5,10 @@ using eSystem.Core.Primitives.Enums;
 
 namespace eSecurity.Idp.Security.Authorization.Token;
 
-public sealed class TokenCommandService(AuthDbContext context, ITokenQueryService query) : ITokenCommandService
+public sealed class OpaqueTokenCommandService(AuthDbContext context, IOpaqueTokenQueryService query) : IOpaqueTokenCommandService
 {
     private readonly AuthDbContext _context = context;
-    private readonly ITokenQueryService _query = query;
+    private readonly IOpaqueTokenQueryService _query = query;
 
     public async ValueTask<Result> CreateAsync(OpaqueTokenEntity entity, CancellationToken cancellationToken = default)
     {

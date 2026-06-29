@@ -25,12 +25,12 @@ public sealed class IntrospectionCommandHandler(
     IUserQueryService userQueryService,
     IOptions<TokenConfigurations> options,
     IClientQueryService clientQueryService,
-    ITokenQueryService tokenQueryService,
+    IOpaqueTokenQueryService opaqueTokenQueryService,
     ISessionQueryService sessionQueryService) : IRequestHandler<IntrospectionCommand, Result>
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly IClientQueryService _clientQueryService = clientQueryService;
-    private readonly ITokenQueryService _tokenQueryService = tokenQueryService;
+    private readonly IOpaqueTokenQueryService _opaqueTokenQueryService = opaqueTokenQueryService;
     private readonly ISessionQueryService _sessionQueryService = sessionQueryService;
     private readonly TokenConfigurations _configurations = options.Value;
 
@@ -44,8 +44,8 @@ public sealed class IntrospectionCommandHandler(
         };
 
         var token = opaqueTokenType.HasValue
-            ? await _tokenQueryService.GetByTokenAsync(request.Token, opaqueTokenType.Value, cancellationToken)
-            : await _tokenQueryService.GetByTokenAsync(request.Token, cancellationToken);
+            ? await _opaqueTokenQueryService.GetByTokenAsync(request.Token, opaqueTokenType.Value, cancellationToken)
+            : await _opaqueTokenQueryService.GetByTokenAsync(request.Token, cancellationToken);
 
         if (token is null || !token.IsValid || token.TokenType is OpaqueTokenType.LoginToken)
             return Results.Success(SuccessCodes.Ok, IntrospectionResponse.Fail());

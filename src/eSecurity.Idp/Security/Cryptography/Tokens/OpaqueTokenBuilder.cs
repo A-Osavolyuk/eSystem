@@ -22,10 +22,10 @@ public sealed class OpaqueTokenBuildContext : TokenBuildContext
 
 public class OpaqueTokenBuilder(
     IHasherProvider hasherProvider,
-    ITokenCommandService tokenCommandService,
+    IOpaqueTokenCommandService opaqueTokenCommandService,
     IClientQueryService clientQueryService) : ITokenBuilder<OpaqueTokenBuildContext>
 {
-    private readonly ITokenCommandService _tokenCommandService = tokenCommandService;
+    private readonly IOpaqueTokenCommandService _opaqueTokenCommandService = opaqueTokenCommandService;
     private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
 
@@ -78,7 +78,7 @@ public class OpaqueTokenBuilder(
                 .ToList();
         }
 
-        var result = await _tokenCommandService.CreateAsync(opaqueToken, cancellationToken);
+        var result = await _opaqueTokenCommandService.CreateAsync(opaqueToken, cancellationToken);
         if (!result.Succeeded)
         {
             var error = result.GetError();

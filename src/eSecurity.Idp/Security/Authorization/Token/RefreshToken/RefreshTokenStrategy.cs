@@ -8,10 +8,10 @@ using eSystem.Core.Server.Security.Authorization.OAuth.Token.RefreshToken;
 namespace eSecurity.Idp.Security.Authorization.Token.RefreshToken;
 
 public class RefreshTokenStrategy(
-    ITokenQueryService tokenQueryService,
+    IOpaqueTokenQueryService opaqueTokenQueryService,
     IRefreshTokenFlowResolver resolver) : ITokenStrategy
 {
-    private readonly ITokenQueryService _tokenQueryService = tokenQueryService;
+    private readonly IOpaqueTokenQueryService _opaqueTokenQueryService = opaqueTokenQueryService;
     private readonly IRefreshTokenFlowResolver _resolver = resolver;
 
     public async ValueTask<Result> ExecuteAsync(TokenRequest tokenRequest,
@@ -29,7 +29,7 @@ public class RefreshTokenStrategy(
             });
         }
         
-        var refreshToken = await _tokenQueryService.GetByTokenAsync(request.RefreshToken, cancellationToken);
+        var refreshToken = await _opaqueTokenQueryService.GetByTokenAsync(request.RefreshToken, cancellationToken);
         if (refreshToken is null || !refreshToken.IsValid)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error

@@ -15,13 +15,13 @@ public sealed class OAuthRefreshTokenFlow(
     IUserQueryService userQueryService,
     ITokenFactoryProvider tokenFactoryProvider,
     IClientQueryService clientQueryService,
-    ITokenCommandService tokenCommandService,
+    IOpaqueTokenCommandService opaqueTokenCommandService,
     IOptions<TokenConfigurations> options) : IRefreshTokenFlow
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly ITokenFactoryProvider _tokenFactoryProvider = tokenFactoryProvider;
     private readonly IClientQueryService _clientQueryService = clientQueryService;
-    private readonly ITokenCommandService _tokenCommandService = tokenCommandService;
+    private readonly IOpaqueTokenCommandService _opaqueTokenCommandService = opaqueTokenCommandService;
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
 
     public async ValueTask<Result> ExecuteAsync(OpaqueTokenEntity token, RefreshTokenFlowContext flowContext,
@@ -137,7 +137,7 @@ public sealed class OAuthRefreshTokenFlow(
             
             response.RefreshToken = refreshToken;
 
-            var revokeResult = await _tokenCommandService.RevokeAsync(token.Id, cancellationToken);
+            var revokeResult = await _opaqueTokenCommandService.RevokeAsync(token.Id, cancellationToken);
             return revokeResult.Succeeded ? Results.Success(SuccessCodes.Ok, response) : revokeResult;
         }
 

@@ -12,11 +12,11 @@ namespace eSecurity.Idp.Security.Authorization.Token.TokenExchange.Delegation;
 public sealed class OpaqueTokenDelegationHandler(
     IOptions<TokenConfigurations> options,
     IClientQueryService clientQueryService,
-    ITokenQueryService tokenQueryService,
+    IOpaqueTokenQueryService opaqueTokenQueryService,
     ITokenBuilderProvider tokenBuilderProvider) : ITokenDelegationHandler
 {
     private readonly IClientQueryService _clientQueryService = clientQueryService;
-    private readonly ITokenQueryService _tokenQueryService = tokenQueryService;
+    private readonly IOpaqueTokenQueryService _opaqueTokenQueryService = opaqueTokenQueryService;
     private readonly TokenConfigurations _configurations = options.Value;
     private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
 
@@ -50,7 +50,7 @@ public sealed class OpaqueTokenDelegationHandler(
             });
         }
 
-        if (!await _tokenQueryService.ExistsAsync(context.SubjectToken, cancellationToken))
+        if (!await _opaqueTokenQueryService.ExistsAsync(context.SubjectToken, cancellationToken))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
@@ -59,7 +59,7 @@ public sealed class OpaqueTokenDelegationHandler(
             });
         }
 
-        if (!await _tokenQueryService.ExistsAsync(context.ActorToken, cancellationToken))
+        if (!await _opaqueTokenQueryService.ExistsAsync(context.ActorToken, cancellationToken))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
@@ -68,7 +68,7 @@ public sealed class OpaqueTokenDelegationHandler(
             });
         }
         
-        var subjectToken = await _tokenQueryService.GetByTokenAsync(context.SubjectToken, cancellationToken);
+        var subjectToken = await _opaqueTokenQueryService.GetByTokenAsync(context.SubjectToken, cancellationToken);
         if (subjectToken is null || !subjectToken.IsValid)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -78,7 +78,7 @@ public sealed class OpaqueTokenDelegationHandler(
             });
         }
         
-        var actorToken = await _tokenQueryService.GetByTokenAsync(context.ActorToken, cancellationToken);
+        var actorToken = await _opaqueTokenQueryService.GetByTokenAsync(context.ActorToken, cancellationToken);
         if (actorToken is null || !actorToken.IsValid || actorToken.TokenType != OpaqueTokenType.AccessToken)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error

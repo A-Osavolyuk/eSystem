@@ -14,11 +14,11 @@ public sealed class RevocationCommand : IRequest<Result>
 }
 
 public sealed class RevocationCommandHandler(
-    ITokenQueryService tokenQueryService,
-    ITokenCommandService tokenCommandService) : IRequestHandler<RevocationCommand, Result>
+    IOpaqueTokenQueryService opaqueTokenQueryService,
+    IOpaqueTokenCommandService opaqueTokenCommandService) : IRequestHandler<RevocationCommand, Result>
 {
-    private readonly ITokenQueryService _tokenQueryService = tokenQueryService;
-    private readonly ITokenCommandService _tokenCommandService = tokenCommandService;
+    private readonly IOpaqueTokenQueryService _opaqueTokenQueryService = opaqueTokenQueryService;
+    private readonly IOpaqueTokenCommandService _opaqueTokenCommandService = opaqueTokenCommandService;
 
     public async Task<Result> Handle(RevocationCommand request, CancellationToken cancellationToken)
     {
@@ -30,13 +30,13 @@ public sealed class RevocationCommandHandler(
         };
         
         var token = !tokenType.HasValue
-            ? await _tokenQueryService.GetByTokenAsync(request.Token, cancellationToken)
-            : await _tokenQueryService.GetByTokenAsync(request.Token, tokenType.Value, cancellationToken);
+            ? await _opaqueTokenQueryService.GetByTokenAsync(request.Token, cancellationToken)
+            : await _opaqueTokenQueryService.GetByTokenAsync(request.Token, tokenType.Value, cancellationToken);
 
         if (token is null || token.Revoked)
             return Results.Success(SuccessCodes.Ok);
 
-        return await _tokenCommandService.RevokeAsync(token.Id, cancellationToken);
+        return await _opaqueTokenCommandService.RevokeAsync(token.Id, cancellationToken);
     }
 }
 

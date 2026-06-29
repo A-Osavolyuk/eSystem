@@ -10,12 +10,12 @@ using eSystem.Core.Server.Security.Authorization.OAuth.Token.TokenExchange;
 namespace eSecurity.Idp.Security.Authorization.Token.TokenExchange.Transformation;
 
 public sealed class OpaqueTokenTransformationHandler(
-    ITokenQueryService tokenQueryService,
+    IOpaqueTokenQueryService opaqueTokenQueryService,
     IOptions<TokenConfigurations> options,
     IClientQueryService clientQueryService,
     ITokenBuilderProvider tokenBuilderProvider) : ITokenTransformationHandler
 {
-    private readonly ITokenQueryService _tokenQueryService = tokenQueryService;
+    private readonly IOpaqueTokenQueryService _opaqueTokenQueryService = opaqueTokenQueryService;
     private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly TokenConfigurations _configurations = options.Value;
     private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
@@ -23,7 +23,7 @@ public sealed class OpaqueTokenTransformationHandler(
     public async ValueTask<Result> HandleAsync(TokenExchangeFlowContext context,
         CancellationToken cancellationToken = default)
     {
-        if (!await _tokenQueryService.ExistsAsync(context.SubjectToken, cancellationToken))
+        if (!await _opaqueTokenQueryService.ExistsAsync(context.SubjectToken, cancellationToken))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
@@ -32,7 +32,7 @@ public sealed class OpaqueTokenTransformationHandler(
             });
         }
         
-        var token = await _tokenQueryService.GetByTokenAsync(context.SubjectToken, cancellationToken);
+        var token = await _opaqueTokenQueryService.GetByTokenAsync(context.SubjectToken, cancellationToken);
         if (token is null || !token.IsValid)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error

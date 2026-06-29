@@ -4,9 +4,9 @@ using eSecurity.Idp.Security.Cryptography.Hashing;
 
 namespace eSecurity.Idp.Security.Authorization.Token;
 
-public sealed class TokenQueryService(
+public sealed class OpaqueTokenQueryService(
     AuthDbContext context,
-    IHasherProvider hasherProvider) : ITokenQueryService
+    IHasherProvider hasherProvider) : IOpaqueTokenQueryService
 {
     private readonly AuthDbContext _context = context;
     private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);

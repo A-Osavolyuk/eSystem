@@ -10,20 +10,20 @@ using TokenValidationResult = eSystem.Core.Server.Security.Authorization.OAuth.T
 namespace eSecurity.Idp.Security.Authorization.Token.Validation;
 
 public class OpaqueTokenValidator(
-    ITokenQueryService tokenQueryService,
+    IOpaqueTokenQueryService opaqueTokenQueryService,
     IClientQueryService clientQueryService,
     IOptions<TokenConfigurations> options) : ITokenValidator
 {
-    private readonly ITokenQueryService _tokenQueryService = tokenQueryService;
+    private readonly IOpaqueTokenQueryService _opaqueTokenQueryService = opaqueTokenQueryService;
     private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
 
     public async Task<TokenValidationResult> ValidateAsync(string token, CancellationToken cancellationToken = default)
     {
-        if (!await _tokenQueryService.ExistsAsync(token, cancellationToken))
+        if (!await _opaqueTokenQueryService.ExistsAsync(token, cancellationToken))
             return TokenValidationResult.Fail();
 
-        var opaqueToken = await _tokenQueryService.GetByTokenAsync(token, cancellationToken);
+        var opaqueToken = await _opaqueTokenQueryService.GetByTokenAsync(token, cancellationToken);
         if (opaqueToken is null || !opaqueToken.IsValid)
             return TokenValidationResult.Fail();
 

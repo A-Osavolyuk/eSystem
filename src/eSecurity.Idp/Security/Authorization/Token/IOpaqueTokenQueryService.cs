@@ -2,7 +2,7 @@
 
 namespace eSecurity.Idp.Security.Authorization.Token;
 
-public interface ITokenQueryService
+public interface IOpaqueTokenQueryService
 {
     ValueTask<bool> ExistsAsync(string token, CancellationToken cancellationToken = default);
 
