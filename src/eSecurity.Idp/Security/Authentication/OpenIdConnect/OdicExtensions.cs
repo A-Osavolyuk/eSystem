@@ -11,12 +11,5 @@ public static class OdicExtensions
         {
             services.Configure(configure);
         }
-
-        public void AddSsoSession(Action<SessionOptions> configure)
-        {
-            services.Configure(configure);
-            services.AddScoped<ISessionAccessor, SessionAccessor>();
-            services.AddScoped<ISessionCookieFactory, SessionCookieFactory>();
-        }
     }
 }

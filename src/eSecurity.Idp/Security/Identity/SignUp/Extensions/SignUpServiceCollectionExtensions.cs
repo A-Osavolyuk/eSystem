@@ -8,7 +8,13 @@ public static class SignUpServiceCollectionExtensions
     {
         public void AddSignUpStrategies()
         {
-            services.AddSingleton<ISignUpStrategyResolver, SignUpStrategyStrategyResolver>();
+            services.AddSingleton<ISignUpStrategyResolver, SignUpStrategyStrategyResolver>(
+                sp => new SignUpStrategyStrategyResolver(sp, new Dictionary<Type, Type>()
+                {
+                    { typeof(ManualSignUpPayload), typeof(ManualSignUpStrategy) },
+                    { typeof(OAuthSignUpPayload), typeof(OAuthSignUpStrategy) }
+                }));
+            
             services.AddScoped<ISignUpStrategy, ManualSignUpStrategy>();
             services.AddScoped<ISignUpStrategy, OAuthSignUpStrategy>();
         }

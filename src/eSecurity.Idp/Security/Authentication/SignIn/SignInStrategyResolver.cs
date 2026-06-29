@@ -2,16 +2,12 @@
 
 namespace eSecurity.Idp.Security.Authentication.SignIn;
 
-public sealed class SignInStrategyResolver : ISignInStrategyResolver
+public sealed class SignInStrategyResolver(
+    IServiceProvider serviceProvider, 
+    Dictionary<Type, Type> strategies) : ISignInStrategyResolver
 {
-    private readonly IServiceProvider _serviceProvider;
-    private readonly Dictionary<Type, Type> _strategies;
-
-    public SignInStrategyResolver(IServiceProvider serviceProvider, IEnumerable<ISignInStrategy> strategies)
-    {
-        _serviceProvider = serviceProvider;
-        _strategies = strategies.ToDictionary(x => x.PayloadType, x => x.GetType());
-    }
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
+    private readonly Dictionary<Type, Type> _strategies = strategies;
 
     public ISignInStrategy Resolve(SignInPayload payload)
     {

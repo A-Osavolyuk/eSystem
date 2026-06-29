@@ -8,5 +8,7 @@ public static class SessionServiceCollectionExtensions
         
         services.AddScoped<ISessionQueryService, SessionQueryService>();
         services.AddScoped<ISessionCommandService, SessionCommandService>();
+        services.AddScoped<ISessionAccessor, SessionAccessor>();
+        services.AddScoped<ISessionCookieFactory, SessionCookieFactory>();
     }
 }

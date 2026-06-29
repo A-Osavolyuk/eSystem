@@ -8,6 +8,7 @@ using eSecurity.Idp.Security.Cookies;
 using eSecurity.Idp.Security.Authentication.Lockout;
 using eSecurity.Idp.Security.Authentication.OpenIdConnect;
 using eSecurity.Idp.Security.Authentication.Password.Extensions;
+using eSecurity.Idp.Security.Authentication.Session.Extensions;
 using eSecurity.Idp.Security.Authentication.SignIn.Extensions;
 using eSecurity.Idp.Security.Authentication.Subject;
 using eSecurity.Idp.Security.Authentication.TwoFactor.Extensions;
@@ -45,7 +46,7 @@ public static class AuthenticationExtensions
             options.MaxRequestLifetime = TimeSpan.FromSeconds(600);
         });
             
-        builder.Services.AddSsoSession(cfg =>
+        builder.Services.AddSsoSessions(cfg =>
         {
             cfg.Timestamp = TimeSpan.FromDays(30);
         });

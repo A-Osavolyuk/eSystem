@@ -1,15 +1,11 @@
 namespace eSecurity.Idp.Security.Identity.SignUp;
 
-public class SignUpStrategyStrategyResolver : ISignUpStrategyResolver
+public class SignUpStrategyStrategyResolver(
+    IServiceProvider serviceProvider, 
+    Dictionary<Type, Type> strategies) : ISignUpStrategyResolver
 {
-    private readonly IServiceProvider _serviceProvider;
-    private readonly Dictionary<Type, Type> _strategies;
-
-    public SignUpStrategyStrategyResolver(IServiceProvider serviceProvider, IEnumerable<ISignUpStrategy> strategies)
-    {
-        _serviceProvider = serviceProvider;
-        _strategies = strategies.ToDictionary(x => x.PayloadType, x => x.GetType());
-    }
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
+    private readonly Dictionary<Type, Type> _strategies = strategies;
 
     public ISignUpStrategy Resolve(SignUpPayload payload)
     {
