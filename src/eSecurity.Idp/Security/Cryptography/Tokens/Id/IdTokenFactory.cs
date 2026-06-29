@@ -23,7 +23,7 @@ public sealed class IdTokenFactory(
     IClientQueryService clientQueryService,
     IUserQueryService userQueryService,
     ISessionQueryService sessionQueryService,
-    IPersonalDataManager personalDataManager) : ITokenFactory<IdTokenFactoryContext>
+    IPersonalDataQueryService personalDataQueryService) : ITokenFactory<IdTokenFactoryContext>
 {
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
     private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
@@ -32,7 +32,7 @@ public sealed class IdTokenFactory(
     private readonly IClientQueryService _clientQueryService = clientQueryService;
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly ISessionQueryService _sessionQueryService = sessionQueryService;
-    private readonly IPersonalDataManager _personalDataManager = personalDataManager;
+    private readonly IPersonalDataQueryService _personalDataQueryService = personalDataQueryService;
 
     public async ValueTask<TypedResult<string>> CreateAsync(
         IdTokenFactoryContext context,
@@ -117,7 +117,7 @@ public sealed class IdTokenFactory(
             //TODO: Implement phone scope handling
         }
 
-        var personalData = await _personalDataManager.GetAsync(context.UserId, cancellationToken);
+        var personalData = await _personalDataQueryService.GetByUserAsync(context.UserId, cancellationToken);
         if (scopes.Contains(ScopeTypes.Profile))
         {
             var user = await _userQueryService.GetByIdAsync(context.UserId, cancellationToken);

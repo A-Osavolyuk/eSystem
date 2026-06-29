@@ -14,7 +14,7 @@ public static class IdentityExtensions
         public void AddIdentity()
         {
             builder.Services.AddSignUpStrategies();
-            builder.Services.AddScoped<IPersonalDataManager, PersonalDataManager>();
+            builder.Services.AddScoped<IPersonalDataQueryService, PersonalDataQueryService>();
             builder.Services.AddScoped<IPairwiseSubjectFactory, PairwiseSubjectFactory>();
 
             builder.Services.AddScoped<ICurrentUserAccessor, CurrentUserAccessor>();
@@ -79,8 +79,6 @@ public static class IdentityExtensions
         {
             var identityBuilder = new IdentityBuilder(builder.Services);
             configurator(identityBuilder);
-            
-            builder.Services.AddScoped<IPersonalDataManager, PersonalDataManager>();
         }
     }
 }

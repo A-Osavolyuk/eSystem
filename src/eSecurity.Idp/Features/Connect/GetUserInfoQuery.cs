@@ -20,13 +20,13 @@ public record GetUserInfoQuery(string? AccessToken = null) : IRequest<Result>;
 
 public class GetUserInfoQueryHandler(
     IUserQueryService userQueryService,
-    IPersonalDataManager personalDataManager,
+    IPersonalDataQueryService personalDataQueryService,
     IHttpContextAccessor httpContextAccessor,
     IEmailQueryService emailQueryService,
     ITokenValidationProvider validationProvider) : IRequestHandler<GetUserInfoQuery, Result>
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
-    private readonly IPersonalDataManager _personalDataManager = personalDataManager;
+    private readonly IPersonalDataQueryService _personalDataQueryService = personalDataQueryService;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly ITokenValidator _validator = validationProvider.CreateValidator(TokenKind.Jwt);
@@ -117,7 +117,7 @@ public class GetUserInfoQueryHandler(
             //TODO: Implement phone scope handling
         }
 
-        var personalData = await _personalDataManager.GetAsync(user.Id, cancellationToken);
+        var personalData = await _personalDataQueryService.GetByUserAsync(user.Id, cancellationToken);
         if (scopes.Contains(ScopeTypes.Profile))
         {
             response.PreferredUsername = user.Username;
