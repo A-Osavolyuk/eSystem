@@ -1358,16 +1358,22 @@ namespace eSecurity.Idp.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<int>("AttestationFormatType")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("AttestationTrustType")
+                        .HasColumnType("integer");
+
                     b.Property<Guid>("AuthenticatorId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset?>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("CredentialId")
+                    b.Property<byte[]>("CredentialId")
                         .IsRequired()
                         .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasColumnType("bytea");
 
                     b.Property<Guid>("DeviceId")
                         .HasColumnType("uuid");
@@ -1427,6 +1433,42 @@ namespace eSecurity.Idp.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TokenAuthMethods", "public");
+                });
+
+            modelBuilder.Entity("eSecurity.Idp.Data.Entities.TwoFactorMethodEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TwoFactorMethods", "public");
                 });
 
             modelBuilder.Entity("eSecurity.Idp.Data.Entities.UserClientEntity", b =>
@@ -1794,9 +1836,8 @@ namespace eSecurity.Idp.Migrations
                     b.Property<DateTimeOffset?>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Method")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("MethodId")
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("Preferred")
                         .HasColumnType("boolean");
@@ -1808,6 +1849,8 @@ namespace eSecurity.Idp.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MethodId");
 
                     b.HasIndex("UserId");
 
@@ -2533,11 +2576,19 @@ namespace eSecurity.Idp.Migrations
 
             modelBuilder.Entity("eSecurity.Idp.Data.Entities.UserTwoFactorMethodEntity", b =>
                 {
+                    b.HasOne("eSecurity.Idp.Data.Entities.TwoFactorMethodEntity", "Method")
+                        .WithMany()
+                        .HasForeignKey("MethodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("eSecurity.Idp.Data.Entities.UserEntity", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Method");
 
                     b.Navigation("User");
                 });

@@ -144,6 +144,25 @@ namespace eSecurity.Idp.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TwoFactorMethods",
+                schema: "public",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<string>(type: "text", nullable: false),
+                    Priority = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
+                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    IsEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TwoFactorMethods", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 schema: "public",
                 columns: table => new
@@ -151,7 +170,7 @@ namespace eSecurity.Idp.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Username = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
                     NormalizedUsername = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    UsernameChangeDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UsernameChangedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     AccountConfirmed = table.Column<bool>(type: "boolean", nullable: false),
                     FailedLoginAttempts = table.Column<int>(type: "integer", nullable: false),
                     ResendAttempts = table.Column<int>(type: "integer", nullable: false),
@@ -800,14 +819,21 @@ namespace eSecurity.Idp.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Preferred = table.Column<bool>(type: "boolean", nullable: false),
-                    Method = table.Column<string>(type: "text", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    MethodId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserTwoFactorMethods", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserTwoFactorMethods_TwoFactorMethods_MethodId",
+                        column: x => x.MethodId,
+                        principalSchema: "public",
+                        principalTable: "TwoFactorMethods",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_UserTwoFactorMethods_Users_UserId",
                         column: x => x.UserId,
@@ -1251,12 +1277,14 @@ namespace eSecurity.Idp.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     AuthenticatorId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CredentialId = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
+                    CredentialId = table.Column<byte[]>(type: "bytea", maxLength: 1000, nullable: false),
                     DisplayName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     PublicKey = table.Column<byte[]>(type: "bytea", nullable: false),
                     Domain = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     SignCount = table.Column<long>(type: "bigint", nullable: false),
                     Type = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
+                    AttestationFormatType = table.Column<int>(type: "integer", nullable: false),
+                    AttestationTrustType = table.Column<int>(type: "integer", nullable: false),
                     LastSeenDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     DeviceId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
@@ -1264,9 +1292,9 @@ namespace eSecurity.Idp.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Passkeys", x => x.Id);
+                    table.PrimaryKey("PK_SoftwareKeys", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Passkeys_UserDevices_DeviceId",
+                        name: "FK_SoftwareKeys_UserDevices_DeviceId",
                         column: x => x.DeviceId,
                         principalSchema: "public",
                         principalTable: "UserDevices",
@@ -1683,13 +1711,6 @@ namespace eSecurity.Idp.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Passkeys_DeviceId",
-                schema: "public",
-                table: "SoftwareKeys",
-                column: "DeviceId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Passwords_UserId",
                 schema: "public",
                 table: "Passwords",
@@ -1748,6 +1769,13 @@ namespace eSecurity.Idp.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_SoftwareKeys_DeviceId",
+                schema: "public",
+                table: "SoftwareKeys",
+                column: "DeviceId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserClients_ClientId",
                 schema: "public",
                 table: "UserClients",
@@ -1795,6 +1823,12 @@ namespace eSecurity.Idp.Migrations
                 table: "UserSecret",
                 column: "UserId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserTwoFactorMethods_MethodId",
+                schema: "public",
+                table: "UserTwoFactorMethods",
+                column: "MethodId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserTwoFactorMethods_UserId",
@@ -1885,10 +1919,6 @@ namespace eSecurity.Idp.Migrations
                 schema: "public");
 
             migrationBuilder.DropTable(
-                name: "SoftwareKeys",
-                schema: "public");
-
-            migrationBuilder.DropTable(
                 name: "Passwords",
                 schema: "public");
 
@@ -1910,6 +1940,10 @@ namespace eSecurity.Idp.Migrations
 
             migrationBuilder.DropTable(
                 name: "SessionAuthenticationMethods",
+                schema: "public");
+
+            migrationBuilder.DropTable(
+                name: "SoftwareKeys",
                 schema: "public");
 
             migrationBuilder.DropTable(
@@ -1989,15 +2023,19 @@ namespace eSecurity.Idp.Migrations
                 schema: "public");
 
             migrationBuilder.DropTable(
-                name: "UserDevices",
-                schema: "public");
-
-            migrationBuilder.DropTable(
                 name: "PushedAuthorizationRequest",
                 schema: "public");
 
             migrationBuilder.DropTable(
+                name: "UserDevices",
+                schema: "public");
+
+            migrationBuilder.DropTable(
                 name: "Roles",
+                schema: "public");
+
+            migrationBuilder.DropTable(
+                name: "TwoFactorMethods",
                 schema: "public");
 
             migrationBuilder.DropTable(
