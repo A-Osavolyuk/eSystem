@@ -92,9 +92,11 @@ public sealed class OidcDeviceCodeFlow(
 
         var accessTokenFactoryContext = new AccessTokenFactoryContext
         {
-            Client = client,
-            User = user,
-            Session = session
+            ClientId = client.Id,
+            TokenLifetime = client.AccessTokenLifetime,
+            UserId = user.Id,
+            SessionId = session.Id,
+            TokenType = client.AccessTokenType
         };
         
         var accessTokenFactory = _tokenFactoryProvider.GetFactory<AccessTokenFactoryContext>();
@@ -126,9 +128,10 @@ public sealed class OidcDeviceCodeFlow(
         {
             var refreshTokenFactoryContext = new RefreshTokenFactoryContext
             {
-                Client = client,
-                User = user,
-                Session = session
+                ClientId = client.Id,
+                UserId = user.Id,
+                SessionId = session.Id,
+                TokenLifetime = client.RefreshTokenLifetime
             };
             
             var refreshTokenFactory = _tokenFactoryProvider.GetFactory<RefreshTokenFactoryContext>();
@@ -158,9 +161,10 @@ public sealed class OidcDeviceCodeFlow(
         {
             var loginTokenFactoryContext = new LoginTokenFactoryContext
             {
-                Client = client,
-                User = user,
-                Session = session
+                ClientId = client.Id,
+                UserId = user.Id,
+                SessionId = session.Id,
+                TokenLifetime = client.LogoutTokenLifetime
             };
             
             var loginTokenFactory = _tokenFactoryProvider.GetFactory<LoginTokenFactoryContext>();
@@ -187,9 +191,10 @@ public sealed class OidcDeviceCodeFlow(
 
         var idTokenFactoryContext = new IdTokenFactoryContext
         {
-            Client = client,
-            User = user,
-            Session = session
+            ClientId = client.Id,
+            UserId = user.Id,
+            SessionId = session.Id,
+            TokenLifetime = client.IdTokenLifetime
         };
         
         var idTokenFactory = _tokenFactoryProvider.GetFactory<IdTokenFactoryContext>();

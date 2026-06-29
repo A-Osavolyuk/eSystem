@@ -4,6 +4,6 @@ namespace eSecurity.Idp.Security.Cryptography.Tokens.Login;
 
 public sealed class LoginTokenFactoryContext : TokenFactoryContext
 {
-    public required UserEntity User { get; set; }
-    public SessionEntity? Session { get; set; }
+    public required Guid UserId { get; init; }
+    public Guid? SessionId { get; init; }
 }

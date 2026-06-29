@@ -112,8 +112,10 @@ public class OAuthAuthorizationCodeFlow(
 
         var accessTokenFactoryContext = new AccessTokenFactoryContext
         {
-            Client = client,
-            User = user
+            ClientId = client.Id,
+            UserId = user.Id,
+            TokenLifetime = client.AccessTokenLifetime,
+            TokenType = client.AccessTokenType
         };
         
         var accessTokenFactory = _tokenFactoryProvider.GetFactory<AccessTokenFactoryContext>();
@@ -141,8 +143,9 @@ public class OAuthAuthorizationCodeFlow(
         {
             var refreshTokenFactoryContext = new RefreshTokenFactoryContext
             {
-                Client = client,
-                User = user
+                ClientId = client.Id,
+                UserId = user.Id,
+                TokenLifetime = client.RefreshTokenLifetime
             };
                 
             var refreshTokenFactory = _tokenFactoryProvider.GetFactory<RefreshTokenFactoryContext>();

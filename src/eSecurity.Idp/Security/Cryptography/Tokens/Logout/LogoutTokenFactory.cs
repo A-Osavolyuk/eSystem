@@ -22,8 +22,8 @@ public sealed class LogoutTokenFactory(
         TokenFactoryOptions? options = null, 
         CancellationToken cancellationToken = default)
     {
-        var lifetime = context.Client.LogoutTokenLifetime ?? _tokenConfigurations.DefaultLogoutTokenLifetime;
-        var subjectResult = await _subjectProvider.GetSubjectAsync(context.User, context.Client, cancellationToken);
+        var lifetime = context.TokenLifetime ?? _tokenConfigurations.DefaultLogoutTokenLifetime;
+        var subjectResult = await _subjectProvider.GetSubjectAsync(context.UserId, context.ClientId, cancellationToken);
         if (!subjectResult.Succeeded || !subjectResult.TryGetValue(out var subject))
         {
             return TypedResult<string>.Fail(new Error
@@ -44,9 +44,9 @@ public sealed class LogoutTokenFactory(
         {
             new(AppClaimTypes.Jti, Guid.NewGuid().ToString()),
             new(AppClaimTypes.Iss, _tokenConfigurations.Issuer),
-            new(AppClaimTypes.Aud, context.Client.Id.ToString()),
+            new(AppClaimTypes.Aud, context.ClientId.ToString()),
             new(AppClaimTypes.Sub, subject),
-            new(AppClaimTypes.Sid, context.Session.Id.ToString()),
+            new(AppClaimTypes.Sid, context.SessionId.ToString()),
             new(AppClaimTypes.Events, eventsJson),
             new(AppClaimTypes.Iat, iat, ClaimValueTypes.Integer64),
             new(AppClaimTypes.Exp, exp, ClaimValueTypes.Integer64),

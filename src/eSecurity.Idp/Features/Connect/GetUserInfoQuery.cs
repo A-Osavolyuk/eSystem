@@ -117,7 +117,7 @@ public class GetUserInfoQueryHandler(
             //TODO: Implement phone scope handling
         }
 
-        var personalData = await _personalDataManager.GetAsync(user, cancellationToken);
+        var personalData = await _personalDataManager.GetAsync(user.Id, cancellationToken);
         if (scopes.Contains(ScopeTypes.Profile))
         {
             response.PreferredUsername = user.Username;

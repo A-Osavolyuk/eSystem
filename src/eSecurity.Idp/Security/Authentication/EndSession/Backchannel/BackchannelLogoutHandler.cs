@@ -38,9 +38,10 @@ public sealed class BackchannelLogoutHandler(
 
             var logoutTokenFactoryContext = new LogoutTokenFactoryContext
             {
-                Client = client,
-                User = request.User,
-                Session = request.Session
+                ClientId = client.Id,
+                UserId = request.User.Id,
+                SessionId = request.Session.Id,
+                TokenLifetime = client.LogoutTokenLifetime
             };
                 
             var logoutTokenFactory = _tokenFactoryProvider.GetFactory<LogoutTokenFactoryContext>();

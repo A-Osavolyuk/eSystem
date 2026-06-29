@@ -21,9 +21,10 @@ public sealed class RefreshTokenFactory(
         TokenFactoryOptions? options = null, 
         CancellationToken cancellationToken = default)
     {
-        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(context.Client.Id, cancellationToken);
-        var clientAudiences = await _clientQueryService.GetSupportedAudiencesAsync(context.Client.Id, cancellationToken);
+        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(context.ClientId, cancellationToken);
+        var clientAudiences = await _clientQueryService.GetSupportedAudiencesAsync(context.ClientId, cancellationToken);
         IEnumerable<string> scopes;
+        
         if (options is null || options.AllowedScopes.Count == 0)
         {
             scopes = clientScopes.Select(x => x.Scope.Value);
@@ -35,26 +36,27 @@ public sealed class RefreshTokenFactory(
                 .Select(x => x.Scope.Value);
         }
         
-        var lifetime = context.Client.RefreshTokenLifetime 
-                       ?? _tokenConfigurations.DefaultRefreshTokenLifetime;
+        var lifetime = context.TokenLifetime ?? _tokenConfigurations.DefaultRefreshTokenLifetime;
         
         OpaqueTokenBuildContext tokenContext;
-        if (context.User is null)
+        if (context.UserId is null)
         {
             tokenContext = new OpaqueTokenBuildContext
             {
                 TokenLength = _tokenConfigurations.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.RefreshToken,
-                ClientId = context.Client.Id,
+                ClientId = context.ClientId,
                 Audiences = clientAudiences.Select(x => x.Audience).ToList(),
                 Scopes = scopes.ToList(),
                 ExpiredAt = DateTimeOffset.UtcNow.Add(lifetime),
-                Subject = context.Client.Id.ToString()
+                Subject = context.ClientId.ToString()
             };
         }
         else
         {
-            var subjectResult = await _subjectProvider.GetSubjectAsync(context.User, context.Client, cancellationToken);
+            var subjectResult = await _subjectProvider.GetSubjectAsync(
+                context.UserId.Value, context.ClientId, cancellationToken);
+            
             if (!subjectResult.Succeeded || !subjectResult.TryGetValue(out var subject))
             {
                 return TypedResult<string>.Fail(new Error
@@ -68,12 +70,12 @@ public sealed class RefreshTokenFactory(
             {
                 TokenLength = _tokenConfigurations.OpaqueTokenLength,
                 TokenType = OpaqueTokenType.RefreshToken,
-                ClientId = context.Client.Id,
+                ClientId = context.ClientId,
                 Audiences = clientAudiences.Select(x => x.Audience).ToList(),
                 Scopes = scopes.ToList(),
                 ExpiredAt = DateTimeOffset.UtcNow.Add(lifetime),
                 Subject = subject,
-                Sid = context.Session?.Id
+                Sid = context.SessionId
             };
         }
 

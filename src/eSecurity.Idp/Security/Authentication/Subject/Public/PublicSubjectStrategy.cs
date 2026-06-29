@@ -5,23 +5,26 @@ namespace eSecurity.Idp.Security.Authentication.Subject.Public;
 
 public sealed class PublicSubjectStrategyContext : SubjectStrategyContext
 {
-    public required UserEntity User { get; set; }
+    public required Guid UserId { get; set; }
 }
 
 public sealed class PublicSubjectStrategy(
-    IPublicSubjectManager subjectManager,
+    IPublicSubjectCommandService publicSubjectCommandService,
+    IPublicSubjectQueryService publicSubjectQueryService,
     ISubjectFactoryProvider subjectFactoryProvider,
     IOptions<SubjectOptions> options) : ISubjectStrategy<PublicSubjectStrategyContext>
 {
-    private readonly IPublicSubjectManager _subjectManager = subjectManager;
+    private readonly IPublicSubjectCommandService _publicSubjectCommandService = publicSubjectCommandService;
+    private readonly IPublicSubjectQueryService _publicSubjectQueryService = publicSubjectQueryService;
     private readonly ISubjectFactoryProvider _subjectFactoryProvider = subjectFactoryProvider;
     private readonly SubjectOptions _options = options.Value;
 
     public async ValueTask<TypedResult<string>> ExecuteAsync(PublicSubjectStrategyContext context, 
         CancellationToken cancellationToken = default)
     {
-        var subject = await _subjectManager.FindAsync(context.User, cancellationToken);
-        if (subject is not null) return TypedResult<string>.Success(subject.Subject);
+        var subject = await _publicSubjectQueryService.GetByUserAsync(context.UserId, cancellationToken);
+        if (subject is not null) 
+            return TypedResult<string>.Success(subject.Subject);
 
         var subjectFactory = _subjectFactoryProvider.GetFactory<PublicSubjectFactoryContext>();
         var factoryContext = new PublicSubjectFactoryContext { Length = _options.PublicSubjectLength };
@@ -29,11 +32,11 @@ public sealed class PublicSubjectStrategy(
         subject = new PublicSubjectEntity
         {
             Id = Guid.CreateVersion7(),
-            UserId = context.User.Id,
+            UserId = context.UserId,
             Subject = subjectFactory.CreateSubject(factoryContext)
         };
 
-        var result = await _subjectManager.CreateAsync(subject, cancellationToken);
+        var result = await _publicSubjectCommandService.CreateAsync(subject, cancellationToken);
         if (result.Succeeded) return TypedResult<string>.Success(subject.Subject);
             
         var error = result.GetError();

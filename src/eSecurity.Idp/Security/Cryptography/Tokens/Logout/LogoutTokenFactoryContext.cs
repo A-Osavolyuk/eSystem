@@ -4,6 +4,6 @@ namespace eSecurity.Idp.Security.Cryptography.Tokens.Logout;
 
 public sealed class LogoutTokenFactoryContext : TokenFactoryContext
 {
-    public required UserEntity User { get; set; }
-    public required SessionEntity Session { get; set; }
+    public required Guid UserId { get; init; }
+    public required Guid SessionId { get; init; }
 }

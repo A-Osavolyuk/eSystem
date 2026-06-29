@@ -82,7 +82,13 @@ public sealed class ClientCredentialsStrategy(
             TokenType = ResponseTokenType.Bearer
         };
 
-        var factoryContext = new AccessTokenFactoryContext { Client = client };
+        var factoryContext = new AccessTokenFactoryContext
+        {
+            ClientId = client.Id, 
+            TokenLifetime = client.AccessTokenLifetime,
+            TokenType = client.AccessTokenType
+        };
+        
         var factoryOptions = new TokenFactoryOptions { AllowedScopes = allowedScopes };
         var accessTokenFactory = _tokenFactoryProvider.GetFactory<AccessTokenFactoryContext>();
         var accessTokenResult = await accessTokenFactory.CreateAsync(factoryContext, factoryOptions, cancellationToken);

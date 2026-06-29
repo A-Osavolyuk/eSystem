@@ -2,9 +2,11 @@
 using System.Text.Json;
 using eSecurity.Core.Security.Identity;
 using eSecurity.Idp.Security.Authentication.Client;
+using eSecurity.Idp.Security.Authentication.Session;
 using eSecurity.Idp.Security.Authentication.Subject;
 using eSecurity.Idp.Security.Identity.Email;
 using eSecurity.Idp.Security.Identity.Privacy;
+using eSecurity.Idp.Security.Identity.User;
 using eSystem.Core.Enums;
 using eSystem.Core.Primitives;
 using eSystem.Core.Security.Authentication.OpenIdConnect;
@@ -19,6 +21,8 @@ public sealed class IdTokenFactory(
     ISubjectProvider subjectProvider,
     IEmailQueryService emailQueryService,
     IClientQueryService clientQueryService,
+    IUserQueryService userQueryService,
+    ISessionQueryService sessionQueryService,
     IPersonalDataManager personalDataManager) : ITokenFactory<IdTokenFactoryContext>
 {
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
@@ -26,15 +30,18 @@ public sealed class IdTokenFactory(
     private readonly ISubjectProvider _subjectProvider = subjectProvider;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly IClientQueryService _clientQueryService = clientQueryService;
+    private readonly IUserQueryService _userQueryService = userQueryService;
+    private readonly ISessionQueryService _sessionQueryService = sessionQueryService;
     private readonly IPersonalDataManager _personalDataManager = personalDataManager;
 
     public async ValueTask<TypedResult<string>> CreateAsync(
         IdTokenFactoryContext context,
-        TokenFactoryOptions? options = null, 
+        TokenFactoryOptions? options = null,
         CancellationToken cancellationToken = default)
     {
-        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(context.Client.Id, cancellationToken);
+        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(context.ClientId, cancellationToken);
         List<string> scopes;
+
         if (options is null || options.AllowedScopes.Count == 0)
         {
             scopes = clientScopes
@@ -48,8 +55,10 @@ public sealed class IdTokenFactory(
                 .Select(x => x.Scope.Value)
                 .ToList();
         }
+
+        var subjectResult = await _subjectProvider.GetSubjectAsync(
+            context.UserId, context.ClientId, cancellationToken);
         
-        var subjectResult = await _subjectProvider.GetSubjectAsync(context.User, context.Client, cancellationToken);
         if (!subjectResult.Succeeded || !subjectResult.TryGetValue(out var subject))
         {
             return TypedResult<string>.Fail(new Error
@@ -59,11 +68,15 @@ public sealed class IdTokenFactory(
             });
         }
         
-        var tokenLifetime = context.Client.IdTokenLifetime ?? _tokenConfigurations.DefaultIdTokenLifetime;
-        var authenticationMethods = context.Session.AuthenticationMethods
+        var tokenLifetime = context.TokenLifetime ?? _tokenConfigurations.DefaultIdTokenLifetime;
+        var session = await _sessionQueryService.GetByIdAsync(context.SessionId, cancellationToken);
+        if (session is null)
+            throw new InvalidOperationException("Invalid session");
+        
+        var authenticationMethods = session.AuthenticationMethods
             .Select(x => x.MethodReference.GetString())
             .ToArray();
-        
+
         var iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
         var exp = DateTimeOffset.UtcNow.Add(tokenLifetime).ToUnixTimeSeconds().ToString();
         var authTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
@@ -72,9 +85,9 @@ public sealed class IdTokenFactory(
         {
             new(AppClaimTypes.Jti, Guid.NewGuid().ToString()),
             new(AppClaimTypes.Iss, _tokenConfigurations.Issuer),
-            new(AppClaimTypes.Aud, context.Client.Id.ToString()),
+            new(AppClaimTypes.Aud, context.ClientId.ToString()),
             new(AppClaimTypes.Sub, subject),
-            new(AppClaimTypes.Sid, context.Session.Id.ToString()),
+            new(AppClaimTypes.Sid, session.Id.ToString()),
             new(AppClaimTypes.Exp, exp, ClaimValueTypes.Integer64),
             new(AppClaimTypes.Iat, iat, ClaimValueTypes.Integer64),
             new(AppClaimTypes.AuthTime, authTime, ClaimValueTypes.Integer64),
@@ -91,7 +104,7 @@ public sealed class IdTokenFactory(
 
         if (scopes.Contains(ScopeTypes.Email))
         {
-            var email = await _emailQueryService.GetByTypeAsync(context.User.Id, EmailType.Primary, cancellationToken);
+            var email = await _emailQueryService.GetByTypeAsync(context.UserId, EmailType.Primary, cancellationToken);
             if (email is not null)
             {
                 claims.Add(new Claim(AppClaimTypes.Email, email.Email));
@@ -104,16 +117,20 @@ public sealed class IdTokenFactory(
             //TODO: Implement phone scope handling
         }
 
-        var personalData = await _personalDataManager.GetAsync(context.User, cancellationToken);
+        var personalData = await _personalDataManager.GetAsync(context.UserId, cancellationToken);
         if (scopes.Contains(ScopeTypes.Profile))
         {
-            claims.Add(new Claim(AppClaimTypes.PreferredUsername, context.User.Username));
-            claims.Add(new Claim(AppClaimTypes.ZoneInfo, context.User.ZoneInfo));
-            claims.Add(new Claim(AppClaimTypes.Locale, context.User.Locale));
+            var user = await _userQueryService.GetByIdAsync(context.UserId, cancellationToken);
+            if (user is null)
+                throw new InvalidOperationException("Invalid user");
 
-            if (context.User.UpdatedAt.HasValue)
+            claims.Add(new Claim(AppClaimTypes.PreferredUsername, user.Username));
+            claims.Add(new Claim(AppClaimTypes.ZoneInfo, user.ZoneInfo));
+            claims.Add(new Claim(AppClaimTypes.Locale, user.Locale));
+
+            if (user.UpdatedAt.HasValue)
             {
-                var updatedAt = context.User.UpdatedAt.Value.ToUnixTimeSeconds().ToString();
+                var updatedAt = user.UpdatedAt.Value.ToUnixTimeSeconds().ToString();
                 claims.Add(new Claim(AppClaimTypes.UpdatedAt, updatedAt, ClaimValueTypes.Integer64));
             }
 
@@ -150,7 +167,7 @@ public sealed class IdTokenFactory(
         var tokenContext = new JwtTokenBuildContext { Claims = claims, Type = JwtTokenType.IdToken };
         var tokenFactory = _tokenBuilderProvider.GetFactory<JwtTokenBuildContext, string>();
         var token = await tokenFactory.BuildAsync(tokenContext, cancellationToken);
-        
+
         return TypedResult<string>.Success(token);
     }
 }

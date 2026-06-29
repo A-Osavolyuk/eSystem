@@ -4,6 +4,6 @@ namespace eSecurity.Idp.Security.Cryptography.Tokens.Refresh;
 
 public sealed class RefreshTokenFactoryContext : TokenFactoryContext
 {
-    public UserEntity? User { get; set; }
-    public SessionEntity? Session { get; set; }
+    public Guid? UserId { get; init; }
+    public Guid? SessionId { get; init; }
 }

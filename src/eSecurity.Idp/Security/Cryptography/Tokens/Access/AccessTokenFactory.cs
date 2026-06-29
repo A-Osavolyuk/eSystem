@@ -24,8 +24,8 @@ public sealed class AccessTokenFactory(
         TokenFactoryOptions? options = null,
         CancellationToken cancellationToken = default)
     {
-        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(context.Client.Id, cancellationToken);
-        var clientAudiences = await _clientQueryService.GetSupportedAudiencesAsync(context.Client.Id, cancellationToken);
+        var clientScopes = await _clientQueryService.GetAllowedScopesAsync(context.ClientId, cancellationToken);
+        var clientAudiences = await _clientQueryService.GetSupportedAudiencesAsync(context.ClientId, cancellationToken);
         List<string> scopes;
         if (options is null || options.AllowedScopes.Count == 0)
         {
@@ -38,9 +38,9 @@ public sealed class AccessTokenFactory(
                 .Select(x => x.Scope.Value)
                 .ToList();
         }
-
-        var lifetime = context.Client.AccessTokenLifetime ?? _tokenConfigurations.DefaultAccessTokenLifetime;
-        if (context.Client.AccessTokenType == AccessTokenType.Jwt)
+        
+        var lifetime = context.TokenLifetime ?? _tokenConfigurations.DefaultAccessTokenLifetime;
+        if (context.TokenType == AccessTokenType.Jwt)
         {
             var iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
             var exp = DateTimeOffset.UtcNow.Add(lifetime).ToUnixTimeSeconds().ToString();
@@ -57,15 +57,15 @@ public sealed class AccessTokenFactory(
             foreach (var audience in clientAudiences.Select(x => x.Audience))
                 claims.Add(new Claim(AppClaimTypes.Aud, audience));
             
-            if (context.User is null)
+            if (context.UserId is null)
             {
-                claims.Add(new Claim(AppClaimTypes.ClientId, context.Client.Id.ToString()));
-                claims.Add(new Claim(AppClaimTypes.Sub, context.Client.Id.ToString()));
+                claims.Add(new Claim(AppClaimTypes.ClientId, context.ClientId.ToString()));
+                claims.Add(new Claim(AppClaimTypes.Sub, context.ClientId.ToString()));
             }
             else
             {
                 var subjectResult = await _subjectProvider.GetSubjectAsync(
-                    context.User, context.Client, cancellationToken);
+                    context.UserId.Value, context.ClientId, cancellationToken);
 
                 if (!subjectResult.Succeeded || !subjectResult.TryGetValue(out var subject))
                 {
@@ -77,7 +77,7 @@ public sealed class AccessTokenFactory(
                 }
                 
                 claims.Add(new Claim(AppClaimTypes.Sub, subject));
-                claims.Add(new Claim(AppClaimTypes.ClientId, context.User.Id.ToString()));
+                claims.Add(new Claim(AppClaimTypes.ClientId, context.UserId.Value.ToString()));
             }
 
             var tokenContext = new JwtTokenBuildContext { Claims = claims, Type = JwtTokenType.AccessToken };
@@ -89,24 +89,24 @@ public sealed class AccessTokenFactory(
         else
         {
             OpaqueTokenBuildContext tokenContext;
-            if (context.User is null)
+            if (context.UserId is null)
             {
                 tokenContext = new OpaqueTokenBuildContext
                 {
                     TokenLength = _tokenConfigurations.OpaqueTokenLength,
                     TokenType = OpaqueTokenType.AccessToken,
-                    ClientId = context.Client.Id,
+                    ClientId = context.ClientId,
                     Audiences = clientAudiences.Select(x => x.Audience).ToList(),
                     Scopes = scopes.ToList(),
                     ExpiredAt = DateTimeOffset.UtcNow.Add(lifetime),
-                    Subject = context.Client.Id.ToString(),
-                    Sid = context.Session?.Id
+                    Subject = context.ClientId.ToString(),
+                    Sid = context.SessionId
                 };
             }
             else
             {
                 var subjectResult = await _subjectProvider.GetSubjectAsync(
-                    context.User, context.Client, cancellationToken);
+                    context.UserId.Value, context.ClientId, cancellationToken);
 
                 if (!subjectResult.Succeeded || !subjectResult.TryGetValue(out var subject))
                 {
@@ -121,12 +121,12 @@ public sealed class AccessTokenFactory(
                 {
                     TokenLength = _tokenConfigurations.OpaqueTokenLength,
                     TokenType = OpaqueTokenType.AccessToken,
-                    ClientId = context.Client.Id,
+                    ClientId = context.ClientId,
                     Audiences = clientAudiences.Select(x => x.Audience).ToList(),
                     Scopes = scopes.ToList(),
                     ExpiredAt = DateTimeOffset.UtcNow.Add(lifetime),
                     Subject = subject,
-                    Sid = context.Session?.Id
+                    Sid = context.SessionId
                 };
             }
 

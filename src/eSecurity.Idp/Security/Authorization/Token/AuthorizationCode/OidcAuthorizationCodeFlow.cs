@@ -126,9 +126,11 @@ public class OidcAuthorizationCodeFlow(
 
         var accessTokenFactoryContext = new AccessTokenFactoryContext
         {
-            Client = client,
-            User = user,
-            Session = session
+            ClientId = client.Id,
+            TokenLifetime = client.AccessTokenLifetime,
+            UserId = user.Id,
+            SessionId = session.Id,
+            TokenType = client.AccessTokenType
         };
             
         var accessTokenFactory = _tokenFactoryProvider.GetFactory<AccessTokenFactoryContext>();
@@ -160,9 +162,10 @@ public class OidcAuthorizationCodeFlow(
         {
             var refreshTokenFactoryContext = new RefreshTokenFactoryContext
             {
-                Client = client,
-                User = user,
-                Session = session
+                ClientId = client.Id,
+                TokenLifetime = client.RefreshTokenLifetime,
+                UserId = user.Id,
+                SessionId = session.Id
             };
                 
             var refreshTokenFactory = _tokenFactoryProvider.GetFactory<RefreshTokenFactoryContext>();
@@ -183,9 +186,10 @@ public class OidcAuthorizationCodeFlow(
 
         var idTokenFactoryContext = new IdTokenFactoryContext
         {
-            Client = client,
-            User = user,
-            Session = session
+            ClientId = client.Id,
+            UserId = user.Id,
+            SessionId = session.Id,
+            TokenLifetime = client.IdTokenLifetime
         };
         
         var idTokenFactory = _tokenFactoryProvider.GetFactory<IdTokenFactoryContext>();

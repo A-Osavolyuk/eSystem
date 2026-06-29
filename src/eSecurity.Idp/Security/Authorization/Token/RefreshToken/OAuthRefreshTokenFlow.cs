@@ -83,8 +83,10 @@ public sealed class OAuthRefreshTokenFlow(
 
         var accessTokenFactoryContext = new AccessTokenFactoryContext
         {
-            Client = client,
-            User = user
+            ClientId = client.Id,
+            UserId = user.Id,
+            TokenLifetime = client.AccessTokenLifetime,
+            TokenType = client.AccessTokenType
         };
         
         var accessTokenFactory = _tokenFactoryProvider.GetFactory<AccessTokenFactoryContext>();
@@ -112,8 +114,9 @@ public sealed class OAuthRefreshTokenFlow(
         {
             var refreshTokenFactoryContext = new RefreshTokenFactoryContext
             {
-                Client = client,
-                User = user
+                ClientId = client.Id,
+                UserId = user.Id,
+                TokenLifetime = client.RefreshTokenLifetime
             };
             
             var refreshTokenFactory = _tokenFactoryProvider.GetFactory<RefreshTokenFactoryContext>();

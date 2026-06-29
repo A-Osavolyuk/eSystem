@@ -11,6 +11,7 @@ using eSecurity.Idp.Security.Authentication.Password.Extensions;
 using eSecurity.Idp.Security.Authentication.Session.Extensions;
 using eSecurity.Idp.Security.Authentication.SignIn.Extensions;
 using eSecurity.Idp.Security.Authentication.Subject;
+using eSecurity.Idp.Security.Authentication.Subject.Extensions;
 using eSecurity.Idp.Security.Authentication.TwoFactor.Extensions;
 using eSecurity.Idp.Security.Cryptography.Pkce;
 using eSystem.Core.Configuration;
