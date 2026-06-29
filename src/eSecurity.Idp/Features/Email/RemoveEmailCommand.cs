@@ -21,19 +21,19 @@ public sealed class RemoveEmailCommand : IRequest<Result>
 
 public sealed class RemoveEmailCommandHandler(
     ICurrentUserAccessor currentUserAccessor,
-    ILinkedAccountManager linkedAccountManager,
     IEmailQueryService emailQueryService,
     IEmailCommandService emailCommandService,
     IVerificationQueryService verificationQueryService,
     ISoftwareKeyQueryService softwareKeyQueryService,
+    ILinkedAccountQueryService linkedAccountQueryService,
     IVerificationCommandService verificationCommandService) : IRequestHandler<RemoveEmailCommand, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
-    private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly IEmailCommandService _emailCommandService = emailCommandService;
     private readonly IVerificationQueryService _verificationQueryService = verificationQueryService;
     private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
+    private readonly ILinkedAccountQueryService _linkedAccountQueryService = linkedAccountQueryService;
     private readonly IVerificationCommandService _verificationCommandService = verificationCommandService;
 
     public async Task<Result> Handle(RemoveEmailCommand request, CancellationToken cancellationToken)
@@ -64,7 +64,7 @@ public sealed class RemoveEmailCommandHandler(
                 });
             }
 
-            if (await _linkedAccountManager.HasAsync(user, cancellationToken))
+            if (await _linkedAccountQueryService.HasAnyAsync(user.Id, cancellationToken))
             {
                 return Results.ClientError(ClientErrorCode.BadRequest, new Error
                 {

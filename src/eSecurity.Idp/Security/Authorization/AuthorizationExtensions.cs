@@ -52,8 +52,10 @@ public static class AuthorizationExtensions
         
         builder.Services.AddScoped<IConsentQueryService, ConsentQueryService>();
         builder.Services.AddScoped<IConsentCommandService, ConsentCommandService>();
+
+        builder.Services.AddScoped<ILinkedAccountQueryService, LinkedAccountQueryService>();
+        builder.Services.AddScoped<ILinkedAccountCommandService, LinkedAccountCommandService>();
         
-        builder.Services.AddScoped<ILinkedAccountManager, LinkedAccountManager>();
         builder.Services.AddScoped<ITokenValidationProvider, TokenValidationProvider>();
         builder.Services.AddScoped<IJwtTokenValidationProvider, JwtTokenValidationProvider>();
         builder.Services.AddKeyedScoped<ITokenValidator, OpaqueTokenValidator>(TokenKind.Opaque);

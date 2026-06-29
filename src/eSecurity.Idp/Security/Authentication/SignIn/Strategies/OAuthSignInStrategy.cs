@@ -20,24 +20,26 @@ public sealed class OAuthSignInStrategy(
     IUserQueryService userQueryService,
     ILockoutManager lockoutManager,
     IHttpContextAccessor httpContextAccessor,
-    ILinkedAccountManager linkedAccountManager,
     IAuthenticationSessionManager authenticationSessionManager,
     ISoftwareKeyQueryService softwareKeyQueryService,
     ITwoFactorQueryService twoFactorQueryService,
     ISessionCommandService sessionCommandService,
     IDeviceQueryService deviceQueryService,
     IDeviceCommandService deviceCommandService,
+    ILinkedAccountCommandService linkedAccountCommandService,
+    ILinkedAccountQueryService linkedAccountQueryService,
     IOptions<SessionOptions> options) : SignInStrategy<OAuthSignInPayload>
 {
     private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly ILockoutManager _lockoutManager = lockoutManager;
-    private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly ISoftwareKeyQueryService _softwareKeyQueryService = softwareKeyQueryService;
     private readonly ITwoFactorQueryService _twoFactorQueryService = twoFactorQueryService;
     private readonly ISessionCommandService _sessionCommandService = sessionCommandService;
     private readonly IDeviceQueryService _deviceQueryService = deviceQueryService;
     private readonly IDeviceCommandService _deviceCommandService = deviceCommandService;
+    private readonly ILinkedAccountCommandService _linkedAccountCommandService = linkedAccountCommandService;
+    private readonly ILinkedAccountQueryService _linkedAccountQueryService = linkedAccountQueryService;
     private readonly SessionOptions _options = options.Value;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
@@ -108,18 +110,16 @@ public sealed class OAuthSignInStrategy(
             });
         }
 
-        var linkedAccount = await _linkedAccountManager.GetAsync(user, payload.Provider, cancellationToken);
+        var linkedAccount = await _linkedAccountQueryService.GetByTypeAsync(user.Id, 
+            payload.Provider, cancellationToken);
+        
         if (linkedAccount is null)
         {
-            linkedAccount = new UserLinkedAccountEntity
-            {
-                Id = Guid.CreateVersion7(),
-                UserId = user.Id,
-                Type = payload.Provider
-            };
-
-            var connectResult = await _linkedAccountManager.CreateAsync(linkedAccount, cancellationToken);
-            if (!connectResult.Succeeded) return connectResult;
+            var connectResult = await _linkedAccountCommandService.CreateAsync(user.Id, 
+                payload.Provider, cancellationToken);
+            
+            if (!connectResult.Succeeded) 
+                return connectResult;
         }
 
         authenticationSession.OAuthFlow = OAuthFlow.SignIn;

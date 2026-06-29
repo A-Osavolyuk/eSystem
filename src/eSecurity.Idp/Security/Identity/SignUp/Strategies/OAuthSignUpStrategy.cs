@@ -29,7 +29,6 @@ public sealed class OAuthSignUpPayload : SignUpPayload
 
 public sealed class OAuthSignUpStrategy(
     IRoleManager roleManager,
-    ILinkedAccountManager providerManager,
     IHttpContextAccessor httpContextAccessor,
     IAuthenticationSessionManager authenticationSessionManager,
     IOptions<Session_SessionOptions> sessionOptions,
@@ -38,16 +37,17 @@ public sealed class OAuthSignUpStrategy(
     IUserCommandService userCommandService,
     ISessionCommandService sessionCommandService,
     IDeviceCommandService deviceCommandService,
+    ILinkedAccountCommandService linkedAccountCommandService,
     IEmailService emailService) : SignUpStrategy<OAuthSignUpPayload>
 {
     private readonly IRoleManager _roleManager = roleManager;
-    private readonly ILinkedAccountManager _providerManager = providerManager;
     private readonly IAuthenticationSessionManager _authenticationSessionManager = authenticationSessionManager;
     private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly IEmailCommandService _emailCommandService = emailCommandService;
     private readonly IUserCommandService _userCommandService = userCommandService;
     private readonly ISessionCommandService _sessionCommandService = sessionCommandService;
     private readonly IDeviceCommandService _deviceCommandService = deviceCommandService;
+    private readonly ILinkedAccountCommandService _linkedAccountCommandService = linkedAccountCommandService;
     private readonly IEmailService _emailService = emailService;
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
     private readonly Session_SessionOptions _sessionOptions = sessionOptions.Value;
@@ -138,16 +138,12 @@ public sealed class OAuthSignUpStrategy(
         };
 
         await _emailService.SendAsync(emailContext, cancellationToken);
-
-        var userLinkedAccount = new UserLinkedAccountEntity
-        {
-            Id = Guid.CreateVersion7(),
-            UserId = user.Id,
-            Type = payload.Provider,
-        };
-
-        var linkedAccountResult = await _providerManager.CreateAsync(userLinkedAccount, cancellationToken);
-        if (!linkedAccountResult.Succeeded) return linkedAccountResult;
+        
+        var linkedAccountResult = await _linkedAccountCommandService.CreateAsync(user.Id, 
+            payload.Provider, cancellationToken);
+        
+        if (!linkedAccountResult.Succeeded) 
+            return linkedAccountResult;
 
         var session = new SessionEntity
         {

@@ -18,13 +18,15 @@ public record DisconnectLinkedAccountCommand : IRequest<Result>
 }
 
 public class DisconnectLinkedAccountCommandHandler(
-    ILinkedAccountManager linkedAccountManager,
     ICurrentUserAccessor currentUserAccessor,
+    ILinkedAccountQueryService linkedAccountQueryService,
+    ILinkedAccountCommandService linkedAccountCommandService,
     IVerificationQueryService verificationQueryService,
     IVerificationCommandService verificationCommandService) : IRequestHandler<DisconnectLinkedAccountCommand, Result>
 {
-    private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
+    private readonly ILinkedAccountQueryService _linkedAccountQueryService = linkedAccountQueryService;
+    private readonly ILinkedAccountCommandService _linkedAccountCommandService = linkedAccountCommandService;
     private readonly IVerificationQueryService _verificationQueryService = verificationQueryService;
     private readonly IVerificationCommandService _verificationCommandService = verificationCommandService;
 
@@ -46,7 +48,7 @@ public class DisconnectLinkedAccountCommandHandler(
         var verificationResult = await _verificationCommandService.ConsumeAsync(verification, cancellationToken);
         if (!verificationResult.Succeeded) return verificationResult;
 
-        var linkedAccount = await _linkedAccountManager.GetAsync(user, request.Type, cancellationToken);
+        var linkedAccount = await _linkedAccountQueryService.GetByTypeAsync(user.Id, request.Type, cancellationToken);
         if (linkedAccount is null)
         {
             return Results.ClientError(ClientErrorCode.NotFound, new Error
@@ -56,7 +58,7 @@ public class DisconnectLinkedAccountCommandHandler(
             });
         }
 
-        var result = await _linkedAccountManager.RemoveAsync(linkedAccount, cancellationToken);
+        var result = await _linkedAccountCommandService.RemoveAsync(linkedAccount.Id, cancellationToken);
         return result;
     }
 }

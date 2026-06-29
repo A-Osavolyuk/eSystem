@@ -11,15 +11,15 @@ public record GetUserLinkedAccountDataQuery : IRequest<Result>;
 
 public class GetUserLinkedAccountDataQueryHandler(
     ICurrentUserAccessor currentUserAccessor,
-    ILinkedAccountManager linkedAccountManager) : IRequestHandler<GetUserLinkedAccountDataQuery, Result>
+    ILinkedAccountQueryService linkedAccountQueryService) : IRequestHandler<GetUserLinkedAccountDataQuery, Result>
 {
     private readonly ICurrentUserAccessor _currentUserAccessor = currentUserAccessor;
-    private readonly ILinkedAccountManager _linkedAccountManager = linkedAccountManager;
+    private readonly ILinkedAccountQueryService _linkedAccountQueryService = linkedAccountQueryService;
 
     public async Task<Result> Handle(GetUserLinkedAccountDataQuery request, CancellationToken cancellationToken)
     {
         var user = await _currentUserAccessor.GetRequiredCurrentAsync(cancellationToken);
-        var linkedAccounts = await _linkedAccountManager.GetAllAsync(user, cancellationToken);
+        var linkedAccounts = await _linkedAccountQueryService.ListByUserAsync(user.Id, cancellationToken);
         var response = new UserLinkedAccountData
         {
             GoogleConnected = linkedAccounts.Any(x => x.Type == LinkedAccountType.Google),
