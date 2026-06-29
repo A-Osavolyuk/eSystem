@@ -22,17 +22,15 @@ public sealed class IntrospectionCommand : IRequest<Result>
 }
 
 public sealed class IntrospectionCommandHandler(
-    ITokenManager tokenManager,
     IUserQueryService userQueryService,
-    IHasherProvider hasherProvider,
     IOptions<TokenConfigurations> options,
     IClientQueryService clientQueryService,
+    ITokenQueryService tokenQueryService,
     ISessionQueryService sessionQueryService) : IRequestHandler<IntrospectionCommand, Result>
 {
-    private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IUserQueryService _userQueryService = userQueryService;
-    private readonly IHasherProvider _hasherProvider = hasherProvider;
     private readonly IClientQueryService _clientQueryService = clientQueryService;
+    private readonly ITokenQueryService _tokenQueryService = tokenQueryService;
     private readonly ISessionQueryService _sessionQueryService = sessionQueryService;
     private readonly TokenConfigurations _configurations = options.Value;
 
@@ -45,12 +43,9 @@ public sealed class IntrospectionCommandHandler(
             _ => null
         };
 
-        var hasher = _hasherProvider.GetHasher(HashAlgorithm.Sha512);
-        var incomingHash = hasher.Hash(request.Token);
-
         var token = opaqueTokenType.HasValue
-            ? await _tokenManager.FindByHashAsync(incomingHash, opaqueTokenType.Value, cancellationToken)
-            : await _tokenManager.FindByHashAsync(incomingHash, cancellationToken);
+            ? await _tokenQueryService.GetByTokenAsync(request.Token, opaqueTokenType.Value, cancellationToken)
+            : await _tokenQueryService.GetByTokenAsync(request.Token, cancellationToken);
 
         if (token is null || !token.IsValid || token.TokenType is OpaqueTokenType.LoginToken)
             return Results.Success(SuccessCodes.Ok, IntrospectionResponse.Fail());
@@ -62,12 +57,12 @@ public sealed class IntrospectionCommandHandler(
             _ => throw new NotSupportedException("Unsupported token type")
         };
 
-        var clientAudiences = await _clientQueryService.GetSupportedAudiencesAsync(token.Client.Id, cancellationToken);
+        var clientAudiences = await _clientQueryService.GetSupportedAudiencesAsync(token.ClientId, cancellationToken);
         var response = new IntrospectionResponse
         {
             Active = true,
             TokenType = tokenType,
-            ClientId = token.Client.Id,
+            ClientId = token.ClientId,
             Issuer = _configurations.Issuer,
             Audience = JsonSerializer.Serialize(clientAudiences.Select(x => x.Audience)),
             IssuedAt = token.IssuedAt.ToUnixTimeSeconds(),

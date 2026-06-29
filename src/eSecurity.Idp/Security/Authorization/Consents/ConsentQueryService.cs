@@ -10,12 +10,19 @@ public sealed class ConsentQueryService(AuthDbContext context) : IConsentQuerySe
     public async ValueTask<ConsentEntity?> GetByClientAsync(Guid userId, Guid clientId,
         CancellationToken cancellationToken = default)
     {
-        return await _context.Consents.FirstOrDefaultAsync(
-            x => x.UserId == userId && x.ClientId == clientId, cancellationToken);
+        return await _context.Consents
+            .Include(x => x.GrantedScopes)
+            .ThenInclude(x => x.ClientScope)
+            .ThenInclude(x => x.Scope)
+            .FirstOrDefaultAsync(x => x.UserId == userId && x.ClientId == clientId, cancellationToken);
     }
 
     public async ValueTask<ConsentEntity?> GetByIdAsync(Guid consentId, CancellationToken cancellationToken = default)
     {
-        return await _context.Consents.FirstOrDefaultAsync(x => x.Id == consentId, cancellationToken);
+        return await _context.Consents
+            .Include(x => x.GrantedScopes)
+            .ThenInclude(x => x.ClientScope)
+            .ThenInclude(x => x.Scope)
+            .FirstOrDefaultAsync(x => x.Id == consentId, cancellationToken);
     }
 }

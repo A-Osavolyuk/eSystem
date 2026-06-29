@@ -8,19 +8,17 @@ namespace eSecurity.Idp.Features.Connect;
 
 public sealed class RevocationCommand : IRequest<Result>
 {
-    [FromForm(Name = "token")] 
-    public string Token { get; set; } = null!;
-    
-    [FromForm(Name = "token_type_hint")]
-    public TokenTypeHint? TokenTypeHint { get; set; }
+    [FromForm(Name = "token")] public string Token { get; set; } = null!;
+
+    [FromForm(Name = "token_type_hint")] public TokenTypeHint? TokenTypeHint { get; set; }
 }
 
 public sealed class RevocationCommandHandler(
-    ITokenManager tokenManager, 
-    IHasherProvider hasherProvider) : IRequestHandler<RevocationCommand, Result>
+    ITokenQueryService tokenQueryService,
+    ITokenCommandService tokenCommandService) : IRequestHandler<RevocationCommand, Result>
 {
-    private readonly ITokenManager _tokenManager = tokenManager;
-    private readonly IHasherProvider _hasherProvider = hasherProvider;
+    private readonly ITokenQueryService _tokenQueryService = tokenQueryService;
+    private readonly ITokenCommandService _tokenCommandService = tokenCommandService;
 
     public async Task<Result> Handle(RevocationCommand request, CancellationToken cancellationToken)
     {
@@ -30,17 +28,15 @@ public sealed class RevocationCommandHandler(
             TokenTypeHint.RefreshToken => OpaqueTokenType.RefreshToken,
             _ => null
         };
-
-        var hasher = _hasherProvider.GetHasher(HashAlgorithm.Sha512);
-        var incomingHash = hasher.Hash(request.Token);
-        var token = !tokenType.HasValue
-            ? await _tokenManager.FindByHashAsync(incomingHash, cancellationToken)
-            : await _tokenManager.FindByHashAsync(incomingHash, tokenType.Value, cancellationToken);
-
-        if (token is null || token.Revoked) 
-            return Results.Success(SuccessCodes.Ok);
         
-        return await _tokenManager.RevokeAsync(token, cancellationToken);
+        var token = !tokenType.HasValue
+            ? await _tokenQueryService.GetByTokenAsync(request.Token, cancellationToken)
+            : await _tokenQueryService.GetByTokenAsync(request.Token, tokenType.Value, cancellationToken);
+
+        if (token is null || token.Revoked)
+            return Results.Success(SuccessCodes.Ok);
+
+        return await _tokenCommandService.RevokeAsync(token.Id, cancellationToken);
     }
 }
 

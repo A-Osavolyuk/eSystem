@@ -10,17 +10,15 @@ using eSystem.Core.Server.Security.Authorization.OAuth.Token.TokenExchange;
 namespace eSecurity.Idp.Security.Authorization.Token.TokenExchange.Delegation;
 
 public sealed class OpaqueTokenDelegationHandler(
-    IHasherProvider hasherProvider,
-    ITokenManager tokenManager,
     IOptions<TokenConfigurations> options,
     IClientQueryService clientQueryService,
+    ITokenQueryService tokenQueryService,
     ITokenBuilderProvider tokenBuilderProvider) : ITokenDelegationHandler
 {
-    private readonly ITokenManager _tokenManager = tokenManager;
     private readonly IClientQueryService _clientQueryService = clientQueryService;
+    private readonly ITokenQueryService _tokenQueryService = tokenQueryService;
     private readonly TokenConfigurations _configurations = options.Value;
     private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
-    private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
 
     public async ValueTask<Result> HandleAsync(TokenExchangeFlowContext context,
         CancellationToken cancellationToken = default)
@@ -52,7 +50,7 @@ public sealed class OpaqueTokenDelegationHandler(
             });
         }
 
-        if (!await _tokenManager.IsOpaqueAsync(context.SubjectToken, cancellationToken))
+        if (!await _tokenQueryService.ExistsAsync(context.SubjectToken, cancellationToken))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
@@ -61,7 +59,7 @@ public sealed class OpaqueTokenDelegationHandler(
             });
         }
 
-        if (!await _tokenManager.IsOpaqueAsync(context.ActorToken, cancellationToken))
+        if (!await _tokenQueryService.ExistsAsync(context.ActorToken, cancellationToken))
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
             {
@@ -69,9 +67,8 @@ public sealed class OpaqueTokenDelegationHandler(
                 Description = "Actor token is invalid."
             });
         }
-
-        var subjectTokenHash = _hasher.Hash(context.SubjectToken);
-        var subjectToken = await _tokenManager.FindByHashAsync(subjectTokenHash, cancellationToken);
+        
+        var subjectToken = await _tokenQueryService.GetByTokenAsync(context.SubjectToken, cancellationToken);
         if (subjectToken is null || !subjectToken.IsValid)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error
@@ -80,9 +77,8 @@ public sealed class OpaqueTokenDelegationHandler(
                 Description = "Subject token is invalid."
             });
         }
-
-        var actorTokenHash = _hasher.Hash(context.ActorToken);
-        var actorToken = await _tokenManager.FindByHashAsync(actorTokenHash, cancellationToken);
+        
+        var actorToken = await _tokenQueryService.GetByTokenAsync(context.ActorToken, cancellationToken);
         if (actorToken is null || !actorToken.IsValid || actorToken.TokenType != OpaqueTokenType.AccessToken)
         {
             return Results.ClientError(ClientErrorCode.BadRequest, new Error

@@ -8,13 +8,11 @@ using eSystem.Core.Primitives;
 namespace eSecurity.Idp.Security.Authentication.BackchannelAuthentication;
 
 public sealed class LoginTokenHintUserResolver(
-    ITokenManager tokenManager,
-    IHasherProvider hasherProvider,
+    ITokenQueryService tokenQueryService,
     IUserQueryService userQueryService) : IUserResolver
 {
-    private readonly ITokenManager _tokenManager = tokenManager;
+    private readonly ITokenQueryService _tokenQueryService = tokenQueryService;
     private readonly IUserQueryService _userQueryService = userQueryService;
-    private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
 
     public async Task<TypedResult<UserEntity>> ResolveAsync(BackchannelAuthenticationCommand command,
         CancellationToken cancellationToken = default)
@@ -28,8 +26,7 @@ public sealed class LoginTokenHintUserResolver(
             });
         }
         
-        var hash = _hasher.Hash(command.LoginTokenHint);
-        var token = await _tokenManager.FindByHashAsync(hash, cancellationToken);
+        var token = await _tokenQueryService.GetByTokenAsync(command.LoginTokenHint, cancellationToken);
         if (token?.TokenType is not OpaqueTokenType.LoginToken)
         {
             return TypedResult<UserEntity>.Fail(new Error

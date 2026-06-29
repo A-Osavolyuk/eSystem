@@ -10,27 +10,24 @@ using TokenValidationResult = eSystem.Core.Server.Security.Authorization.OAuth.T
 namespace eSecurity.Idp.Security.Authorization.Token.Validation;
 
 public class OpaqueTokenValidator(
-    ITokenManager tokenManager,
-    IHasherProvider hasherProvider,
+    ITokenQueryService tokenQueryService,
     IClientQueryService clientQueryService,
     IOptions<TokenConfigurations> options) : ITokenValidator
 {
-    private readonly ITokenManager _tokenManager = tokenManager;
+    private readonly ITokenQueryService _tokenQueryService = tokenQueryService;
     private readonly IClientQueryService _clientQueryService = clientQueryService;
-    private readonly IHasher _hasher = hasherProvider.GetHasher(HashAlgorithm.Sha512);
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
 
     public async Task<TokenValidationResult> ValidateAsync(string token, CancellationToken cancellationToken = default)
     {
-        if (!await _tokenManager.IsOpaqueAsync(token, cancellationToken))
+        if (!await _tokenQueryService.ExistsAsync(token, cancellationToken))
             return TokenValidationResult.Fail();
-        
-        var incomingHash = _hasher.Hash(token);
-        var opaqueToken = await _tokenManager.FindByHashAsync(incomingHash, cancellationToken);
+
+        var opaqueToken = await _tokenQueryService.GetByTokenAsync(token, cancellationToken);
         if (opaqueToken is null || !opaqueToken.IsValid)
             return TokenValidationResult.Fail();
 
-        var audiences = await _clientQueryService.GetSupportedAudiencesAsync(opaqueToken.Client.Id, cancellationToken);
+        var audiences = await _clientQueryService.GetSupportedAudiencesAsync(opaqueToken.ClientId, cancellationToken);
         var audClaimValue = JsonSerializer.Serialize(audiences.Select(x => x.Audience));
         var scopes = opaqueToken.Scopes.Select(x => x.ClientScope);
         var claims = new List<Claim>

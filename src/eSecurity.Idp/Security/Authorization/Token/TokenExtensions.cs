@@ -38,7 +38,8 @@ public static class TokenExtensions
         services.AddKeyedScoped<ITokenDelegationHandler, OpaqueTokenDelegationHandler>(TokenKind.Opaque);
         services.AddScoped<ITokenClaimsExtractor, JwtTokenClaimsExtractor>();
             
-        services.AddScoped<ITokenManager, TokenManager>();
+        services.AddScoped<ITokenQueryService, TokenQueryService>();
+        services.AddScoped<ITokenCommandService, TokenCommandService>();
         services.AddScoped<ITokenStrategyResolver, TokenStrategyResolver>();
         services.AddKeyedScoped<ITokenStrategy, AuthorizationCodeStrategy>(GrantType.AuthorizationCode);
         services.AddKeyedScoped<ITokenStrategy, RefreshTokenStrategy>(GrantType.RefreshToken);
