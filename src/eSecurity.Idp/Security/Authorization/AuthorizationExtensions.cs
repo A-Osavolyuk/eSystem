@@ -7,6 +7,7 @@ using eSecurity.Idp.Security.Authorization.Devices.Extensions;
 using eSecurity.Idp.Security.Authorization.LinkedAccount;
 using eSecurity.Idp.Security.Authorization.Prompt;
 using eSecurity.Idp.Security.Authorization.Roles;
+using eSecurity.Idp.Security.Authorization.Scopes.Extensions;
 using eSecurity.Idp.Security.Authorization.Token;
 using eSecurity.Idp.Security.Authorization.Token.DeviceCode;
 using eSecurity.Idp.Security.Authorization.Token.Validation;
@@ -29,6 +30,7 @@ public static class AuthorizationExtensions
             options.FallbackUrl = $"{clientUri}/connect/fallback";
         });
         
+        builder.Services.AddScopesProcessing();
         builder.Services.AddPromptsHandling();
         builder.Services.AddTokenFlow();
         builder.Services.AddRoleManagement();

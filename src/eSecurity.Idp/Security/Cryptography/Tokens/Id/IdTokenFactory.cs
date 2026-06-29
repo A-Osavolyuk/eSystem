@@ -4,6 +4,7 @@ using eSecurity.Core.Security.Identity;
 using eSecurity.Idp.Security.Authentication.Client;
 using eSecurity.Idp.Security.Authentication.Session;
 using eSecurity.Idp.Security.Authentication.Subject;
+using eSecurity.Idp.Security.Authorization.Scopes;
 using eSecurity.Idp.Security.Identity.Email;
 using eSecurity.Idp.Security.Identity.Privacy;
 using eSecurity.Idp.Security.Identity.User;
@@ -19,20 +20,16 @@ public sealed class IdTokenFactory(
     IOptions<TokenConfigurations> options,
     ITokenBuilderProvider tokenBuilderProvider,
     ISubjectProvider subjectProvider,
-    IEmailQueryService emailQueryService,
     IClientQueryService clientQueryService,
-    IUserQueryService userQueryService,
     ISessionQueryService sessionQueryService,
-    IPersonalDataQueryService personalDataQueryService) : ITokenFactory<IdTokenFactoryContext>
+    IScopesProcessor scopesProcessor) : ITokenFactory<IdTokenFactoryContext>
 {
     private readonly TokenConfigurations _tokenConfigurations = options.Value;
     private readonly ITokenBuilderProvider _tokenBuilderProvider = tokenBuilderProvider;
     private readonly ISubjectProvider _subjectProvider = subjectProvider;
-    private readonly IEmailQueryService _emailQueryService = emailQueryService;
     private readonly IClientQueryService _clientQueryService = clientQueryService;
-    private readonly IUserQueryService _userQueryService = userQueryService;
     private readonly ISessionQueryService _sessionQueryService = sessionQueryService;
-    private readonly IPersonalDataQueryService _personalDataQueryService = personalDataQueryService;
+    private readonly IScopesProcessor _scopesProcessor = scopesProcessor;
 
     public async ValueTask<TypedResult<string>> CreateAsync(
         IdTokenFactoryContext context,
@@ -102,67 +99,16 @@ public sealed class IdTokenFactory(
         if (!string.IsNullOrEmpty(options?.Nonce))
             claims.Add(new Claim(AppClaimTypes.Nonce, options.Nonce));
 
-        if (scopes.Contains(ScopeTypes.Email))
+        var scopeContext = new ScopeContext { UserId = context.UserId };
+        var scopesProcessingResult = await _scopesProcessor.ProcessAsync(scopeContext, scopes, cancellationToken);
+        if (!scopesProcessingResult.Succeeded)
         {
-            var email = await _emailQueryService.GetByTypeAsync(context.UserId, EmailType.Primary, cancellationToken);
-            if (email is not null)
-            {
-                claims.Add(new Claim(AppClaimTypes.Email, email.Email));
-                claims.Add(new Claim(AppClaimTypes.EmailVerified, email.IsVerified.ToString()));
-            }
+            var error = scopesProcessingResult.GetError();
+            return TypedResult<string>.Fail(error);
         }
 
-        if (scopes.Contains(ScopeTypes.Phone))
-        {
-            //TODO: Implement phone scope handling
-        }
-
-        var personalData = await _personalDataQueryService.GetByUserAsync(context.UserId, cancellationToken);
-        if (scopes.Contains(ScopeTypes.Profile))
-        {
-            var user = await _userQueryService.GetByIdAsync(context.UserId, cancellationToken);
-            if (user is null)
-                throw new InvalidOperationException("Invalid user");
-
-            claims.Add(new Claim(AppClaimTypes.PreferredUsername, user.Username));
-            claims.Add(new Claim(AppClaimTypes.ZoneInfo, user.ZoneInfo));
-            claims.Add(new Claim(AppClaimTypes.Locale, user.Locale));
-
-            if (user.UpdatedAt.HasValue)
-            {
-                var updatedAt = user.UpdatedAt.Value.ToUnixTimeSeconds().ToString();
-                claims.Add(new Claim(AppClaimTypes.UpdatedAt, updatedAt, ClaimValueTypes.Integer64));
-            }
-
-            if (personalData is not null)
-            {
-                var birthDate = personalData.BirthDate.ToString("YYYY-MM-DD");
-
-                claims.Add(new Claim(AppClaimTypes.Name, personalData.Fullname));
-                claims.Add(new Claim(AppClaimTypes.GivenName, personalData.FirstName));
-                claims.Add(new Claim(AppClaimTypes.FamilyName, personalData.LastName));
-                claims.Add(new Claim(AppClaimTypes.BirthDate, birthDate));
-                claims.Add(new Claim(AppClaimTypes.Gender, personalData.Gender.ToString().ToLower()));
-
-                if (!string.IsNullOrEmpty(personalData.MiddleName))
-                    claims.Add(new Claim(AppClaimTypes.MiddleName, personalData.MiddleName));
-            }
-        }
-
-        if (scopes.Contains(ScopeTypes.Address) && personalData?.Address is not null)
-        {
-            var claim = new AddressClaim
-            {
-                Country = personalData.Address.Country,
-                Locality = personalData.Address.Locality,
-                PostalCode = personalData.Address.PostalCode,
-                Region = personalData.Address.Region,
-                StreetAddress = personalData.Address.StreetAddress,
-            };
-
-            var claimJson = JsonSerializer.Serialize(claim);
-            claims.Add(new Claim(AppClaimTypes.Address, claimJson));
-        }
+        var processedClaims = scopesProcessingResult.GetValue();
+        claims.AddRange(processedClaims);
 
         var tokenContext = new JwtTokenBuildContext { Claims = claims, Type = JwtTokenType.IdToken };
         var tokenFactory = _tokenBuilderProvider.GetFactory<JwtTokenBuildContext, string>();
